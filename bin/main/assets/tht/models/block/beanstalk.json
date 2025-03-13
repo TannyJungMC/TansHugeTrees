@@ -1,8 +1,0 @@
-{
-  "parent": "block/cross",
-  "textures": {
-    "cross": "tht:block/tree_beanstalk",
-    "particle": "tht:block/tree_beanstalk"
-  },
-  "render_type": "cutout"
-}

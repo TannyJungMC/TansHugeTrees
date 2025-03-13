@@ -1,8 +1,0 @@
-{
-  "parent": "block/cross",
-  "textures": {
-    "cross": "tht:block/tree_beekeeper",
-    "particle": "tht:block/tree_beekeeper"
-  },
-  "render_type": "cutout"
-}

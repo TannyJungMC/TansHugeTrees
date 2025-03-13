@@ -1,7 +1,0 @@
-{
-  "type": "tht:world_gen",
-  "config": {
-    "structure": "tht:world_gen",
-    "ignored_blocks": "minecraft:air"
-  }
-}

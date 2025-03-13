@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "tht:item/tree_rust"
-  },
-  "render_type": "translucent"
-}

@@ -1,8 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "tht:block/block_placer_twig",
-    "particle": "tht:block/block_placer_twig"
-  },
-  "render_type": "solid"
-}
