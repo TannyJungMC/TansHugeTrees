@@ -1,6 +1,8 @@
 {
   "pack": {
-    "pack_format": 15,
-    "description": "Tan's Huge Trees (THT) is a world gen addon mod. Generate trees and nature stuffs around the world. Mainly focus on improve the look of Minecraft and scale of the world to realistic fantasy style. This mod combined between my command block skills, my small coding skills and MCreator."
+    "description": "tht mod resources",
+    "pack_format": 9,
+    "forge:resource_pack_format": 9,
+    "forge:data_pack_format": 10
   }
 }

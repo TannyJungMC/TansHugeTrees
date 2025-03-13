@@ -1,5 +1,5 @@
 {
-  "_fv": 73,
+  "_fv": 66,
   "_type": "block",
   "definition": {
     "texture": "tree_beekeeper",
@@ -33,14 +33,13 @@
         "subtract": false
       }
     ],
-    "customProperties": [],
     "name": "Beekeeper",
     "specialInformation": {
       "fixedValue": [
         "--------------------------------------------------",
         "Size : Realistic",
         "Blocks : Dark Oak Wood / Stripped Dark Oak Wood / Dark Oak Leaves",
-        "Special : Generate with bee nest on twig and create area of flowers around the tree",
+        "Special : Can generate with bee nest on twig and create area of flowers on the way roots go",
         "--------------------------------------------------",
         "This is random tree sapling, it may take long time to generate!",
         "--------------------------------------------------"
@@ -114,6 +113,7 @@
     "vanillaToolTier": "STONE",
     "isBonemealable": false,
     "hasInventory": true,
+    "guiBoundTo": "<NONE>",
     "openGUIOnRightClick": false,
     "inventorySize": 9,
     "inventoryStackSize": 64,

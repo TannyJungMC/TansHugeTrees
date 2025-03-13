@@ -12,8 +12,8 @@ credits="Created with MCreator"
 authors="TannyJung"
 description="Generate trees and nature stuffs around the world"
 
-# Start of user tannyjung_handcode block mod configuration
-# End of user tannyjung_handcode block mod configuration
+# Start of user code block mod configuration
+# End of user code block mod configuration
 
 [[dependencies.tht]]
     modId="minecraft"
@@ -25,5 +25,5 @@ description="Generate trees and nature stuffs around the world"
 
 
 
-# Start of user tannyjung_handcode block dependencies configuration
-# End of user tannyjung_handcode block dependencies configuration
+# Start of user code block dependencies configuration
+# End of user code block dependencies configuration

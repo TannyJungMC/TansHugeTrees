@@ -1,5 +1,5 @@
 {
-  "_fv": 73,
+  "_fv": 66,
   "_type": "block",
   "definition": {
     "texture": "random_tree",
@@ -33,7 +33,6 @@
         "subtract": false
       }
     ],
-    "customProperties": [],
     "name": "Random Tree (Unset)",
     "specialInformation": {
       "fixedValue": [
@@ -110,6 +109,7 @@
     "vanillaToolTier": "STONE",
     "isBonemealable": false,
     "hasInventory": true,
+    "guiBoundTo": "<NONE>",
     "openGUIOnRightClick": false,
     "inventorySize": 9,
     "inventoryStackSize": 64,
@@ -129,7 +129,7 @@
       "name": "SaplingBlockRightClick"
     },
     "onTickUpdate": {
-      "name": "SaplingBlockTick"
+      "name": "RandomTreeBlockRun"
     },
     "generateFeature": false,
     "restrictionBiomes": [],

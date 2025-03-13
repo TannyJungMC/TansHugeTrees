@@ -1,8 +1,0 @@
-{
-  "parent": "block/cross",
-  "textures": {
-    "cross": "tanshugetrees:block/tree_sky_island_chain",
-    "particle": "tanshugetrees:block/tree_sky_island_chain"
-  },
-  "render_type": "cutout"
-}

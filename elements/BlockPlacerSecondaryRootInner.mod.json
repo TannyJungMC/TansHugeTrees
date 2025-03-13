@@ -1,5 +1,5 @@
 {
-  "_fv": 73,
+  "_fv": 66,
   "_type": "block",
   "definition": {
     "texture": "block_placer_secondary_root",
@@ -12,15 +12,15 @@
     "customModelName": "Single texture",
     "rotationMode": 0,
     "enablePitch": false,
-    "emissiveRendering": true,
-    "displayFluidOverlay": true,
+    "emissiveRendering": false,
+    "displayFluidOverlay": false,
     "itemTexture": "",
     "particleTexture": "",
     "tintType": "No tint",
     "isItemTinted": false,
-    "hasTransparency": true,
-    "connectedSides": true,
-    "transparencyType": "TRANSLUCENT",
+    "hasTransparency": false,
+    "connectedSides": false,
+    "transparencyType": "SOLID",
     "disableOffset": false,
     "boundingBoxes": [
       {
@@ -33,7 +33,6 @@
         "subtract": false
       }
     ],
-    "customProperties": [],
     "name": "Block Placer",
     "specialInformation": {
       "fixedValue": []
@@ -41,7 +40,7 @@
     "hardness": 1.0,
     "resistance": 10.0,
     "hasGravity": false,
-    "isWaterloggable": true,
+    "isWaterloggable": false,
     "creativeTabs": [],
     "destroyTool": "Not specified",
     "customDrop": {
@@ -77,7 +76,7 @@
     "speedFactor": 1.0,
     "jumpFactor": 1.0,
     "reactionToPushing": "NORMAL",
-    "isNotColidable": true,
+    "isNotColidable": false,
     "isCustomSoundType": false,
     "soundOnStep": {
       "value": "GLASS"
@@ -97,11 +96,12 @@
     "stepSound": {
       "value": ""
     },
-    "luminance": 1,
+    "luminance": 0,
     "unbreakable": true,
     "vanillaToolTier": "STONE",
     "isBonemealable": false,
     "hasInventory": true,
+    "guiBoundTo": "<NONE>",
     "openGUIOnRightClick": false,
     "inventorySize": 9,
     "inventoryStackSize": 64,

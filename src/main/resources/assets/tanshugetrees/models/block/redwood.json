@@ -1,8 +1,0 @@
-{
-  "parent": "block/cross",
-  "textures": {
-    "cross": "tanshugetrees:block/tree_redwood",
-    "particle": "tanshugetrees:block/tree_redwood"
-  },
-  "render_type": "cutout"
-}

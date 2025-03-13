@@ -1,5 +1,5 @@
 {
-  "_fv": 73,
+  "_fv": 66,
   "_type": "block",
   "definition": {
     "texture": "tree_sky_island_chain",
@@ -33,12 +33,11 @@
         "subtract": false
       }
     ],
-    "customProperties": [],
     "name": "Sky Island (Chain)",
     "specialInformation": {
       "fixedValue": [
         "--------------------------------------------------",
-        "Size : Medium",
+        "Size : Huge",
         "Blocks : Stone / Moss Block / Oak Leaves",
         "Special : Can generate with moss patch on the islands",
         "--------------------------------------------------",
@@ -114,6 +113,7 @@
     "vanillaToolTier": "STONE",
     "isBonemealable": false,
     "hasInventory": true,
+    "guiBoundTo": "<NONE>",
     "openGUIOnRightClick": false,
     "inventorySize": 9,
     "inventoryStackSize": 64,

@@ -1,24 +1,24 @@
 modLoader="javafml"
-loaderVersion="[47,)"
+loaderVersion="[43,)"
 license="All Rights Reserved"
 
 [[mods]]
-modId="tanshugetrees"
-version="6.3.1"
+modId="tht"
+version="4.4.3"
 displayName="Tan's Huge Trees"
-displayURL="https://legacy.curseforge.com/minecraft/mc-mods/tans-huge-trees"
+displayURL="https://legacy.curseforge.com/members/tannyjung/projects"
 logoFile="logo.png"
 credits="Created with MCreator"
 authors="TannyJung"
-description="Tan's Huge Trees (THT) is a world gen addon mod. Generate trees and nature stuffs around the world. Mainly focus on improve the look of Minecraft and scale of the world to realistic fantasy style. This mod combined between my command block skills, my small coding skills and MCreator."
+description="Generate trees and nature stuffs around the world, improved the look of Minecraft and scale of the world. This mod combined between my command block skills, my small coding skills and MCreator."
 
 # Start of user code block mod configuration
 # End of user code block mod configuration
 
-[[dependencies.tanshugetrees]]
+[[dependencies.tht]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.20.1]"
+    versionRange="[1.19.2]"
     ordering="AFTER"
     side="BOTH"
 

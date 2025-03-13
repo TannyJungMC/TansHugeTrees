@@ -1,5 +1,5 @@
 {
-  "_fv": 73,
+  "_fv": 66,
   "_type": "block",
   "definition": {
     "texture": "tree_christmas_tree",
@@ -33,7 +33,6 @@
         "subtract": false
       }
     ],
-    "customProperties": [],
     "name": "Christmas Tree",
     "specialInformation": {
       "fixedValue": [
@@ -114,6 +113,7 @@
     "vanillaToolTier": "STONE",
     "isBonemealable": false,
     "hasInventory": true,
+    "guiBoundTo": "<NONE>",
     "openGUIOnRightClick": false,
     "inventorySize": 9,
     "inventoryStackSize": 64,
