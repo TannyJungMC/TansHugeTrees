@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "misc",
+  "experience": 100,
+  "cookingtime": 1200,
+  "ingredient": {
+    "item": "minecraft:flowering_azalea_leaves"
+  },
+  "result": "tanshugetrees:waypoint_flower"
+}

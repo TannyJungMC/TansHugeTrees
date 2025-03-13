@@ -1,0 +1,22 @@
+{
+  "_fv": 73,
+  "_type": "recipe",
+  "definition": {
+    "recipeType": "Campfire cooking",
+    "recipeRetstackSize": 1,
+    "group": "",
+    "cookingBookCategory": "MISC",
+    "xpReward": 100.0,
+    "cookingTime": 1200,
+    "craftingBookCategory": "MISC",
+    "recipeShapeless": false,
+    "campfireCookingInputStack": {
+      "value": "Blocks.FLOWERING_AZALEA_LEAVES"
+    },
+    "campfireCookingReturnStack": {
+      "value": "CUSTOM:WaypointFlower"
+    },
+    "name": "waypoint_flower_recipe",
+    "namespace": "mod"
+  }
+}

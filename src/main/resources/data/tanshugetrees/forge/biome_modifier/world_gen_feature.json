@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#tanshugetrees:world_gen_biomes",
+  "features": "tanshugetrees:world_gen_feature",
+  "step": "underground_decoration"
+}

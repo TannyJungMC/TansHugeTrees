@@ -1,0 +1,50 @@
+{
+  "_fv": 73,
+  "_type": "gui",
+  "definition": {
+    "type": 0,
+    "width": 176,
+    "height": 60,
+    "inventoryOffsetX": 0,
+    "inventoryOffsetY": 0,
+    "renderBgLayer": true,
+    "doesPauseGame": false,
+    "components": [
+      {
+        "type": "textfield",
+        "data": {
+          "placeholder": "preset",
+          "name": "preset",
+          "width": 160,
+          "height": 20,
+          "x": 134,
+          "y": 96,
+          "locked": false
+        }
+      },
+      {
+        "type": "button",
+        "data": {
+          "name": "button_convert",
+          "text": "Fix",
+          "isUndecorated": false,
+          "onClick": {
+            "name": "GUIPresetFixerConvert"
+          },
+          "width": 32,
+          "height": 20,
+          "x": 198,
+          "y": 120,
+          "locked": false
+        }
+      }
+    ],
+    "gridSettings": {
+      "sx": 16,
+      "sy": 16,
+      "ox": 11,
+      "oy": 15,
+      "snapOnGrid": true
+    }
+  }
+}

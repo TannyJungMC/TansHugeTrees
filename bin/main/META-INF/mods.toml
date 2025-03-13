@@ -1,0 +1,29 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="tht"
+version="6.2.8"
+displayName="Tan's Huge Trees"
+displayURL="https://legacy.curseforge.com/members/tannyjung/projects"
+logoFile="logo.png"
+credits="Created with MCreator"
+authors="TannyJung"
+description="Generate trees and nature stuffs around the world"
+
+# Start of user tannyjung_handcode block mod configuration
+# End of user tannyjung_handcode block mod configuration
+
+[[dependencies.tht]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1]"
+    ordering="AFTER"
+    side="BOTH"
+
+
+
+
+# Start of user tannyjung_handcode block dependencies configuration
+# End of user tannyjung_handcode block dependencies configuration
