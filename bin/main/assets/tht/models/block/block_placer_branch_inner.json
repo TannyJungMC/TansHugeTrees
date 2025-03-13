@@ -1,8 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "tanshugetrees:block/block_placer_branch",
-    "particle": "tanshugetrees:block/block_placer_branch"
-  },
-  "render_type": "solid"
-}

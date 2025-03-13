@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "tanshugetrees:item/tree_sky_island_chain"
-  },
-  "render_type": "translucent"
-}

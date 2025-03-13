@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "tanshugetrees:item/random_tree"
-  },
-  "render_type": "translucent"
-}
