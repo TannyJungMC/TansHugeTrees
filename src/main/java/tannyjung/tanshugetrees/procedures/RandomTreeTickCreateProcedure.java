@@ -71,40 +71,42 @@ public class RandomTreeTickCreateProcedure {
 						|| entity.getPersistentData().getBoolean((type_next + "_random_auto")) == true && entity.getPersistentData().getDouble((type_next + "_distance")) <= 0)
 				|| entity.getPersistentData().getDouble((entity.getPersistentData().getString("type") + "_length")) <= 0) {
 			if (entity.getPersistentData().getDouble((type_next + "_count")) > 0) {
-				if (entity.getPersistentData().getBoolean((type_next + "_random_auto")) == true) {
-					entity.getPersistentData().putDouble((type_next + "_distance"),
-							((entity.getPersistentData().getDouble((entity.getPersistentData().getString("type") + "_length_save")) * (1 - entity.getPersistentData().getDouble((type_next + "_random_percent")) * 0.01))
-									/ (entity.getPersistentData().getDouble((type_next + "_count_save")) - entity.getPersistentData().getDouble((type_next + "_last_count_min")))));
-				} else {
-					entity.getPersistentData().putDouble((type_next + "_distance"), (entity.getPersistentData().getDouble((type_next + "_distance_min"))));
+				if (true) {
+					if (entity.getPersistentData().getBoolean((type_next + "_random_auto")) == true) {
+						entity.getPersistentData().putDouble((type_next + "_distance"),
+								((entity.getPersistentData().getDouble((entity.getPersistentData().getString("type") + "_length_save")) * (1 - entity.getPersistentData().getDouble((type_next + "_random_percent")) * 0.01))
+										/ (entity.getPersistentData().getDouble((type_next + "_count_save")) - entity.getPersistentData().getDouble((type_next + "_last_count_min")))));
+					} else {
+						entity.getPersistentData().putDouble((type_next + "_distance"), (entity.getPersistentData().getDouble((type_next + "_distance_min"))));
+					}
+					if ((entity.getPersistentData().getString("type")).equals("taproot")) {
+						entity.getPersistentData().putString("type", "secondary_root");
+					} else if ((entity.getPersistentData().getString("type")).equals("secondary_root")) {
+						entity.getPersistentData().putString("type", "tertiary_root");
+					} else if ((entity.getPersistentData().getString("type")).equals("tertiary_root")) {
+						entity.getPersistentData().putString("type", "fine_root");
+					}
+					if ((entity.getPersistentData().getString("type")).equals("trunk")) {
+						entity.getPersistentData().putString("type", "branch");
+					} else if ((entity.getPersistentData().getString("type")).equals("branch")) {
+						entity.getPersistentData().putString("type", "twig");
+					} else if ((entity.getPersistentData().getString("type")).equals("twig")) {
+						entity.getPersistentData().putString("type", "leaves_twig");
+					} else if ((entity.getPersistentData().getString("type")).equals("leaves_twig")) {
+						entity.getPersistentData().putString("type", "leaves");
+					}
+					entity.getPersistentData().putString("step", "summon");
+					entity.getPersistentData().putString("up_down", "up");
 				}
-				if ((entity.getPersistentData().getString("type")).equals("taproot")) {
-					entity.getPersistentData().putString("type", "secondary_root");
-				} else if ((entity.getPersistentData().getString("type")).equals("secondary_root")) {
-					entity.getPersistentData().putString("type", "tertiary_root");
-				} else if ((entity.getPersistentData().getString("type")).equals("tertiary_root")) {
-					entity.getPersistentData().putString("type", "fine_root");
-				}
-				if ((entity.getPersistentData().getString("type")).equals("trunk")) {
-					entity.getPersistentData().putString("type", "branch");
-				} else if ((entity.getPersistentData().getString("type")).equals("branch")) {
-					entity.getPersistentData().putString("type", "twig");
-				} else if ((entity.getPersistentData().getString("type")).equals("twig")) {
-					entity.getPersistentData().putString("type", "leaves_twig");
-				} else if ((entity.getPersistentData().getString("type")).equals("leaves_twig")) {
-					entity.getPersistentData().putString("type", "leaves");
-				}
-				entity.getPersistentData().putString("step", "summon");
-				entity.getPersistentData().putString("up_down", "up");
 			} else {
 				if (world instanceof ServerLevel _level)
 					_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
 							("kill @e[name=THT-tree_" + (entity.getPersistentData().getString("type") + "_" + entity.getPersistentData().getString("tree_id")) + "]"));
 				if ((entity.getPersistentData().getString("type")).equals("taproot")) {
 					if (entity.getPersistentData().getDouble((entity.getPersistentData().getString("type") + "_length")) <= 0 && entity.getPersistentData().getDouble((entity.getPersistentData().getString("type") + "_count")) <= 0) {
-						entity.getPersistentData().putString("step", "summon");
 						entity.getPersistentData().putString("type", "trunk");
 					}
+					entity.getPersistentData().putString("step", "summon");
 				} else if ((entity.getPersistentData().getString("type")).equals("secondary_root")) {
 					entity.getPersistentData().putString("type", "taproot");
 				} else if ((entity.getPersistentData().getString("type")).equals("tertiary_root")) {

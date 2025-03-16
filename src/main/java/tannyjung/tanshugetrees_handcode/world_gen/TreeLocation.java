@@ -518,7 +518,7 @@ public class TreeLocation {
 
                 {
 
-                    if (read_all.startsWith(id) == true) {
+                    if (read_all.startsWith(id + "|") == true) {
 
                         array = read_all.split("\\|");
                         pos = array[1].split("/");
@@ -557,6 +557,8 @@ public class TreeLocation {
         String ground_block = array[4];
         boolean dead_tree = Boolean.parseBoolean(array[5]);
         int dead_tree_level = Integer.parseInt(array[6]);
+
+        int original_height = center_posY;
 
         // Scan "World Gen" File
         {
@@ -824,7 +826,7 @@ public class TreeLocation {
 
                                 }
 
-                                other_data = ground_block + "/" + dead_tree_level;
+                                other_data = original_height + "/" + ground_block + "/" + dead_tree_level;
 
                             }
 

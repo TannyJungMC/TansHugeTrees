@@ -90,9 +90,9 @@ public class AutoGenWhenTreeFinishProcedure {
 								skip = true;
 							}
 						} else {
-							if (stringiterator.startsWith("b")) {
+							if (stringiterator.startsWith("+b")) {
 								if (true) {
-									pos = stringiterator.substring(1, (int) ((stringiterator).length() - 3));
+									pos = stringiterator.substring(2, (int) ((stringiterator).length() - 3));
 									posX = pos.indexOf("^", 0);
 									posY = pos.indexOf("^", (int) (int) posX + 1);
 									posZ = new Object() {

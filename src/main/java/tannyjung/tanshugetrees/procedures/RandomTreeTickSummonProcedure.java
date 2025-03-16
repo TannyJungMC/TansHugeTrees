@@ -29,45 +29,9 @@ public class RandomTreeTickSummonProcedure {
 		String type = "";
 		String step = "";
 		String above_below = "";
-		if (!("").equals("pre-next")) {
-			type_pre = "";
-			type_next = "";
-			if (true) {
-				if ((entity.getPersistentData().getString("type")).equals("secondary_root")) {
-					type_pre = "taproot";
-				} else if ((entity.getPersistentData().getString("type")).equals("tertiary_root")) {
-					type_pre = "secondary_root";
-				} else if ((entity.getPersistentData().getString("type")).equals("fine_root")) {
-					type_pre = "tertiary_root";
-				}
-				if ((entity.getPersistentData().getString("type")).equals("taproot")) {
-					type_next = "secondary_root";
-				} else if ((entity.getPersistentData().getString("type")).equals("secondary_root")) {
-					type_next = "tertiary_root";
-				} else if ((entity.getPersistentData().getString("type")).equals("tertiary_root")) {
-					type_next = "fine_root";
-				}
-			}
-			if (true) {
-				if ((entity.getPersistentData().getString("type")).equals("branch")) {
-					type_pre = "trunk";
-				} else if ((entity.getPersistentData().getString("type")).equals("twig")) {
-					type_pre = "branch";
-				} else if ((entity.getPersistentData().getString("type")).equals("leaves_twig")) {
-					type_pre = "twig";
-				} else if ((entity.getPersistentData().getString("type")).equals("leaves")) {
-					type_pre = "leaves_twig";
-				}
-				if ((entity.getPersistentData().getString("type")).equals("trunk")) {
-					type_next = "branch";
-				} else if ((entity.getPersistentData().getString("type")).equals("branch")) {
-					type_next = "twig";
-				} else if ((entity.getPersistentData().getString("type")).equals("twig")) {
-					type_next = "leaves_twig";
-				} else if ((entity.getPersistentData().getString("type")).equals("leaves_twig")) {
-					type_next = "leaves";
-				}
-			}
+		if (!("Get Type Pre - Next").isEmpty()) {
+			type_pre = RandomTreeGetPreNextProcedure.execute(entity, "previous");
+			type_next = RandomTreeGetPreNextProcedure.execute(entity, "next");
 		}
 		entity.getPersistentData().putDouble((entity.getPersistentData().getString("type") + "_count"), (entity.getPersistentData().getDouble((entity.getPersistentData().getString("type") + "_count")) - 1));
 		if (!(entity.getPersistentData().getString("type")).equals("leaves")) {
@@ -160,7 +124,6 @@ public class RandomTreeTickSummonProcedure {
 										entity.getPersistentData().getDouble((entity.getPersistentData().getString("type") + "_start_gravity_min")))));
 		} else {
 			if (entity.getPersistentData().getBoolean((entity.getPersistentData().getString("type") + "_center_direction")) == false) {
-				entity.getPersistentData().putBoolean("summon_fix", false);
 				center_direction_horizontal = Mth.nextDouble(RandomSource.create(), entity.getPersistentData().getDouble((entity.getPersistentData().getString("type") + "_start_horizontal")) * (-1),
 						entity.getPersistentData().getDouble((entity.getPersistentData().getString("type") + "_start_horizontal")));
 				center_direction_vertical = Mth.nextDouble(RandomSource.create(), entity.getPersistentData().getDouble((entity.getPersistentData().getString("type") + "_start_vertical")) * (-1),
@@ -200,8 +163,7 @@ public class RandomTreeTickSummonProcedure {
 				center_direction_vertical = Mth.nextDouble(RandomSource.create(), center_direction_vertical * (-1), center_direction_vertical);
 			}
 			if (true) {
-				entity.getPersistentData().putBoolean("summon_fix", false);
-				for (int index1 = 0; index1 < 100; index1++) {
+				for (int index1 = 0; index1 < 1; index1++) {
 					{
 						Entity _ent = entity;
 						if (!_ent.level().isClientSide() && _ent.getServer() != null) {
@@ -213,16 +175,7 @@ public class RandomTreeTickSummonProcedure {
 											+ "\"],CustomName:'{\"text\":\"THT-tree_" + (entity.getPersistentData().getString("type") + "_" + entity.getPersistentData().getString("tree_id")) + "\"}'}"));
 						}
 					}
-					{
-						Entity _ent = entity;
-						if (!_ent.level().isClientSide() && _ent.getServer() != null) {
-							_ent.getServer().getCommands().performPrefixedCommand(
-									new CommandSourceStack(CommandSource.NULL, _ent.position(), _ent.getRotationVector(), _ent.level() instanceof ServerLevel ? (ServerLevel) _ent.level() : null, 4, _ent.getName().getString(), _ent.getDisplayName(),
-											_ent.level().getServer(), _ent),
-									("execute if entity @e[name=THT-tree_" + (entity.getPersistentData().getString("type") + "_" + entity.getPersistentData().getString("tree_id")) + "] run data merge entity @s {ForgeData:{summon_fix:true}}"));
-						}
-					}
-					if (entity.getPersistentData().getBoolean("summon_fix") == true) {
+					if (CommandResultEntityProcedure.execute(entity, "execute if entity @e[name=THT-tree_" + (entity.getPersistentData().getString("type") + "_" + entity.getPersistentData().getString("tree_id")) + "]")) {
 						break;
 					}
 				}

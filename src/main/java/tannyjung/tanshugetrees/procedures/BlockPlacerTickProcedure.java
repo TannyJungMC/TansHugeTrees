@@ -77,7 +77,7 @@ public class BlockPlacerTickProcedure {
 						BufferedWriter filebw = new BufferedWriter(filewriter);
 						if (true) {
 							{
-								filebw.write(("b" + (Math.floor(x - (new Object() {
+								filebw.write(("+b" + (Math.floor(x - (new Object() {
 									public double getValue(LevelAccessor world, BlockPos pos, String tag) {
 										BlockEntity blockEntity = world.getBlockEntity(pos);
 										if (blockEntity != null)
@@ -117,7 +117,7 @@ public class BlockPlacerTickProcedure {
 								}
 							}.getValue(world, BlockPos.containing(x, y, z), "function")).equals("")) {
 								{
-									filebw.write(("f" + (Math.floor(x - (new Object() {
+									filebw.write(("+f" + (Math.floor(x - (new Object() {
 										public double getValue(LevelAccessor world, BlockPos pos, String tag) {
 											BlockEntity blockEntity = world.getBlockEntity(pos);
 											if (blockEntity != null)

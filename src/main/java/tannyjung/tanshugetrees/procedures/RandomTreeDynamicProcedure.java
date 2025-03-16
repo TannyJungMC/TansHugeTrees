@@ -78,14 +78,14 @@ public class RandomTreeDynamicProcedure {
 							} else {
 								if (!(stringiterator).equals("")) {
 									if (entity.getPersistentData().getDouble("process") > entity.getPersistentData().getDouble("process_save")) {
-										if (stringiterator.startsWith("b")) {
+										if (stringiterator.startsWith("+b")) {
 											if ((stringiterator.substring((int) ((stringiterator).length() - 3), (int) ((stringiterator).length() - 1))).equals("tr")
 													|| (stringiterator.substring((int) ((stringiterator).length() - 3), (int) ((stringiterator).length() - 1))).equals("br")
 													|| (stringiterator.substring((int) ((stringiterator).length() - 3), (int) ((stringiterator).length() - 1))).equals("tw")
 													|| (stringiterator.substring((int) ((stringiterator).length() - 3), (int) ((stringiterator).length() - 1))).equals("lt")
 													|| (stringiterator.substring((int) ((stringiterator).length() - 3), (int) ((stringiterator).length() - 1))).equals("le")) {
 												if (true) {
-													pos = stringiterator.substring(1, (int) ((stringiterator).length() - 3));
+													pos = stringiterator.substring(2, (int) ((stringiterator).length() - 3));
 													posX = pos.indexOf("^", 0);
 													posY = pos.indexOf("^", (int) (int) posX + 1);
 													posZ = new Object() {
