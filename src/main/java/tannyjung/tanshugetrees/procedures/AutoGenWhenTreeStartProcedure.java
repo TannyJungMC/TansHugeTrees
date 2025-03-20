@@ -154,10 +154,10 @@ public class AutoGenWhenTreeStartProcedure {
 										if (true) {
 											if (true) {
 												entity.getPersistentData().putString((type + "_outer_short"), (type_short + "o"));
-												file_write = ("Block " + entity.getPersistentData().getString((type + "_outer_short"))) + " = " + entity.getPersistentData().getString((type + "_inner"));
+												file_write = ("Block " + entity.getPersistentData().getString((type + "_outer_short"))) + " = " + entity.getPersistentData().getString((type + "_outer"));
 												if (entity.getPersistentData().getBoolean((type + "_replace")) == false && !file_write.endsWith("= ")) {
 													{
-														filebw.write((file_write + " replace #tanshugetrees:passable_blocks"));
+														filebw.write((file_write + " keep"));
 														filebw.newLine();
 													}
 												} else {
@@ -172,7 +172,7 @@ public class AutoGenWhenTreeStartProcedure {
 												file_write = ("Block " + entity.getPersistentData().getString((type + "_inner_short"))) + " = " + entity.getPersistentData().getString((type + "_inner"));
 												if (entity.getPersistentData().getBoolean((type + "_replace")) == false && !file_write.endsWith("= ")) {
 													{
-														filebw.write((file_write + " replace #tanshugetrees:passable_blocks"));
+														filebw.write((file_write + " keep"));
 														filebw.newLine();
 													}
 												} else {
@@ -187,7 +187,7 @@ public class AutoGenWhenTreeStartProcedure {
 												file_write = ("Block " + entity.getPersistentData().getString((type + "_core_short"))) + " = " + entity.getPersistentData().getString((type + "_core"));
 												if (entity.getPersistentData().getBoolean((type + "_replace")) == false && !file_write.endsWith("= ")) {
 													{
-														filebw.write((file_write + " replace #tanshugetrees:passable_blocks"));
+														filebw.write((file_write + " keep"));
 														filebw.newLine();
 													}
 												} else {
@@ -336,7 +336,7 @@ public class AutoGenWhenTreeStartProcedure {
 							filebw.newLine();
 						}
 						{
-							filebw.write("b0^0^0tro");
+							filebw.write("+b0^0^0tro");
 							filebw.newLine();
 						}
 					}

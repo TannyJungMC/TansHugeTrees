@@ -1,19 +1,12 @@
 package tannyjung.tanshugetrees_handcode.world_gen;
 
-import com.sun.jna.platform.win32.OaIdl;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -25,19 +18,17 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraftforge.registries.ForgeRegistries;
-import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.misc.FileManager;
 import tannyjung.tanshugetrees_handcode.misc.Misc;
-import tannyjung.tanshugetrees_handcode.misc.TXTFunction;
+import tannyjung.tanshugetrees_handcode.misc.TreeFunction;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 public class TreePlacer {
 
@@ -76,72 +67,79 @@ public class TreePlacer {
                 boolean mirrored = false;
 
                 String[] other_data = null;
+                int original_height = 0;
                 String ground_block = "";
                 int dead_tree_level = 0;
 
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                // Reading
+                {
 
-                    {
+                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-                        if (read_all.equals("") == false) {
+                        {
 
-                            // Get Tree Chunk Pos
-                            {
+                            if (read_all.equals("") == false) {
 
-                                array_text = read_all.split("\\|");
-
-                                from_chunk = array_text[0].split("/");
-                                to_chunk = array_text[1].split("/");
-                                from_chunk_posX = Integer.parseInt(from_chunk[0]);
-                                from_chunk_posZ = Integer.parseInt(from_chunk[1]);
-                                to_chunk_posX = Integer.parseInt(to_chunk[0]);
-                                to_chunk_posZ = Integer.parseInt(to_chunk[1]);
-
-                            }
-
-                            if ((from_chunk_posX <= chunk_posX && chunk_posX <= to_chunk_posX) && (from_chunk_posZ <= chunk_posZ && chunk_posZ <= to_chunk_posZ)) {
-
-                                // Get Tree Data
+                                // Get Tree Chunk Pos
                                 {
 
-                                    id = array_text[2];
-                                    chosen = array_text[3];
+                                    array_text = read_all.split("\\|");
 
-                                    center_pos = array_text[4].split("/");
-                                    center_posX = Integer.parseInt(center_pos[0]);
-                                    center_posY = Integer.parseInt(center_pos[1]);
-                                    center_posZ = Integer.parseInt(center_pos[2]);
-
-                                    rotation_mirrored = array_text[5].split("/");
-                                    rotation = Integer.parseInt(rotation_mirrored[0]);
-                                    mirrored = Boolean.parseBoolean(rotation_mirrored[1]);
-
-                                    other_data = array_text[6].split("(?<! )/(?! )");
-                                    ground_block = other_data[0];
-                                    dead_tree_level = Integer.parseInt(other_data[1]);
+                                    from_chunk = array_text[0].split("/");
+                                    to_chunk = array_text[1].split("/");
+                                    from_chunk_posX = Integer.parseInt(from_chunk[0]);
+                                    from_chunk_posZ = Integer.parseInt(from_chunk[1]);
+                                    to_chunk_posX = Integer.parseInt(to_chunk[0]);
+                                    to_chunk_posZ = Integer.parseInt(to_chunk[1]);
 
                                 }
 
-                                // Detailed Detection
-                                {
+                                if ((from_chunk_posX <= chunk_posX && chunk_posX <= to_chunk_posX) && (from_chunk_posZ <= chunk_posZ && chunk_posZ <= to_chunk_posZ)) {
 
-                                    if (detailed_detection(level, center_posX, center_posY, center_posZ, ground_block) == false) {
+                                    // Get Tree Data
+                                    {
 
-                                        continue;
+                                        id = array_text[2];
+                                        chosen = array_text[3];
+
+                                        center_pos = array_text[4].split("/");
+                                        center_posX = Integer.parseInt(center_pos[0]);
+                                        center_posY = Integer.parseInt(center_pos[1]);
+                                        center_posZ = Integer.parseInt(center_pos[2]);
+
+                                        rotation_mirrored = array_text[5].split("/");
+                                        rotation = Integer.parseInt(rotation_mirrored[0]);
+                                        mirrored = Boolean.parseBoolean(rotation_mirrored[1]);
+
+                                        other_data = array_text[6].split("(?<! )/(?! )");
+                                        original_height = Integer.parseInt(other_data[0]);
+                                        ground_block = other_data[1];
+                                        dead_tree_level = Integer.parseInt(other_data[2]);
 
                                     }
 
-                                }
+                                    // Detailed Detection
+                                    {
 
-                                place(context, id, chosen, center_posX, center_posY, center_posZ, rotation, mirrored, dead_tree_level);
+                                        if (detailed_detection(level, center_posX, original_height, center_posZ, ground_block) == false) {
+
+                                            continue;
+
+                                        }
+
+                                    }
+
+                                    place(context, id, chosen, center_posX, center_posY, center_posZ, rotation, mirrored, dead_tree_level);
+
+                                }
 
                             }
 
                         }
 
-                    }
+                    } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
 
-                } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                }
 
             }
 
@@ -149,7 +147,7 @@ public class TreePlacer {
 
     }
 
-    private static boolean detailed_detection (LevelAccessor level, int center_posX, int center_posY, int center_posZ, String ground_block) {
+    private static boolean detailed_detection (LevelAccessor level, int center_posX, int original_height, int center_posZ, String ground_block) {
 
         boolean return_logic = true;
         boolean already_tested = false;
@@ -235,46 +233,56 @@ public class TreePlacer {
                     // Test Ground Block
                     {
 
-                        boolean test = false;
-                        BlockState ground_block_get = level.getBlockState(new BlockPos(center_posX, center_posY - 1, center_posZ));
+                        if (center_chunk.getStatus().isOrAfter(ChunkStatus.SURFACE) == true) {
 
-                        for (String split : ground_block.split(" / ")) {
+                            boolean test = false;
+                            BlockState ground_block_get = level.getBlockState(new BlockPos(center_posX, original_height - 1, center_posZ));
 
-                            test = true;
+                            for (String split : ground_block.split(" / ")) {
 
-                            for (String split2 : split.split(" & ")) {
+                                test = true;
 
-                                String split_get = split2.replaceAll("[#!]", "");
+                                for (String split2 : split.split(" & ")) {
 
-                                {
+                                    String split_get = split2.replaceAll("[#!]", "");
 
-                                    if (split2.contains("#") == false) {
+                                    {
 
-                                        if (ForgeRegistries.BLOCKS.getKey(ground_block_get.getBlock()).toString().equals(split_get) == false) {
+                                        if (split2.contains("#") == false) {
 
-                                            test = false;
+                                            if (ForgeRegistries.BLOCKS.getKey(ground_block_get.getBlock()).toString().equals(split_get) == false) {
+
+                                                test = false;
+
+                                            }
+
+                                        } else {
+
+                                            if (Misc.isBlockTaggedAs(ground_block_get, split_get) == false) {
+
+                                                test = false;
+
+                                            }
 
                                         }
 
-                                    } else {
+                                        if (split2.contains("!") == true) {
 
-                                        if (Misc.isBlockTaggedAs(ground_block_get, split_get) == false) {
-
-                                            test = false;
+                                            test = !test;
 
                                         }
 
                                     }
 
-                                    if (split2.contains("!") == true) {
+                                    if (test == false) {
 
-                                        test = !test;
+                                        break;
 
                                     }
 
                                 }
 
-                                if (test == false) {
+                                if (test == true) {
 
                                     break;
 
@@ -282,18 +290,12 @@ public class TreePlacer {
 
                             }
 
-                            if (test == true) {
+                            if (test == false) {
 
-                                break;
+                                return_logic = false;
+                                break test;
 
                             }
-
-                        }
-
-                        if (test == false) {
-
-                            return_logic = false;
-                            break test;
 
                         }
 
@@ -305,7 +307,7 @@ public class TreePlacer {
 
             }
 
-            // Write
+            // Write the file to mark as "already tested"
             {
 
                 StringBuilder write = new StringBuilder();
@@ -331,6 +333,9 @@ public class TreePlacer {
 
         String storage_directory = "";
         String tree_settings = "";
+
+        Map<String, String> map_block = new HashMap<>();
+        boolean tree_dynamic = false;
 
         // Scan "World Gen" File
         {
@@ -374,8 +379,6 @@ public class TreePlacer {
 
         }
 
-        Map<String, String> map_block = new HashMap<>();
-
         // Scan "Tree Settings" File
         {
 
@@ -390,17 +393,37 @@ public class TreePlacer {
 
                     {
 
-                        if (read_all.startsWith("Block ") == true) {
+                        if (read_all.startsWith("rt_dynamic = ") == true) {
 
-                            get_short = read_all.substring("Block ".length(), "Block ###".length());
-                            get = read_all.substring("Block ### = ".length());
-                            map_block.put(get_short, get);
+                            {
+
+                                if (read_all.replace("rt_dynamic = ", "").equals("true")) {
+
+                                    tree_dynamic = true;
+
+                                }
+
+                            }
+
+                        } else if (read_all.startsWith("Block ") == true) {
+
+                            {
+
+                                get_short = read_all.substring("Block ".length(), "Block ###".length());
+                                get = read_all.substring("Block ### = ".length());
+                                map_block.put(get_short, get);
+
+                            }
 
                         } else if (read_all.startsWith("Function ") == true) {
 
-                            get_short = read_all.substring("Function ".length(), "Function ##".length());
-                            get = read_all.substring("Function ## = ".length());
-                            map_block.put(get_short, get);
+                            {
+
+                                get_short = read_all.substring("Function ".length(), "Function ##".length());
+                                get = read_all.substring("Function ## = ".length());
+                                map_block.put(get_short, get);
+
+                            }
 
                         }
 
@@ -449,7 +472,7 @@ public class TreePlacer {
 
                                         } else {
 
-                                            if (read_all.startsWith("b")) {
+                                            if (read_all.startsWith("+b")) {
 
                                                 if (read_all.substring(read_all.length() - 3, read_all.length() - 1).equals("tr") == true) {
 
@@ -493,6 +516,7 @@ public class TreePlacer {
 
                 LevelAccessor level = context.level();
                 ServerLevel world = context.level().getLevel();
+                WorldGenLevel world_gen_level = context.level();
                 ChunkPos chunk_pos = new ChunkPos(context.origin().getX() >> 4, context.origin().getZ() >> 4);
                 ChunkAccess chunk = context.level().getChunk(chunk_pos.x, chunk_pos.z);
 
@@ -515,21 +539,11 @@ public class TreePlacer {
                 double pre_leaves_litter_chance = 0.0;
                 boolean can_run_function = false;
 
-                boolean skip = false;
-
                 try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
                     {
 
-                        if (skip == false) {
-
-                            if (read_all.equals("--------------------------------------------------")) {
-
-                                skip = true;
-
-                            }
-
-                        } else {
+                        if (read_all.startsWith("+") == true) {
 
                             get_short = "";
                             get = "";
@@ -537,27 +551,18 @@ public class TreePlacer {
                             // Test "Block" or "Function" and get value from map
                             {
 
-                                if (read_all.startsWith("b") == true) {
+                                if (read_all.startsWith("+b") == true) {
 
                                     get_short = read_all.substring(read_all.length() - 3);
                                     can_run_function = false;
 
-                                } else if (read_all.startsWith("f") == true) {
+                                } else if (read_all.startsWith("+f") == true) {
 
                                     get_short = read_all.substring(read_all.length() - 2);
 
                                 }
 
-                                if (get_short.equals("") == false) {
-
-                                    get = map_block.get(get_short);
-
-                                }
-
-                            }
-
-                            // If Not a Block
-                            {
+                                get = map_block.get(get_short);
 
                                 if (get.equals("") == true) {
 
@@ -644,16 +649,15 @@ public class TreePlacer {
                                 // Convert To Pos
                                 {
 
-                                    if (read_all.startsWith("b") == true) {
+                                    if (read_all.startsWith("+b") == true) {
 
-                                        test = read_all.substring(1, read_all.length() - 3);
+                                        test = read_all.substring(2, read_all.length() - 3);
 
-                                    } else if (read_all.startsWith("f") == true) {
+                                    } else if (read_all.startsWith("+f") == true) {
 
-                                        test = read_all.substring(1, read_all.length() - 2);
+                                        test = read_all.substring(2, read_all.length() - 2);
 
                                     }
-
 
                                     split = test.indexOf("^");
                                     split2 = test.indexOf("^", split + 1);
@@ -723,8 +727,9 @@ public class TreePlacer {
 
                                 }
 
-                                if (read_all.startsWith("b")) {
+                                if (read_all.startsWith("+b")) {
 
+                                    // Place Block
                                     {
 
                                         block = Misc.textToBlock(get);
@@ -735,21 +740,25 @@ public class TreePlacer {
                                             can_run_function = true;
 
                                             // Pre Leaves Drop
-                                            if (get_short.startsWith("le") == true) {
+                                            {
 
-                                                if (Misc.isBlockTaggedAs(block, "tanshugetrees:deciduous_leaves_blocks") == true) {
+                                                if (tree_dynamic == true && get_short.startsWith("le") == true) {
 
-                                                    pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_chance;
+                                                    if (Misc.isBlockTaggedAs(block, "tanshugetrees:deciduous_leaves_blocks") == true) {
 
-                                                } else if (Misc.isBlockTaggedAs(block, "tanshugetrees:coniferous_leaves_blocks") == true) {
+                                                        pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_chance;
 
-                                                    pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_coniferous_chance;
+                                                    } else if (Misc.isBlockTaggedAs(block, "tanshugetrees:coniferous_leaves_blocks") == true) {
 
-                                                }
+                                                        pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_coniferous_chance;
 
-                                                if (Math.random() < pre_leaves_litter_chance) {
+                                                    }
 
-                                                    pre_leaves_drop(chunk, pos, block);
+                                                    if (Math.random() < pre_leaves_litter_chance) {
+
+                                                        pre_leaves_drop(chunk, pos, block);
+
+                                                    }
 
                                                 }
 
@@ -759,11 +768,17 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (read_all.startsWith("f")) {
+                                } else if (read_all.startsWith("+f")) {
 
-                                    if (can_run_function == true || get_short.equals("fs") == true || get_short.equals("fe") == true) {
+                                    // Run Function
+                                    {
 
-                                        TXTFunction.run(level, world, get, test_posX, test_posY, test_posZ);
+                                        // Separate like this because start and end function doesn't need to test "can_run_function"
+                                        if (can_run_function == true || get_short.equals("fs") == true || get_short.equals("fe") == true) {
+
+                                            TreeFunction.run(level, world, world_gen_level, get, test_posX, test_posY, test_posZ);
+
+                                        }
 
                                     }
 

@@ -20,6 +20,25 @@ public class FileManager {
 
 		File file = new File(path);
 
+		// Create a File
+		{
+
+			if (file.exists() == false) {
+
+				try {
+
+					file.createNewFile();
+
+				} catch (Exception e) {
+
+					e.printStackTrace();
+
+				}
+
+			}
+
+		}
+
 		try {
 
 			Writer writer = new FileWriter(file, append);
