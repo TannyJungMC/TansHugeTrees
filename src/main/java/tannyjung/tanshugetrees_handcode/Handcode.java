@@ -25,6 +25,7 @@ import tannyjung.tanshugetrees_handcode.misc.Misc;
 import tannyjung.tanshugetrees_handcode.world_gen.WorldGenFeature;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 
 @Mod.EventBusSubscriber
@@ -71,6 +72,7 @@ public class Handcode {
 
 		directory_world_data = event.getServer().getWorldPath(new LevelResource(".")) + "/data/tanshugetrees";
 
+		FileManager.createFolder(Handcode.directory_world_data + "/regions");
 		FileManager.createFolder(Handcode.directory_world_data + "/tree_locations");
 		FileManager.createFolder(Handcode.directory_world_data + "/detailed_detection");
 		FileManager.createFolder(Handcode.directory_world_data + "/place");

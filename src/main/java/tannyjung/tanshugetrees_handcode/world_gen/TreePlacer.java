@@ -71,70 +71,75 @@ public class TreePlacer {
                 String ground_block = "";
                 int dead_tree_level = 0;
 
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                // Reading
+                {
 
-                    {
+                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-                        if (read_all.equals("") == false) {
+                        {
 
-                            // Get Tree Chunk Pos
-                            {
+                            if (read_all.equals("") == false) {
 
-                                array_text = read_all.split("\\|");
-
-                                from_chunk = array_text[0].split("/");
-                                to_chunk = array_text[1].split("/");
-                                from_chunk_posX = Integer.parseInt(from_chunk[0]);
-                                from_chunk_posZ = Integer.parseInt(from_chunk[1]);
-                                to_chunk_posX = Integer.parseInt(to_chunk[0]);
-                                to_chunk_posZ = Integer.parseInt(to_chunk[1]);
-
-                            }
-
-                            if ((from_chunk_posX <= chunk_posX && chunk_posX <= to_chunk_posX) && (from_chunk_posZ <= chunk_posZ && chunk_posZ <= to_chunk_posZ)) {
-
-                                // Get Tree Data
+                                // Get Tree Chunk Pos
                                 {
 
-                                    id = array_text[2];
-                                    chosen = array_text[3];
+                                    array_text = read_all.split("\\|");
 
-                                    center_pos = array_text[4].split("/");
-                                    center_posX = Integer.parseInt(center_pos[0]);
-                                    center_posY = Integer.parseInt(center_pos[1]);
-                                    center_posZ = Integer.parseInt(center_pos[2]);
-
-                                    rotation_mirrored = array_text[5].split("/");
-                                    rotation = Integer.parseInt(rotation_mirrored[0]);
-                                    mirrored = Boolean.parseBoolean(rotation_mirrored[1]);
-
-                                    other_data = array_text[6].split("(?<! )/(?! )");
-                                    original_height = Integer.parseInt(other_data[0]);
-                                    ground_block = other_data[1];
-                                    dead_tree_level = Integer.parseInt(other_data[2]);
+                                    from_chunk = array_text[0].split("/");
+                                    to_chunk = array_text[1].split("/");
+                                    from_chunk_posX = Integer.parseInt(from_chunk[0]);
+                                    from_chunk_posZ = Integer.parseInt(from_chunk[1]);
+                                    to_chunk_posX = Integer.parseInt(to_chunk[0]);
+                                    to_chunk_posZ = Integer.parseInt(to_chunk[1]);
 
                                 }
 
-                                // Detailed Detection
-                                {
+                                if ((from_chunk_posX <= chunk_posX && chunk_posX <= to_chunk_posX) && (from_chunk_posZ <= chunk_posZ && chunk_posZ <= to_chunk_posZ)) {
 
-                                    if (detailed_detection(level, center_posX, original_height, center_posZ, ground_block) == false) {
+                                    // Get Tree Data
+                                    {
 
-                                        continue;
+                                        id = array_text[2];
+                                        chosen = array_text[3];
+
+                                        center_pos = array_text[4].split("/");
+                                        center_posX = Integer.parseInt(center_pos[0]);
+                                        center_posY = Integer.parseInt(center_pos[1]);
+                                        center_posZ = Integer.parseInt(center_pos[2]);
+
+                                        rotation_mirrored = array_text[5].split("/");
+                                        rotation = Integer.parseInt(rotation_mirrored[0]);
+                                        mirrored = Boolean.parseBoolean(rotation_mirrored[1]);
+
+                                        other_data = array_text[6].split("(?<! )/(?! )");
+                                        original_height = Integer.parseInt(other_data[0]);
+                                        ground_block = other_data[1];
+                                        dead_tree_level = Integer.parseInt(other_data[2]);
 
                                     }
 
-                                }
+                                    // Detailed Detection
+                                    {
 
-                                place(context, id, chosen, center_posX, center_posY, center_posZ, rotation, mirrored, dead_tree_level);
+                                        if (detailed_detection(level, center_posX, original_height, center_posZ, ground_block) == false) {
+
+                                            continue;
+
+                                        }
+
+                                    }
+
+                                    place(context, id, chosen, center_posX, center_posY, center_posZ, rotation, mirrored, dead_tree_level);
+
+                                }
 
                             }
 
                         }
 
-                    }
+                    } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
 
-                } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                }
 
             }
 
@@ -302,7 +307,7 @@ public class TreePlacer {
 
             }
 
-            // Write
+            // Write the file to mark as "already tested"
             {
 
                 StringBuilder write = new StringBuilder();
