@@ -121,7 +121,7 @@ public class TreePlacer {
                                     // Detailed Detection
                                     {
 
-                                        if (detailed_detection(level, center_posX, original_height, center_posZ, ground_block) == false) {
+                                        if (detailed_detection(level, center_posX, center_posZ, original_height, ground_block) == false) {
 
                                             continue;
 
@@ -147,7 +147,7 @@ public class TreePlacer {
 
     }
 
-    private static boolean detailed_detection (LevelAccessor level, int center_posX, int original_height, int center_posZ, String ground_block) {
+    private static boolean detailed_detection (LevelAccessor level, int center_posX, int center_posZ, int original_height, String ground_block) {
 
         boolean return_logic = true;
         boolean already_tested = false;
@@ -198,15 +198,15 @@ public class TreePlacer {
 
         if (already_tested == false) {
 
-            int center_chunk_posX = center_posX >> 4;
-            int center_chunk_posZ = center_posZ >> 4;
+            test:
+            while (true) {
 
-            if (level.hasChunk(center_chunk_posX, center_chunk_posZ) == true) {
+                int center_chunk_posX = center_posX >> 4;
+                int center_chunk_posZ = center_posZ >> 4;
 
-                ChunkAccess center_chunk = level.getChunk(center_chunk_posX, center_chunk_posZ);
+                if (level.hasChunk(center_chunk_posX, center_chunk_posZ) == true) {
 
-                test:
-                while (true) {
+                    ChunkAccess center_chunk = level.getChunk(center_chunk_posX, center_chunk_posZ);
 
                     // Test Structure Area
                     {

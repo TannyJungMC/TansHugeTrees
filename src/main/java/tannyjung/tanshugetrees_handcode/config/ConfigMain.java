@@ -16,7 +16,9 @@ public class ConfigMain {
 	public static double global_rarity = 0.0;
 	public static boolean tree_location = false;
 	public static boolean world_gen_roots = false;
-	public static int surface_smoothness_detection_size = 0;
+	public static boolean surface_smoothness_detection = false;
+	public static boolean waterside_detection = false;
+	public static int surrounding_area_detection_size = 0;
 	public static int surface_smoothness_detection_height = 0;
 
 	public static boolean rt_dynamic = false;
@@ -68,6 +70,7 @@ public class ConfigMain {
 			write.append("""
 			- Apply the changes by run this command [ /THT config apply ] or restart the world
 			- Repair missing values by run this command [ /THT config repair ] or restart the world
+			
 			----------------------------------------------------------------------------------------------------
 			TannyJung's Tree Pack
 			----------------------------------------------------------------------------------------------------
@@ -76,7 +79,7 @@ public class ConfigMain {
 			// Check for the new update from GitHub every time the world starts
 			// Default is true
 			
-			auto_update = true
+			auto_update = false
 			// Auto update the pack every time the world starts, if there's a new update from GitHub. To use this feature, the "auto_check_update" config must be enable.
 			// Default is false
 			
@@ -85,7 +88,7 @@ public class ConfigMain {
 			// Default is false
 			
 			----------------------------------------------------------------------------------------------------
-			Tree Placer & World Gen
+			World Generation
 			----------------------------------------------------------------------------------------------------
 		
 			global_rarity = 100
@@ -100,9 +103,17 @@ public class ConfigMain {
 			// Enable tree roots in world gen. Note that disable this feature will not affect to some trees and nature stuffs because roots is important part for them, also not affect to tree taproot part.
 			// Default is true
 			
-			surface_smoothness_detection_size = 10
-			// Set size of the detector, for all detectors at 8 directions. Set to 0 to disable this feature.
-			// Default is 5
+			surface_smoothness_detection = true
+			// 
+			// Default is true
+			
+			waterside_detection = true
+			// 
+			// Default is true
+			
+			surrounding_area_detection_size = 10
+			// Set size of the detectors, for all detectors at 8 directions. Set to 0 will disable this feature.
+			// Default is 10
 			
 			surface_smoothness_detection_height = 5
 			// Set height of the detector, this value for each up and down. If the detector detects that the surface is rough than this height, it will cancel the tree.
@@ -286,7 +297,9 @@ public class ConfigMain {
 
 		tree_location = Get.logic("tree_location");
 		world_gen_roots = Get.logic("config_world_gen_roots");
-		surface_smoothness_detection_size = Get.numberInt("surface_smoothness_detection_size");
+		surface_smoothness_detection = Get.logic("surface_smoothness_detection");
+		waterside_detection = Get.logic("waterside_detection");
+		surrounding_area_detection_size = Get.numberInt("surrounding_area_detection_size");
 		surface_smoothness_detection_height = Get.numberInt("surface_smoothness_detection_height");
 
 		rt_dynamic = Get.logic("rt_dynamic");

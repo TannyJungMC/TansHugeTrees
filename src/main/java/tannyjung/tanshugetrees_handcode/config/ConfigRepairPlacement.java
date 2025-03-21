@@ -359,47 +359,6 @@ public class ConfigRepairPlacement {
                 buffered_writer.write("This config is auto apply the changes. Repair missing values by command [/THT config repair] or restart the world.");
                 buffered_writer.newLine();
                 buffered_writer.newLine();
-                buffered_writer.write("IMPORTANT!");
-                buffered_writer.newLine();
-                buffered_writer.write("- If you change something in this config, you need to lock your settings, by write [LOCK] at font of the name of it.");
-                buffered_writer.newLine();
-                buffered_writer.newLine();
-                buffered_writer.write("SETTINGS INFO");
-                buffered_writer.newLine();
-                buffered_writer.write("- [biome] is where biome the tree can spawn in, supported both multiple biomes and biome tags.");
-                buffered_writer.newLine();
-                buffered_writer.write("    - Use [@all] for all biomes");
-                buffered_writer.newLine();
-                buffered_writer.write("    - Use [@vanilla] for vanilla biomes");
-                buffered_writer.newLine();
-                buffered_writer.write("    - Add [!] for if-not");
-                buffered_writer.newLine();
-                buffered_writer.write("    - Add [&] for compulsion (the value must be true, so can spawn that tree.)");
-                buffered_writer.newLine();
-                buffered_writer.write("- [ground_block] is block the tree can spawn on, supported both multiple blocks and block tags.");
-                buffered_writer.newLine();
-                buffered_writer.write("    - Use [@all] for all blocks");
-                buffered_writer.newLine();
-                buffered_writer.write("    - Add [!] for if-not");
-                buffered_writer.newLine();
-                buffered_writer.write("    - Add [&] for compulsion (the value must be true, so can spawn that tree.)");
-                buffered_writer.newLine();
-                buffered_writer.write("- [rarity] is how common of the tree. Only supported number between 0 to 100 (Higher make it more common). Set to 0 to disable it.");
-                buffered_writer.newLine();
-                buffered_writer.write("- [min_distance] is min distance in blocks between trees in the same species. May not work in some cases, cause by unloaded chunks.");
-                buffered_writer.newLine();
-                buffered_writer.write("- [group_chance] is a chance to spawn near others in the same species. Work good with trees that have low rarity. Only supported number between 0 to 1");
-                buffered_writer.newLine();
-                buffered_writer.write("- [waterside_chance] is a chance to spawn near water. Set to 1 for only waterside. Only supported number between 0 to 1");
-                buffered_writer.newLine();
-                buffered_writer.write("- [dead_tree_chance] is a chance to spawn as dead tree, no leaves and sometimes no twig or even become hollowed tree. Only supported number between 0 to 1");
-                buffered_writer.newLine();
-                buffered_writer.write("- [dead_tree_level_min] is max level of dead tree. Useful for some trees such as coconut tree that use branch part as leaves. Only supported number between 1 to 7");
-                buffered_writer.newLine();
-                buffered_writer.newLine();
-                buffered_writer.newLine();
-                buffered_writer.newLine();
-                buffered_writer.newLine();
 
             } catch (Exception e) {
 
