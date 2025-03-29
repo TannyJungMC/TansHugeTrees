@@ -11,8 +11,6 @@ public class ConfigRepairAll {
 		FileManager.createFolder(Handcode.directory_config + "/custom_packs/.organized");
 		FileManager.createFolder(Handcode.directory_config + "/generated");
 
-		TestIncompatibleCustomPack.start(level);
-
 		{
 
 			String[] custom_args = {};
@@ -25,6 +23,7 @@ public class ConfigRepairAll {
 
 		}
 
+		TestIncompatibleCustomPack.start();
 		ConfigMain.repair();
 		ConfigAutoGen.repair();
 		ConfigPlacement.start();

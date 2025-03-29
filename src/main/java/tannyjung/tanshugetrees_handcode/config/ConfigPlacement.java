@@ -206,7 +206,7 @@ public class ConfigPlacement {
                     // Incompatible and Lock
                     {
 
-                        if (name.startsWith("[INCOMPATIBLE] ") == true) {
+                        if (name.startsWith("[INCOMPATIBLE] ") == true || source.toFile().getName().startsWith("[INCOMPATIBLE] ") == true) {
 
                             write.append("[INCOMPATIBLE] ");
 

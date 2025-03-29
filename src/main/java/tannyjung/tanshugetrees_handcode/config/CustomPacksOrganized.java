@@ -44,7 +44,7 @@ public class CustomPacksOrganized {
 
 
 
-    public static void start (String[] args) throws Exception {
+    public static void start (String[] args) {
 
         delete();
         create_organized_folder();
@@ -61,25 +61,33 @@ public class CustomPacksOrganized {
 
 
 
-    private static void delete () throws Exception {
+    private static void delete () {
 
         Path delete = Paths.get(folder_pack_organized);
 
         if (delete.toFile().exists() == true) {
 
-            Files.walk(delete).sorted(Comparator.reverseOrder()).forEach(path -> {
+            try {
 
-                try {
+                Files.walk(delete).sorted(Comparator.reverseOrder()).forEach(path -> {
 
-                    Files.delete(path);
+                    try {
 
-                } catch (Exception e) {
+                        Files.delete(path);
 
-                    TanshugetreesMod.LOGGER.error("Error to delete folders in custom_packs_organized!");
+                    } catch (Exception e) {
 
-                }
-                
-            });
+                        TanshugetreesMod.LOGGER.error("Error to delete folders in custom_packs_organized!");
+
+                    }
+
+                });
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
 
         }
 
@@ -93,7 +101,7 @@ public class CustomPacksOrganized {
 
 
 
-    private static void create_organized_folder () throws Exception {
+    private static void create_organized_folder () {
 
         File create;
 
@@ -110,7 +118,7 @@ public class CustomPacksOrganized {
 
 
 
-    private static void copy () throws Exception {
+    private static void copy () {
         
         Path from = Paths.get(folder_pack);
         Path to = Paths.get(folder_pack_organized);
@@ -120,8 +128,10 @@ public class CustomPacksOrganized {
             Files.walk(from).forEach(source -> {
 
                 if (
-                    
+
                     source.toFile().isDirectory() == false
+                    &&
+                    source.toString().contains("[INCOMPATIBLE] ") == false
                     &&
                     (
                         source.toString().contains("\\.organized\\") == false
@@ -138,7 +148,7 @@ public class CustomPacksOrganized {
                         ||
                         source.toString().contains("\\world_gen\\") == true
                     )
-                
+
                 ) {
 
                     Path copy = to.resolve(from.relativize(source));
@@ -174,7 +184,7 @@ public class CustomPacksOrganized {
 
 
 
-    private static void replace () throws Exception {
+    private static void replace () {
 
         File directory_scan = new File(folder_pack);
         File [] file_list = directory_scan.listFiles();
