@@ -95,11 +95,9 @@ public class TanshugetreesModVariables {
 		public boolean detect_exist = false;
 		public double generation_distance_max = 0;
 		public double loop_second = 0;
-		public String mod_version = "";
 		public double rt_dynamic_tick = 0;
 		public String season = "";
 		public double season_detector_tick = 0;
-		public String tanny_pack_version = "";
 		public boolean version_1192 = false;
 
 		public static MapVariables load(CompoundTag tag) {
@@ -117,11 +115,9 @@ public class TanshugetreesModVariables {
 			detect_exist = nbt.getBoolean("detect_exist");
 			generation_distance_max = nbt.getDouble("generation_distance_max");
 			loop_second = nbt.getDouble("loop_second");
-			mod_version = nbt.getString("mod_version");
 			rt_dynamic_tick = nbt.getDouble("rt_dynamic_tick");
 			season = nbt.getString("season");
 			season_detector_tick = nbt.getDouble("season_detector_tick");
-			tanny_pack_version = nbt.getString("tanny_pack_version");
 			version_1192 = nbt.getBoolean("version_1192");
 		}
 
@@ -135,11 +131,9 @@ public class TanshugetreesModVariables {
 			nbt.putBoolean("detect_exist", detect_exist);
 			nbt.putDouble("generation_distance_max", generation_distance_max);
 			nbt.putDouble("loop_second", loop_second);
-			nbt.putString("mod_version", mod_version);
 			nbt.putDouble("rt_dynamic_tick", rt_dynamic_tick);
 			nbt.putString("season", season);
 			nbt.putDouble("season_detector_tick", season_detector_tick);
-			nbt.putString("tanny_pack_version", tanny_pack_version);
 			nbt.putBoolean("version_1192", version_1192);
 			return nbt;
 		}

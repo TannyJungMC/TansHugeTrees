@@ -123,8 +123,6 @@ public class CustomPacksOrganized {
                     
                     source.toFile().isDirectory() == false
                     &&
-                    source.toString().contains("[INCOMPATIBLE] ") == false
-                    &&
                     (
                         source.toString().contains("\\.organized\\") == false
                         &&

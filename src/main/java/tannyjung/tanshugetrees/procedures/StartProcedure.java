@@ -35,16 +35,9 @@ public class StartProcedure {
 
 	private static void execute(@Nullable Event event, LevelAccessor world, double x, double y, double z) {
 		if ((world.isClientSide() ? Minecraft.getInstance().getConnection().getOnlinePlayers().size() : ServerLifecycleHooks.getCurrentServer().getPlayerCount()) == 1) {
-			TanshugetreesModVariables.MapVariables.get(world).mod_version = "20241118";
-			TanshugetreesModVariables.MapVariables.get(world).syncData(world);
-			TanshugetreesModVariables.MapVariables.get(world).tanny_pack_version = "main";
-			TanshugetreesModVariables.MapVariables.get(world).syncData(world);
 			TanshugetreesModVariables.MapVariables.get(world).version_1192 = false;
 			TanshugetreesModVariables.MapVariables.get(world).syncData(world);
 			if (true) {
-				if (world instanceof ServerLevel _level)
-					_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-							"scoreboard objectives add THT dummy");
 				if (world instanceof ServerLevel _level)
 					_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
 							"execute positioned 0 0 0 run THT config repair");
@@ -55,10 +48,6 @@ public class StartProcedure {
 					if (world instanceof ServerLevel _level)
 						_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
 								"execute in tanshugetrees:dimension positioned 0 0 0 run forceload add 16 16 -16 -16");
-				}
-				if ((TanshugetreesModVariables.MapVariables.get(world).season).equals("")) {
-					TanshugetreesModVariables.MapVariables.get(world).season = "Summer";
-					TanshugetreesModVariables.MapVariables.get(world).syncData(world);
 				}
 			}
 			TanshugetreesMod.queueServerWork(100, () -> {

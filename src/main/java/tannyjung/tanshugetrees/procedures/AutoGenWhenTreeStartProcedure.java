@@ -63,7 +63,7 @@ public class AutoGenWhenTreeStartProcedure {
 								filebw.newLine();
 							}
 							{
-								filebw.write(("rt_dynamic = " + entity.getPersistentData().getBoolean("rt_dynamic")));
+								filebw.write(("living_tree_mechanics = " + entity.getPersistentData().getBoolean("living_tree_mechanics")));
 								filebw.newLine();
 							}
 							{

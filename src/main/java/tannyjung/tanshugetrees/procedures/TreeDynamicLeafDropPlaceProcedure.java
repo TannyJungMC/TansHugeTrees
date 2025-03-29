@@ -18,7 +18,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.CommandSource;
 
-public class RandomTreeDynamicLeavesDropPlaceProcedure {
+public class TreeDynamicLeafDropPlaceProcedure {
 	public static void execute(LevelAccessor world, Entity entity) {
 		if (entity == null)
 			return;

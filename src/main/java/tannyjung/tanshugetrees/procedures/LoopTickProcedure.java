@@ -92,7 +92,7 @@ public class LoopTickProcedure {
 				}
 			}
 		}
-		if (!("").equals("RT Dynamic")) {
+		if (!("").equals("Tree Dynamic")) {
 			if (CommandResultProcedure.execute(world, x, y, z, "execute if entity @e[tag=THT-tree_location,nbt={ForgeData:{rt_dynamic:true}}]")) {
 				if (ConfigMain.rt_dynamic_tick > 0) {
 					if (TanshugetreesModVariables.MapVariables.get(world).rt_dynamic_tick < ConfigMain.rt_dynamic_tick) {
@@ -106,12 +106,12 @@ public class LoopTickProcedure {
 								if (world instanceof ServerLevel _level)
 									_level.getServer().getCommands().performPrefixedCommand(
 											new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-											"execute at @p as @e[tag=THT-tree_location,limit=1,sort=random,nbt={ForgeData:{rt_dynamic:true}}] at @s run THT dev rt_dynamic tick");
+											"execute at @p as @e[tag=THT-tree_location,limit=1,sort=random,nbt={ForgeData:{rt_dynamic:true}}] at @s run THT dev tree_dynamic tick");
 							} else {
 								if (world instanceof ServerLevel _level)
 									_level.getServer().getCommands().performPrefixedCommand(
 											new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-											"execute at @p as @e[tag=THT-tree_location,limit=1,sort=random,nbt={ForgeData:{rt_dynamic:true}}] at @s if loaded ~ ~ ~ run THT dev rt_dynamic tick");
+											"execute at @p as @e[tag=THT-tree_location,limit=1,sort=random,nbt={ForgeData:{rt_dynamic:true}}] at @s if loaded ~ ~ ~ run THT dev tree_dynamic tick");
 							}
 						}
 					}

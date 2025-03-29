@@ -9,16 +9,14 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Comparator;
-import java.util.concurrent.CompletableFuture;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import tannyjung.tanshugetrees.TanshugetreesMod;
-import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees.procedures.RunCommandProcedure;
 import tannyjung.tanshugetrees.procedures.SendChatMessageProcedure;
+import tannyjung.tanshugetrees_handcode.misc.Misc;
 
 public class UpdateRun {
 
@@ -30,7 +28,7 @@ public class UpdateRun {
 
 		if (ConfigMain.wip_version == false) {
 
-			url = "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + TanshugetreesModVariables.MapVariables.get(level).tanny_pack_version + "/version.txt";
+			url = "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version + "/version.txt";
 
 		} else {
 
@@ -55,16 +53,19 @@ public class UpdateRun {
 
 				if (error.equals("") == false) {
 
-					SendChatMessageProcedure.execute(level, "red", "@a", "THT : Something error during installation, please wait and try again. For some info, it caused by [ " + error + " ].");
+					Misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation, please wait and try again. For some info, it caused by [ " + error + " ].");
 
 				} else {
 
-					SendChatMessageProcedure.execute(level, "gray", "@a", "THT : Install Completed!");
+					Misc.sendChatMessage(level, "@a", "gray", "THT : Install Completed!");
+					ConfigRepairAll.start(null);
+					Misc.runCommand(level, 0, 0, 0, "THT config repair");
+					Misc.runCommand(level, 0, 0, 0, "THT config apply");
 
-					Config.repair();
-
-					RunCommandProcedure.execute(level, 0, 0, 0, "THT config repair");
-					RunCommandProcedure.execute(level, 0, 0, 0, "THT config apply");
+					Misc.sendChatMessage(level, "@a", "white", "");
+					FileCount.start(level, 0, 0, 0);
+					Misc.sendChatMessage(level, "@a", "white", "");
+					SendMessageWhenUpdate.start(level, 0, 0, 0);
 
 				}
 
@@ -105,9 +106,7 @@ public class UpdateRun {
 	private static boolean checkModVersion (LevelAccessor level, String url) {
 
 		boolean return_logic = true;
-
-		String mod_version = TanshugetreesModVariables.MapVariables.get(level).mod_version;
-		String mod_version_url = "";
+		int mod_version_url = 0;
 
 		// Read URL
 		{
@@ -121,7 +120,7 @@ public class UpdateRun {
 
 					if (read_all.startsWith("mod_version : ")) {
 
-						mod_version_url = read_all.replace("mod_version : ", "");
+						mod_version_url = Integer.parseInt(read_all.replace("mod_version : ", ""));
 
 					}
 
@@ -136,10 +135,10 @@ public class UpdateRun {
 
         }
 
-		if (mod_version.equals(mod_version_url) == false) {
+		if (Handcode.mod_version > mod_version_url) {
 
 			SendChatMessageProcedure.execute(level, "red", "@a", "THT : You're currently using mod version that does not support to new version of tree pack, please update the mod and try again.");
-			TanshugetreesMod.LOGGER.info("Your version is " + mod_version + " but tree pack needed " + mod_version_url);
+			TanshugetreesMod.LOGGER.info("Your version is " + Handcode.mod_version + " but tree pack needed " + mod_version_url);
 
 			return_logic = false;
 
@@ -206,7 +205,7 @@ public class UpdateRun {
 
 		if (ConfigMain.wip_version == false) {
 
-			download_from = "https://github.com/TannyJungMC/THT-tree_pack/archive/refs/heads/" + TanshugetreesModVariables.MapVariables.get(level).tanny_pack_version + ".zip";
+			download_from = "https://github.com/TannyJungMC/THT-tree_pack/archive/refs/heads/" + Handcode.tanny_pack_version + ".zip";
 
 		} else {
 
@@ -373,7 +372,7 @@ public class UpdateRun {
 
 		if (ConfigMain.wip_version == false) {
 
-			rename_from = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-" + TanshugetreesModVariables.MapVariables.get(level).tanny_pack_version);
+			rename_from = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-" + Handcode.tanny_pack_version);
 
 		} else {
 

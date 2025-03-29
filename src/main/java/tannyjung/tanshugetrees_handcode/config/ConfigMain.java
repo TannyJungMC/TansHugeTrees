@@ -155,9 +155,9 @@ public class ConfigMain {
 			// Count limit of the leaves litter remover
 			// Default is 10
 			
-			pre_leaves_litter_chance = 0.25
+			pre_leaves_litter_chance = 0.1
 			// Create leaves litter for normal leaves on the ground and on water while on worldgen
-			// Default is 0.25
+			// Default is 0.1
 			
 			pre_leaves_litter_coniferous_chance = 0.05
 			// Create leaves litter for coniferous leaves on the ground and on water while on worldgen

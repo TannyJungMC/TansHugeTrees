@@ -1,5 +1,5 @@
 {
-  "_fv": 73,
+  "_fv": 77,
   "_type": "procedure",
   "definition": {
     "procedurexml": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"event_trigger\" deletable=\"false\" x=\"77\" y=\"76\"><field name=\"trigger\">no_ext_trigger</field><next><block type=\"java_code\"><field name=\"CODE\">tannyjung.tanshugetrees_handcode.config.ConfigMain.apply();</field></block></next></block></xml>"

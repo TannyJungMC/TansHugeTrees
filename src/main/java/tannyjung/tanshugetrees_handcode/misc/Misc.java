@@ -1,14 +1,21 @@
 package tannyjung.tanshugetrees_handcode.misc;
 
+import net.minecraft.commands.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class Misc {
@@ -57,6 +64,30 @@ public class Misc {
 	public static boolean isBiomeTaggedAs (Holder<Biome> biome_get, String tag) {
 
 		return biome_get.is(TagKey.create(Registries.BIOME, new ResourceLocation(tag)));
+
+	}
+
+	public static void sendChatMessage (LevelAccessor level, String target, String color, String text) {
+
+		if (level == null) {
+
+			return;
+
+		}
+
+		level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(0, 0, 0), Vec2.ZERO, level.getServer().overworld(), 4, "", Component.literal(""), level.getServer(), null).withSuppressedOutput(), "tellraw " + target + " [{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}]");
+
+	}
+
+	public static void runCommand (LevelAccessor level, double posX, double posY, double posZ, String command) {
+
+		if (level == null) {
+
+			return;
+
+		}
+
+		level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level.getServer().overworld(), 4, "", Component.literal(""), level.getServer(), null).withSuppressedOutput(), command);
 
 	}
 

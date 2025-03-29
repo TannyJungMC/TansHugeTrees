@@ -10,154 +10,71 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.loading.FMLPaths;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
+import tannyjung.tanshugetrees_handcode.Handcode;
+import tannyjung.tanshugetrees_handcode.misc.Misc;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.concurrent.CompletableFuture;
 
 public class TestIncompatibleCustomPack {
 
-    
+    public static void start (LevelAccessor level) {
 
-    // ----------------------------------------------------------------------------------------------------
-    // Custom
-    // ----------------------------------------------------------------------------------------------------
-
-    
-
-    //    FMLPaths.GAMEDIR.get().toString();
-    //    "C:/Users/acer/Desktop/Minecraft Projects/Mod MCreator/THT/THT/run";
-    static String game_directory = FMLPaths.GAMEDIR.get().toString();
-
-    static String directory_pack = game_directory + "/config/tanshugetrees/custom_packs";
-
-
-
-    // ----------------------------------------------------------------------------------------------------
-    // Class Global Variables
-    // ----------------------------------------------------------------------------------------------------
-
-
-
-    static LevelAccessor world;
-    static double x = 0;
-    static double y = 0;
-    static double z = 0;
-
-    
-
-    // ----------------------------------------------------------------------------------------------------
-    // Run System
-    // ----------------------------------------------------------------------------------------------------
-
-
-
-    public static void start (LevelAccessor import_world, double import_x, double import_y, double import_z) throws Exception {
-
-        world = import_world;
-        x = import_x;
-        y = import_y;
-        z = import_z;
-
-        CompletableFuture.runAsync(() -> {
-
-            try {
-
-                test();
-
-            }  catch (Exception e) {
-
-                TanshugetreesMod.LOGGER.error(e);
-                
-            }
-
-        });
+        test(level);
 
     }
 
+    public static void test (LevelAccessor level) {
 
+        File file = new File(Handcode.directory_config + "/custom_packs");
 
-    // ----------------------------------------------------------------------------------------------------
-    // Test
-    // ----------------------------------------------------------------------------------------------------
+        if (file.exists() == true) {
 
+            for (File pack : file.listFiles()) {
 
+                if (pack.isDirectory() == true && pack.getName().equals(".organized") == false) {
 
-    public static void test () throws Exception {
+                    File file_version = new File(Handcode.directory_config + "/custom_packs/" + pack.getName() + "/version.txt");
+                    boolean same_version = false;
 
-        File directory = new File(directory_pack);
-        File [] list = directory.listFiles();
+                    if (file_version.exists() == true && file_version.isDirectory() == false) {
 
-        if (directory.exists() == true) {
+                        try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file_version)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-            if (list != null) {
+                            {
 
-                for (int i = 0; i < list.length; i++) {
+                                if (read_all.startsWith("mod_version = ")) {
 
-                    if (
-                            list[i].isDirectory() == true
-                            &&
-                            list[i].getName().equals(".organized") == false
-                    ) {
-
-                        File version_file = new File(directory_pack + "/" + list[i].getName() + "/version.txt");
-
-                        if (version_file.exists() == true) {
-
-                            BufferedReader buffered_reader = new BufferedReader(new FileReader(version_file));
-                            String read_all = "";
-                            boolean test = false;
-
-                            while ((read_all = buffered_reader.readLine()) != null) {
-
-                                if (read_all.startsWith("mod_version : ")) {
-
-                                    String version = read_all.replace("mod_version : ", "");
-
-                                    if (TanshugetreesModVariables.MapVariables.get(world).mod_version.equals(version) == false) {   //  TanshugetreesModVariables.MapVariables.get(world).mod_version
-
-                                        test = false;
-
-                                        String command = "tellraw @a [{\"text\":\"THT : Detected Incompatible Pack! \",\"color\":\"red\"},{\"text\":\"" + list[i].getName().replace("[INCOMPATIBLE] ", "") + "\",\"color\":\"white\"}]";
-
-                                        if (world instanceof ServerLevel _level) {
-                                            _level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL,new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),(command));
-                                        }
-
-                                    } else {
-
-                                        test = true;
-
-                                    }
-
-                                }
-
-                            } buffered_reader.close();
-
-                            if (test == false) {
-
-                                if (list[i].getName().startsWith("[INCOMPATIBLE] ") == false) {
-
-                                    File rename_from = new File(directory_pack + "/" + list[i].getName());
-                                    File rename_to = new File(directory_pack + "/[INCOMPATIBLE] " + list[i].getName());
-
-                                    rename_from.renameTo(rename_to);
-
-                                }
-
-                            } else {
-
-                                if (list[i].getName().startsWith("[INCOMPATIBLE] ") == true) {
-
-                                    File rename_from = new File(directory_pack + "/" + list[i].getName());
-                                    File rename_to = new File(directory_pack + "/" + list[i].getName().replace("[INCOMPATIBLE] ", ""));
-
-                                    rename_from.renameTo(rename_to);
+                                    same_version = Handcode.mod_version == Integer.parseInt(read_all.replace("mod_version = ", ""));
 
                                 }
 
                             }
+
+                        } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+
+                    }
+
+                    if (same_version == true) {
+
+                        if (pack.getName().startsWith("[INCOMPATIBLE]") == true) {
+
+                            pack.renameTo(new File(Handcode.directory_config + "/custom_packs/" + pack.getName().replace("[INCOMPATIBLE] ", "")));
+
+                        }
+
+                    } else {
+
+                        Misc.runCommand(level, 0, 0, 0, "tellraw @a [{\"text\":\"THT : Detected Incompatible Pack! \",\"color\":\"red\"},{\"text\":\"" + pack.getName().replace("[INCOMPATIBLE] ", "") + "\",\"color\":\"white\"}]");
+
+                        if (pack.getName().startsWith("[INCOMPATIBLE]") == false) {
+
+                            pack.renameTo(new File(Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] " + pack.getName()));
 
                         }
 
@@ -166,10 +83,6 @@ public class TestIncompatibleCustomPack {
                 }
 
             }
-
-        } else {
-
-            TanshugetreesMod.LOGGER.error("Error to test files from the directory (Not Found Directory Folder)");
 
         }
 

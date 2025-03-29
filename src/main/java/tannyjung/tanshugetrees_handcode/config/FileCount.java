@@ -55,7 +55,7 @@ public class FileCount {
 
 
 
-    public static void start (LevelAccessor world, double x, double y, double z) throws Exception {
+    public static void start (LevelAccessor level, double x, double y, double z) {
 
 
 
@@ -63,14 +63,17 @@ public class FileCount {
 	    count_file = 0;
 	    file_size = 0;
 
-        scan_tree();
-
+        try {
+            scan_tree();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
 
         file_size_mb = (double) (file_size  / (1024.0 * 1024.0));
 
-        if (world instanceof ServerLevel _level) {
-        	_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL,new Vec3(x, y, z), Vec2.ZERO, _level, 4, "",Component.literal(""), _level.getServer(), null).withSuppressedOutput(),("execute if entity @e[type=player,distance=..0.01] run tellraw @a [{\"text\":\"There are now \",\"color\":\"white\"},{\"text\":\"" + count_tree + "\",\"color\":\"yellow\"},{\"text\":\" species of trees and nature stuffs in the TannyJung's Tree Pack, and \",\"color\":\"white\"},{\"text\":\"" + count_file + "\",\"color\":\"yellow\"},{\"text\":\" different shapes in total! (\",\"color\":\"white\"},{\"text\":\"" + String.format("%.1f", file_size_mb) + " MB\",\"color\":\"yellow\"},{\"text\":\")\",\"color\":\"white\"}]"));
+        if (level instanceof ServerLevel _level) {
+        	_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL,new Vec3(x, y, z), Vec2.ZERO, _level, 4, "",Component.literal(""), _level.getServer(), null).withSuppressedOutput(),("tellraw @a [{\"text\":\"There are now \",\"color\":\"white\"},{\"text\":\"" + count_tree + "\",\"color\":\"yellow\"},{\"text\":\" species of trees and nature stuffs in the TannyJung's Tree Pack, and \",\"color\":\"white\"},{\"text\":\"" + count_file + "\",\"color\":\"yellow\"},{\"text\":\" different shapes in total! (\",\"color\":\"white\"},{\"text\":\"" + String.format("%.1f", file_size_mb) + " MB\",\"color\":\"yellow\"},{\"text\":\")\",\"color\":\"white\"}]"));
 		}
 
     }

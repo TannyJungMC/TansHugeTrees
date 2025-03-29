@@ -333,45 +333,39 @@ public class TreePlacer {
 
         String storage_directory = "";
         String tree_settings = "";
-
         Map<String, String> map_block = new HashMap<>();
-        boolean tree_dynamic = false;
+        boolean living_tree_mechanics = false;
 
         // Scan "World Gen" File
         {
 
-            File file = new File(Handcode.directory_game + "/config/tanshugetrees/custom_packs/.organized/" + id.replace("#", "world_gen") + ".txt");
+            File file = new File(Handcode.directory_config + "/custom_packs/.organized/" + id.replace("#", "world_gen") + ".txt");
 
             if (file.exists() == true) {
 
-                try {
+                {
 
-                    BufferedReader buffered_reader = new BufferedReader(new FileReader(file));
-                    String read_all = "";
+                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-                    while ((read_all = buffered_reader.readLine()) != null) {
+                        {
 
-                        if (read_all.startsWith("storage_directory = ") == true) {
+                            if (read_all.startsWith("storage_directory = ") == true) {
 
-                            storage_directory = read_all.replace("storage_directory = ", "");
+                                storage_directory = read_all.replace("storage_directory = ", "");
 
-                        } else if (read_all.startsWith("tree_settings = ") == true) {
+                            } else if (read_all.startsWith("tree_settings = ") == true) {
 
-                            tree_settings = read_all.replace("tree_settings = ", "");
+                                tree_settings = read_all.replace("tree_settings = ", "");
 
-                        } else {
+                            } else {
 
-                            break;
+                                break;
+
+                            }
 
                         }
 
-                    }
-
-                    buffered_reader.close();
-
-                } catch (Exception e) {
-
-                    e.printStackTrace();
+                    } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
 
                 }
 
@@ -382,7 +376,7 @@ public class TreePlacer {
         // Scan "Tree Settings" File
         {
 
-            File file = new File(Handcode.directory_game + "/config/tanshugetrees/custom_packs/" + tree_settings);
+            File file = new File(Handcode.directory_config + "/custom_packs/.organized/" + tree_settings);
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -393,13 +387,13 @@ public class TreePlacer {
 
                     {
 
-                        if (read_all.startsWith("rt_dynamic = ") == true) {
+                        if (read_all.startsWith("living_tree_mechanics = ") == true) {
 
                             {
 
-                                if (read_all.replace("rt_dynamic = ", "").equals("true")) {
+                                if (read_all.replace("living_tree_mechanics = ", "").equals("true")) {
 
-                                    tree_dynamic = true;
+                                    living_tree_mechanics = true;
 
                                 }
 
@@ -438,7 +432,7 @@ public class TreePlacer {
         // Placing
         {
 
-            File file = new File(Handcode.directory_game + "/config/tanshugetrees/custom_packs/" + storage_directory + "/" + chosen);
+            File file = new File(Handcode.directory_config + "/custom_packs/" + storage_directory + "/" + chosen);
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -564,7 +558,16 @@ public class TreePlacer {
 
                                 get = map_block.get(get_short);
 
-                                if (get.equals("") == true) {
+                                // This fix the error >>> Cannot invoke "String.equals(Object)" because "get" is null
+                                try {
+
+                                    if (get.equals("") == true) {
+
+                                        continue;
+
+                                    }
+
+                                } catch (Exception e) {
 
                                     continue;
 
@@ -742,15 +745,15 @@ public class TreePlacer {
                                             // Pre Leaves Drop
                                             {
 
-                                                if (tree_dynamic == true && get_short.startsWith("le") == true) {
+                                                if (living_tree_mechanics == true && get_short.startsWith("le") == true) {
 
-                                                    if (Misc.isBlockTaggedAs(block, "tanshugetrees:deciduous_leaves_blocks") == true) {
-
-                                                        pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_chance;
-
-                                                    } else if (Misc.isBlockTaggedAs(block, "tanshugetrees:coniferous_leaves_blocks") == true) {
+                                                    if (Misc.isBlockTaggedAs(block, "tanshugetrees:coniferous_leaves_blocks") == true) {
 
                                                         pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_coniferous_chance;
+
+                                                    } else {
+
+                                                        pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_chance;
 
                                                     }
 

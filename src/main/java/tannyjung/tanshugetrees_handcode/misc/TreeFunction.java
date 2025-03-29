@@ -4,6 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
@@ -27,73 +29,85 @@ public class TreeFunction {
 
 				{
 
-					if (read_all.startsWith("fill = ") == true) {
+					if (read_all.equals("") == false) {
 
-						{
+						if (read_all.startsWith("block = ") == true) {
 
-							String[] get = read_all.replace("place_block = ", "").split(" \\| ");
-
-							double chance = Double.parseDouble(get[0]);
-							String[] offset_pos = get[1].split(" - ");
-
-							String[] offset_pos_from = offset_pos[0].split("/");
-							int offset_from_posX = Integer.parseInt(offset_pos_from[0]);
-							int offset_from_posY = Integer.parseInt(offset_pos_from[1]);
-							int offset_from_posZ = Integer.parseInt(offset_pos_from[2]);
-
-							String[] offset_pos_to = offset_pos[1].split("/");
-							int offset_to_posX = Integer.parseInt(offset_pos_to[0]);
-							int offset_to_posY = Integer.parseInt(offset_pos_to[1]);
-							int offset_to_posZ = Integer.parseInt(offset_pos_to[2]);
-
-							BlockState block = Misc.textToBlock(get[2]);
-							boolean keep = get[3].equals("true");
-
-							// Test
 							{
 
-								if (Math.random() >= chance) {
+								String[] get = read_all.replace("block = ", "").split(" \\| ");
 
-									continue;
+								double chance = Double.parseDouble(get[0]);
+								BlockState block = Misc.textToBlock(get[3]);
+								boolean keep = get[4].equals("true");
+
+								// Cancellation Conditions
+								{
+
+									if (Math.random() >= chance) {
+
+										continue;
+
+									}
+
+									if (block == Blocks.AIR.defaultBlockState()) {
+
+										continue;
+
+									}
 
 								}
 
-								if (block == Blocks.AIR.defaultBlockState()) {
+								String[] offset_pos = get[1].split("/");
+								int offset_posX = Integer.parseInt(offset_pos[0]);
+								int offset_posY = Integer.parseInt(offset_pos[1]);
+								int offset_posZ = Integer.parseInt(offset_pos[2]);
 
-									continue;
+								String[] min_max = get[2].split("/");
+								int minX = Integer.parseInt(min_max[0]);
+								int minY = Integer.parseInt(min_max[1]);
+								int minZ = Integer.parseInt(min_max[2]);
+								int maxX = Integer.parseInt(min_max[3]);
+								int maxY = Integer.parseInt(min_max[4]);
+								int maxZ = Integer.parseInt(min_max[5]);
 
-								}
+								int startX = Math.min(0, Mth.nextInt(RandomSource.create(), minX, maxX));
+								int startY = Math.min(0, Mth.nextInt(RandomSource.create(), minY, maxY));
+								int startZ = Math.min(0, Mth.nextInt(RandomSource.create(), minZ, maxZ));
+								int endX = Math.max(0, Mth.nextInt(RandomSource.create(), minX, maxX));
+								int endY = Math.max(0, Mth.nextInt(RandomSource.create(), minY, maxY));
+								int endZ = Math.max(0, Mth.nextInt(RandomSource.create(), minZ, maxZ));
 
-							}
+								for (int testX = startX; testX <= endX; testX++) {
 
-							for (int offset_posX = offset_from_posX; offset_posX <= offset_to_posX; offset_posX++) {
+									for (int testY = startY; testY <= endY; testY++) {
 
-								for (int offset_posY = offset_from_posY; offset_posY <= offset_to_posY; offset_posY++) {
+										for (int testZ = startZ; testZ <= endZ; testZ++) {
 
-									for (int offset_posZ = offset_from_posZ; offset_posZ <= offset_to_posZ; offset_posZ++) {
+											BlockPos pos = new BlockPos(posX + offset_posX + testX, posY + offset_posY + testY, posZ + offset_posZ + testZ);
 
-										BlockPos pos = new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ);
+											// Keep
+											{
 
-										// Keep
-										{
+												if (keep == true) {
 
-											if (keep == true) {
-
-												if (
+													if (
 														Misc.isBlockTaggedAs(level.getBlockState(pos), "tanshugetrees:passable_blocks") == false
-																||
-																Misc.isBlockTaggedAs(level.getBlockState(pos), "tanshugetrees:fluid_blocks") == true
-												) {
+														||
+														Misc.isBlockTaggedAs(level.getBlockState(pos), "tanshugetrees:fluid_blocks") == true
+													) {
 
-													continue;
+														continue;
+
+													}
 
 												}
 
 											}
 
-										}
+											level.setBlock(new BlockPos(pos), block, 2);
 
-										level.setBlock(new BlockPos(pos), block, 2);
+										}
 
 									}
 
@@ -101,37 +115,31 @@ public class TreeFunction {
 
 							}
 
-						}
+						} else if (read_all.startsWith("feature = ") == true) {
 
-					} else if (read_all.startsWith("feature = ") == true) {
+							{
 
-						{
+								String[] get = read_all.replace("feature = ", "").split(" \\| ");
+								double chance = Double.parseDouble(get[0]);
+								String[] offset_pos = get[1].split("/");
+								int offset_posX = Integer.parseInt(offset_pos[0]);
+								int offset_posY = Integer.parseInt(offset_pos[1]);
+								int offset_posZ = Integer.parseInt(offset_pos[2]);
+								String feature = get[2];
 
-							String[] get = read_all.replace("feature = ", "").split(" \\| ");
-							double chance = Double.parseDouble(get[0]);
-							String[] offset_pos = get[1].split("/");
-							int offset_posX = Integer.parseInt(offset_pos[0]);
-							int offset_posY = Integer.parseInt(offset_pos[1]);
-							int offset_posZ = Integer.parseInt(offset_pos[2]);
-							String feature = get[2];
+								if (Math.random() < chance) {
 
-							if (Math.random() < chance) {
+									level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(feature)).value().place(world_gen_level, world.getChunkSource().getGenerator(), level.getRandom(), BlockPos.containing(posX + offset_posX, posY + offset_posY, posZ + offset_posZ));
 
-								level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(feature)).value().place(world_gen_level, world.getChunkSource().getGenerator(), level.getRandom(), BlockPos.containing(posX + offset_posX, posY + offset_posY, posZ + offset_posZ));
+								}
 
 							}
 
+						} else {
+
+							Misc.runCommand(level, posX, posY, posZ, read_all);
+
 						}
-
-					} else {
-
-						String read_all_final = read_all;
-
-						TanshugetreesMod.queueServerWork(20, () -> {
-
-							MCreatorLink.runCommand(world, posX, posY, posZ, read_all_final);
-
-						});
 
 					}
 

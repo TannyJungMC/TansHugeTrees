@@ -631,7 +631,7 @@ public class TreeLocation {
             // Scan "Tree Settings" File
             {
 
-                File file = new File(Handcode.directory_game + "/config/tanshugetrees/custom_packs/" + tree_settings);
+                File file = new File(Handcode.directory_config + "/custom_packs/" + tree_settings);
 
                 if (file.exists() == true && file.isDirectory() == false) {
 

@@ -1,7 +1,5 @@
 package tannyjung.tanshugetrees_handcode.config;
 
-import net.minecraftforge.fml.loading.FMLPaths;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -18,138 +16,108 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.CommandSource;
 
 import tannyjung.tanshugetrees.TanshugetreesMod;
-import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
+import tannyjung.tanshugetrees.procedures.SendChatMessageProcedure;
+import tannyjung.tanshugetrees_handcode.Handcode;
+import tannyjung.tanshugetrees_handcode.misc.Misc;
 
 public class CheckUpdateRun {
 
-    public static void start (LevelAccessor world, double x, double y, double z) throws Exception {
-    
-        
-
-        // ----------------------------------------------------------------------------------------------------
-        // Custom
-        // ----------------------------------------------------------------------------------------------------
-
-
+    public static void start (LevelAccessor level, double x, double y, double z) {
 
 		String url = "";
-        String version_directory = FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/THT-tree_pack-main/version.txt";
 
 		if (ConfigMain.wip_version == false) {
 			
-        	url = "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + TanshugetreesModVariables.MapVariables.get(world).tanny_pack_version + "/version.txt";
+        	url = "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version + "/version.txt";
 
 		} else {
 
 			url = "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/wip/version.txt";
 			
 		}
-		
 
+        File file = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-main/version.txt");
+		int pack_version = 0;
 
-        // ----------------------------------------------------------------------------------------------------
-        // Variables
-        // ----------------------------------------------------------------------------------------------------
-
-
-
-        URL url_convert;
-        File file = new File(version_directory);
-        
-        BufferedReader reader;
-
-        String read_all = "";
-        String pack_version = "";
-        String url_pack_version = "";
-
-
-
-        // ----------------------------------------------------------------------------------------------------
-        // Reading Version
-        // ----------------------------------------------------------------------------------------------------
-
-        
 
         if (file.exists() == true) {
 
-            reader = new BufferedReader(new FileReader(file));
+			// Get Your Pack Version
+			{
 
-            while ((read_all = reader.readLine()) != null) {
-	
-	            if (read_all.startsWith("pack_version : ")) {
-	
-					pack_version = read_all.replace("pack_version : ", "");
-	
-				}
-	
-	        } reader.close();
+				try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
+					{
 
+						if (read_all.startsWith("pack_version = ")) {
 
-            // ----------------------------------------------------------------------------------------------------
-	        // Reading URL
-	        // ----------------------------------------------------------------------------------------------------
-	
-	
-	
+							pack_version = Integer.parseInt(read_all.replace("pack_version = ", ""));
+							break;
+
+						}
+
+					}
+
+				} buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+
+			}
+
 	        try {
+
+				URL url_convert = new URI(url).toURL();
+				int url_pack_version = 0;
+
+				// Read File From GitHub
+				{
+
+					try { BufferedReader buffered_reader = new BufferedReader(new InputStreamReader(url_convert.openStream())); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+
+						{
+
+							if (read_all.startsWith("pack_version : ")) {
+
+								url_pack_version = Integer.parseInt(read_all.replace("pack_version : ", ""));
+
+							}
+
+						}
+
+					} buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+
+				}
+
+				if (pack_version == url_pack_version) {
+
+					SendChatMessageProcedure.execute(level, "green", "@a", "THT : TannyJung's Tree Pack is already up to date");
 	
-	            url_convert = new URI(url).toURL();
-	            reader = new BufferedReader(new InputStreamReader(url_convert.openStream()));
-	
-	            while ((read_all = reader.readLine()) != null) {
-
-					if (read_all.startsWith("pack_version : ")) {
-
-						url_pack_version = read_all.replace("pack_version : ", "");
-
-					}
-
-	            } reader.close();
-
-
-
-				if (pack_version.equals(url_pack_version) == true) {
-		
-	                if (world instanceof ServerLevel _level) {
-		            	_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL,new Vec3(x, y, z), Vec2.ZERO, _level, 4, "",Component.literal(""), _level.getServer(), null).withSuppressedOutput(),("execute if entity @e[type=player,distance=..0.01] run tellraw @a [{\"text\":\"THT : TannyJung's Tree Pack is already up to date\",\"color\":\"green\"}]"));
-					}
-	
-	            } else if (pack_version.equals(url_pack_version) == false) {
+	            } else {
 
 					TanshugetreesMod.LOGGER.debug("Pack Version : " + url_pack_version);
 					TanshugetreesMod.LOGGER.debug("Your Pack Version : " + pack_version);
 	
 					if (ConfigMain.auto_check_update == true && ConfigMain.auto_update == true) {
-	
-						if (world instanceof ServerLevel _level) {
-							_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL,new Vec3(x, y, z), Vec2.ZERO, _level, 4, "",Component.literal(""), _level.getServer(), null).withSuppressedOutput(),("tellraw @a [{\"text\":\"THT : Detected new version for TannyJung's Tree Pack. Starting auto update...\",\"color\":\"gold\"}]"));
-							_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL,new Vec3(x, y, z), Vec2.ZERO, _level, 4, "",Component.literal(""), _level.getServer(), null).withSuppressedOutput(),("execute at @p run THT tanny_pack update"));
-						}
+
+						SendChatMessageProcedure.execute(level, "gold", "@a", "THT : Detected new version for TannyJung's Tree Pack. Starting auto update...");
+						UpdateRun.start(level, x, y, z);
 
 					} else {
 
-						if (world instanceof ServerLevel _level) {
-							_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL,new Vec3(x, y, z), Vec2.ZERO, _level, 4, "",Component.literal(""), _level.getServer(), null).withSuppressedOutput(),("tellraw @a [{\"text\":\"THT : Detected new version for TannyJung's Tree Pack. You can manual update by follow the guide in \",\"color\":\"gold\"},{\"text\":\"GitHub\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://github.com/TannyJungMC/THT-tree_pack\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:air\",\"count\":1,\"tag\":\"{display:{Name:'\\\"https://github.com/TannyJungMC/THT-tree_pack\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/THT tanny_pack update\"}},{\"text\":\" to let the mod do it.\",\"color\":\"gold\"}]"));
-						}
+						SendChatMessageProcedure.execute(level, "gold", "@a", "THT : Detected new version for TannyJung's Tree Pack. Starting auto update...");
+						Misc.runCommand(level, 0, 0, 0, "tellraw @a [{\"text\":\"THT : Detected new version for TannyJung's Tree Pack. You can manual update by follow the guide in \",\"color\":\"gold\"},{\"text\":\"GitHub\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://github.com/TannyJungMC/THT-tree_pack\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:air\",\"count\":1,\"tag\":\"{display:{Name:'\\\"https://github.com/TannyJungMC/THT-tree_pack\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/THT tanny_pack update\"}},{\"text\":\" to let the mod do it.\",\"color\":\"gold\"}]");
 
 					}
 	                
 	            }
 	            
 	        } catch (Exception e) {
-	            
-	            if (world instanceof ServerLevel _level) {
-	            	_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL,new Vec3(x, y, z), Vec2.ZERO, _level, 4, "",Component.literal(""), _level.getServer(), null).withSuppressedOutput(),("execute if entity @e[type=player,distance=..0.01] run tellraw @a [{\"text\":\"THT : No internet connection!\",\"color\":\"red\"}]"));
-				}
+
+				SendChatMessageProcedure.execute(level, "red", "@a", "THT : Can't check the update right now, try again later.");
 
             }
 
         } else {
 
-			if (world instanceof ServerLevel _level) {
-            	_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL,new Vec3(x, y, z), Vec2.ZERO, _level, 4, "",Component.literal(""), _level.getServer(), null).withSuppressedOutput(),("tellraw @a [{\"text\":\"THT : Not detected TannyJung's Tree Pack in the config folder. You can manual download and install by follow the guide in \",\"color\":\"gold\"},{\"text\":\"GitHub\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://github.com/TannyJungMC/THT-tree_pack\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:air\",\"count\":1,\"tag\":\"{display:{Name:'\\\"https://github.com/TannyJungMC/THT-tree_pack\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/THT tanny_pack update\"}},{\"text\":\" to let the mod do it.\",\"color\":\"gold\"}]"));
-			}
+			Misc.runCommand(level, 0, 0, 0, "tellraw @a [{\"text\":\"THT : Not detected TannyJung's Tree Pack in the config folder. You can manual download and install by follow the guide in \",\"color\":\"gold\"},{\"text\":\"GitHub\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://github.com/TannyJungMC/THT-tree_pack\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:air\",\"count\":1,\"tag\":\"{display:{Name:'\\\"https://github.com/TannyJungMC/THT-tree_pack\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/THT tanny_pack update\"}},{\"text\":\" to let the mod do it.\",\"color\":\"gold\"}]");
 
         }
 

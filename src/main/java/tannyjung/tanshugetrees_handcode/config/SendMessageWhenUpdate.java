@@ -16,7 +16,7 @@ import net.minecraft.commands.CommandSource;
 
 public class SendMessageWhenUpdate {
 
-    public static void start (LevelAccessor world, double x, double y, double z) throws Exception {
+    public static void start (LevelAccessor level, double x, double y, double z) {
 		
 			
 
@@ -53,23 +53,30 @@ public class SendMessageWhenUpdate {
 		
 		if (file.exists() == true) {
 
-            buffered_reader = new BufferedReader(new FileReader(file));
+            try {
 
-            while ((read = buffered_reader.readLine()) != null) {
+                buffered_reader = new BufferedReader(new FileReader(file));
 
-                if (read != "") {
-                	
-					read_all = read_all + read;
-                	
+                while ((read = buffered_reader.readLine()) != null) {
+
+                    if (read.equals("") == false) {
+
+                        read_all = read_all + read;
+
+                    }
+
                 }
-    
-            } buffered_reader.close();
+                buffered_reader.close();
 
-            if (world instanceof ServerLevel _level) {
+                if (level instanceof ServerLevel _level) {
 
-				_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL,new Vec3(x, y, z), Vec2.ZERO, _level, 4, "",Component.literal(""), _level.getServer(), null).withSuppressedOutput(),(read_all));
+                    _level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(), (read_all));
 
-        	}
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         }
 

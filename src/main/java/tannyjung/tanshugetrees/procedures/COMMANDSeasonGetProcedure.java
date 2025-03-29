@@ -1,6 +1,6 @@
 package tannyjung.tanshugetrees.procedures;
 
-import tannyjung.tanshugetrees_handcode.config.CheckUpdateRun;
+import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.Vec2;
@@ -10,14 +10,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.CommandSource;
 
-public class CheckUpdateProcedure {
+public class COMMANDSeasonGetProcedure {
 	public static void execute(LevelAccessor world, double x, double y, double z) {
 		if (world instanceof ServerLevel _level)
-			_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(), "");
-		try {
-			CheckUpdateRun.start(world, x, y, z);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
+					("tellraw @a [{\"text\":\"THT : Current Season is " + "" + TanshugetreesModVariables.MapVariables.get(world).season + "\",\"color\":\"gray\"}]"));
 	}
 }

@@ -1,35 +1,26 @@
 package tannyjung.tanshugetrees_handcode;
 
-import net.minecraft.client.telemetry.events.WorldLoadEvent;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.util.profiling.jfr.event.ChunkGenerationEvent;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.event.level.ChunkDataEvent;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerLifecycleEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
-import tannyjung.tanshugetrees_handcode.config.Config;
+import tannyjung.tanshugetrees_handcode.config.ConfigRepairAll;
 import tannyjung.tanshugetrees_handcode.misc.FileManager;
-import tannyjung.tanshugetrees_handcode.misc.Misc;
 import tannyjung.tanshugetrees_handcode.world_gen.WorldGenFeature;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 
 @Mod.EventBusSubscriber
 public class Handcode {
+
+	public static int mod_version = 20250326;
+	public static String tanny_pack_version = "alpha";
 
 	public static String directory_game = FMLPaths.GAMEDIR.get().toString();
 	public static String directory_config = directory_game + "/config/tanshugetrees";
@@ -62,7 +53,7 @@ public class Handcode {
 
 		}
 
-		Config.repair();
+		ConfigRepairAll.start(null);
 		ConfigMain.apply();
 
 	}

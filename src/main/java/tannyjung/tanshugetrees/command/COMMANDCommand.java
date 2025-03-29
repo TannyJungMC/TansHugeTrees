@@ -1,21 +1,21 @@
 
 package tannyjung.tanshugetrees.command;
 
-import tannyjung.tanshugetrees.procedures.UpdateProcedure;
 import tannyjung.tanshugetrees.procedures.TxtFunctionProcedure;
-import tannyjung.tanshugetrees.procedures.SeasonSetWinterProcedure;
-import tannyjung.tanshugetrees.procedures.SeasonSetSummerProcedure;
-import tannyjung.tanshugetrees.procedures.SeasonSetSpringProcedure;
-import tannyjung.tanshugetrees.procedures.SeasonSetAutumnProcedure;
-import tannyjung.tanshugetrees.procedures.SeasonGetProcedure;
+import tannyjung.tanshugetrees.procedures.TreeDynamicProcedure;
+import tannyjung.tanshugetrees.procedures.TreeDynamicLeafDropPlaceProcedure;
 import tannyjung.tanshugetrees.procedures.RandomTreeTickProcedure;
 import tannyjung.tanshugetrees.procedures.RandomTreeTickPartCreateBlockConnectorTestProcedure;
-import tannyjung.tanshugetrees.procedures.RandomTreeDynamicProcedure;
-import tannyjung.tanshugetrees.procedures.RandomTreeDynamicLeavesDropPlaceProcedure;
 import tannyjung.tanshugetrees.procedures.RandomTreeDetectExistProcedure;
-import tannyjung.tanshugetrees.procedures.ConfigRepairProcedure;
-import tannyjung.tanshugetrees.procedures.ConfigApplyProcedure;
-import tannyjung.tanshugetrees.procedures.CheckUpdateProcedure;
+import tannyjung.tanshugetrees.procedures.COMMANDSeasonSetWinterProcedure;
+import tannyjung.tanshugetrees.procedures.COMMANDSeasonSetSummerProcedure;
+import tannyjung.tanshugetrees.procedures.COMMANDSeasonSetSpringProcedure;
+import tannyjung.tanshugetrees.procedures.COMMANDSeasonSetAutumnProcedure;
+import tannyjung.tanshugetrees.procedures.COMMANDSeasonGetProcedure;
+import tannyjung.tanshugetrees.procedures.COMMANDPackUpdateProcedure;
+import tannyjung.tanshugetrees.procedures.COMMANDPackCkeckUpdateProcedure;
+import tannyjung.tanshugetrees.procedures.COMMANDConfigRepairProcedure;
+import tannyjung.tanshugetrees.procedures.COMMANDConfigApplyProcedure;
 import tannyjung.tanshugetrees.procedures.AutoGenStopProcedure;
 import tannyjung.tanshugetrees.procedures.AutoGenStartCountProcedure;
 import tannyjung.tanshugetrees.procedures.AutoGenStartCount1Procedure;
@@ -39,7 +39,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 
 @Mod.EventBusSubscriber
-public class CommandTHTCommand {
+public class COMMANDCommand {
 	@SubscribeEvent
 	public static void registerCommand(RegisterCommandsEvent event) {
 		event.getDispatcher().register(Commands.literal("THT").requires(s -> s.hasPermission(2)).then(Commands.literal("tanny_pack").then(Commands.literal("check_update").executes(arguments -> {
@@ -54,7 +54,7 @@ public class CommandTHTCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			CheckUpdateProcedure.execute(world, x, y, z);
+			COMMANDPackCkeckUpdateProcedure.execute(world, x, y, z);
 			return 0;
 		})).then(Commands.literal("update").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
@@ -68,7 +68,7 @@ public class CommandTHTCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			UpdateProcedure.execute(world, x, y, z);
+			COMMANDPackUpdateProcedure.execute(world, x, y, z);
 			return 0;
 		}))).then(Commands.literal("config").then(Commands.literal("repair").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
@@ -82,7 +82,7 @@ public class CommandTHTCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			ConfigRepairProcedure.execute(world, x, y, z);
+			COMMANDConfigRepairProcedure.execute(world, x, y, z);
 			return 0;
 		})).then(Commands.literal("apply").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
@@ -96,7 +96,7 @@ public class CommandTHTCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			ConfigApplyProcedure.execute();
+			COMMANDConfigApplyProcedure.execute();
 			return 0;
 		}))).then(Commands.literal("command").then(Commands.literal("txt_function").then(Commands.argument("file", StringArgumentType.word()).then(Commands.argument("folder", MessageArgument.message()).executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
@@ -124,7 +124,7 @@ public class CommandTHTCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			SeasonGetProcedure.execute(world, x, y, z);
+			COMMANDSeasonGetProcedure.execute(world, x, y, z);
 			return 0;
 		})).then(Commands.literal("set").then(Commands.literal("spring").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
@@ -138,7 +138,7 @@ public class CommandTHTCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			SeasonSetSpringProcedure.execute(world);
+			COMMANDSeasonSetSpringProcedure.execute(world);
 			return 0;
 		})).then(Commands.literal("summer").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
@@ -152,7 +152,7 @@ public class CommandTHTCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			SeasonSetSummerProcedure.execute(world);
+			COMMANDSeasonSetSummerProcedure.execute(world);
 			return 0;
 		})).then(Commands.literal("autumn").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
@@ -166,7 +166,7 @@ public class CommandTHTCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			SeasonSetAutumnProcedure.execute(world);
+			COMMANDSeasonSetAutumnProcedure.execute(world);
 			return 0;
 		})).then(Commands.literal("winter").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
@@ -180,7 +180,7 @@ public class CommandTHTCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			SeasonSetWinterProcedure.execute(world);
+			COMMANDSeasonSetWinterProcedure.execute(world);
 			return 0;
 		})))).then(Commands.literal("auto_gen").then(Commands.literal("start").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
@@ -224,7 +224,7 @@ public class CommandTHTCommand {
 
 			AutoGenStopProcedure.execute(world, x, y, z);
 			return 0;
-		})))).then(Commands.literal("dev").then(Commands.literal("rt_dynamic").then(Commands.literal("tick").executes(arguments -> {
+		})))).then(Commands.literal("dev").then(Commands.literal("tree_dynamic").then(Commands.literal("tick").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
 			double x = arguments.getSource().getPosition().x();
 			double y = arguments.getSource().getPosition().y();
@@ -236,9 +236,9 @@ public class CommandTHTCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			RandomTreeDynamicProcedure.execute(world, x, y, z, entity);
+			TreeDynamicProcedure.execute(world, x, y, z, entity);
 			return 0;
-		})).then(Commands.literal("leaves_drop").executes(arguments -> {
+		})).then(Commands.literal("leaf_drop").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
 			double x = arguments.getSource().getPosition().x();
 			double y = arguments.getSource().getPosition().y();
@@ -250,7 +250,7 @@ public class CommandTHTCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			RandomTreeDynamicLeavesDropPlaceProcedure.execute(world, entity);
+			TreeDynamicLeafDropPlaceProcedure.execute(world, entity);
 			return 0;
 		}))).then(Commands.literal("random_tree").then(Commands.literal("run").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
