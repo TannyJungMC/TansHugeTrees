@@ -40,10 +40,10 @@ public class StartProcedure {
 			if (true) {
 				if (world instanceof ServerLevel _level)
 					_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-							"execute positioned 0 0 0 run THT config repair");
+							"execute positioned 0 0 0 run tanshugetrees config repair");
 				if (world instanceof ServerLevel _level)
 					_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-							"execute positioned 0 0 0 run THT config apply");
+							"execute positioned 0 0 0 run tanshugetrees config apply");
 				if (TanshugetreesModVariables.MapVariables.get(world).auto_gen == true) {
 					if (world instanceof ServerLevel _level)
 						_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
@@ -54,7 +54,7 @@ public class StartProcedure {
 				if (ConfigMain.auto_check_update == true) {
 					if (world instanceof ServerLevel _level)
 						_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-								"execute positioned 0 0 0 run THT tanny_pack check_update");
+								"execute positioned 0 0 0 run tanshugetrees tanny_pack check_update");
 				}
 				LoopTickProcedure.execute(world, x, y, z);
 			});

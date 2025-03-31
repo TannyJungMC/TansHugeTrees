@@ -89,7 +89,7 @@ public class SaplingBlockRightClickProcedure {
 					} else {
 						sapling = (world.getBlockState(BlockPos.containing(x, y, z)));
 						file_name = (ForgeRegistries.BLOCKS.getKey(sapling.getBlock()).toString()).replace("tanshugetrees:", "");
-						file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/.organized/THT-tree_pack-main/presets/" + file_name), File.separator + (file_name + ".txt"));
+						file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/.organized/presets/THT-tree_pack-main/" + file_name), File.separator + (file_name + ".txt"));
 						if (file.exists() == false) {
 							cancel = "Preset not have been added yet";
 						}

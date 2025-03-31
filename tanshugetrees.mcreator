@@ -1971,7 +1971,7 @@
           }
         ]
       },
-      "path": "~/Tree Dynamic"
+      "path": "~/Living Tree Mechanics"
     },
     {
       "name": "TreeDynamicLeafDropPlace",
@@ -1994,7 +1994,7 @@
           }
         ]
       },
-      "path": "~/Tree Dynamic"
+      "path": "~/Living Tree Mechanics"
     },
     {
       "name": "COMMAND",
@@ -2338,13 +2338,6 @@
     "BLOCKS:mod:leaves_blocks": [
       "TAG:minecraft:leaves"
     ],
-    "BLOCKS:mod:fluid_blocks": [
-      "Blocks.FLOWING_WATER",
-      "Blocks.WATER",
-      "Blocks.BUBBLE_COLUMN",
-      "Blocks.FLOWING_LAVA",
-      "Blocks.LAVA"
-    ],
     "BLOCKS:mod:passable_blocks": [
       "TAG:minecraft:replaceable_by_trees",
       "TAG:minecraft:replaceable",
@@ -2365,6 +2358,11 @@
       "CUSTOM:BlockPlacerFineRootCore",
       "CUSTOM:BlockPlacerFineRootInner",
       "CUSTOM:BlockPlacerFineRootOuter"
+    ],
+    "BLOCKS:mod:water_blocks": [
+      "Blocks.FLOWING_WATER",
+      "Blocks.WATER",
+      "Blocks.BUBBLE_COLUMN"
     ],
     "BLOCKS:mod:coniferous_leaves_blocks": [
       "Blocks.LEAVES#1"
@@ -2446,8 +2444,8 @@
       "block.tanshugetrees.legion.description_1": "Size : Huge",
       "block.tanshugetrees.legion.description_0": "--------------------------------------------------",
       "block.tanshugetrees.legion.description_3": "Special : None",
-      "gamerule.tht_rarity_a_8.description": "This Gamerule For Tan\u0027s Huge Trees Mod",
       "block.tanshugetrees.legion.description_2": "Blocks : Spruce Wood / Stripped Spruce Wood / Spruce Leaves",
+      "gamerule.tht_rarity_a_8.description": "This Gamerule For Tan\u0027s Huge Trees Mod",
       "block.tanshugetrees.legion.description_5": "This is random tree sapling, it may take long time to generate!",
       "block.tanshugetrees.legion.description_4": "--------------------------------------------------",
       "gamerule.tht_rarity_a_9.description": "This Gamerule For Tan\u0027s Huge Trees Mod",
@@ -2477,9 +2475,9 @@
       "block.tanshugetrees.beanstalk.description_6": "--------------------------------------------------",
       "block.tanshugetrees.snow_white": "Snow White",
       "block.tht.wendy.description_3": "Special : None",
-      "block.tht.wendy.description_4": "--------------------------------------------------",
-      "gamerule.tht_test_area": "THT-TestLevel",
       "block.tanshugetrees.block_placer_twig_inner": "Block Placer",
+      "gamerule.tht_test_area": "THT-TestLevel",
+      "block.tht.wendy.description_4": "--------------------------------------------------",
       "block.tht.wendy.description_5": "This is random tree sapling, it may take long time to generate!",
       "block.tht.wendy.description_6": "--------------------------------------------------",
       "block.tht.wendy.description_0": "--------------------------------------------------",
@@ -2491,20 +2489,20 @@
       "block.tht.agathos.description_2": "Blocks : Birch Wood / Stripped Birch Wood / Birch Leaves",
       "block.tht.agathos.description_3": "Special : None",
       "block.tht.agathos.description_4": "--------------------------------------------------",
-      "gamerule.tht_start.description": "Gamerule Config For Tan\u0027s Huge Trees Mod",
-      "block.tht.rust.description_0": "--------------------------------------------------",
-      "block.tht.snow_white.description_2": "Blocks : Spruce Wood / Stripped Spruce Wood / Spruce Leaves",
-      "block.tht.agathos.description_5": "This is random tree sapling, it may take long time to generate!",
       "block.tanshugetrees.beekeeper.description_4": "--------------------------------------------------",
-      "block.tht.rust.description_1": "Size : Realistic",
-      "block.tht.snow_white.description_1": "Size : Realistic",
-      "block.tht.agathos.description_6": "--------------------------------------------------",
+      "block.tht.agathos.description_5": "This is random tree sapling, it may take long time to generate!",
+      "block.tht.snow_white.description_2": "Blocks : Spruce Wood / Stripped Spruce Wood / Spruce Leaves",
+      "block.tht.rust.description_0": "--------------------------------------------------",
+      "gamerule.tht_start.description": "Gamerule Config For Tan\u0027s Huge Trees Mod",
       "block.tanshugetrees.beekeeper.description_5": "This is random tree sapling, it may take long time to generate!",
-      "block.tht.snow_white.description_4": "--------------------------------------------------",
+      "block.tht.agathos.description_6": "--------------------------------------------------",
+      "block.tht.snow_white.description_1": "Size : Realistic",
+      "block.tht.rust.description_1": "Size : Realistic",
       "block.tanshugetrees.beekeeper.description_6": "--------------------------------------------------",
+      "block.tht.snow_white.description_4": "--------------------------------------------------",
       "block.tht.snow_white.description_3": "Special : Can generate with snow on leaves",
-      "block.tht.rust.description_4": "--------------------------------------------------",
       "gamerule.mod_th_trarity_a_1.description": "-",
+      "block.tht.rust.description_4": "--------------------------------------------------",
       "block.tht.rust.description_5": "This is random tree sapling, it may take long time to generate!",
       "block.tht.rust.description_2": "Blocks : Oak Wood / Stripped Oak Wood / Oak Leaves",
       "block.tht.snow_white.description_0": "--------------------------------------------------",
@@ -2518,9 +2516,9 @@
       "block.tht.giant_pumpkin.description_0": "--------------------------------------------------",
       "block.tanshugetrees.baobab": "Baobab",
       "block.tht.falcon.description_4": "--------------------------------------------------",
-      "gamerule.tht_rarity_b_9.description": "This Gamerule For Tan\u0027s Huge Trees Mod",
-      "gamerule.tht_rarity_b_7.description": "This Gamerule For Tan\u0027s Huge Trees Mod",
       "block.tht.falcon.description_3": "Special : None",
+      "gamerule.tht_rarity_b_7.description": "This Gamerule For Tan\u0027s Huge Trees Mod",
+      "gamerule.tht_rarity_b_9.description": "This Gamerule For Tan\u0027s Huge Trees Mod",
       "block.tht.falcon.description_6": "--------------------------------------------------",
       "block.tht.falcon.description_5": "This is random tree sapling, it may take long time to generate!",
       "block.tanshugetrees.sky_island_chain": "Sky Island (Chain)",
@@ -3056,7 +3054,7 @@
         ]
       },
       {
-        "name": "Tree Dynamic",
+        "name": "Living Tree Mechanics",
         "children": []
       },
       {

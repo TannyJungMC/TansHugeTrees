@@ -17,6 +17,7 @@ public class WorldGenFeature extends Feature <NoneFeatureConfiguration> {
 
         TreeLocation.start(context);
         TreePlacer.start(context);
+        DataFolderCleaner.start(context);
 
         return true;
 

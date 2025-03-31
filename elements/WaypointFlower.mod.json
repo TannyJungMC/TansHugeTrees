@@ -63,7 +63,7 @@
     "canRedstoneConnect": false,
     "lightOpacity": 0,
     "material": {
-      "value": "PLANTS"
+      "value": "NONE"
     },
     "tickRate": 1200,
     "tickRandomly": false,

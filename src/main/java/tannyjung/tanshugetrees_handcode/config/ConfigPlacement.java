@@ -54,7 +54,7 @@ public class ConfigPlacement {
 
     private static void create () {
 
-        File file_organized = new File(Handcode.directory_config + "/custom_packs/.organized");
+        File file_organized = new File(Handcode.directory_config + "/custom_packs/.organized/world_gen");
         File file = new File(Handcode.directory_config + "/config_placement.txt");
 
         // Re-Create The File
@@ -64,13 +64,19 @@ public class ConfigPlacement {
 
             {
 
-                write.append("Hello There");
-                write.append("\n");
-                write.append("\n");
+                write.append("""
+                - Apply The Changes : No need to do anything, as it automatic applying.
+                - Repair Missing Values : Run this command [ /tanshugetrees config repair ] or restart the world
+                
+                multiply_rarity = 1.0
+                multiply_min_distance = 1.0
+                multiply_dead_tree_chance = 1.0
+                
+                """);
 
             }
 
-            FileManager.writeTXT(file.toPath().toString(), write.toString(), false);
+            FileManager.writeConfigTXT(file.toPath().toString(), write.toString());
 
         }
 
@@ -87,15 +93,11 @@ public class ConfigPlacement {
 
                             if (source.toFile().isDirectory() == false) {
 
-                                if (source.toString().contains("\\world_gen\\") == true) {
+                                String name_pack = source.getParent().getParent().toFile().getName();
+                                String name_theme = source.getParent().toFile().getName();
+                                String name_tree = source.toFile().getName().replace(".txt", "");
 
-                                    String name_pack = source.getName(source.getNameCount() - 4).toString();
-                                    String name_theme = source.getName(source.getNameCount() - 2).toString();
-                                    String name_tree = source.getName(source.getNameCount() - 1).toString().replace(".txt", "");
-
-                                    write(source, name_pack + " > " + name_theme + " > " + name_tree);
-
-                                }
+                                write(source, name_pack + " > " + name_theme + " > " + name_tree);
 
                             }
 

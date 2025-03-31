@@ -9,7 +9,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -21,6 +20,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.misc.FileManager;
+import tannyjung.tanshugetrees_handcode.misc.LeafLitter;
 import tannyjung.tanshugetrees_handcode.misc.Misc;
 import tannyjung.tanshugetrees_handcode.misc.TreeFunction;
 
@@ -339,7 +339,7 @@ public class TreePlacer {
         // Scan "World Gen" File
         {
 
-            File file = new File(Handcode.directory_config + "/custom_packs/.organized/" + id.replace("#", "world_gen") + ".txt");
+            File file = new File(Handcode.directory_config + "/custom_packs/.organized/world_gen/" + id + ".txt");
 
             if (file.exists() == true) {
 
@@ -376,7 +376,7 @@ public class TreePlacer {
         // Scan "Tree Settings" File
         {
 
-            File file = new File(Handcode.directory_config + "/custom_packs/.organized/" + tree_settings);
+            File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -531,6 +531,7 @@ public class TreePlacer {
                 BlockState block = Blocks.AIR.defaultBlockState();
                 BlockPos pos = null;
                 double pre_leaves_litter_chance = 0.0;
+                int height_motion_block = 0;
                 boolean can_run_function = false;
 
                 try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
@@ -720,7 +721,7 @@ public class TreePlacer {
 
                                         get = get.replace(" keep", "");
 
-                                        if (Misc.isBlockTaggedAs(chunk.getBlockState(pos), "tanshugetrees:passable_blocks") == false || Misc.isBlockTaggedAs(chunk.getBlockState(pos), "tanshugetrees:fluid_blocks") == true) {
+                                        if (Misc.isBlockTaggedAs(chunk.getBlockState(pos), "tanshugetrees:passable_blocks") == false || Misc.isBlockTaggedAs(chunk.getBlockState(pos), "tanshugetrees:water_blocks") == true) {
 
                                             continue;
 
@@ -759,7 +760,13 @@ public class TreePlacer {
 
                                                     if (Math.random() < pre_leaves_litter_chance) {
 
-                                                        pre_leaves_drop(chunk, pos, block);
+                                                        height_motion_block = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, test_posX, test_posZ) + 1;
+
+                                                        if (height_motion_block < posY) {
+
+                                                            LeafLitter.start(chunk, test_posX, height_motion_block, test_posZ, block);
+
+                                                        }
 
                                                     }
 
@@ -794,31 +801,6 @@ public class TreePlacer {
                     }
 
                 } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
-
-            }
-
-        }
-
-    }
-
-    private static void pre_leaves_drop (ChunkAccess chunk, BlockPos pos, BlockState block) {
-
-        int height = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) + 1;
-
-        if (height < pos.getY()) {
-
-            // Not The Same Block
-            if (chunk.getBlockState(new BlockPos(pos.getX(), height, pos.getZ())).getBlock() != block.getBlock()) {
-
-                // If Found Water
-                if (Misc.isBlockTaggedAs(chunk.getBlockState(new BlockPos(pos.getX(), height - 1, pos.getZ())), "tanshugetrees:fluid_blocks") == true) {
-
-                    block = (block.getBlock().getStateDefinition().getProperty("waterlogged") instanceof BooleanProperty property ? block.setValue(property, true) : block);
-                    height = height - 1;
-
-                }
-
-                chunk.setBlockState(new BlockPos(pos.getX(), height, pos.getZ()), block, false);
 
             }
 

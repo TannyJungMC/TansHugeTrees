@@ -2,11 +2,12 @@ package tannyjung.tanshugetrees_handcode.misc;
 
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.LevelAccessor;
@@ -31,33 +32,54 @@ public class Misc {
 		BlockState return_block = Blocks.AIR.defaultBlockState();
 
 		{
+			try {
 
-			String extra_settings = "";
+				return_block = BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), id, true).blockState();
 
-			if (id.endsWith("]") == true) {
+			} catch (Exception e) {
 
-				extra_settings = id.substring(id.indexOf("["));
-				id = id.substring(0, id.indexOf("["));
-
-			}
-
-			// Convert ID into Block
-			return_block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation((id).toLowerCase(java.util.Locale.ENGLISH))).defaultBlockState();
-
-			// Set Extra Settings
-			if (extra_settings.equals("") == false) {
-
-				if (extra_settings.contains("persistent=true") == true) {
-
-					return_block = return_block.getBlock().getStateDefinition().getProperty("persistent") instanceof BooleanProperty property ? return_block.setValue(property, true) : return_block;
-
-				}
+				return_block = Blocks.AIR.defaultBlockState();
 
 			}
 
 		}
 
 		return return_block;
+
+	}
+
+	public static String blockToText (BlockState block) {
+
+		String return_text = "";
+
+		{
+
+			return_text = block.toString();
+			return_text = return_text.replace("Block{", "").replace("}", "");
+
+		}
+
+		return return_text;
+
+	}
+
+	public static String blockToTextID (BlockState block) {
+
+		String return_text = "";
+
+		{
+
+			return_text = blockToText(block);
+
+			if (return_text.endsWith("]") == true) {
+
+				return_text = return_text.substring(0, return_text.indexOf("["));
+
+			}
+
+		}
+
+		return return_text;
 
 	}
 
