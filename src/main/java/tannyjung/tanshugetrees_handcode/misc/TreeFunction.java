@@ -21,7 +21,7 @@ public class TreeFunction {
 
 	public static void run (LevelAccessor level, ServerLevel world, WorldGenLevel world_gen_level, String path, int posX, int posY, int posZ) {
 
-		File file = new File(Handcode.directory_config + "/custom_packs/.organized/functions/" + path);
+		File file = new File(Handcode.directory_config + "/custom_packs/.organized/" + path);
 
 		if (file.exists() == true && file.isDirectory() == false) {
 
@@ -94,7 +94,7 @@ public class TreeFunction {
 													if (
 														Misc.isBlockTaggedAs(level.getBlockState(pos), "tanshugetrees:passable_blocks") == false
 														||
-														Misc.isBlockTaggedAs(level.getBlockState(pos), "tanshugetrees:water_blocks") == true
+														Misc.isBlockTaggedAs(level.getBlockState(pos), "tanshugetrees:fluid_blocks") == true
 													) {
 
 														continue;

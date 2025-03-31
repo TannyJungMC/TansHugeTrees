@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "minecraft:water",
-    "minecraft:bubble_column"
+    "minecraft:bubble_column",
+    "minecraft:lava"
   ]
 }

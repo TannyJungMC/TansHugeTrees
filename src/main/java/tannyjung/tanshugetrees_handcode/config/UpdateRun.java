@@ -17,13 +17,12 @@ import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees.procedures.SendChatMessageProcedure;
 import tannyjung.tanshugetrees_handcode.misc.Misc;
-import tannyjung.tanshugetrees_handcode.misc.MiscOutside;
 
 public class UpdateRun {
 
 	private static String error = "";
 
-    public static void start (LevelAccessor level) {
+    public static void start (LevelAccessor level, double x, double y, double z) {
 
 		String url = "";
 
@@ -37,11 +36,7 @@ public class UpdateRun {
 
 		}
 
-		if (MiscOutside.isConnectedToInternet() == false) {
-
-			SendChatMessageProcedure.execute(level, "red", "@a", "THT : Can't update the tree pack right now, as no internet connection.");
-
-		} else {
+		if (isConnectedToInternet(level, url) == true) {
 
 			if (checkModVersion(level, url) == true) {
 
@@ -64,8 +59,8 @@ public class UpdateRun {
 
 					Misc.sendChatMessage(level, "@a", "gray", "THT : Install Completed!");
 					ConfigRepairAll.start(null);
-					Misc.runCommand(level, 0, 0, 0, "tanshugetrees config repair");
-					Misc.runCommand(level, 0, 0, 0, "tanshugetrees config apply");
+					Misc.runCommand(level, 0, 0, 0, "THT config repair");
+					Misc.runCommand(level, 0, 0, 0, "THT config apply");
 
 					Misc.sendChatMessage(level, "@a", "white", "");
 					FileCount.start(level, 0, 0, 0);
@@ -83,6 +78,31 @@ public class UpdateRun {
 
 	}
 
+	public static boolean isConnectedToInternet(LevelAccessor level, String url) {
+
+		boolean return_logic = true;
+
+		try {
+
+			URL test = new URI(url).toURL();
+			HttpURLConnection connection = (HttpURLConnection) test.openConnection();
+			connection.setRequestMethod("HEAD");
+			connection.setConnectTimeout(3000);
+			connection.setReadTimeout(3000);
+			int responseCode = connection.getResponseCode();
+			// return (200 <= responseCode && responseCode < 400);
+
+		} catch (Exception e) {
+
+			SendChatMessageProcedure.execute(level, "red", "@a", "THT : Can't update the tree pack right now, as no internet connection.");
+			return_logic = false;
+
+		}
+
+		return return_logic;
+
+    }
+
 	private static boolean checkModVersion (LevelAccessor level, String url) {
 
 		boolean return_logic = true;
@@ -98,9 +118,9 @@ public class UpdateRun {
 
 				while ((read_all = buffered_reader.readLine()) != null) {
 
-					if (read_all.startsWith("mod_version = ")) {
+					if (read_all.startsWith("mod_version : ")) {
 
-						mod_version_url = Integer.parseInt(read_all.replace("mod_version = ", ""));
+						mod_version_url = Integer.parseInt(read_all.replace("mod_version : ", ""));
 
 					}
 
@@ -117,7 +137,7 @@ public class UpdateRun {
 
 		if (Handcode.mod_version > mod_version_url) {
 
-			SendChatMessageProcedure.execute(level, "red", "@a", "THT : You're currently using mod version that does not support to new tree pack version, try update the mod and do it again.");
+			SendChatMessageProcedure.execute(level, "red", "@a", "THT : You're currently using mod version that does not support to new version of tree pack, please update the mod and try again.");
 			TanshugetreesMod.LOGGER.info("Your version is " + Handcode.mod_version + " but tree pack needed " + mod_version_url);
 
 			return_logic = false;
