@@ -54,7 +54,7 @@ public class Handcode {
 		}
 
 		ConfigRepairAll.start(null);
-		ConfigMain.apply();
+		ConfigMain.apply(null);
 
 	}
 
@@ -63,6 +63,7 @@ public class Handcode {
 
 		directory_world_data = event.getServer().getWorldPath(new LevelResource(".")) + "/data/tanshugetrees";
 
+		FileManager.createFolder(Handcode.directory_world_data + "/data_folder_cleaner");
 		FileManager.createFolder(Handcode.directory_world_data + "/regions");
 		FileManager.createFolder(Handcode.directory_world_data + "/tree_locations");
 		FileManager.createFolder(Handcode.directory_world_data + "/detailed_detection");

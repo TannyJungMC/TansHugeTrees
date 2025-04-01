@@ -54,7 +54,7 @@ public class ConfigPlacement {
 
     private static void create () {
 
-        File file_organized = new File(Handcode.directory_config + "/custom_packs/.organized");
+        File file_organized = new File(Handcode.directory_config + "/custom_packs/.organized/world_gen");
         File file = new File(Handcode.directory_config + "/config_placement.txt");
 
         // Re-Create The File
@@ -64,13 +64,20 @@ public class ConfigPlacement {
 
             {
 
-                write.append("Hello There");
-                write.append("\n");
-                write.append("\n");
+                write.append("""
+                - No need to apply this config, as it automatic applying.
+                - To repair missing values, run this command [ /tanshugetrees config repair ] or restart the world.
+                - Very important! You must lock the trees you have edited, to mark it as don't reset. Do it by change "[]" at font of tree ID to "[LOCK]".
+                
+                multiply_rarity = 1.0
+                multiply_min_distance = 1.0
+                multiply_dead_tree_chance = 1.0
+                
+                """);
 
             }
 
-            FileManager.writeTXT(file.toPath().toString(), write.toString(), false);
+            FileManager.writeConfigTXT(file.toPath().toString(), write.toString());
 
         }
 
@@ -87,15 +94,11 @@ public class ConfigPlacement {
 
                             if (source.toFile().isDirectory() == false) {
 
-                                if (source.toString().contains("\\world_gen\\") == true) {
+                                String name_pack = source.getParent().getParent().toFile().getName();
+                                String name_theme = source.getParent().toFile().getName();
+                                String name_tree = source.toFile().getName().replace(".txt", "");
 
-                                    String name_pack = source.getName(source.getNameCount() - 4).toString();
-                                    String name_theme = source.getName(source.getNameCount() - 2).toString();
-                                    String name_tree = source.getName(source.getNameCount() - 1).toString().replace(".txt", "");
-
-                                    write(source, name_pack + " > " + name_theme + " > " + name_tree);
-
-                                }
+                                write(source, name_pack + " > " + name_theme + " > " + name_tree);
 
                             }
 
@@ -109,31 +112,11 @@ public class ConfigPlacement {
 
                 }
 
-            } else {
-
-                // Not found any pack installed
-                {
-
-                    StringBuilder write = new StringBuilder();
-
-                    {
-
-                        write.append("----------------------------------------------------------------------------------------------------");
-                        write.append("\n");
-                        write.append("\n");
-                        write.append("Not found any pack installed");
-                        write.append("\n");
-                        write.append("\n");
-
-                    }
-
-                    FileManager.writeTXT(file.toPath().toString(), write.toString(), true);
-
-                }
-
             }
 
-            //  At the end of the file
+        } else {
+
+            // Not found any pack installed
             {
 
                 StringBuilder write = new StringBuilder();
@@ -141,12 +124,32 @@ public class ConfigPlacement {
                 {
 
                     write.append("----------------------------------------------------------------------------------------------------");
+                    write.append("\n");
+                    write.append("\n");
+                    write.append("Not found any pack installed");
+                    write.append("\n");
+                    write.append("\n");
 
                 }
 
                 FileManager.writeTXT(file.toPath().toString(), write.toString(), true);
 
             }
+
+        }
+
+        //  At the end of the file
+        {
+
+            StringBuilder write = new StringBuilder();
+
+            {
+
+                write.append("----------------------------------------------------------------------------------------------------");
+
+            }
+
+            FileManager.writeTXT(file.toPath().toString(), write.toString(), true);
 
         }
 

@@ -2,6 +2,7 @@ package tannyjung.tanshugetrees_handcode.config;
 
 import net.minecraftforge.fml.loading.FMLPaths;
 import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -12,155 +13,31 @@ import java.util.Comparator;
 
 public class CustomPacksOrganized {
 
-    
+    public static void start () {
 
-    // ----------------------------------------------------------------------------------------------------
-    // Custom
-    // ----------------------------------------------------------------------------------------------------
-
-    
-
-    // Change to "FMLPaths.GAMEDIR.get().toString();" for game directory
-    static String game_directory = FMLPaths.GAMEDIR.get().toString();
-
-    static String folder_pack = game_directory + "/config/tanshugetrees/custom_packs";
-    static String folder_pack_organized = game_directory + "/config/tanshugetrees/custom_packs/.organized";
-
-
-
-    // ----------------------------------------------------------------------------------------------------
-    // Class Global Variables
-    // ----------------------------------------------------------------------------------------------------
-
-
-    
-    
-
-    
-
-    // ----------------------------------------------------------------------------------------------------
-    // Run System
-    // ----------------------------------------------------------------------------------------------------
-
-
-
-    public static void start (String[] args) {
-
-        delete();
-        create_organized_folder();
-        copy();
+        clearFolder();
+        organizing();
         replace();
 
     }
 
+    public static void clearFolder () {
 
-
-    // ----------------------------------------------------------------------------------------------------
-    // Delete
-    // ----------------------------------------------------------------------------------------------------
-
-
-
-    private static void delete () {
-
-        Path delete = Paths.get(folder_pack_organized);
-
-        if (delete.toFile().exists() == true) {
-
-            try {
-
-                Files.walk(delete).sorted(Comparator.reverseOrder()).forEach(path -> {
-
-                    try {
-
-                        Files.delete(path);
-
-                    } catch (Exception e) {
-
-                        TanshugetreesMod.LOGGER.error("Error to delete folders in custom_packs_organized!");
-
-                    }
-
-                });
-
-            } catch (Exception e) {
-
-                e.printStackTrace();
-
-            }
-
-        }
-
-    }
-
-
-
-    // ----------------------------------------------------------------------------------------------------
-    // Create Organized Folder
-    // ----------------------------------------------------------------------------------------------------
-
-
-
-    private static void create_organized_folder () {
-
-        File create;
-
-        create = new File(folder_pack_organized);
-        create.mkdirs();
-
-    }
-    
-
-
-    // ----------------------------------------------------------------------------------------------------
-    // Copy
-    // ----------------------------------------------------------------------------------------------------
-
-
-
-    private static void copy () {
-        
-        Path from = Paths.get(folder_pack);
-        Path to = Paths.get(folder_pack_organized);
+        Path delete = Path.of(Handcode.directory_config + "/custom_packs/.organized");
 
         try {
 
-            Files.walk(from).forEach(source -> {
+            Files.walk(delete).sorted(Comparator.reverseOrder()).forEach(source -> {
 
-                if (
-
-                    source.toFile().isDirectory() == false
-                    &&
-                    source.toString().contains("[INCOMPATIBLE] ") == false
-                    &&
-                    (
-                        source.toString().contains("\\.organized\\") == false
-                        &&
-                        source.toString().contains("\\replace\\") == false
-                        &&
-                        source.toString().contains("\\storage\\") == false
-                    )
-                    &&
-                    (
-                        source.toString().contains("\\functions\\") == true
-                        ||
-                        source.toString().contains("\\presets\\") == true
-                        ||
-                        source.toString().contains("\\world_gen\\") == true
-                    )
-
-                ) {
-
-                    Path copy = to.resolve(from.relativize(source));
+                if (source.toFile().getName().equals(".organized") == false) {
 
                     try {
 
-                        Files.createDirectories(copy.getParent());
-                        Files.copy(source, copy, StandardCopyOption.REPLACE_EXISTING);
+                        Files.delete(source);
 
                     } catch (Exception e) {
 
-                        TanshugetreesMod.LOGGER.error("Error to copying " + e.getMessage());
+                        e.printStackTrace();
 
                     }
 
@@ -170,70 +47,153 @@ public class CustomPacksOrganized {
 
         } catch (Exception e) {
 
-            TanshugetreesMod.LOGGER.error("Error walking the source directory : " + e.getMessage());
+            e.printStackTrace();
 
         }
 
     }
 
+    private static void organizing () {
 
+        for (File pack : new File(Handcode.directory_config + "/custom_packs").listFiles()) {
 
-    // ----------------------------------------------------------------------------------------------------
-    // Replace
-    // ----------------------------------------------------------------------------------------------------
+            // Make it scan the main pack first
+            {
 
+                if (pack.getName().equals(".organized") == true) {
 
+                    pack = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-main");
 
-    private static void replace () {
+                } else {
 
-        File directory_scan = new File(folder_pack);
-        File [] file_list = directory_scan.listFiles();
+                    if (pack.getName().equals("THT-tree_pack-main") == true) {
 
-        if (file_list != null) {for (int i = 0; i < file_list.length;) {
+                        continue;
 
-            if (file_list[i].getName().equals(".organized") == false) {
-
-                Path from = Paths.get(folder_pack + "/" + file_list[i].getName() + "/replace");
-                Path to = Paths.get(folder_pack_organized);
-
-                if (from.toFile().exists() == true) {
-
-	                try {
-	
-	                    Files.walk(from).forEach(source -> {
-	
-	                        if (source.toFile().isDirectory() == false) {
-	
-	                            Path copy = to.resolve(from.relativize(source));
-	
-	                            try {
-	
-	                                Files.createDirectories(copy.getParent());
-	                                Files.copy(source, copy, StandardCopyOption.REPLACE_EXISTING);
-	
-	                            } catch (Exception e) {
-
-                                    TanshugetreesMod.LOGGER.error("Error to replacing " + e.getMessage());
-	
-	                            }
-	
-	                        }
-	
-	                    });
-	
-	                } catch (Exception e) {
-
-                        TanshugetreesMod.LOGGER.error("Error walking the source directory (replacing) : " + e.getMessage());
-	
-	                }
+                    }
 
                 }
 
             }
 
-            i = i + 1;
+            if (pack.exists() == true) {
 
-        }}
+                for (File category : pack.listFiles()) {
+
+                    // Only These Folders
+                    if (category.getName().equals("functions") == true || category.getName().equals("leaf_litter") == true || category.getName().equals("presets") == true || category.getName().equals("world_gen") == true) {
+
+                        // Copying
+                        {
+
+                            try {
+
+                                File pack_final = pack;
+
+                                Files.walk(category.toPath()).forEach(source -> {
+
+                                    if (source.toFile().isDirectory() == false) {
+
+                                        // Not in Storage Folder
+                                        if (source.getParent().toFile().getName().equals("storage") == false) {
+
+                                            String path = Handcode.directory_config + "/custom_packs/.organized/" + category.getName();
+
+                                            // With Pack Name
+                                            if (category.getName().equals("leaf_litter") == false) {
+
+                                                path = path + "/" + pack_final.getName();
+
+                                            }
+
+                                            try {
+
+                                                Path to = Path.of(path);
+                                                to = to.resolve(category.toPath().relativize(source));
+                                                Files.createDirectories(to.getParent());
+                                                Files.copy(source, to, StandardCopyOption.REPLACE_EXISTING);
+
+                                            } catch (Exception e) {
+
+                                                e.printStackTrace();
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                });
+
+                            } catch (Exception e) {
+
+                                e.printStackTrace();
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    private static void replace () {
+
+        for (File pack : new File(Handcode.directory_config + "/custom_packs/").listFiles()) {
+
+            if (pack.getName().equals(".organized") == false) {
+
+                File replace = new File(Handcode.directory_config + "/custom_packs/" + pack.getName() + "/replace");
+
+                if (replace.exists() == true) {
+
+                    // Copying
+                    {
+
+                        try {
+
+                            Files.walk(replace.toPath()).forEach(source -> {
+
+                                if (source.toFile().isDirectory() == false) {
+
+                                    try {
+
+                                        Path from = Path.of(pack.toPath() + "/replace");
+                                        Path to = Path.of(Handcode.directory_config + "/custom_packs/.organized");
+
+                                        Path copy = to.resolve(from.relativize(source));
+                                        Files.createDirectories(copy.getParent());
+                                        Files.copy(source, copy, StandardCopyOption.REPLACE_EXISTING);
+
+                                    } catch (Exception e) {
+
+                                        e.printStackTrace();
+
+                                    }
+
+                                }
+
+                            });
+
+                        } catch (Exception e) {
+
+                            e.printStackTrace();
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
 
     }
 

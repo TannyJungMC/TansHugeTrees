@@ -37,7 +37,7 @@ public class WaypointFlowerPlaceProcedure {
 			}
 			if (world instanceof ServerLevel _level)
 				_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3((x + 0.5), y, (z + 0.5)), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-						"THT command txt_function sapling_trader config/tanshugetrees/custom_packs/THT-tree_pack-main/functions");
+						"tanshugetrees command txt_function sapling_trader config/tanshugetrees/custom_packs/THT-tree_pack-main/functions");
 			world.setBlock(BlockPos.containing(x, y, z), Blocks.AIR.defaultBlockState(), 3);
 		} else {
 			if (world instanceof ServerLevel _level)

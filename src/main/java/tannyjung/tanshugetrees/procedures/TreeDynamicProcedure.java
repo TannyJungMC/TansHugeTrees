@@ -253,14 +253,14 @@ public class TreeDynamicProcedure {
 																				}
 																				if (!world.getBiome(BlockPos.containing(entity.getX(), entity.getY(), entity.getZ()))
 																						.is(TagKey.create(Registries.BIOME, new ResourceLocation("tanshugetrees:no_snow_biomes")))) {
-																					if (ConfigMain.leaves_regrow_summer_chance <= Math.random()) {
+																					if (ConfigMain.leaves_regrow_chance_summer <= Math.random()) {
 																						continue;
 																					}
 																				}
-																				if ((TanshugetreesModVariables.MapVariables.get(world).season).equals("Spring") && ConfigMain.leaves_regrow_spring_chance <= Math.random()
-																						|| (TanshugetreesModVariables.MapVariables.get(world).season).equals("Summer") && ConfigMain.leaves_regrow_summer_chance <= Math.random()
-																						|| (TanshugetreesModVariables.MapVariables.get(world).season).equals("Autumn") && ConfigMain.leaves_regrow_autumn_chance <= Math.random()
-																						|| (TanshugetreesModVariables.MapVariables.get(world).season).equals("Winter") && ConfigMain.leaves_regrow_winter_chance <= Math.random()) {
+																				if ((TanshugetreesModVariables.MapVariables.get(world).season).equals("Spring") && ConfigMain.leaves_regrow_chance_spring <= Math.random()
+																						|| (TanshugetreesModVariables.MapVariables.get(world).season).equals("Summer") && ConfigMain.leaves_regrow_chance_summer <= Math.random()
+																						|| (TanshugetreesModVariables.MapVariables.get(world).season).equals("Autumn") && ConfigMain.leaves_regrow_chance_autumn <= Math.random()
+																						|| (TanshugetreesModVariables.MapVariables.get(world).season).equals("Winter") && ConfigMain.leaves_regrow_chance_winter <= Math.random()) {
 																					continue;
 																				}
 																			}
@@ -276,7 +276,7 @@ public class TreeDynamicProcedure {
 																						continue;
 																					}
 																				} else {
-																					if (ConfigMain.leaves_drop_summer_chance <= Math.random()) {
+																					if (ConfigMain.leaves_drop_chance_summer <= Math.random()) {
 																						continue;
 																					}
 																				}
@@ -289,19 +289,19 @@ public class TreeDynamicProcedure {
 																				} else {
 																					if (!world.getBiome(BlockPos.containing(entity.getX(), entity.getY(), entity.getZ()))
 																							.is(TagKey.create(Registries.BIOME, new ResourceLocation("tanshugetrees:no_snow_biomes")))) {
-																						if (ConfigMain.leaves_drop_summer_chance <= Math.random()) {
+																						if (ConfigMain.leaves_drop_chance_summer <= Math.random()) {
 																							continue;
 																						}
 																					}
 																					if (world.getMaxLocalRawBrightness(BlockPos.containing(posX, posY, posZ)) < ConfigMain.leaves_light_level_detection) {
-																						if (ConfigMain.leaves_drop_summer_chance <= Math.random()) {
+																						if (ConfigMain.leaves_drop_chance_summer <= Math.random()) {
 																							continue;
 																						}
 																					}
-																					if ((TanshugetreesModVariables.MapVariables.get(world).season).equals("Spring") && ConfigMain.leaves_drop_spring_chance <= Math.random()
-																							|| (TanshugetreesModVariables.MapVariables.get(world).season).equals("Summer") && ConfigMain.leaves_drop_summer_chance <= Math.random()
-																							|| (TanshugetreesModVariables.MapVariables.get(world).season).equals("Autumn") && ConfigMain.leaves_drop_autumn_chance <= Math.random()
-																							|| (TanshugetreesModVariables.MapVariables.get(world).season).equals("Winter") && ConfigMain.leaves_drop_winter_chance <= Math.random()) {
+																					if ((TanshugetreesModVariables.MapVariables.get(world).season).equals("Spring") && ConfigMain.leaves_drop_chance_spring <= Math.random()
+																							|| (TanshugetreesModVariables.MapVariables.get(world).season).equals("Summer") && ConfigMain.leaves_drop_chance_summer <= Math.random()
+																							|| (TanshugetreesModVariables.MapVariables.get(world).season).equals("Autumn") && ConfigMain.leaves_drop_chance_autumn <= Math.random()
+																							|| (TanshugetreesModVariables.MapVariables.get(world).season).equals("Winter") && ConfigMain.leaves_drop_chance_winter <= Math.random()) {
 																						continue;
 																					}
 																				}

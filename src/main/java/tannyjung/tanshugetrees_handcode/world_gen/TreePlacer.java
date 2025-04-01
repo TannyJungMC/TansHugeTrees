@@ -9,7 +9,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -18,9 +17,11 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraftforge.registries.ForgeRegistries;
+import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.misc.FileManager;
+import tannyjung.tanshugetrees_handcode.misc.LeafLitter;
 import tannyjung.tanshugetrees_handcode.misc.Misc;
 import tannyjung.tanshugetrees_handcode.misc.TreeFunction;
 
@@ -339,7 +340,7 @@ public class TreePlacer {
         // Scan "World Gen" File
         {
 
-            File file = new File(Handcode.directory_config + "/custom_packs/.organized/" + id.replace("#", "world_gen") + ".txt");
+            File file = new File(Handcode.directory_config + "/custom_packs/.organized/world_gen/" + id + ".txt");
 
             if (file.exists() == true) {
 
@@ -376,54 +377,55 @@ public class TreePlacer {
         // Scan "Tree Settings" File
         {
 
-            File file = new File(Handcode.directory_config + "/custom_packs/.organized/" + tree_settings);
+            File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
 
             if (file.exists() == true && file.isDirectory() == false) {
 
                 String get_short = "";
                 String get = "";
 
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                // Scan
+                {
 
-                    {
+                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-                        if (read_all.startsWith("living_tree_mechanics = ") == true) {
+                        {
 
-                            {
+                            if (read_all.startsWith("living_tree_mechanics = ") == true) {
 
-                                if (read_all.replace("living_tree_mechanics = ", "").equals("true")) {
+                                {
 
-                                    living_tree_mechanics = true;
+                                    living_tree_mechanics = Boolean.parseBoolean(read_all.replace("living_tree_mechanics = ", ""));
+
+                                }
+
+                            } else if (read_all.startsWith("Block ") == true) {
+
+                                {
+
+                                    get_short = read_all.substring("Block ".length(), "Block ###".length());
+                                    get = read_all.substring("Block ### = ".length());
+                                    map_block.put(get_short, get);
+
+                                }
+
+                            } else if (read_all.startsWith("Function ") == true) {
+
+                                {
+
+                                    get_short = read_all.substring("Function ".length(), "Function ##".length());
+                                    get = read_all.substring("Function ## = ".length());
+                                    map_block.put(get_short, get);
 
                                 }
 
                             }
 
-                        } else if (read_all.startsWith("Block ") == true) {
-
-                            {
-
-                                get_short = read_all.substring("Block ".length(), "Block ###".length());
-                                get = read_all.substring("Block ### = ".length());
-                                map_block.put(get_short, get);
-
-                            }
-
-                        } else if (read_all.startsWith("Function ") == true) {
-
-                            {
-
-                                get_short = read_all.substring("Function ".length(), "Function ##".length());
-                                get = read_all.substring("Function ## = ".length());
-                                map_block.put(get_short, get);
-
-                            }
-
                         }
 
-                    }
+                    } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
 
-                } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                }
 
             }
 
@@ -531,235 +533,112 @@ public class TreePlacer {
                 BlockState block = Blocks.AIR.defaultBlockState();
                 BlockPos pos = null;
                 double pre_leaves_litter_chance = 0.0;
+                int height_motion_block = 0;
                 boolean can_run_function = false;
 
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                // Read File
+                {
 
-                    {
+                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-                        if (read_all.startsWith("+") == true) {
+                        {
 
-                            get_short = "";
-                            get = "";
+                            if (read_all.startsWith("+") == true) {
 
-                            // Test "Block" or "Function" and get value from map
-                            {
+                                get_short = "";
+                                get = "";
 
-                                if (read_all.startsWith("+b") == true) {
+                                // Test "Block" or "Function" and get value from map
+                                {
 
-                                    get_short = read_all.substring(read_all.length() - 3);
-                                    can_run_function = false;
+                                    if (read_all.startsWith("+b") == true) {
 
-                                } else if (read_all.startsWith("+f") == true) {
+                                        get_short = read_all.substring(read_all.length() - 3);
+                                        can_run_function = false;
 
-                                    get_short = read_all.substring(read_all.length() - 2);
+                                    } else if (read_all.startsWith("+f") == true) {
 
-                                }
+                                        get_short = read_all.substring(read_all.length() - 2);
 
-                                get = map_block.get(get_short);
+                                    }
 
-                                // This fix the error >>> Cannot invoke "String.equals(Object)" because "get" is null
-                                try {
+                                    get = map_block.get(get_short);
 
-                                    if (get.equals("") == true) {
+                                    // This fix the error >>> Cannot invoke "String.equals(Object)" because "get" is null
+                                    try {
+
+                                        if (get.equals("") == true) {
+
+                                            continue;
+
+                                        }
+
+                                    } catch (Exception e) {
 
                                         continue;
 
                                     }
 
-                                } catch (Exception e) {
-
-                                    continue;
-
                                 }
 
-                            }
+                                // Dead Tree
+                                {
 
-                            // Dead Tree
-                            {
+                                    if (dead_tree_level != 0) {
 
-                                if (dead_tree_level != 0) {
+                                        if (dead_tree_level >= 1) {
 
-                                    if (dead_tree_level >= 1) {
+                                            if (get_short.startsWith("le") == true) {
 
-                                        if (get_short.startsWith("le") == true) {
-
-                                            continue;
-
-                                        }
-
-                                    }
-
-                                    if (dead_tree_level >= 2) {
-
-                                        if (get_short.startsWith("lt") == true) {
-
-                                            continue;
-
-                                        }
-
-                                    }
-
-                                    if (dead_tree_level >= 3) {
-
-                                        if (get_short.startsWith("tw") == true) {
-
-                                            continue;
-
-                                        }
-
-                                    }
-
-                                    if (dead_tree_level >= 4) {
-
-                                        if (get_short.startsWith("br") == true) {
-
-                                            continue;
-
-                                        } else if (get_short.startsWith("tr") == true) {
-
-                                            if (trunk_count > 0) {
-
-                                                trunk_count = trunk_count - 1;
-
-                                            } else {
-
-                                                break;
+                                                continue;
 
                                             }
 
-                                            if (hollowed == true) {
+                                        }
 
-                                                if (get_short.startsWith("trc") == true) {
+                                        if (dead_tree_level >= 2) {
 
-                                                    continue;
+                                            if (get_short.startsWith("lt") == true) {
+
+                                                continue;
+
+                                            }
+
+                                        }
+
+                                        if (dead_tree_level >= 3) {
+
+                                            if (get_short.startsWith("tw") == true) {
+
+                                                continue;
+
+                                            }
+
+                                        }
+
+                                        if (dead_tree_level >= 4) {
+
+                                            if (get_short.startsWith("br") == true) {
+
+                                                continue;
+
+                                            } else if (get_short.startsWith("tr") == true) {
+
+                                                if (trunk_count > 0) {
+
+                                                    trunk_count = trunk_count - 1;
+
+                                                } else {
+
+                                                    break;
 
                                                 }
 
-                                            }
+                                                if (hollowed == true) {
 
-                                        }
+                                                    if (get_short.startsWith("trc") == true) {
 
-                                    }
-
-                                }
-
-                            }
-
-                            // Get Pos
-                            {
-
-                                // Convert To Pos
-                                {
-
-                                    if (read_all.startsWith("+b") == true) {
-
-                                        test = read_all.substring(2, read_all.length() - 3);
-
-                                    } else if (read_all.startsWith("+f") == true) {
-
-                                        test = read_all.substring(2, read_all.length() - 2);
-
-                                    }
-
-                                    split = test.indexOf("^");
-                                    split2 = test.indexOf("^", split + 1);
-                                    posX = Integer.parseInt(test.substring(0, split));
-                                    posY = Integer.parseInt(test.substring(split + 1, split2));
-                                    posZ = Integer.parseInt(test.substring(split2 + 1));
-
-                                }
-
-                                // Rotation & Mirrored
-                                {
-
-                                    if (mirrored == true) {
-
-                                        posX = posX * (-1);
-
-                                    }
-
-                                    if (rotation == 2) {
-
-                                        int posX_save = posX;
-                                        posX = posZ;
-                                        posZ = posX_save * (-1);
-
-                                    } else if (rotation == 3) {
-
-                                        posX = posX * (-1);
-                                        posZ = posZ * (-1);
-
-                                    } else if (rotation == 4) {
-
-                                        int posX_save = posX;
-                                        int posZ_save = posZ;
-                                        posX = posZ_save * (-1);
-                                        posZ = posX_save;
-
-                                    }
-
-                                }
-
-                                // Apply Block Pos With Real Pos
-                                test_posX = center_posX + posX;
-                                test_posY = center_posY + posY;
-                                test_posZ = center_posZ + posZ;
-
-                            }
-
-                            // Test is in Current Chunk
-                            if (chunk_pos.equals(new ChunkPos(test_posX >> 4, test_posZ >> 4)) == true) {
-
-                                pos = new BlockPos(test_posX, test_posY, test_posZ);
-
-                                // Keep
-                                {
-
-                                    if (get.endsWith(" keep") == true) {
-
-                                        get = get.replace(" keep", "");
-
-                                        if (Misc.isBlockTaggedAs(chunk.getBlockState(pos), "tanshugetrees:passable_blocks") == false || Misc.isBlockTaggedAs(chunk.getBlockState(pos), "tanshugetrees:fluid_blocks") == true) {
-
-                                            continue;
-
-                                        }
-
-                                    }
-
-                                }
-
-                                if (read_all.startsWith("+b")) {
-
-                                    // Place Block
-                                    {
-
-                                        block = Misc.textToBlock(get);
-
-                                        if (block != Blocks.AIR.defaultBlockState()) {
-
-                                            chunk.setBlockState(pos, block, false);
-                                            can_run_function = true;
-
-                                            // Pre Leaves Drop
-                                            {
-
-                                                if (living_tree_mechanics == true && get_short.startsWith("le") == true) {
-
-                                                    if (Misc.isBlockTaggedAs(block, "tanshugetrees:coniferous_leaves_blocks") == true) {
-
-                                                        pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_coniferous_chance;
-
-                                                    } else {
-
-                                                        pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_chance;
-
-                                                    }
-
-                                                    if (Math.random() < pre_leaves_litter_chance) {
-
-                                                        pre_leaves_drop(chunk, pos, block);
+                                                        continue;
 
                                                     }
 
@@ -771,15 +650,163 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (read_all.startsWith("+f")) {
+                                }
 
-                                    // Run Function
+                                // Get Pos
+                                {
+
+                                    // Convert To Pos
                                     {
 
-                                        // Separate like this because start and end function doesn't need to test "can_run_function"
-                                        if (can_run_function == true || get_short.equals("fs") == true || get_short.equals("fe") == true) {
+                                        if (read_all.startsWith("+b") == true) {
 
-                                            TreeFunction.run(level, world, world_gen_level, get, test_posX, test_posY, test_posZ);
+                                            test = read_all.substring(2, read_all.length() - 3);
+
+                                        } else if (read_all.startsWith("+f") == true) {
+
+                                            test = read_all.substring(2, read_all.length() - 2);
+
+                                        }
+
+                                        split = test.indexOf("^");
+                                        split2 = test.indexOf("^", split + 1);
+                                        posX = Integer.parseInt(test.substring(0, split));
+                                        posY = Integer.parseInt(test.substring(split + 1, split2));
+                                        posZ = Integer.parseInt(test.substring(split2 + 1));
+
+                                    }
+
+                                    // Rotation & Mirrored
+                                    {
+
+                                        if (mirrored == true) {
+
+                                            posX = posX * (-1);
+
+                                        }
+
+                                        if (rotation == 2) {
+
+                                            int posX_save = posX;
+                                            posX = posZ;
+                                            posZ = posX_save * (-1);
+
+                                        } else if (rotation == 3) {
+
+                                            posX = posX * (-1);
+                                            posZ = posZ * (-1);
+
+                                        } else if (rotation == 4) {
+
+                                            int posX_save = posX;
+                                            int posZ_save = posZ;
+                                            posX = posZ_save * (-1);
+                                            posZ = posX_save;
+
+                                        }
+
+                                    }
+
+                                    // Apply Block Pos With Real Pos
+                                    test_posX = center_posX + posX;
+                                    test_posY = center_posY + posY;
+                                    test_posZ = center_posZ + posZ;
+
+                                }
+
+                                // Test is in Current Chunk
+                                if (chunk_pos.equals(new ChunkPos(test_posX >> 4, test_posZ >> 4)) == true) {
+
+                                    pos = new BlockPos(test_posX, test_posY, test_posZ);
+
+                                    // Keep
+                                    {
+
+                                        if (get.endsWith(" keep") == true) {
+
+                                            get = get.replace(" keep", "");
+
+                                            if (Misc.isBlockTaggedAs(chunk.getBlockState(pos), "tanshugetrees:passable_blocks") == false || Misc.isBlockTaggedAs(chunk.getBlockState(pos), "tanshugetrees:water_blocks") == true) {
+
+                                                continue;
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                    if (read_all.startsWith("+b")) {
+
+                                        // Place Block
+                                        {
+
+                                            block = Misc.textToBlock(get);
+
+                                            if (block != Blocks.AIR.defaultBlockState()) {
+
+                                                chunk.setBlockState(pos, block, false);
+                                                can_run_function = true;
+
+                                                // Pre Leaves Drop
+                                                {
+
+                                                    if (ConfigMain.pre_leaves_litter == true) {
+
+                                                        if (living_tree_mechanics == true && get_short.startsWith("le") == true) {
+
+                                                            if (Misc.isBlockTaggedAs(block, "tanshugetrees:leaves_blocks") == true) {
+
+                                                                // Get "Chance" Value
+                                                                {
+
+                                                                    if (Misc.isBlockTaggedAs(block, "tanshugetrees:coniferous_leaves_blocks") == true) {
+
+                                                                        pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_chance_coniferous;
+
+                                                                    } else {
+
+                                                                        pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_chance;
+
+                                                                    }
+
+                                                                }
+
+                                                                if (Math.random() < pre_leaves_litter_chance) {
+
+                                                                    height_motion_block = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, test_posX, test_posZ) + 1;
+
+                                                                    if (height_motion_block < test_posY) {
+
+                                                                        LeafLitter.start(chunk, test_posX, height_motion_block, test_posZ, block);
+
+                                                                    }
+
+                                                                }
+
+                                                            }
+
+                                                        }
+
+                                                    }
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                    } else if (read_all.startsWith("+f")) {
+
+                                        // Run Function
+                                        {
+
+                                            // Separate like this because start and end function doesn't need to test "can_run_function"
+                                            if (can_run_function == true || get_short.equals("fs") == true || get_short.equals("fe") == true) {
+
+                                                TreeFunction.run(level, world, world_gen_level, get, test_posX, test_posY, test_posZ);
+
+                                            }
 
                                         }
 
@@ -791,34 +818,9 @@ public class TreePlacer {
 
                         }
 
-                    }
-
-                } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
-
-            }
-
-        }
-
-    }
-
-    private static void pre_leaves_drop (ChunkAccess chunk, BlockPos pos, BlockState block) {
-
-        int height = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) + 1;
-
-        if (height < pos.getY()) {
-
-            // Not The Same Block
-            if (chunk.getBlockState(new BlockPos(pos.getX(), height, pos.getZ())).getBlock() != block.getBlock()) {
-
-                // If Found Water
-                if (Misc.isBlockTaggedAs(chunk.getBlockState(new BlockPos(pos.getX(), height - 1, pos.getZ())), "tanshugetrees:fluid_blocks") == true) {
-
-                    block = (block.getBlock().getStateDefinition().getProperty("waterlogged") instanceof BooleanProperty property ? block.setValue(property, true) : block);
-                    height = height - 1;
+                    } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
 
                 }
-
-                chunk.setBlockState(new BlockPos(pos.getX(), height, pos.getZ()), block, false);
 
             }
 

@@ -26,49 +26,52 @@ public class TestIncompatibleCustomPack {
 
     public static void start () {
 
-        // Scan Main Folder
-        {
+        scanMain();
+        scanOrganized();
 
-            File file = new File(Handcode.directory_config + "/custom_packs");
+    }
 
-            for (File pack : file.listFiles()) {
+    public static void scanMain () {
 
-                if (pack.getName().equals(".organized") == false) {
+        for (File pack : new File(Handcode.directory_config + "/custom_packs").listFiles()) {
 
-                    testVersion(new File(pack.toPath() + "/version.txt").toPath());
+            if (pack.getName().equals(".organized") == false) {
 
-                }
+                testVersion(new File(pack.toPath() + "/version.txt"));
 
             }
 
         }
 
-        // Scan Organized Folder
-        {
+    }
 
-            File file = new File(Handcode.directory_config + "/custom_packs/.organized");
+    public static void scanOrganized () {
 
-            {
+        File file = new File(Handcode.directory_config + "/custom_packs/.organized");
 
-                try {
+        for (File category : file.listFiles()) {
 
-                    Files.walk(file.toPath()).forEach(source -> {
+            if (category.getName().equals("world_gen") == true) {
 
-                        if (source.toFile().isDirectory() == false) {
+                {
 
-                            if (source.getParent().getParent().toFile().getName().equals("world_gen") == true) {
+                    try {
+
+                        Files.walk(category.toPath()).forEach(source -> {
+
+                            if (source.toFile().isDirectory() == false) {
 
                                 testTreeSettings(source);
 
                             }
 
-                        }
+                        });
 
-                    });
+                    } catch (Exception e) {
 
-                } catch (Exception e) {
+                        e.printStackTrace();
 
-                    e.printStackTrace();
+                    }
 
                 }
 
@@ -78,9 +81,9 @@ public class TestIncompatibleCustomPack {
 
     }
 
-    private static void testVersion (Path source) {
+    private static void testVersion (File file) {
 
-        File file = new File(source.toFile().getPath());
+        boolean incompatible = false;
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -96,7 +99,7 @@ public class TestIncompatibleCustomPack {
 
                             if (version != Handcode.mod_version) {
 
-                                rename(new File(source.getParent().getParent().toFile().getPath() + "/.organized/" + source.getParent().toFile().getName()));
+                                incompatible = true;
                                 break;
 
                             }
@@ -111,14 +114,17 @@ public class TestIncompatibleCustomPack {
 
         } else {
 
-            rename(new File(source.getParent().getParent().toFile().getPath() + "/.organized/" + source.getParent().toFile().getName()));
+            incompatible = true;
 
         }
+
+        rename(new File(file.getParentFile().getPath()), incompatible);
 
     }
 
     private static void testTreeSettings (Path source) {
 
+        boolean incompatible = false;
         String tree_settings = "";
 
         // Read "World Gen" File
@@ -141,7 +147,7 @@ public class TestIncompatibleCustomPack {
 
         }
 
-        File file = new File(Handcode.directory_config + "/custom_packs/.organized/" + tree_settings);
+        File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -158,11 +164,9 @@ public class TestIncompatibleCustomPack {
 
                             if (id.equals("") == false) {
 
-                                System.out.println(read_all + "   >   " + id + "   >   " + Misc.textToBlock(id).getBlock());
-
                                 if (Misc.textToBlock(id).getBlock() == Blocks.AIR) {
 
-                                    rename(source.toFile());
+                                    incompatible = true;
                                     break;
 
                                 }
@@ -179,17 +183,27 @@ public class TestIncompatibleCustomPack {
 
         } else {
 
-            rename(source.toFile());
+            incompatible = true;
 
         }
 
+        rename(source.toFile(), incompatible);
+
     }
 
-    private static void rename (File file) {
+    private static void rename (File file, boolean incompatible) {
 
-        if (file.getName().startsWith("[INCOMPATIBLE]") == false) {
+        if (incompatible == true) {
 
-            file.renameTo(new File(file.getParentFile().toPath() + "/[INCOMPATIBLE] " + file.getName()));
+            if (file.getName().startsWith("[INCOMPATIBLE]") == false) {
+
+                file.renameTo(new File(file.getParentFile().toPath() + "/[INCOMPATIBLE] " + file.getName()));
+
+            }
+
+        } else {
+
+            file.renameTo(new File(file.getParentFile().toPath() + "/" + file.getName().replace("[INCOMPATIBLE] ", "")));
 
         }
 

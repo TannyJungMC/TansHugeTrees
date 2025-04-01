@@ -60,8 +60,6 @@ public class TreeLocation {
             int chunk_posZ = 0;
             int center_posX = 0;
             int center_posZ = 0;
-            int center_posY = 0;
-            String tree_data = "";
 
             generating_region = 4;
             generating_region_bar = 0;
@@ -109,7 +107,7 @@ public class TreeLocation {
 
                         generating_region_bar = generating_region_bar + 1;
 
-                        if (Math.random() < ConfigMain.global_rarity * 0.01) {
+                        if (Math.random() < ConfigMain.region_scan_percentage * 0.01) {
 
                             chunk_posX = (region_posX * 32) + scanX;
                             chunk_posZ = (region_posZ * 32) + scanZ;
@@ -118,9 +116,7 @@ public class TreeLocation {
 
                                 center_posX = (chunk_posX * 16) + (int) (Math.random() * 16);
                                 center_posZ = (chunk_posZ * 16) + (int) (Math.random() * 16);
-                                center_posY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
-
-                                getTreeData(level, world, chunk_generator, center_posX, center_posY, center_posZ);
+                                getTreeData(level, world, chunk_generator, center_posX, center_posZ);
 
                             }
 
@@ -139,23 +135,31 @@ public class TreeLocation {
 
     }
 
-    private static void getTreeData (LevelAccessor level, ServerLevel world, ChunkGenerator chunk_generator, int center_posX, int center_posY, int center_posZ) {
+    private static void getTreeData (LevelAccessor level, ServerLevel world, ChunkGenerator chunk_generator, int center_posX, int center_posZ) {
 
         File file = new File(Handcode.directory_config + "/config_placement.txt");
 
         if (file.exists() == true) {
 
+            boolean start_test = false;
             boolean skip = true;
+
+            double multiply_rarity = 0.0;
+            double multiply_min_distance = 0.0;
+            double multiply_dead_tree_chance = 0.0;
+
             String id = "";
+            String biome = "";
             String ground_block = "";
+            double rarity = 0.0;
             int min_distance = 0;
             int group_size = 0;
             double waterside_chance = 0.0;
+            double dead_tree_chance = 0.0;
+            String dead_tree_level = "";
             String start_height_offset = "";
             String rotation = "";
             String mirrored = "";
-            double dead_tree_chance = 0.0;
-            String dead_tree_level = "";
 
             // Read, Test, and Get Values
             {
@@ -166,17 +170,46 @@ public class TreeLocation {
 
                         if (read_all.equals("") == false) {
 
-                            if (read_all.startsWith("[INCOMPATIBLE] ") == false) {
+                            if (start_test == false) {
+
+                                // Before Testing
+                                {
+
+                                    if (read_all.startsWith("---") == true) {
+
+                                        start_test = true;
+
+                                    }
+
+                                    // Get Multiply Values
+                                    {
+
+                                        if (read_all.startsWith("multiply_rarity = ") == true) {
+
+                                            multiply_rarity = Double.parseDouble(read_all.replace("multiply_rarity = ", ""));
+
+                                        } else if (read_all.startsWith("multiply_min_distance = ") == true) {
+
+                                            multiply_min_distance = Double.parseDouble(read_all.replace("multiply_min_distance = ", ""));
+
+                                        } else if (read_all.startsWith("multiply_dead_tree_chance = ") == true) {
+
+                                            multiply_dead_tree_chance = Double.parseDouble(read_all.replace("multiply_dead_tree_chance = ", ""));
+
+                                        }
+
+                                    }
+
+                                }
+
+                            } else if (read_all.startsWith("[INCOMPATIBLE] ") == false) {
 
                                 if (read_all.startsWith("[") == true) {
 
                                     // Reset The Test
                                     {
 
-                                        id = read_all.substring(read_all.indexOf("]") + 2);
-                                        int test = id.indexOf(" > ");
-                                        id = id.substring(0, test) + "/#/" + id.substring(test + 3).replace(" > ", "/");
-
+                                        id = read_all.substring(read_all.indexOf("]") + 2).replace(" > ", "/");
                                         skip = false;
 
                                     }
@@ -202,9 +235,10 @@ public class TreeLocation {
                                             {
 
                                                 boolean test = false;
-                                                Holder<Biome> biome_get = level.getBiome(new BlockPos(center_posX, center_posY - 1, center_posZ));
+                                                biome = read_all.replace("biome = ", "");
+                                                Holder<Biome> biome_get = level.getBiome(new BlockPos(center_posX, level.getMaxBuildHeight(), center_posZ));
 
-                                                for (String split : read_all.replace("biome = ", "").split(" / ")) {
+                                                for (String split : biome.split(" / ")) {
 
                                                     test = true;
 
@@ -279,7 +313,10 @@ public class TreeLocation {
 
                                             {
 
-                                                if (Math.random() >= Double.parseDouble(read_all.replace("rarity = ", "")) * 0.01) {
+                                                rarity = Double.parseDouble(read_all.replace("rarity = ", ""));
+                                                rarity = rarity * multiply_min_distance * 0.01;
+
+                                                if (Math.random() >= rarity) {
 
                                                     skip = true;
 
@@ -292,6 +329,7 @@ public class TreeLocation {
                                             {
 
                                                 min_distance = Integer.parseInt(read_all.replace("min_distance = ", ""));
+                                                min_distance = (int) Math.nextUp(min_distance * multiply_min_distance);
 
                                                 if (min_distance > 0) {
 
@@ -329,6 +367,7 @@ public class TreeLocation {
                                             {
 
                                                 dead_tree_chance = Double.parseDouble(read_all.replace("dead_tree_chance = ", ""));
+                                                dead_tree_chance = dead_tree_chance * multiply_dead_tree_chance;
 
                                             }
 
@@ -390,7 +429,7 @@ public class TreeLocation {
             if (skip == false) {
 
                 String tree_data = id + "|" + ground_block + "|" + start_height_offset + "|" + waterside_chance + "|" + rotation + "|" + mirrored + "|" + dead_tree_chance + "|" + dead_tree_level;
-                readTreeFile(level, world, chunk_generator, tree_data, center_posX, center_posY, center_posZ);
+                readTreeFile(level, world, chunk_generator, tree_data, center_posX, center_posZ);
 
                 // Group Spawning
                 {
@@ -404,14 +443,11 @@ public class TreeLocation {
                             center_posX = center_posX + Mth.nextInt(RandomSource.create(), -min_distance_plus, min_distance_plus);
                             center_posZ = center_posZ + Mth.nextInt(RandomSource.create(), -min_distance_plus, min_distance_plus);
 
-                            if (testDistance(id, center_posX, center_posZ, min_distance) == false) {
+                            if (testDistance(id, center_posX, center_posZ, min_distance) == true) {
 
-                                continue;
+                                readTreeFile(level, world, chunk_generator, tree_data, center_posX, center_posZ);
 
                             }
-
-                            center_posY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
-                            readTreeFile(level, world, chunk_generator, tree_data, center_posX, center_posY, center_posZ);
 
                         }
 
@@ -512,7 +548,7 @@ public class TreeLocation {
 
     }
 
-    private static void readTreeFile (LevelAccessor level, ServerLevel world, ChunkGenerator chunk_generator, String tree_data, int center_posX, int center_posY, int center_posZ) {
+    private static void readTreeFile (LevelAccessor level, ServerLevel world, ChunkGenerator chunk_generator, String tree_data, int center_posX, int center_posZ) {
 
         String storage_directory = "";
         String tree_settings = "";
@@ -530,31 +566,35 @@ public class TreeLocation {
         // Scan "World Gen" File
         {
 
-            File file = new File(Handcode.directory_config + "/custom_packs/.organized/" + id.replace("#", "world_gen") + ".txt");
+            File file = new File(Handcode.directory_config + "/custom_packs/.organized/world_gen/" + id + ".txt");
 
-            if (file.exists() == true) {
+            if (file.exists() == true && file.isDirectory() == false) {
 
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                {
 
-                    {
+                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-                        if (read_all.startsWith("storage_directory = ") == true) {
+                        {
 
-                            storage_directory = read_all.replace("storage_directory = ", "");
+                            if (read_all.startsWith("storage_directory = ") == true) {
 
-                        } else if (read_all.startsWith("tree_settings = ") == true) {
+                                storage_directory = read_all.replace("storage_directory = ", "");
 
-                            tree_settings = read_all.replace("tree_settings = ", "");
+                            } else if (read_all.startsWith("tree_settings = ") == true) {
 
-                        } else {
+                                tree_settings = read_all.replace("tree_settings = ", "");
 
-                            break;
+                            } else {
+
+                                break;
+
+                            }
 
                         }
 
-                    }
+                    } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
 
-                } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                }
 
             }
 
@@ -567,7 +607,7 @@ public class TreeLocation {
 
             File[] list = chosen.listFiles();
 
-            if (list != null) {
+            if (list.length > 0) {
 
                 chosen = new File(chosen.toPath() + "/" + list[(int) (Math.random() * list.length)].getName());
 
@@ -577,41 +617,47 @@ public class TreeLocation {
 
         if (chosen.exists() == true && chosen.isDirectory() == false) {
 
+            int center_posY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
+
             // Surface Smoothness Detector & Waterside Chance
             {
 
-                if (ConfigMain.surrounding_area_detection_size != 0) {
+                if (ConfigMain.surrounding_area_detection_size > 0) {
 
-                    int size = ConfigMain.surrounding_area_detection_size;
-                    int ocean_floor1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
-                    int ocean_floor2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
-                    int ocean_floor3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
-                    int ocean_floor4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
+                    if (ConfigMain.surface_smoothness_detection == true || ConfigMain.waterside_detection == true) {
 
-                    if (ConfigMain.surface_smoothness_detection == true) {
+                        int size = ConfigMain.surrounding_area_detection_size;
+                        int ocean_floor1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
+                        int ocean_floor2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
+                        int ocean_floor3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
+                        int ocean_floor4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
 
-                        int height = ConfigMain.surface_smoothness_detection_height;
+                        if (ConfigMain.surface_smoothness_detection == true) {
 
-                        if ((Math.abs(center_posY - ocean_floor1) > height) || (Math.abs(center_posY - ocean_floor2) > height) || (Math.abs(center_posY - ocean_floor3) > height) || (Math.abs(center_posY - ocean_floor4) > height)) {
+                            int height = ConfigMain.surface_smoothness_detection_height;
 
-                            return;
+                            if ((Math.abs(center_posY - ocean_floor1) > height) || (Math.abs(center_posY - ocean_floor2) > height) || (Math.abs(center_posY - ocean_floor3) > height) || (Math.abs(center_posY - ocean_floor4) > height)) {
+
+                                return;
+
+                            }
 
                         }
 
-                    }
+                        if (ConfigMain.waterside_detection == true) {
 
-                    if (ConfigMain.waterside_detection == true) {
+                            if (Math.random() < waterside_chance) {
 
-                        if (Math.random() < waterside_chance) {
+                                int world_surface1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
+                                int world_surface2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
+                                int world_surface3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
+                                int world_surface4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
 
-                            int world_surface1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
-                            int world_surface2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
-                            int world_surface3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
-                            int world_surface4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
+                                if ((world_surface1 == ocean_floor1) && (world_surface2 == ocean_floor2) && (world_surface3 == ocean_floor3) && (world_surface4 == ocean_floor4)) {
 
-                            if ((world_surface1 == ocean_floor1) && (world_surface2 == ocean_floor2) && (world_surface3 == ocean_floor3) && (world_surface4 == ocean_floor4)) {
+                                    return;
 
-                                return;
+                                }
 
                             }
 
@@ -631,7 +677,7 @@ public class TreeLocation {
             // Scan "Tree Settings" File
             {
 
-                File file = new File(Handcode.directory_config + "/custom_packs/" + tree_settings);
+                File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
 
                 if (file.exists() == true && file.isDirectory() == false) {
 
@@ -880,21 +926,13 @@ public class TreeLocation {
                 int pointX = center_posX - center_sizeX;
                 int pointZ = center_posZ - center_sizeZ;
 
-                if (true
-                    //(center_posX > pointX && center_posZ > pointZ)
-                    //&&
-                    //(center_posX < center_posX + center_sizeX && center_posZ < center_posZ + center_sizeZ)
-                ) {
+                for (int scanX = pointX >> 4; scanX <= Math.nextUp((pointX + sizeX) / 16.0); scanX++) {
 
-                    for (int scanX = pointX >> 4; scanX <= Math.nextUp((pointX + sizeX) / 16.0); scanX++) {
+                    for (int scanZ = pointZ >> 4; scanZ <= Math.nextUp((pointZ + sizeZ) / 16.0); scanZ++) {
 
-                        for (int scanZ = pointZ >> 4; scanZ <= Math.nextUp((pointZ + sizeZ) / 16.0); scanZ++) {
+                        if (level.hasChunk(scanX, scanZ) == true && level.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.FEATURES) == true) {
 
-                            if (level.hasChunk(scanX, scanZ) == true && level.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.FEATURES) == true) {
-
-                                return;
-
-                            }
+                            return;
 
                         }
 

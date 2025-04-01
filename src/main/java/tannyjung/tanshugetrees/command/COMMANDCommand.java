@@ -42,7 +42,7 @@ import com.mojang.brigadier.arguments.DoubleArgumentType;
 public class COMMANDCommand {
 	@SubscribeEvent
 	public static void registerCommand(RegisterCommandsEvent event) {
-		event.getDispatcher().register(Commands.literal("THT").requires(s -> s.hasPermission(2)).then(Commands.literal("tanny_pack").then(Commands.literal("check_update").executes(arguments -> {
+		event.getDispatcher().register(Commands.literal("tanshugetrees").requires(s -> s.hasPermission(2)).then(Commands.literal("tanny_pack").then(Commands.literal("check_update").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
 			double x = arguments.getSource().getPosition().x();
 			double y = arguments.getSource().getPosition().y();
@@ -96,7 +96,7 @@ public class COMMANDCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			COMMANDConfigApplyProcedure.execute();
+			COMMANDConfigApplyProcedure.execute(world, x, y, z);
 			return 0;
 		}))).then(Commands.literal("command").then(Commands.literal("txt_function").then(Commands.argument("file", StringArgumentType.word()).then(Commands.argument("folder", MessageArgument.message()).executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
