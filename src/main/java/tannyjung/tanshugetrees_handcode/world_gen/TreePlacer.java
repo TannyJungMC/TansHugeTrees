@@ -512,7 +512,6 @@ public class TreePlacer {
 
                 LevelAccessor level = context.level();
                 ServerLevel world = context.level().getLevel();
-                WorldGenLevel world_gen_level = context.level();
                 ChunkPos chunk_pos = new ChunkPos(context.origin().getX() >> 4, context.origin().getZ() >> 4);
                 ChunkAccess chunk = context.level().getChunk(chunk_pos.x, chunk_pos.z);
 
@@ -745,40 +744,61 @@ public class TreePlacer {
 
                                             if (block != Blocks.AIR.defaultBlockState()) {
 
-                                                chunk.setBlockState(pos, block, false);
-                                                can_run_function = true;
-
-                                                // Pre Leaves Drop
+                                                // Leaves
                                                 {
 
-                                                    if (ConfigMain.pre_leaves_litter == true) {
+                                                    if (living_tree_mechanics == true) {
 
-                                                        if (living_tree_mechanics == true && get_short.startsWith("le") == true) {
+                                                        if (get_short.startsWith("le") == true && Misc.isBlockTaggedAs(block, "tanshugetrees:leaves_blocks") == true) {
 
-                                                            if (Misc.isBlockTaggedAs(block, "tanshugetrees:leaves_blocks") == true) {
+                                                            // Pre Leaves Drop
+                                                            {
 
-                                                                // Get "Chance" Value
-                                                                {
+                                                                if (ConfigMain.pre_leaves_litter == true) {
 
-                                                                    if (Misc.isBlockTaggedAs(block, "tanshugetrees:coniferous_leaves_blocks") == true) {
+                                                                    // Get "Chance" Value
+                                                                    {
 
-                                                                        pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_chance_coniferous;
+                                                                        if (Misc.isBlockTaggedAs(block, "tanshugetrees:coniferous_leaves_blocks") == true) {
 
-                                                                    } else {
+                                                                            pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_chance_coniferous;
 
-                                                                        pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_chance;
+                                                                        } else {
+
+                                                                            pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_chance;
+
+                                                                        }
+
+                                                                    }
+
+                                                                    if (Math.random() < pre_leaves_litter_chance) {
+
+                                                                        height_motion_block = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, test_posX, test_posZ) + 1;
+
+                                                                        if (height_motion_block < test_posY) {
+
+                                                                            LeafLitter.start(chunk, test_posX, height_motion_block, test_posZ, block);
+
+                                                                        }
 
                                                                     }
 
                                                                 }
 
-                                                                if (Math.random() < pre_leaves_litter_chance) {
+                                                            }
 
-                                                                    height_motion_block = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, test_posX, test_posZ) + 1;
+                                                            // Abscission (World Gen)
+                                                            {
 
-                                                                    if (height_motion_block < test_posY) {
+                                                                if (ConfigMain.abscission_world_gen == true) {
 
-                                                                        LeafLitter.start(chunk, test_posX, height_motion_block, test_posZ, block);
+                                                                    if (Misc.isBlockTaggedAs(block, "tanshugetrees:deciduous_leaves_blocks") == true) {
+
+                                                                        if (Misc.isBiomeTaggedAs(level.getBiome(new BlockPos(center_posX, center_posY, center_posZ)), "forge:is_snowy") == true) {
+
+                                                                            continue;
+
+                                                                        }
 
                                                                     }
 
@@ -792,6 +812,9 @@ public class TreePlacer {
 
                                                 }
 
+                                                chunk.setBlockState(pos, block, false);
+                                                can_run_function = true;
+
                                             }
 
                                         }
@@ -804,7 +827,7 @@ public class TreePlacer {
                                             // Separate like this because start and end function doesn't need to test "can_run_function"
                                             if (can_run_function == true || get_short.equals("fs") == true || get_short.equals("fe") == true) {
 
-                                                TreeFunction.run(level, world, world_gen_level, get, test_posX, test_posY, test_posZ);
+                                                TreeFunction.run(level, get, test_posX, test_posY, test_posZ);
 
                                             }
 

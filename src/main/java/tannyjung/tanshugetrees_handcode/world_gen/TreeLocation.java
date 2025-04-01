@@ -607,7 +607,7 @@ public class TreeLocation {
 
             File[] list = chosen.listFiles();
 
-            if (list.length > 0) {
+            if (list != null) {
 
                 chosen = new File(chosen.toPath() + "/" + list[(int) (Math.random() * list.length)].getName());
 

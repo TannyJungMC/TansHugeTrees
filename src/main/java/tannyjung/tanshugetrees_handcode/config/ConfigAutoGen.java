@@ -18,7 +18,7 @@ public class ConfigAutoGen {
 			
 			----------------------------------------------------------------------------------------------------
 			
-			file_location = THT-tree_pack-main/presets/folder/file.txt
+			file_location = TannyJung-Tree-Pack/presets/folder/file.txt
 			
 			generate_speed = 1
 			generate_speed_repeat = 10000

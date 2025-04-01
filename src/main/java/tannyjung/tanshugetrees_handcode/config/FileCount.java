@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.CommandSource;
+import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.File;
 
@@ -73,7 +74,7 @@ public class FileCount {
         file_size_mb = (double) (file_size  / (1024.0 * 1024.0));
 
         if (level instanceof ServerLevel _level) {
-        	_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL,new Vec3(x, y, z), Vec2.ZERO, _level, 4, "",Component.literal(""), _level.getServer(), null).withSuppressedOutput(),("tellraw @a [{\"text\":\"There are now \",\"color\":\"white\"},{\"text\":\"" + count_tree + "\",\"color\":\"yellow\"},{\"text\":\" species of trees and nature stuffs in the TannyJung's Tree Pack, and \",\"color\":\"white\"},{\"text\":\"" + count_file + "\",\"color\":\"yellow\"},{\"text\":\" different shapes in total! (\",\"color\":\"white\"},{\"text\":\"" + String.format("%.1f", file_size_mb) + " MB\",\"color\":\"yellow\"},{\"text\":\")\",\"color\":\"white\"}]"));
+        	_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL,new Vec3(x, y, z), Vec2.ZERO, _level, 4, "",Component.literal(""), _level.getServer(), null).withSuppressedOutput(),("tellraw @a [{\"text\":\"There are now \",\"color\":\"white\"},{\"text\":\"" + count_tree + "\",\"color\":\"yellow\"},{\"text\":\" species in TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + "), and \",\"color\":\"white\"},{\"text\":\"" + count_file + "\",\"color\":\"yellow\"},{\"text\":\" different shapes in total! (\",\"color\":\"white\"},{\"text\":\"" + String.format("%.1f", file_size_mb) + " MB\",\"color\":\"yellow\"},{\"text\":\")\",\"color\":\"white\"}]"));
 		}
 
     }
@@ -88,7 +89,7 @@ public class FileCount {
 
     private static void scan_tree () throws Exception {
         
-        directory = new File(folder_scan + "/THT-tree_pack-main/presets");
+        directory = new File(folder_scan + "/TannyJung-Tree-Pack/presets");
         list_tree = directory.listFiles();
 
         if (list_tree != null) {for (int i_tree = 0; i_tree < list_tree.length;) {
@@ -119,7 +120,7 @@ public class FileCount {
 
     private static void scan_file () throws Exception {
 
-        directory = new File(folder_scan + "/THT-tree_pack-main/presets/" + tree_name + "/storage");
+        directory = new File(folder_scan + "/TannyJung-Tree-Pack/presets/" + tree_name + "/storage");
         list_file = directory.listFiles();
 
         if (list_file != null) {for (int i_file = 0; i_file < list_file.length;) {

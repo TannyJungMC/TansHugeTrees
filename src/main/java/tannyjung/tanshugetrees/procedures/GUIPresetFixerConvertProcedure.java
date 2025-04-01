@@ -30,7 +30,7 @@ public class GUIPresetFixerConvertProcedure {
 		String name = "";
 		boolean start = false;
 		all = guistate.containsKey("textin:preset") ? (String) guistate.get("textin:preset") : "";
-		file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/THT-tree_pack-main/dev"), File.separator + "preset_template.txt");
+		file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/TannyJung-Tree-Pack/dev"), File.separator + "preset_template.txt");
 		if (file.exists()) {
 			try {
 				BufferedReader fileReader = new BufferedReader(new FileReader(file));

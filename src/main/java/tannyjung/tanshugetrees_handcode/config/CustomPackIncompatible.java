@@ -1,28 +1,17 @@
 package tannyjung.tanshugetrees_handcode.config;
 
-import net.minecraft.commands.CommandSource;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.loading.FMLPaths;
-import tannyjung.tanshugetrees.TanshugetreesMod;
-import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.misc.Misc;
+import tannyjung.tanshugetrees_handcode.misc.MiscOutside;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.concurrent.CompletableFuture;
 
-public class TestIncompatibleCustomPack {
+public class CustomPackIncompatible {
 
     public static void start () {
 
@@ -95,14 +84,14 @@ public class TestIncompatibleCustomPack {
 
                         if (read_all.startsWith("mod_version = ")) {
 
-                            int version = Integer.parseInt(read_all.replace("mod_version = ", ""));
-
-                            if (version != Handcode.mod_version) {
+                            if (Double.parseDouble(read_all.replace("mod_version = ", "")) != Handcode.mod_version) {
 
                                 incompatible = true;
                                 break;
 
                             }
+
+                            break;
 
                         }
 

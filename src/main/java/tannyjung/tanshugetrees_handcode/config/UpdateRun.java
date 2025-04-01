@@ -3,9 +3,7 @@ package tannyjung.tanshugetrees_handcode.config;
 import net.minecraft.world.level.LevelAccessor;
 
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Comparator;
@@ -15,7 +13,6 @@ import java.util.zip.ZipOutputStream;
 
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees.procedures.SendChatMessageProcedure;
 import tannyjung.tanshugetrees_handcode.misc.Misc;
 import tannyjung.tanshugetrees_handcode.misc.MiscOutside;
 
@@ -25,36 +22,33 @@ public class UpdateRun {
 
     public static void start (LevelAccessor level) {
 
-		String url = "";
-
-		if (ConfigMain.wip_version == false) {
-
-			url = "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version + "/version.txt";
-
-		} else {
-
-			url = "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/wip/version.txt";
-
-		}
+		String url = "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt";
 
 		if (MiscOutside.isConnectedToInternet() == false) {
 
-			SendChatMessageProcedure.execute(level, "red", "@a", "THT : Can't update the tree pack right now, as no internet connection.");
+			Misc.sendChatMessage(level, "@a", "red", "THT : Can't update the tree pack right now, as no internet connection.");
 
 		} else {
 
 			if (checkModVersion(level, url) == true) {
 
-				SendChatMessageProcedure.execute(level, "white", "@a", "");
-				SendChatMessageProcedure.execute(level, "gray", "@a", "THT : Started the installation, this may take a while.");
+				Misc.sendChatMessage(level, "@a", "white", "");
+				Misc.sendChatMessage(level, "@a", "gray", "THT : Started the installation, this may take a while.");
 				error = "";
 
-				if (error.equals("") == true) {deleteOldPackFolder();}
+				// Delete Old Folders
+				{
+
+					deleteOldPackFolder(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack");
+					deleteOldPackFolder(Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Tree-Pack");
+
+				}
+
 				if (error.equals("") == true) {createZIP();}
-				if (error.equals("") == true) {download(level);}
+				if (error.equals("") == true) {download();}
 				if (error.equals("") == true) {unzip();}
 				if (error.equals("") == true) {deleteZIP();}
-				if (error.equals("") == true) {renameFolder(level);}
+				if (error.equals("") == true) {renameFolder();}
 
 				if (error.equals("") == false) {
 
@@ -64,13 +58,12 @@ public class UpdateRun {
 
 					Misc.sendChatMessage(level, "@a", "gray", "THT : Install Completed!");
 					ConfigRepairAll.start(null);
-					Misc.runCommand(level, 0, 0, 0, "tanshugetrees config repair");
-					Misc.runCommand(level, 0, 0, 0, "tanshugetrees config apply");
+					ConfigMain.apply(null);
 
 					Misc.sendChatMessage(level, "@a", "white", "");
 					FileCount.start(level, 0, 0, 0);
 					Misc.sendChatMessage(level, "@a", "white", "");
-					SendMessageWhenUpdate.start(level, 0, 0, 0);
+					PackMessage.start(level);
 
 				}
 
@@ -86,7 +79,7 @@ public class UpdateRun {
 	private static boolean checkModVersion (LevelAccessor level, String url) {
 
 		boolean return_logic = true;
-		int mod_version_url = 0;
+		double mod_version_url = 0.0;
 
 		// Read URL
 		{
@@ -100,7 +93,7 @@ public class UpdateRun {
 
 					if (read_all.startsWith("mod_version = ")) {
 
-						mod_version_url = Integer.parseInt(read_all.replace("mod_version = ", ""));
+						mod_version_url = Double.parseDouble(read_all.replace("mod_version = ", ""));
 
 					}
 
@@ -115,9 +108,9 @@ public class UpdateRun {
 
         }
 
-		if (Handcode.mod_version > mod_version_url) {
+		if (Handcode.mod_version != mod_version_url) {
 
-			SendChatMessageProcedure.execute(level, "red", "@a", "THT : You're currently using mod version that does not support to new tree pack version, try update the mod and do it again.");
+			Misc.sendChatMessage(level, "@a", "red", "THT : You're currently using mod version that does not support to new tree pack version, try update the mod and do it again.");
 			TanshugetreesMod.LOGGER.info("Your version is " + Handcode.mod_version + " but tree pack needed " + mod_version_url);
 
 			return_logic = false;
@@ -128,19 +121,17 @@ public class UpdateRun {
 
 	}
 
-	private static void deleteOldPackFolder () {
+	private static void deleteOldPackFolder (String path) {
 
-		String file = Handcode.directory_config + "/custom_packs/THT-tree_pack-main";
-
-		if (new File(file).exists() == true) {
+		if (new File(path).exists() == true) {
 
 			try {
 
-				Files.walk(Paths.get(file)).sorted(Comparator.reverseOrder()).forEach(path -> {
+				Files.walk(Paths.get(path)).sorted(Comparator.reverseOrder()).forEach(source -> {
 
 					try {
 
-						Files.delete(path);
+						Files.delete(source);
 
 					} catch (Exception e) {
 
@@ -162,7 +153,7 @@ public class UpdateRun {
 
 	private static void createZIP () {
 
-		File file = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-main.zip");
+		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip");
 		ZipOutputStream out = null;
 
 		try {
@@ -178,20 +169,10 @@ public class UpdateRun {
 
 	}
 
-	private static void download (LevelAccessor level) {
+	private static void download () {
 
-		String download_from = "";
-		String download_to = Handcode.directory_config + "/custom_packs/THT-tree_pack-main.zip";
-
-		if (ConfigMain.wip_version == false) {
-
-			download_from = "https://github.com/TannyJungMC/THT-tree_pack/archive/refs/heads/" + Handcode.tanny_pack_version + ".zip";
-
-		} else {
-
-			download_from = "https://github.com/TannyJungMC/THT-tree_pack/archive/refs/heads/wip.zip";
-
-		}
+		String download_from = "https://github.com/TannyJungMC/THT-tree_pack/archive/refs/heads/" + Handcode.tanny_pack_version_name.toLowerCase() + ".zip";
+		String download_to = Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip";
 
 		try {
 
@@ -210,6 +191,8 @@ public class UpdateRun {
 
 			}
 
+			TanshugetreesMod.LOGGER.info("THT : Downloaded " + download_from);
+
 		} catch (Exception e) {
 
 			error = "Downloading The Pack From " + download_from;
@@ -220,7 +203,7 @@ public class UpdateRun {
 
 	private static void unzip () {
 
-		File unzip = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-main.zip");
+		File unzip = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip");
 		File unzip_to = new File(Handcode.directory_config + "/custom_packs");
 		byte[] buffer = new byte[1024];
 
@@ -315,7 +298,7 @@ public class UpdateRun {
 
 	private static void deleteZIP () {
 
-		File file = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-main.zip");
+		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip");
 
 		if (file.exists() == true) {
 
@@ -345,20 +328,10 @@ public class UpdateRun {
 
 	}
 
-	private static void renameFolder (LevelAccessor level) {
+	private static void renameFolder () {
 
-		File rename_from;
-		File rename_to = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-main");
-
-		if (ConfigMain.wip_version == false) {
-
-			rename_from = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-" + Handcode.tanny_pack_version);
-
-		} else {
-
-			rename_from = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-wip");
-
-		}
+		File rename_from = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-" + Handcode.tanny_pack_version_name.toLowerCase());
+		File rename_to = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack");
 
 		if (rename_from.renameTo(rename_to) == false) {
 

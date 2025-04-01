@@ -100,7 +100,7 @@ public class SaplingBlockTickProcedure {
 					if (true) {
 						sapling = (world.getBlockState(BlockPos.containing(x, y, z)));
 						if (true) {
-							file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/THT-tree_pack-main/presets/" + (ForgeRegistries.BLOCKS.getKey(sapling.getBlock()).toString()).replace("tanshugetrees:", "")),
+							file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/TannyJung-Tree-Pack/presets/" + (ForgeRegistries.BLOCKS.getKey(sapling.getBlock()).toString()).replace("tanshugetrees:", "")),
 									File.separator + ((ForgeRegistries.BLOCKS.getKey(sapling.getBlock()).toString()).replace("tanshugetrees:", "") + ".txt"));
 						}
 						if (file.exists()) {

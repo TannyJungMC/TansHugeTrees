@@ -82,14 +82,14 @@ public class SaplingBlockRightClickProcedure {
 						cancel = "No preset in this custom sapling";
 					}
 				} else {
-					file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/THT-tree_pack-main"), File.separator + "version.txt");
+					file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/TannyJung-Tree-Pack"), File.separator + "version.txt");
 					if (file.exists() == false) {
 						cancel = "Needed TannyJung Tree Pack";
 						COMMANDPackCkeckUpdateProcedure.execute(world, x, y, z);
 					} else {
 						sapling = (world.getBlockState(BlockPos.containing(x, y, z)));
 						file_name = (ForgeRegistries.BLOCKS.getKey(sapling.getBlock()).toString()).replace("tanshugetrees:", "");
-						file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/.organized/presets/THT-tree_pack-main/" + file_name), File.separator + (file_name + ".txt"));
+						file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/.organized/presets/TannyJung-Tree-Pack/" + file_name), File.separator + (file_name + ".txt"));
 						if (file.exists() == false) {
 							cancel = "Preset not have been added yet";
 						}

@@ -19,7 +19,7 @@ import java.io.FileReader;
 
 public class TreeFunction {
 
-	public static void run (LevelAccessor level, ServerLevel world, WorldGenLevel world_gen_level, String path, int posX, int posY, int posZ) {
+	public static void run (LevelAccessor level, String path, int posX, int posY, int posZ) {
 
 		File file = new File(Handcode.directory_config + "/custom_packs/.organized/functions/" + path);
 
@@ -129,7 +129,7 @@ public class TreeFunction {
 
 								if (Math.random() < chance) {
 
-									level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(feature)).value().place(world_gen_level, world.getChunkSource().getGenerator(), level.getRandom(), BlockPos.containing(posX + offset_posX, posY + offset_posY, posZ + offset_posZ));
+									level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(feature)).value().place((WorldGenLevel) level, ((WorldGenLevel) level).getLevel().getChunkSource().getGenerator(), level.getRandom(), BlockPos.containing(posX + offset_posX, posY + offset_posY, posZ + offset_posZ));
 
 								}
 

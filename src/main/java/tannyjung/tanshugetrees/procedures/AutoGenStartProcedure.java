@@ -60,7 +60,7 @@ public class AutoGenStartProcedure {
 					}
 				}
 			}
-			if ((file_location).equals("") || (file_location).equals("THT-tree_pack-main/presets/folder/file.txt")) {
+			if ((file_location).equals("") || (file_location).equals("TannyJung-Tree-Pack/presets/folder/file.txt")) {
 				if (world instanceof ServerLevel _level)
 					_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
 							"tellraw @a [{\"text\":\"THT : It seems you are using this system without knowing what is it. This is developer tool for generate tree files from presets, not recommended to touching this unless you are developing custom trees. For how to use please read in [ auto_gen.txt ] in the config folder.\",\"color\":\"gray\"}]");

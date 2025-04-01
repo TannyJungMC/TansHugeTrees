@@ -14,10 +14,10 @@ public class ConfigRepairAll {
 		FileManager.createFolder(Handcode.directory_config + "/custom_packs/.organized");
 		FileManager.createFolder(Handcode.directory_config + "/generated");
 
-		CustomPacksOrganized.clearFolder();
-		TestIncompatibleCustomPack.scanMain();
-		CustomPacksOrganized.start();
-		TestIncompatibleCustomPack.scanOrganized();
+		CustomPackOrganized.clearFolder();
+		CustomPackIncompatible.scanMain();
+		CustomPackOrganized.start();
+		CustomPackIncompatible.scanOrganized();
 
 		ConfigMain.repair();
 		ConfigAutoGen.repair();
