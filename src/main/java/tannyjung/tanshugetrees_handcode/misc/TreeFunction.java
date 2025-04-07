@@ -91,11 +91,7 @@ public class TreeFunction {
 
 												if (keep == true) {
 
-													if (
-														Misc.isBlockTaggedAs(level.getBlockState(pos), "tanshugetrees:passable_blocks") == false
-														||
-														Misc.isBlockTaggedAs(level.getBlockState(pos), "tanshugetrees:water_blocks") == true
-													) {
+													if (Misc.isBlockTaggedAs(level.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level.isWaterAt(pos) == true) {
 
 														continue;
 
@@ -145,7 +141,7 @@ public class TreeFunction {
 
 				}
 
-			} buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+			} buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
 		}
 

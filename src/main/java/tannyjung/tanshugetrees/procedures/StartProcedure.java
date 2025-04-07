@@ -1,6 +1,5 @@
 package tannyjung.tanshugetrees.procedures;
 
-import tannyjung.tanshugetrees_handcode.config.ConfigRepairAll;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
@@ -38,14 +37,13 @@ public class StartProcedure {
 		if ((world.isClientSide() ? Minecraft.getInstance().getConnection().getOnlinePlayers().size() : ServerLifecycleHooks.getCurrentServer().getPlayerCount()) == 1) {
 			TanshugetreesModVariables.MapVariables.get(world).version_1192 = false;
 			TanshugetreesModVariables.MapVariables.get(world).syncData(world);
-			if (true) {
-				ConfigRepairAll.start(null);
-				ConfigMain.apply(null);
-				if (TanshugetreesModVariables.MapVariables.get(world).auto_gen == true) {
-					if (world instanceof ServerLevel _level)
-						_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-								"execute in tanshugetrees:dimension positioned 0 0 0 run forceload add 16 16 -16 -16");
-				}
+			if (world instanceof ServerLevel _level)
+				_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
+						"scoreboard objectives add tanshugetrees dummy");
+			if (TanshugetreesModVariables.MapVariables.get(world).auto_gen == true) {
+				if (world instanceof ServerLevel _level)
+					_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
+							"execute in tanshugetrees:dimension positioned 0 0 0 run forceload add 16 16 -16 -16");
 			}
 			TanshugetreesMod.queueServerWork(100, () -> {
 				if (ConfigMain.auto_check_update == true) {

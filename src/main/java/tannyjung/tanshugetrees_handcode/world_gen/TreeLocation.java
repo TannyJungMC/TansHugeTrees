@@ -2,25 +2,21 @@ package tannyjung.tanshugetrees_handcode.world_gen;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.*;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import tannyjung.tanshugetrees.TanshugetreesMod;
-import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.misc.FileManager;
 import tannyjung.tanshugetrees_handcode.misc.Misc;
+import tannyjung.tanshugetrees_handcode.misc.MiscOutside;
 
 import java.io.*;
 import java.util.concurrent.*;
@@ -34,24 +30,12 @@ public class TreeLocation {
 
         int region_posX = context.origin().getX() >> 9;
         int region_posZ = context.origin().getZ() >> 9;
-        File file = new File(Handcode.directory_world_data + "/regions/" + region_posX + "," + region_posZ + ".txt");
+        File file = new File(Handcode.directory_world_data + "/tree_locations/" + region_posX + "," + region_posZ);
 
         if (file.exists() == false) {
 
-            // Write The File
-            {
-
-                StringBuilder write = new StringBuilder();
-
-                {
-
-                    write.append("");
-
-                }
-
-                FileManager.writeTXT(file.toPath().toString(), write.toString(), true);
-
-            }
+            // Prepairing The Folder
+            FileManager.createFolder(file.toPath().toString());
 
             LevelAccessor level = context.level();
             ServerLevel world = context.level().getLevel();
@@ -88,7 +72,7 @@ public class TreeLocation {
 
                         } catch (InterruptedException e) {
 
-                            e.printStackTrace();
+                            TanshugetreesMod.LOGGER.error(e.getMessage());
 
                         }
 
@@ -146,7 +130,10 @@ public class TreeLocation {
 
             double multiply_rarity = 0.0;
             double multiply_min_distance = 0.0;
+            double multiply_group_size = 0.0;
+            double multiply_waterside_chance = 0.0;
             double multiply_dead_tree_chance = 0.0;
+            Holder<Biome> biome_center = null;
 
             String id = "";
             String biome = "";
@@ -161,7 +148,7 @@ public class TreeLocation {
             String rotation = "";
             String mirrored = "";
 
-            // Read, Test, and Get Values
+            // Read / Test / Get Values
             {
 
                 try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
@@ -172,33 +159,43 @@ public class TreeLocation {
 
                             if (start_test == false) {
 
-                                // Before Testing
+                                if (read_all.startsWith("---") == true) {
+
+                                    start_test = true;
+
+                                }
+
+                                // Get Multiply Values
                                 {
 
-                                    if (read_all.startsWith("---") == true) {
+                                    if (read_all.startsWith("multiply_rarity = ") == true) {
 
-                                        start_test = true;
+                                        multiply_rarity = Double.parseDouble(read_all.replace("multiply_rarity = ", ""));
 
-                                    }
+                                    } else if (read_all.startsWith("multiply_min_distance = ") == true) {
 
-                                    // Get Multiply Values
-                                    {
+                                        multiply_min_distance = Double.parseDouble(read_all.replace("multiply_min_distance = ", ""));
 
-                                        if (read_all.startsWith("multiply_rarity = ") == true) {
+                                    } else if (read_all.startsWith("multiply_group_size = ") == true) {
 
-                                            multiply_rarity = Double.parseDouble(read_all.replace("multiply_rarity = ", ""));
+                                        multiply_group_size = Double.parseDouble(read_all.replace("multiply_group_size = ", ""));
 
-                                        } else if (read_all.startsWith("multiply_min_distance = ") == true) {
+                                    } else if (read_all.startsWith("multiply_waterside_chance = ") == true) {
 
-                                            multiply_min_distance = Double.parseDouble(read_all.replace("multiply_min_distance = ", ""));
+                                        multiply_waterside_chance = Double.parseDouble(read_all.replace("multiply_waterside_chance = ", ""));
 
-                                        } else if (read_all.startsWith("multiply_dead_tree_chance = ") == true) {
+                                    } else if (read_all.startsWith("multiply_dead_tree_chance = ") == true) {
 
-                                            multiply_dead_tree_chance = Double.parseDouble(read_all.replace("multiply_dead_tree_chance = ", ""));
-
-                                        }
+                                        multiply_dead_tree_chance = Double.parseDouble(read_all.replace("multiply_dead_tree_chance = ", ""));
 
                                     }
+
+                                }
+
+                                // Get Biome at Center
+                                {
+
+                                    biome_center = level.getBiome(new BlockPos(center_posX, level.getMaxBuildHeight(), center_posZ));
 
                                 }
 
@@ -234,66 +231,9 @@ public class TreeLocation {
 
                                             {
 
-                                                boolean test = false;
                                                 biome = read_all.replace("biome = ", "");
-                                                Holder<Biome> biome_get = level.getBiome(new BlockPos(center_posX, level.getMaxBuildHeight(), center_posZ));
 
-                                                for (String split : biome.split(" / ")) {
-
-                                                    test = true;
-
-                                                    for (String split2 : split.split(" & ")) {
-
-                                                        String split_get = split2.replaceAll("[#!]", "");
-
-                                                        {
-
-                                                            if (split2.contains("#") == false) {
-
-                                                                String variable_text = biome_get.toString().replace("Reference{ResourceKey[minecraft:worldgen/biome / ", "");
-                                                                variable_text = variable_text.substring(0, variable_text.indexOf("]"));
-
-                                                                if (variable_text.equals(split_get) == false) {
-
-                                                                    test = false;
-
-                                                                }
-
-                                                            } else {
-
-                                                                if (Misc.isBiomeTaggedAs(biome_get, split_get) == false) {
-
-                                                                    test = false;
-
-                                                                }
-
-                                                            }
-
-                                                            if (split2.contains("!") == true) {
-
-                                                                test = !test;
-
-                                                            }
-
-                                                        }
-
-                                                        if (test == false) {
-
-                                                            break;
-
-                                                        }
-
-                                                    }
-
-                                                    if (test == true) {
-
-                                                        break;
-
-                                                    }
-
-                                                }
-
-                                                if (test == false) {
+                                                if (testBiome(level, biome_center, biome, center_posX, center_posZ) == false) {
 
                                                     skip = true;
 
@@ -314,7 +254,7 @@ public class TreeLocation {
                                             {
 
                                                 rarity = Double.parseDouble(read_all.replace("rarity = ", ""));
-                                                rarity = rarity * multiply_min_distance * 0.01;
+                                                rarity = rarity * (multiply_rarity * 0.01);
 
                                                 if (Math.random() >= rarity) {
 
@@ -350,6 +290,26 @@ public class TreeLocation {
                                                 String[] get = read_all.replace("group_size = ", "").split(" <> ");
                                                 int min = Integer.parseInt(get[0]);
                                                 int max = Integer.parseInt(get[1]);
+                                                min = (int) Math.nextUp(min * multiply_group_size);
+                                                max = (int) Math.nextUp(max * multiply_group_size);
+
+                                                // Round if lower than 0
+                                                {
+
+                                                    if (min < 1) {
+
+                                                        min = 1;
+
+                                                    }
+
+                                                    if (max < 1) {
+
+                                                        max = 1;
+
+                                                    }
+
+                                                }
+
                                                 group_size = Mth.nextInt(RandomSource.create(), min, max);
 
                                             }
@@ -359,6 +319,7 @@ public class TreeLocation {
                                             {
 
                                                 waterside_chance = Double.parseDouble(read_all.replace("waterside_chance = ", ""));
+                                                waterside_chance = waterside_chance * multiply_waterside_chance;
 
                                             }
 
@@ -422,32 +383,80 @@ public class TreeLocation {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
             }
 
             if (skip == false) {
 
-                String tree_data = id + "|" + ground_block + "|" + start_height_offset + "|" + waterside_chance + "|" + rotation + "|" + mirrored + "|" + dead_tree_chance + "|" + dead_tree_level;
-                readTreeFile(level, world, chunk_generator, tree_data, center_posX, center_posZ);
+                int center_posY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
+
+                // Surface Smoothness Detector & Waterside Chance
+                {
+
+                    if (testSurroundingArea(level, world, chunk_generator, center_posX, center_posY, center_posZ, true, waterside_chance) == false) {
+
+                        return;
+
+                    }
+
+                }
+
+                String tree_data = id + "|" + ground_block + "|" + start_height_offset + "|" + rotation + "|" + mirrored + "|" + dead_tree_chance + "|" + dead_tree_level;
+                readTreeFile(level, world, chunk_generator, tree_data, center_posX, center_posY, center_posZ);
 
                 // Group Spawning
                 {
 
                     if (group_size > 1) {
 
-                        int min_distance_plus = min_distance + 1;
+                        while (group_size > 0) {
 
-                        for (int loop = group_size; loop > 0; loop--) {
+                            group_size = group_size - 1;
+                            center_posX = center_posX + Mth.nextInt(RandomSource.create(), -(min_distance + 1), (min_distance + 1));
+                            center_posZ = center_posZ + Mth.nextInt(RandomSource.create(), -(min_distance + 1), (min_distance + 1));
+                            center_posY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
 
-                            center_posX = center_posX + Mth.nextInt(RandomSource.create(), -min_distance_plus, min_distance_plus);
-                            center_posZ = center_posZ + Mth.nextInt(RandomSource.create(), -min_distance_plus, min_distance_plus);
+                            // Biome
+                            {
 
-                            if (testDistance(id, center_posX, center_posZ, min_distance) == true) {
+                                biome_center = level.getBiome(new BlockPos(center_posX, level.getMaxBuildHeight(), center_posZ));
 
-                                readTreeFile(level, world, chunk_generator, tree_data, center_posX, center_posZ);
+                                if (testBiome(level, biome_center, biome, center_posX, center_posZ) == false) {
+
+                                    continue;
+
+                                }
 
                             }
+
+                            // Min Distance
+                            {
+
+                                if (min_distance > 0) {
+
+                                    if (testDistance(id, center_posX, center_posZ, min_distance) == false) {
+
+                                        continue;
+
+                                    }
+
+                                }
+
+                            }
+
+                            // Surface Smoothness Detector
+                            {
+
+                                if (testSurroundingArea(level, world, chunk_generator, center_posX, center_posY, center_posZ, false, waterside_chance) == false) {
+
+                                    return;
+
+                                }
+
+                            }
+
+                            readTreeFile(level, world, chunk_generator, tree_data, center_posX, center_posY, center_posZ);
 
                         }
 
@@ -461,84 +470,64 @@ public class TreeLocation {
 
     }
 
-    private static boolean testDistance (String id, int center_posX, int center_posZ, int min_distance) {
+    private static boolean testBiome (LevelAccessor level, Holder<Biome> biome_center, String biome, int center_posX, int center_posZ) {
 
-        boolean return_logic = true;
+        boolean return_logic = false;
 
-        int region_posX = center_posX >> 9;
-        int region_posZ = center_posZ >> 9;
+        {
 
-        if (testDistanceRun(id, region_posX, region_posZ, center_posX, center_posZ, min_distance) == false) {
+            String biome_centerID = biome_center.toString().replace("Reference{ResourceKey[minecraft:worldgen/biome / ", "");
+            biome_centerID = biome_centerID.substring(0, biome_centerID.indexOf("]"));
 
-            return_logic = false;
+            for (String split : biome.split(" / ")) {
 
-        } else if (
-            testDistanceRun(id, region_posX + 1, region_posZ + 0, center_posX, center_posZ, min_distance) == false
-            ||
-            testDistanceRun(id, region_posX - 1, region_posZ + 0, center_posX, center_posZ, min_distance) == false
-            ||
-            testDistanceRun(id, region_posX + 0, region_posZ + 1, center_posX, center_posZ, min_distance) == false
-            ||
-            testDistanceRun(id, region_posX + 0, region_posZ - 1, center_posX, center_posZ, min_distance) == false
-        ) {
+                return_logic = true;
 
-            return_logic = false;
+                for (String split2 : split.split(" & ")) {
 
-        } else if (
-            testDistanceRun(id, region_posX + 1, region_posZ + 1, center_posX, center_posZ, min_distance) == false
-            ||
-            testDistanceRun(id, region_posX + 1, region_posZ - 1, center_posX, center_posZ, min_distance) == false
-            ||
-            testDistanceRun(id, region_posX - 1, region_posZ + 1, center_posX, center_posZ, min_distance) == false
-            ||
-            testDistanceRun(id, region_posX - 1, region_posZ - 1, center_posX, center_posZ, min_distance) == false
-        ) {
-
-            return_logic = false;
-
-        }
-
-        return return_logic;
-
-    }
-
-    private static boolean testDistanceRun (String id, int region_posX, int region_posZ, int center_posX, int center_posZ, int min_distance) {
-
-        boolean return_logic = true;
-
-        File file = file = new File(Handcode.directory_world_data + "/tree_locations/" + region_posX + "," + region_posZ + ".txt");
-        String[] array = null;
-        String[] pos = null;
-        int posX = 0;
-        int posZ = 0;
-
-        if (file.exists() == true) {
-
-            {
-
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                    String split_get = split2.replaceAll("[#!]", "");
 
                     {
 
-                        if (read_all.startsWith(id + "|") == true) {
+                        if (split2.contains("#") == false) {
 
-                            array = read_all.split("\\|");
-                            pos = array[1].split("/");
-                            posX = Integer.parseInt(pos[0]);
-                            posZ = Integer.parseInt(pos[2]);
-
-                            if ((Math.abs(center_posX - posX) <= min_distance) && (Math.abs(center_posZ - posZ) <= min_distance)) {
+                            if (biome_centerID.equals(split_get) == false) {
 
                                 return_logic = false;
-                                break;
+
+                            }
+
+                        } else {
+
+                            if (Misc.isBiomeTaggedAs(biome_center, split_get) == false) {
+
+                                return_logic = false;
 
                             }
 
                         }
 
+                        if (split2.contains("!") == true) {
+
+                            return_logic = !return_logic;
+
+                        }
+
                     }
 
-                } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                    if (return_logic == false) {
+
+                        break;
+
+                    }
+
+                }
+
+                if (return_logic == true) {
+
+                    break;
+
+                }
 
             }
 
@@ -548,7 +537,193 @@ public class TreeLocation {
 
     }
 
-    private static void readTreeFile (LevelAccessor level, ServerLevel world, ChunkGenerator chunk_generator, String tree_data, int center_posX, int center_posZ) {
+    private static boolean testDistance (String id, int center_posX, int center_posZ, int min_distance) {
+
+        boolean return_logic = true;
+
+        {
+
+            test:
+            {
+
+                int center_chunk_posX = center_posX >> 4;
+                int center_chunk_posZ = center_posZ >> 4;
+                int start_chunk_posX = 0;
+                int start_chunk_posZ = 0;
+                int chunk_posX = 0;
+                int chunk_posZ = 0;
+                int scanX = 0;
+                int scanZ = 0;
+                int step = 0;
+
+                for (int distance = 0; distance <= (((min_distance >> 4) + 1) / 2) * 2; distance = distance + 2) {
+
+                    start_chunk_posX = center_chunk_posX - distance;
+                    start_chunk_posZ = center_chunk_posZ - distance;
+                    step = 1;
+
+                    while (true) {
+
+                        chunk_posX = start_chunk_posX + scanX;
+                        chunk_posZ = start_chunk_posZ + scanZ;
+
+                        {
+
+                            File file = file = new File(Handcode.directory_world_data + "/tree_locations/" + (chunk_posX >> 5) + "," + (chunk_posZ >> 5) + "/" + MiscOutside.quardtreeChunkToNode(chunk_posX, chunk_posZ) + ".txt");
+                            String[] get = null;
+                            String[] pos = null;
+                            int posX = 0;
+                            int posZ = 0;
+
+                            if (file.exists() == true && file.isDirectory() == false) {
+
+                                {
+
+                                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+
+                                        {
+
+                                            if (read_all.startsWith(id + "|") == true) {
+
+                                                get = read_all.split("\\|");
+                                                pos = get[1].split("/");
+                                                posX = Integer.parseInt(pos[0]);
+                                                posZ = Integer.parseInt(pos[2]);
+
+                                                if ((Math.abs(center_posX - posX) <= min_distance) && (Math.abs(center_posZ - posZ) <= min_distance)) {
+
+                                                    return_logic = false;
+                                                    break test;
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+
+                                }
+
+                            }
+
+                        }
+
+                        if (step == 1) {
+
+                            scanX = scanX + 2;
+
+                            if (scanX > (distance * 2)) {
+
+                                step = 2;
+
+                            }
+
+                        } else if (step == 2) {
+
+                            scanZ = scanZ + 2;
+
+                            if (scanZ > (distance * 2)) {
+
+                                step = 3;
+
+                            }
+
+                        } else if (step == 3) {
+
+                            scanX = scanX - 2;
+
+                            if (scanX <= 0) {
+
+                                step = 4;
+
+                            }
+
+                        } else if (step == 4) {
+
+                            scanZ = scanZ - 2;
+
+                            if (scanZ <= 0) {
+
+                                break;
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        return return_logic;
+
+    }
+
+    private static boolean testSurroundingArea (LevelAccessor level, ServerLevel world, ChunkGenerator chunk_generator, int center_posX, int center_posY, int center_posZ, boolean waterside_detection, double waterside_chance) {
+
+        boolean return_logic = true;
+
+        {
+
+            test:
+            if (ConfigMain.surface_smoothness_detection == true || ConfigMain.waterside_detection == true) {
+
+                int size = ConfigMain.surrounding_area_detection_size;
+                int ocean_floor1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
+                int ocean_floor2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
+                int ocean_floor3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
+                int ocean_floor4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
+
+                if (ConfigMain.surface_smoothness_detection == true) {
+
+                    int height = ConfigMain.surface_smoothness_detection_height;
+
+                    if ((Math.abs(center_posY - ocean_floor1) > height) || (Math.abs(center_posY - ocean_floor2) > height) || (Math.abs(center_posY - ocean_floor3) > height) || (Math.abs(center_posY - ocean_floor4) > height)) {
+
+                        return_logic = false;
+                        break test;
+
+                    }
+
+                }
+
+                if (ConfigMain.waterside_detection == true) {
+
+                    if (waterside_detection == true) {
+
+                        if (Math.random() < waterside_chance) {
+
+                            int surface1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
+                            int surface2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
+                            int surface3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
+                            int surface4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
+
+                            if (surface1 == ocean_floor1 && surface2 == ocean_floor2 && surface3 == ocean_floor3 && surface4 == ocean_floor4) {
+
+                                return_logic = false;
+                                break test;
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        return return_logic;
+
+    }
+
+    private static void readTreeFile (LevelAccessor level, ServerLevel world, ChunkGenerator chunk_generator, String tree_data, int center_posX, int center_posY, int center_posZ) {
 
         String storage_directory = "";
         String tree_settings = "";
@@ -557,11 +732,10 @@ public class TreeLocation {
         String id = get[0];
         String ground_block = get[1];
         String start_height_offset = get[2];
-        double waterside_chance = Double.parseDouble(get[3]);
-        String rotation = get[4];
-        String mirrored = get[5];
-        double dead_tree_chance = Double.parseDouble(get[6]);
-        String dead_tree_level_all = get[7];
+        String rotation = get[3];
+        String mirrored = get[4];
+        double dead_tree_chance = Double.parseDouble(get[5]);
+        String dead_tree_level_all = get[6];
 
         // Scan "World Gen" File
         {
@@ -592,7 +766,7 @@ public class TreeLocation {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
                 }
 
@@ -616,58 +790,6 @@ public class TreeLocation {
         }
 
         if (chosen.exists() == true && chosen.isDirectory() == false) {
-
-            int center_posY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
-
-            // Surface Smoothness Detector & Waterside Chance
-            {
-
-                if (ConfigMain.surrounding_area_detection_size > 0) {
-
-                    if (ConfigMain.surface_smoothness_detection == true || ConfigMain.waterside_detection == true) {
-
-                        int size = ConfigMain.surrounding_area_detection_size;
-                        int ocean_floor1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
-                        int ocean_floor2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
-                        int ocean_floor3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
-                        int ocean_floor4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
-
-                        if (ConfigMain.surface_smoothness_detection == true) {
-
-                            int height = ConfigMain.surface_smoothness_detection_height;
-
-                            if ((Math.abs(center_posY - ocean_floor1) > height) || (Math.abs(center_posY - ocean_floor2) > height) || (Math.abs(center_posY - ocean_floor3) > height) || (Math.abs(center_posY - ocean_floor4) > height)) {
-
-                                return;
-
-                            }
-
-                        }
-
-                        if (ConfigMain.waterside_detection == true) {
-
-                            if (Math.random() < waterside_chance) {
-
-                                int world_surface1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
-                                int world_surface2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
-                                int world_surface3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
-                                int world_surface4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
-
-                                if ((world_surface1 == ocean_floor1) && (world_surface2 == ocean_floor2) && (world_surface3 == ocean_floor3) && (world_surface4 == ocean_floor4)) {
-
-                                    return;
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
 
             String tree_type = "";
             int start_height = 0;
@@ -707,7 +829,7 @@ public class TreeLocation {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                        } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
                     }
 
@@ -768,7 +890,7 @@ public class TreeLocation {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
             }
 
@@ -961,7 +1083,8 @@ public class TreeLocation {
 
         }
 
-        FileManager.writeTXT(Handcode.directory_world_data + "/tree_locations/" + (center_posX >> 9) + "," + (center_posZ >> 9) + ".txt", write.toString(), true);
+        FileManager.createFolder(Handcode.directory_world_data + "/tree_locations/" + (center_posX >> 9) + "," + (center_posZ >> 9));
+        FileManager.writeTXT(Handcode.directory_world_data + "/tree_locations/" + (center_posX >> 9) + "," + (center_posZ >> 9) + "/" + MiscOutside.quardtreeChunkToNode((center_posX >> 4), (center_posZ >> 4)) + ".txt", write.toString(), true);
 
     }
 
@@ -976,11 +1099,12 @@ public class TreeLocation {
 
         }
 
-        for (int scanX = from_chunk_posX >> 5; scanX <= Math.nextUp(to_chunk_posX / 32.0); scanX++) {
+        for (int scanX = from_chunk_posX; scanX <= to_chunk_posX; scanX++) {
 
-            for (int scanZ = from_chunk_posZ >> 5; scanZ <= Math.nextUp(to_chunk_posZ / 32.0); scanZ++) {
+            for (int scanZ = from_chunk_posZ; scanZ <= to_chunk_posZ; scanZ++) {
 
-                FileManager.writeTXT(Handcode.directory_world_data + "/place/" + scanX + "," + scanZ + ".txt", write.toString(), true);
+                FileManager.createFolder(Handcode.directory_world_data + "/place/" + (scanX >> 5) + "," + (scanZ >> 5));
+                FileManager.writeTXT(Handcode.directory_world_data + "/place/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + MiscOutside.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
 
             }
 

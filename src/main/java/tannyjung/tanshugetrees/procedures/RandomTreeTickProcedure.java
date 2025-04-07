@@ -94,12 +94,6 @@ public class RandomTreeTickProcedure {
 				}
 			}
 		}
-		if (entity.getPersistentData().getDouble("time_used_tick") < 20) {
-			entity.getPersistentData().putDouble("time_used_tick", (entity.getPersistentData().getDouble("time_used_tick") + 1));
-		} else {
-			entity.getPersistentData().putDouble("time_used_tick", 1);
-			entity.getPersistentData().putDouble("time_used", (entity.getPersistentData().getDouble("time_used") + 1));
-		}
 		if (true) {
 			if (TanshugetreesModVariables.MapVariables.get(world).auto_gen == false && ConfigMain.global_speed_enable == true && entity.getPersistentData().getBoolean("global_generate_speed") == true) {
 				entity.getPersistentData().putDouble("generate_speed", ConfigMain.global_speed);

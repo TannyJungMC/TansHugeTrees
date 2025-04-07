@@ -9,6 +9,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -20,10 +21,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
-import tannyjung.tanshugetrees_handcode.misc.FileManager;
-import tannyjung.tanshugetrees_handcode.misc.LeafLitter;
-import tannyjung.tanshugetrees_handcode.misc.Misc;
-import tannyjung.tanshugetrees_handcode.misc.TreeFunction;
+import tannyjung.tanshugetrees_handcode.misc.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,7 +40,7 @@ public class TreePlacer {
         // Read To Get Tree(s)
         {
 
-            File file = new File(Handcode.directory_world_data + "/place/" + (chunk_posX >> 5) + "," + (chunk_posZ >> 5) + ".txt");
+            File file = new File(Handcode.directory_world_data + "/place/" + (chunk_posX >> 5) + "," + (chunk_posZ >> 5) + "/" + MiscOutside.quardtreeChunkToNode(chunk_posX, chunk_posZ) + ".txt");
 
             if (file.exists() == true) {
 
@@ -138,7 +136,7 @@ public class TreePlacer {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
                 }
 
@@ -153,13 +151,14 @@ public class TreePlacer {
         boolean return_logic = true;
         boolean already_tested = false;
 
-        File file = new File(Handcode.directory_world_data + "/detailed_detection/" + (center_posX >> 9) + "," + (center_posZ >> 9) + ".txt");
+        File file = new File(Handcode.directory_world_data + "/detailed_detection/" + (center_posX >> 9) + "," + (center_posZ >> 9) + "/" + MiscOutside.quardtreeChunkToNode((center_posX >> 4), (center_posZ >> 4)) + ".txt");
 
         // Create Empty File
         {
 
             if (file.exists() == false) {
 
+                FileManager.createFolder(file.getParent());
                 StringBuilder write = new StringBuilder();
 
                 {
@@ -193,21 +192,21 @@ public class TreePlacer {
 
                 }
 
-            } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+            } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
         }
 
         if (already_tested == false) {
 
-            test:
-            while (true) {
+            int center_chunk_posX = center_posX >> 4;
+            int center_chunk_posZ = center_posZ >> 4;
 
-                int center_chunk_posX = center_posX >> 4;
-                int center_chunk_posZ = center_posZ >> 4;
+            if (level.hasChunk(center_chunk_posX, center_chunk_posZ) == true) {
 
-                if (level.hasChunk(center_chunk_posX, center_chunk_posZ) == true) {
+                ChunkAccess center_chunk = level.getChunk(center_chunk_posX, center_chunk_posZ);
 
-                    ChunkAccess center_chunk = level.getChunk(center_chunk_posX, center_chunk_posZ);
+                test:
+                {
 
                     // Test Structure Area
                     {
@@ -302,8 +301,6 @@ public class TreePlacer {
 
                     }
 
-                    break;
-
                 }
 
             }
@@ -366,7 +363,7 @@ public class TreePlacer {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
                 }
 
@@ -423,7 +420,7 @@ public class TreePlacer {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
                 }
 
@@ -485,7 +482,7 @@ public class TreePlacer {
                                 }
                                 buffered_reader.close();
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                TanshugetreesMod.LOGGER.error(e.getMessage());
                             }
 
                         }
@@ -511,7 +508,6 @@ public class TreePlacer {
                 }
 
                 LevelAccessor level = context.level();
-                ServerLevel world = context.level().getLevel();
                 ChunkPos chunk_pos = new ChunkPos(context.origin().getX() >> 4, context.origin().getZ() >> 4);
                 ChunkAccess chunk = context.level().getChunk(chunk_pos.x, chunk_pos.z);
 
@@ -725,7 +721,7 @@ public class TreePlacer {
 
                                             get = get.replace(" keep", "");
 
-                                            if (Misc.isBlockTaggedAs(chunk.getBlockState(pos), "tanshugetrees:passable_blocks") == false || Misc.isBlockTaggedAs(chunk.getBlockState(pos), "tanshugetrees:water_blocks") == true) {
+                                            if (Misc.isBlockTaggedAs(chunk.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level.isWaterAt(pos) == true) {
 
                                                 continue;
 
@@ -777,7 +773,7 @@ public class TreePlacer {
 
                                                                         if (height_motion_block < test_posY) {
 
-                                                                            LeafLitter.start(chunk, test_posX, height_motion_block, test_posZ, block);
+                                                                            LeafLitter.start(level, test_posX, height_motion_block, test_posZ, block);
 
                                                                         }
 
@@ -812,6 +808,19 @@ public class TreePlacer {
 
                                                 }
 
+                                                // Automatic Waterlogged
+                                                {
+
+                                                    if (level.isWaterAt(pos) == true) {
+
+                                                        block = block.getBlock().getStateDefinition().getProperty("waterlogged") instanceof BooleanProperty property
+                                                                ? block.setValue(property, true)
+                                                                : block;
+
+                                                    }
+
+                                                }
+
                                                 chunk.setBlockState(pos, block, false);
                                                 can_run_function = true;
 
@@ -841,7 +850,7 @@ public class TreePlacer {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
                 }
 

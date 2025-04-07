@@ -163,20 +163,15 @@ public class RandomTreeTickSummonProcedure {
 				center_direction_vertical = Mth.nextDouble(RandomSource.create(), center_direction_vertical * (-1), center_direction_vertical);
 			}
 			if (true) {
-				for (int index1 = 0; index1 < 1; index1++) {
-					{
-						Entity _ent = entity;
-						if (!_ent.level().isClientSide() && _ent.getServer() != null) {
-							_ent.getServer().getCommands().performPrefixedCommand(
-									new CommandSourceStack(CommandSource.NULL, _ent.position(), _ent.getRotationVector(), _ent.level() instanceof ServerLevel ? (ServerLevel) _ent.level() : null, 4, _ent.getName().getString(), _ent.getDisplayName(),
-											_ent.level().getServer(), _ent),
-									("execute at @e[name=THT-tree_" + (type_pre + "_" + entity.getPersistentData().getString("tree_id")) + "] positioned ^" + center_direction_horizontal + " ^" + center_direction_vertical + " ^"
-											+ center_direction_forward + " positioned ~ ~" + center_direction_height + " ~ run summon marker ~ ~ ~ {Tags:[\"THT\",\"THT-random_tree\",\"THT-tree_" + entity.getPersistentData().getString("tree_id")
-											+ "\"],CustomName:'{\"text\":\"THT-tree_" + (entity.getPersistentData().getString("type") + "_" + entity.getPersistentData().getString("tree_id")) + "\"}'}"));
-						}
-					}
-					if (CommandResultEntityProcedure.execute(entity, "execute if entity @e[name=THT-tree_" + (entity.getPersistentData().getString("type") + "_" + entity.getPersistentData().getString("tree_id")) + "]")) {
-						break;
+				{
+					Entity _ent = entity;
+					if (!_ent.level().isClientSide() && _ent.getServer() != null) {
+						_ent.getServer().getCommands().performPrefixedCommand(
+								new CommandSourceStack(CommandSource.NULL, _ent.position(), _ent.getRotationVector(), _ent.level() instanceof ServerLevel ? (ServerLevel) _ent.level() : null, 4, _ent.getName().getString(), _ent.getDisplayName(),
+										_ent.level().getServer(), _ent),
+								("execute at @e[name=THT-tree_" + (type_pre + "_" + entity.getPersistentData().getString("tree_id")) + "] positioned ^" + center_direction_horizontal + " ^" + center_direction_vertical + " ^" + center_direction_forward
+										+ " positioned ~ ~" + center_direction_height + " ~ run summon marker ~ ~ ~ {Tags:[\"THT\",\"THT-random_tree\",\"THT-tree_" + entity.getPersistentData().getString("tree_id")
+										+ "\"],CustomName:'{\"text\":\"THT-tree_" + (entity.getPersistentData().getString("type") + "_" + entity.getPersistentData().getString("tree_id")) + "\"}'}"));
 					}
 				}
 			}

@@ -102,7 +102,7 @@ public class UpdateRun {
 
 			} catch (Exception e) {
 
-				e.printStackTrace();
+				TanshugetreesMod.LOGGER.error(e.getMessage());
 
 			}
 
@@ -288,7 +288,7 @@ public class UpdateRun {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			TanshugetreesMod.LOGGER.error(e.getMessage());
 
 		}
 

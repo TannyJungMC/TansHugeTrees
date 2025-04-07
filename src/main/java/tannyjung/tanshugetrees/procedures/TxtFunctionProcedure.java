@@ -59,7 +59,7 @@ public class TxtFunctionProcedure {
 				}
 				fileReader.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				TanshugetreesMod.LOGGER.error(e.getMessage());
 			}
 			if (merge_true == true) {
 				if (world instanceof ServerLevel _level)

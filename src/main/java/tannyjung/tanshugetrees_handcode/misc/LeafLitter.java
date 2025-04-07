@@ -2,6 +2,7 @@ package tannyjung.tanshugetrees_handcode.misc;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.goal.CatLieOnBedGoal;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -16,7 +17,7 @@ import java.io.FileReader;
 
 public class LeafLitter {
 
-    public static void start (ChunkAccess chunk, int posX, int posY, int posZ, BlockState block) {
+    public static void start (LevelAccessor level, int posX, int posY, int posZ, BlockState block) {
 
         File file = new File(Handcode.directory_config + "/custom_packs/.organized/leaf_litter/" + Misc.blockToTextID(block).replace(":", "-") + ".txt");
 
@@ -53,7 +54,7 @@ public class LeafLitter {
                                     if (get_from_to[0].contains("/") == true) {
 
                                         get_from = get_from_to[0].split("/");
-                                        block_current = chunk.getBlockState(new BlockPos(posX, posY + Integer.parseInt(get_from[0]), posZ));
+                                        block_current = level.getBlockState(new BlockPos(posX, posY + Integer.parseInt(get_from[0]), posZ));
 
                                     } else {
 
@@ -71,7 +72,7 @@ public class LeafLitter {
 
                                                 if (Misc.isBlockTaggedAs(block_current, "tanshugetrees:air_blocks") == true) {
 
-                                                    BlockState ground_block = chunk.getBlockState(new BlockPos(posX, posY - 1, posZ));
+                                                    BlockState ground_block = level.getBlockState(new BlockPos(posX, posY - 1, posZ));
 
                                                     if (Misc.isBlockTaggedAs(ground_block, "tanshugetrees:passable_blocks") == false) {
 
@@ -89,9 +90,7 @@ public class LeafLitter {
 
                                                 if (Misc.isBlockTaggedAs(block_current, "tanshugetrees:air_blocks") == true) {
 
-                                                    BlockState ground_block = chunk.getBlockState(new BlockPos(posX, posY - 1, posZ));
-
-                                                    if (Misc.isBlockTaggedAs(ground_block, "tanshugetrees:water_blocks") == true) {
+                                                    if (level.isWaterAt(new BlockPos(posX, posY - 1, posZ)) == true) {
 
                                                         place = true;
 
@@ -111,7 +110,7 @@ public class LeafLitter {
 
                                     if (place == true) {
 
-                                        chunk.setBlockState(new BlockPos(posX, posY + Integer.parseInt(get_to[0]), posZ), Misc.textToBlock(get_to[1]), false);
+                                        level.setBlock(new BlockPos(posX, posY + Integer.parseInt(get_to[0]), posZ), Misc.textToBlock(get_to[1]), 2);
                                         break;
 
                                     }
@@ -122,7 +121,7 @@ public class LeafLitter {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
                 }
 
@@ -135,17 +134,17 @@ public class LeafLitter {
                 // Classic Style
                 {
 
-                    if (Misc.isBlockTaggedAs(chunk.getBlockState(new BlockPos(posX, posY, posZ)), "tanshugetrees:air_blocks") == true) {
+                    if (Misc.isBlockTaggedAs(level.getBlockState(new BlockPos(posX, posY, posZ)), "tanshugetrees:air_blocks") == true) {
 
                         // If Found Water
-                        if (Misc.isBlockTaggedAs(chunk.getBlockState(new BlockPos(posX, posY - 1, posZ)), "tanshugetrees:water_blocks") == true) {
+                        if (level.isWaterAt(new BlockPos(posX, posY - 1, posZ)) == true) {
 
                             block = (block.getBlock().getStateDefinition().getProperty("waterlogged") instanceof BooleanProperty property ? block.setValue(property, true) : block);
                             posY = posY - 1;
 
                         }
 
-                        chunk.setBlockState(new BlockPos(posX, posY, posZ), block, false);
+                        level.setBlock(new BlockPos(posX, posY, posZ), block, 2);
 
                     }
 

@@ -9,6 +9,7 @@ import java.io.FileReader;
 
 import net.minecraft.world.level.LevelAccessor;
 
+import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.misc.Misc;
 import tannyjung.tanshugetrees_handcode.misc.MiscOutside;
@@ -60,7 +61,7 @@ public class CheckUpdateRun {
 
 						}
 
-					} buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+					} buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
 				}
 
@@ -84,7 +85,7 @@ public class CheckUpdateRun {
 
 							}
 
-						} buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+						} buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
 					}
 

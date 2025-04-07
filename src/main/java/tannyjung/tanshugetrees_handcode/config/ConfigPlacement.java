@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.config;
 
+import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.misc.FileManager;
 
@@ -38,7 +39,7 @@ public class ConfigPlacement {
 
                 } catch (Exception e) {
 
-                    e.printStackTrace();
+                    TanshugetreesMod.LOGGER.error(e.getMessage());
 
                 }
 
@@ -46,7 +47,7 @@ public class ConfigPlacement {
 
         } catch (Exception e) {
 
-            e.printStackTrace();
+            TanshugetreesMod.LOGGER.error(e.getMessage());
 
         }
 
@@ -71,6 +72,8 @@ public class ConfigPlacement {
                 
                 multiply_rarity = 1.0
                 multiply_min_distance = 1.0
+                multiply_group_size = 1.0
+                multiply_waterside_chance = 1.0
                 multiply_dead_tree_chance = 1.0
                 
                 """);
@@ -106,7 +109,7 @@ public class ConfigPlacement {
 
                     } catch (Exception e) {
 
-                        e.printStackTrace();
+                        TanshugetreesMod.LOGGER.error(e.getMessage());
 
                     }
 
@@ -185,7 +188,7 @@ public class ConfigPlacement {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
                 }
 
@@ -295,7 +298,7 @@ public class ConfigPlacement {
 
                                                         }
 
-                                                    } buffered_reader2.close(); } catch (Exception e) { e.printStackTrace(); }
+                                                    } buffered_reader2.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
                                                 }
 
@@ -311,7 +314,7 @@ public class ConfigPlacement {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+                        } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
                     }
 
@@ -337,7 +340,7 @@ public class ConfigPlacement {
 
             } catch (Exception e) {
 
-                e.printStackTrace();
+                TanshugetreesMod.LOGGER.error(e.getMessage());
 
             }
 

@@ -1,5 +1,7 @@
 package tannyjung.tanshugetrees_handcode.misc;
 
+import tannyjung.tanshugetrees.TanshugetreesMod;
+
 import java.io.*;
 
 public class FileManager {
@@ -31,7 +33,7 @@ public class FileManager {
 
 				} catch (Exception e) {
 
-					e.printStackTrace();
+					TanshugetreesMod.LOGGER.error(e.getMessage());
 
 				}
 
@@ -51,7 +53,7 @@ public class FileManager {
 
 		} catch (Exception e) {
 
-			e.printStackTrace();
+			TanshugetreesMod.LOGGER.error(e.getMessage());
 
 		}
 
@@ -60,7 +62,6 @@ public class FileManager {
 	public static void writeConfigTXT (String path, String write_get) {
 
 		File file = new File(path);
-		StringBuilder get_old = new StringBuilder();
 
 		// Create a File
 		{
@@ -73,27 +74,11 @@ public class FileManager {
 
 				} catch (Exception e) {
 
-					e.printStackTrace();
+					TanshugetreesMod.LOGGER.error(e.getMessage());
 
 				}
 
 			}
-
-		}
-
-		// Get Old
-		{
-
-			try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
-
-				{
-
-					get_old.append(read_all);
-					get_old.append("\n");
-
-				}
-
-			} buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
 
 		}
 
@@ -117,28 +102,21 @@ public class FileManager {
 							// Read Old
 							{
 
-								try {
-									BufferedReader buffered_reader2 = new BufferedReader(new FileReader(file));
-									String read_old = "";
-									while ((read_old = buffered_reader2.readLine()) != null) {
+								try { BufferedReader buffered_reader2 = new BufferedReader(new FileReader(file)); String read_old = ""; while ((read_old = buffered_reader2.readLine()) != null) {
 
-										{
+									{
 
-											if (read_old.startsWith(test + " = ") == true) {
+										if (read_old.startsWith(test + " = ") == true) {
 
-												read_new = read_old;
-												exists = true;
-												break;
-
-											}
+											read_new = read_old;
+											exists = true;
+											break;
 
 										}
 
 									}
-									buffered_reader2.close();
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
+
+								} buffered_reader2.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
 							}
 
@@ -155,7 +133,7 @@ public class FileManager {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+				} buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
 			}
 

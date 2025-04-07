@@ -2208,6 +2208,18 @@
         ]
       },
       "path": "~/.Other/COMMAND"
+    },
+    {
+      "name": "DiskGrass",
+      "type": "feature",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "disk_grass",
+      "metadata": {
+        "files": [
+          "src/main/resources/data/tanshugetrees/worldgen/configured_feature/disk_grass.json"
+        ]
+      }
     }
   ],
   "variable_elements": [
@@ -2344,11 +2356,6 @@
       "CUSTOM:BlockPlacerFineRootCore",
       "CUSTOM:BlockPlacerFineRootInner",
       "CUSTOM:BlockPlacerFineRootOuter"
-    ],
-    "BLOCKS:mod:water_blocks": [
-      "Blocks.FLOWING_WATER",
-      "Blocks.WATER",
-      "Blocks.BUBBLE_COLUMN"
     ],
     "BLOCKS:mod:coniferous_leaves_blocks": [
       "Blocks.LEAVES#1"
@@ -3052,7 +3059,7 @@
   "workspaceSettings": {
     "modid": "tanshugetrees",
     "modName": "Tan\u0027s Huge Trees",
-    "version": "1.0.0-alpha",
+    "version": "1.0.1-alpha",
     "description": "Generate trees and nature stuffs around the world",
     "author": "TannyJung",
     "websiteURL": "https://legacy.curseforge.com/minecraft/mc-mods/tans-huge-trees",

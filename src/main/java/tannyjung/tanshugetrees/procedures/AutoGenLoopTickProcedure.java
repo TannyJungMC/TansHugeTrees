@@ -100,7 +100,7 @@ public class AutoGenLoopTickProcedure {
 					}
 					fileReader.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					TanshugetreesMod.LOGGER.error(e.getMessage());
 				}
 				file = new File(Handcode.directory_config + "/custom_packs/" + file_location);
 				if (file.exists() == false && file.isDirectory() == false) {
@@ -179,7 +179,7 @@ public class AutoGenLoopTickProcedure {
 							}
 							fileReader.close();
 						} catch (IOException e) {
-							e.printStackTrace();
+							TanshugetreesMod.LOGGER.error(e.getMessage());
 						}
 						for (int index0 = 0; index0 < (merge_text).length(); index0++) {
 							if ((merge_text.substring(0, (int) merge_text_pos)).contains("BlockEntityTag:{") == true) {

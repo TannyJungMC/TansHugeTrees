@@ -3,6 +3,7 @@ package tannyjung.tanshugetrees_handcode.world_gen;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.misc.FileManager;
 
@@ -14,8 +15,8 @@ public class DataFolderCleaner {
 
     public static void start (FeaturePlaceContext<NoneFeatureConfiguration> context) {
 
-        String file_name = (context.origin().getX() >> 9) + "," + (context.origin().getZ() >> 9) + ".txt";
-        File file = new File(Handcode.directory_world_data + "/data_folder_cleaner/" + file_name);
+        String name = (context.origin().getX() >> 9) + "," + (context.origin().getZ() >> 9);
+        File file = new File(Handcode.directory_world_data + "/data_folder_cleaner/" + name + ".txt");
 
         // Write
         {
@@ -49,15 +50,15 @@ public class DataFolderCleaner {
 
                 }
 
-            } buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+            } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
         }
 
         if (region_full == true) {
 
             file.delete();
-            new File(Handcode.directory_world_data + "/place/" + file_name).delete();
-            new File(Handcode.directory_world_data + "/detailed_detection/" + file_name).delete();
+            new File(Handcode.directory_world_data + "/place/" + name).delete();
+            new File(Handcode.directory_world_data + "/detailed_detection/" + name).delete();
 
         }
 

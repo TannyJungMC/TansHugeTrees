@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.config;
 
+import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.File;
@@ -34,7 +35,7 @@ public class CustomPackOrganized {
 
                     } catch (Exception e) {
 
-                        e.printStackTrace();
+                        TanshugetreesMod.LOGGER.error(e.getMessage());
 
                     }
 
@@ -44,7 +45,7 @@ public class CustomPackOrganized {
 
         } catch (Exception e) {
 
-            e.printStackTrace();
+            TanshugetreesMod.LOGGER.error(e.getMessage());
 
         }
 
@@ -137,7 +138,7 @@ public class CustomPackOrganized {
 
                                             } catch (Exception e) {
 
-                                                e.printStackTrace();
+                                                TanshugetreesMod.LOGGER.error(e.getMessage());
 
                                             }
 
@@ -149,7 +150,7 @@ public class CustomPackOrganized {
 
                             } catch (Exception e) {
 
-                                e.printStackTrace();
+                                TanshugetreesMod.LOGGER.error(e.getMessage());
 
                             }
 
@@ -197,7 +198,7 @@ public class CustomPackOrganized {
 
                                         } catch (Exception e) {
 
-                                            e.printStackTrace();
+                                            TanshugetreesMod.LOGGER.error(e.getMessage());
 
                                         }
 
@@ -207,7 +208,7 @@ public class CustomPackOrganized {
 
                             } catch (Exception e) {
 
-                                e.printStackTrace();
+                                TanshugetreesMod.LOGGER.error(e.getMessage());
 
                             }
 

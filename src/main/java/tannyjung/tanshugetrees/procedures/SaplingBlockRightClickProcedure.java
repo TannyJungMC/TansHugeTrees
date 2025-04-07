@@ -165,7 +165,7 @@ public class SaplingBlockRightClickProcedure {
 									}
 									fileReader.close();
 								} catch (IOException e) {
-									e.printStackTrace();
+									TanshugetreesMod.LOGGER.error(e.getMessage());
 								}
 							}
 							if (!world.isClientSide()) {

@@ -1,6 +1,7 @@
 package tannyjung.tanshugetrees_handcode.config;
 
 import net.minecraft.world.level.LevelAccessor;
+import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.misc.FileManager;
 import tannyjung.tanshugetrees_handcode.misc.Misc;
@@ -121,9 +122,9 @@ public class ConfigMain {
 			| Set size of the detectors, for all detectors at 8 directions. Set to 0 will disable this feature.
 			| Default is 10
 	
-			surface_smoothness_detection_height = 5
+			surface_smoothness_detection_height = 10
 			| Set height of the detector, this value for each up and down. If the detector detects that the surface is rough than this height, it will cancel the tree.
-			| Default is 5
+			| Default is 10
 	
 			pre_leaf_litter = true
 			| aaa
@@ -467,7 +468,7 @@ public class ConfigMain {
 
 						}
 
-					} buffered_reader.close(); } catch (Exception e) { e.printStackTrace(); }
+					} buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
 				}
 
