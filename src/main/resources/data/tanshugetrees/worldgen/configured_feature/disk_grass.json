@@ -8,19 +8,122 @@
         "max_inclusive": 8
       }
     },
-    "half_height": 1,
+    "half_height": 3,
     "target": {
       "type": "minecraft:matching_blocks",
-      "blocks": "#minecraft:sand"
+      "blocks": [
+        "minecraft:stone",
+        "minecraft:sand"
+      ]
     },
     "state_provider": {
       "fallback": {
-        "type": "minecraft:simple_state_provider",
-        "state": {
-          "Name": "minecraft:grass_block"
-        }
+        "type": "minecraft:weighted_state_provider",
+        "entries": [
+          {
+            "data": {
+              "Name": "minecraft:grass_block"
+            },
+            "weight": 3
+          },
+          {
+            "data": {
+              "Name": "minecraft:coarse_dirt"
+            },
+            "weight": 2
+          }
+        ]
       },
-      "rules": []
+      "rules": [
+        {
+          "if_true": {
+            "type": "minecraft:any_of",
+            "predicates": [
+              {
+                "type": "minecraft:solid",
+                "offset": [
+                  0,
+                  1,
+                  0
+                ]
+              },
+              {
+                "type": "minecraft:matching_fluids",
+                "fluids": "minecraft:water",
+                "offset": [
+                  0,
+                  1,
+                  0
+                ]
+              }
+            ]
+          },
+          "then": {
+            "type": "minecraft:simple_state_provider",
+            "state": {
+              "Name": "minecraft:dirt"
+            }
+          }
+        },
+        {
+          "if_true": {
+            "type": "minecraft:matching_blocks",
+            "blocks": "minecraft:stone"
+          },
+          "then": {
+            "type": "minecraft:weighted_state_provider",
+            "entries": [
+              {
+                "data": {
+                  "Name": "minecraft:stone"
+                },
+                "weight": 2
+              },
+              {
+                "data": {
+                  "Name": "minecraft:grass_block"
+                },
+                "weight": 5
+              },
+              {
+                "data": {
+                  "Name": "minecraft:coarse_dirt"
+                },
+                "weight": 3
+              }
+            ]
+          }
+        },
+        {
+          "if_true": {
+            "type": "minecraft:matching_blocks",
+            "blocks": "minecraft:sand"
+          },
+          "then": {
+            "type": "minecraft:weighted_state_provider",
+            "entries": [
+              {
+                "data": {
+                  "Name": "minecraft:sand"
+                },
+                "weight": 2
+              },
+              {
+                "data": {
+                  "Name": "minecraft:grass_block"
+                },
+                "weight": 5
+              },
+              {
+                "data": {
+                  "Name": "minecraft:coarse_dirt"
+                },
+                "weight": 3
+              }
+            ]
+          }
+        }
+      ]
     }
   }
 }

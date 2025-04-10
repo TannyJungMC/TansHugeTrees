@@ -1,12 +1,12 @@
 package tannyjung.tanshugetrees_handcode.misc;
 
+import tannyjung.tanshugetrees_handcode.world_gen.TreeLocation;
+
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
 public class MiscOutside {
-
-
 
 	public static boolean isConnectedToInternet () {
 
@@ -42,28 +42,19 @@ public class MiscOutside {
 
 		{
 
-			for (int loop = 1; loop <= 3; loop++) {
+			int localX = chunkX & 31;
+			int localZ = chunkZ & 31;
 
-				int posX = (chunkX / (loop * 2)) % 2;
-				int posZ = (chunkZ / (loop * 2)) % 2;
+			for (int level = 0; level < TreeLocation.quadtree_level; level++) {
 
-				if (posX == 0 && posZ == 0) {
+				int size = 32 >> (level + 1);
+				int posX = (localX / size) % 2;
+				int posZ = (localZ / size) % 2;
 
-					return_text.append("-NW");
-
-				} else if (posX == 1 && posZ == 0) {
-
-					return_text.append("-NE");
-
-				} else if (posX == 0 && posZ == 1) {
-
-					return_text.append("-SW");
-
-				} else {
-
-					return_text.append("-SE");
-
-				}
+				if (posX == 0 && posZ == 0) return_text.append("-NW");
+				else if (posX == 1 && posZ == 0) return_text.append("-NE");
+				else if (posX == 0 && posZ == 1) return_text.append("-SW");
+				else return_text.append("-SE");
 
 			}
 

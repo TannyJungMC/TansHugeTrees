@@ -56,7 +56,7 @@ public class AutoGenStartProcedure {
 						}
 						fileReader.close();
 					} catch (IOException e) {
-						TanshugetreesMod.LOGGER.error(e.getMessage());
+						e.printStackTrace();
 					}
 				}
 			}

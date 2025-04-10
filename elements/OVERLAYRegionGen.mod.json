@@ -1,0 +1,93 @@
+{
+  "_fv": 77,
+  "_type": "overlay",
+  "definition": {
+    "priority": "NORMAL",
+    "components": [
+      {
+        "type": "sprite",
+        "data": {
+          "sprite": "overlay_region_gen.png",
+          "spritesCount": 4,
+          "spriteIndex": {
+            "fixedValue": 0.0,
+            "name": "OVERLAYRegionGenLoading"
+          },
+          "anchorPoint": "TOP_LEFT",
+          "x": 6,
+          "y": 8,
+          "locked": false
+        }
+      },
+      {
+        "type": "sprite",
+        "data": {
+          "sprite": "overlay_region_gen_bar.png",
+          "spritesCount": 17,
+          "spriteIndex": {
+            "fixedValue": 0.0,
+            "name": "OVERLAYRegionGenBar"
+          },
+          "anchorPoint": "TOP_LEFT",
+          "x": 22,
+          "y": 8,
+          "locked": false
+        }
+      },
+      {
+        "type": "label",
+        "data": {
+          "name": "label_proc_overlay_region_gen_biome",
+          "text": {
+            "fixedValue": "",
+            "name": "OVERLAYRegionGenBiome"
+          },
+          "color": {
+            "value": -13421773,
+            "falpha": 0.0
+          },
+          "displayCondition": {
+            "name": "DeveloperMode"
+          },
+          "anchorPoint": "TOP_LEFT",
+          "x": 6,
+          "y": 32,
+          "locked": false
+        }
+      },
+      {
+        "type": "label",
+        "data": {
+          "name": "label_proc_overlay_region_gen_tree",
+          "text": {
+            "fixedValue": "",
+            "name": "OVERLAYRegionGenTree"
+          },
+          "color": {
+            "value": -10066330,
+            "falpha": 0.0
+          },
+          "displayCondition": {
+            "name": "DeveloperMode"
+          },
+          "anchorPoint": "TOP_LEFT",
+          "x": 6,
+          "y": 44,
+          "locked": false
+        }
+      }
+    ],
+    "baseTexture": "",
+    "overlayTarget": "Ingame",
+    "displayCondition": {
+      "name": "OVERLAYRegionGenShow"
+    },
+    "gridSettings": {
+      "sx": 16,
+      "sy": 8,
+      "ox": 11,
+      "oy": 15,
+      "snapOnGrid": true
+    }
+  }
+}

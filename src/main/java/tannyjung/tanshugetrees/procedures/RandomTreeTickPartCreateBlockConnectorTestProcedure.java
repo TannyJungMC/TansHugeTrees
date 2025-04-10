@@ -23,7 +23,7 @@ public class RandomTreeTickPartCreateBlockConnectorTestProcedure {
 					try {
 						return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getX();
 					} catch (CommandSyntaxException e) {
-						TanshugetreesMod.LOGGER.error(e.getMessage());
+						e.printStackTrace();
 						return 0;
 					}
 				}
@@ -33,7 +33,7 @@ public class RandomTreeTickPartCreateBlockConnectorTestProcedure {
 					try {
 						return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getY();
 					} catch (CommandSyntaxException e) {
-						TanshugetreesMod.LOGGER.error(e.getMessage());
+						e.printStackTrace();
 						return 0;
 					}
 				}
@@ -43,7 +43,7 @@ public class RandomTreeTickPartCreateBlockConnectorTestProcedure {
 					try {
 						return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getZ();
 					} catch (CommandSyntaxException e) {
-						TanshugetreesMod.LOGGER.error(e.getMessage());
+						e.printStackTrace();
 						return 0;
 					}
 				}
@@ -92,7 +92,7 @@ public class RandomTreeTickPartCreateBlockConnectorTestProcedure {
 						try {
 							return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getX();
 						} catch (CommandSyntaxException e) {
-							TanshugetreesMod.LOGGER.error(e.getMessage());
+							e.printStackTrace();
 							return 0;
 						}
 					}
@@ -101,7 +101,7 @@ public class RandomTreeTickPartCreateBlockConnectorTestProcedure {
 						try {
 							return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getY();
 						} catch (CommandSyntaxException e) {
-							TanshugetreesMod.LOGGER.error(e.getMessage());
+							e.printStackTrace();
 							return 0;
 						}
 					}
@@ -110,7 +110,7 @@ public class RandomTreeTickPartCreateBlockConnectorTestProcedure {
 						try {
 							return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getZ();
 						} catch (CommandSyntaxException e) {
-							TanshugetreesMod.LOGGER.error(e.getMessage());
+							e.printStackTrace();
 							return 0;
 						}
 					}
@@ -151,7 +151,7 @@ public class RandomTreeTickPartCreateBlockConnectorTestProcedure {
 					try {
 						return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getX();
 					} catch (CommandSyntaxException e) {
-						TanshugetreesMod.LOGGER.error(e.getMessage());
+						e.printStackTrace();
 						return 0;
 					}
 				}
@@ -161,7 +161,7 @@ public class RandomTreeTickPartCreateBlockConnectorTestProcedure {
 					try {
 						return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getY();
 					} catch (CommandSyntaxException e) {
-						TanshugetreesMod.LOGGER.error(e.getMessage());
+						e.printStackTrace();
 						return 0;
 					}
 				}
@@ -171,7 +171,7 @@ public class RandomTreeTickPartCreateBlockConnectorTestProcedure {
 					try {
 						return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getZ();
 					} catch (CommandSyntaxException e) {
-						TanshugetreesMod.LOGGER.error(e.getMessage());
+						e.printStackTrace();
 						return 0;
 					}
 				}
@@ -215,7 +215,7 @@ public class RandomTreeTickPartCreateBlockConnectorTestProcedure {
 						try {
 							return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getX();
 						} catch (CommandSyntaxException e) {
-							TanshugetreesMod.LOGGER.error(e.getMessage());
+							e.printStackTrace();
 							return 0;
 						}
 					}
@@ -224,7 +224,7 @@ public class RandomTreeTickPartCreateBlockConnectorTestProcedure {
 						try {
 							return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getY();
 						} catch (CommandSyntaxException e) {
-							TanshugetreesMod.LOGGER.error(e.getMessage());
+							e.printStackTrace();
 							return 0;
 						}
 					}
@@ -233,7 +233,7 @@ public class RandomTreeTickPartCreateBlockConnectorTestProcedure {
 						try {
 							return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getZ();
 						} catch (CommandSyntaxException e) {
-							TanshugetreesMod.LOGGER.error(e.getMessage());
+							e.printStackTrace();
 							return 0;
 						}
 					}

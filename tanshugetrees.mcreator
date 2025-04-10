@@ -1523,7 +1523,7 @@
           "src/main/java/tannyjung/tanshugetrees/item/PresetFixerItem.java"
         ]
       },
-      "path": "~/.Other/Preset Fixer"
+      "path": "~/Preset Fixer"
     },
     {
       "name": "Agathos",
@@ -1656,77 +1656,6 @@
       "path": "~/Saplings"
     },
     {
-      "name": "OVERLAYGeneratingRegion",
-      "type": "overlay",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "overlay_generating_region",
-      "metadata": {
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/client/screens/OVERLAYGeneratingRegionOverlay.java"
-        ]
-      },
-      "path": "~/.Other/OVERLAY"
-    },
-    {
-      "name": "OVERLAYGeneratingRegionShow",
-      "type": "procedure",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "overlay_generating_region_show",
-      "metadata": {
-        "return_type": "logic",
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/procedures/OVERLAYGeneratingRegionShowProcedure.java"
-        ],
-        "dependencies": []
-      },
-      "path": "~/.Other/OVERLAY"
-    },
-    {
-      "name": "OVERLAYGeneratingRegionLoading",
-      "type": "procedure",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "overlay_generating_region_loading",
-      "metadata": {
-        "return_type": "number",
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/procedures/OVERLAYGeneratingRegionLoadingProcedure.java"
-        ],
-        "dependencies": []
-      },
-      "path": "~/.Other/OVERLAY"
-    },
-    {
-      "name": "OVERLAYGeneratingRegionMenu",
-      "type": "overlay",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "overlay_generating_region_menu",
-      "metadata": {
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/client/screens/OVERLAYGeneratingRegionMenuOverlay.java"
-        ]
-      },
-      "path": "~/.Other/OVERLAY"
-    },
-    {
-      "name": "OVERLAYGeneratingRegionBar",
-      "type": "procedure",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "overlay_generating_region_bar",
-      "metadata": {
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/procedures/OVERLAYGeneratingRegionBarProcedure.java"
-        ],
-        "dependencies": [],
-        "return_type": "number"
-      },
-      "path": "~/.Other/OVERLAY"
-    },
-    {
       "name": "GUIPresetFixer",
       "type": "gui",
       "compiles": true,
@@ -1739,7 +1668,7 @@
           "src/main/java/tannyjung/tanshugetrees/world/inventory/GUIPresetFixerMenu.java"
         ]
       },
-      "path": "~/.Other/Preset Fixer"
+      "path": "~/Preset Fixer"
     },
     {
       "name": "GUIPresetFixerConvert",
@@ -1766,7 +1695,7 @@
           }
         ]
       },
-      "path": "~/.Other/Preset Fixer"
+      "path": "~/Preset Fixer"
     },
     {
       "name": "GUIPresetFixerOpen",
@@ -1801,7 +1730,7 @@
           }
         ]
       },
-      "path": "~/.Other/Preset Fixer"
+      "path": "~/Preset Fixer"
     },
     {
       "name": "CommandResult",
@@ -2210,6 +2139,122 @@
       "path": "~/.Other/COMMAND"
     },
     {
+      "name": "OVERLAYRegionGenBar",
+      "type": "procedure",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "overlay_region_gen_bar",
+      "metadata": {
+        "return_type": "number",
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/procedures/OVERLAYRegionGenBarProcedure.java"
+        ],
+        "dependencies": []
+      },
+      "path": "~/.Other/OVERLAY"
+    },
+    {
+      "name": "OVERLAYRegionGenLoading",
+      "type": "procedure",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "overlay_region_gen_loading",
+      "metadata": {
+        "return_type": "number",
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/procedures/OVERLAYRegionGenLoadingProcedure.java"
+        ],
+        "dependencies": []
+      },
+      "path": "~/.Other/OVERLAY"
+    },
+    {
+      "name": "OVERLAYRegionGenMenu",
+      "type": "overlay",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "overlay_region_gen_menu",
+      "metadata": {
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/client/screens/OVERLAYRegionGenMenuOverlay.java"
+        ]
+      },
+      "path": "~/.Other/OVERLAY"
+    },
+    {
+      "name": "OVERLAYRegionGen",
+      "type": "overlay",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "overlay_region_gen",
+      "metadata": {
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/client/screens/OVERLAYRegionGenOverlay.java"
+        ]
+      },
+      "path": "~/.Other/OVERLAY"
+    },
+    {
+      "name": "OVERLAYRegionGenShow",
+      "type": "procedure",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "overlay_region_gen_show",
+      "metadata": {
+        "return_type": "logic",
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/procedures/OVERLAYRegionGenShowProcedure.java"
+        ],
+        "dependencies": []
+      },
+      "path": "~/.Other/OVERLAY"
+    },
+    {
+      "name": "OVERLAYRegionGenBiome",
+      "type": "procedure",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "overlay_region_gen_biome",
+      "metadata": {
+        "return_type": "string",
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/procedures/OVERLAYRegionGenBiomeProcedure.java"
+        ],
+        "dependencies": []
+      },
+      "path": "~/.Other/OVERLAY"
+    },
+    {
+      "name": "OVERLAYRegionGenTree",
+      "type": "procedure",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "overlay_region_gen_tree",
+      "metadata": {
+        "return_type": "string",
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/procedures/OVERLAYRegionGenTreeProcedure.java"
+        ],
+        "dependencies": []
+      },
+      "path": "~/.Other/OVERLAY"
+    },
+    {
+      "name": "DeveloperMode",
+      "type": "procedure",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "developer_mode",
+      "metadata": {
+        "return_type": "logic",
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/procedures/DeveloperModeProcedure.java"
+        ],
+        "dependencies": []
+      },
+      "path": "~/.Other"
+    },
+    {
       "name": "DiskGrass",
       "type": "feature",
       "compiles": true,
@@ -2219,7 +2264,8 @@
         "files": [
           "src/main/resources/data/tanshugetrees/worldgen/configured_feature/disk_grass.json"
         ]
-      }
+      },
+      "path": "~/.Other"
     }
   ],
   "variable_elements": [
@@ -2553,6 +2599,7 @@
       "block.tanshugetrees.old_witch.description_1": "Size : Realistic",
       "gamerule.mod_th_trarity_percent_a.description": "-",
       "block.tanshugetrees.old_witch.description_2": "Blocks : Oak Wood / Stripped Oak Wood / Oak Leaves",
+      "gui.tanshugetrees.overlay_region_gen_menu.label_tanss_huge_trees_generating_t": "Generating tree locations. This may take a while.",
       "block.tanshugetrees.old_witch.description_5": "This is random tree sapling, it may take long time to generate!",
       "block.tanshugetrees.old_witch.description_6": "--------------------------------------------------",
       "block.tht.yokai.description_5": "This is random tree sapling, it may take long time to generate!",
@@ -3024,10 +3071,6 @@
             "children": []
           },
           {
-            "name": "Preset Fixer",
-            "children": []
-          },
-          {
             "name": "OVERLAY",
             "children": []
           }
@@ -3053,13 +3096,17 @@
       {
         "name": ".MCreatorLink",
         "children": []
+      },
+      {
+        "name": "Preset Fixer",
+        "children": []
       }
     ]
   },
   "workspaceSettings": {
     "modid": "tanshugetrees",
     "modName": "Tan\u0027s Huge Trees",
-    "version": "1.0.1-alpha",
+    "version": "1.1.0-alpha",
     "description": "Generate trees and nature stuffs around the world",
     "author": "TannyJung",
     "websiteURL": "https://legacy.curseforge.com/minecraft/mc-mods/tans-huge-trees",
@@ -3071,7 +3118,7 @@
     "dependants": [],
     "mcreatorDependencies": [],
     "currentGenerator": "forge-1.20.1",
-    "credits": "Created with MCreator",
+    "credits": "Created with MCreator and IntelliJ",
     "modElementsPackage": "tannyjung.tanshugetrees"
   },
   "mcreatorVersion": 202500113416

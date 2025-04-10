@@ -84,7 +84,7 @@ public class GUIPresetFixerConvertProcedure {
 				}
 				fileReader.close();
 			} catch (IOException e) {
-				TanshugetreesMod.LOGGER.error(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 		if (entity instanceof ServerPlayer _player && !world.isClientSide())

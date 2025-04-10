@@ -23,8 +23,11 @@ import java.util.concurrent.*;
 
 public class TreeLocation {
 
-    public static int generating_region = 0;
-    public static int generating_region_bar = 0;
+    public static int quadtree_level = 4; // 1 = 32x32 / 2 = 16x16 / 3 = 8x8 / ...
+    public static int region_gen = 0;
+    public static int region_gen_bar = 0;
+    public static String region_gen_biome = "";
+    public static String region_gen_tree = "";
 
     public static void start (FeaturePlaceContext <NoneFeatureConfiguration> context) {
 
@@ -45,8 +48,8 @@ public class TreeLocation {
             int center_posX = 0;
             int center_posZ = 0;
 
-            generating_region = 4;
-            generating_region_bar = 0;
+            region_gen = 4;
+            region_gen_bar = 0;
             TanshugetreesMod.LOGGER.info("Generating Region (" + region_posX + "/" + region_posZ + ")");
 
             // Overlay Loading Loop
@@ -54,15 +57,15 @@ public class TreeLocation {
 
                 CompletableFuture.runAsync(() -> {
 
-                    while (generating_region != 0) {
+                    while (region_gen != 0) {
 
-                        if (generating_region < 4) {
+                        if (region_gen < 4) {
 
-                            generating_region = generating_region + 1;
+                            region_gen = region_gen + 1;
 
                         } else {
 
-                            generating_region = 1;
+                            region_gen = 1;
 
                         }
 
@@ -89,7 +92,7 @@ public class TreeLocation {
 
                     for (int scanZ = 0; scanZ < 32; scanZ++) {
 
-                        generating_region_bar = generating_region_bar + 1;
+                        region_gen_bar = region_gen_bar + 1;
 
                         if (Math.random() < ConfigMain.region_scan_percentage * 0.01) {
 
@@ -112,7 +115,7 @@ public class TreeLocation {
 
             }
 
-            generating_region = 0;
+            region_gen = 0;
             TanshugetreesMod.LOGGER.info("Completed!");
 
         }
@@ -163,6 +166,19 @@ public class TreeLocation {
 
                                     start_test = true;
 
+                                    // Get Biome at Center
+                                    {
+
+                                        biome_center = level.getBiome(new BlockPos(center_posX, level.getMaxBuildHeight(), center_posZ));
+
+                                    }
+
+                                    if (ConfigMain.developer_mode == true) {
+
+                                        region_gen_biome = "Biome : " + Misc.biomeToBiomeID(biome_center);
+
+                                    }
+
                                 }
 
                                 // Get Multiply Values
@@ -192,24 +208,27 @@ public class TreeLocation {
 
                                 }
 
-                                // Get Biome at Center
-                                {
-
-                                    biome_center = level.getBiome(new BlockPos(center_posX, level.getMaxBuildHeight(), center_posZ));
-
-                                }
-
-                            } else if (read_all.startsWith("[INCOMPATIBLE] ") == false) {
+                            } else {
 
                                 if (read_all.startsWith("[") == true) {
 
-                                    // Reset The Test
-                                    {
+                                    if (read_all.startsWith("[INCOMPATIBLE] ") == true) {
 
-                                        id = read_all.substring(read_all.indexOf("]") + 2).replace(" > ", "/");
-                                        skip = false;
+                                        skip = true;
+
+                                    } else {
+
+                                        // Reset The Test
+                                        {
+
+                                            id = read_all.substring(read_all.indexOf("]") + 2).replace(" > ", "/");
+                                            skip = false;
+
+                                        }
 
                                     }
+
+                                    region_gen_tree = "";
 
                                 } else {
 
@@ -236,6 +255,21 @@ public class TreeLocation {
                                                 if (testBiome(level, biome_center, biome, center_posX, center_posZ) == false) {
 
                                                     skip = true;
+
+                                                }
+
+                                            }
+
+                                            // Set Region Gen Tree ID
+                                            {
+
+                                                if (skip == false) {
+
+                                                    region_gen_tree = "Tree : " + id;
+
+                                                } else {
+
+                                                    region_gen_tree = "Tree : No tree have set for this biome";
 
                                                 }
 
@@ -269,7 +303,7 @@ public class TreeLocation {
                                             {
 
                                                 min_distance = Integer.parseInt(read_all.replace("min_distance = ", ""));
-                                                min_distance = (int) Math.nextUp(min_distance * multiply_min_distance);
+                                                min_distance = (int) Math.ceil(min_distance * multiply_min_distance);
 
                                                 if (min_distance > 0) {
 
@@ -290,8 +324,8 @@ public class TreeLocation {
                                                 String[] get = read_all.replace("group_size = ", "").split(" <> ");
                                                 int min = Integer.parseInt(get[0]);
                                                 int max = Integer.parseInt(get[1]);
-                                                min = (int) Math.nextUp(min * multiply_group_size);
-                                                max = (int) Math.nextUp(max * multiply_group_size);
+                                                min = (int) Math.ceil(min * multiply_group_size);
+                                                max = (int) Math.ceil(max * multiply_group_size);
 
                                                 // Round if lower than 0
                                                 {
@@ -476,8 +510,7 @@ public class TreeLocation {
 
         {
 
-            String biome_centerID = biome_center.toString().replace("Reference{ResourceKey[minecraft:worldgen/biome / ", "");
-            biome_centerID = biome_centerID.substring(0, biome_centerID.indexOf("]"));
+            String biome_centerID = Misc.biomeToBiomeID(biome_center);
 
             for (String split : biome.split(" / ")) {
 
@@ -546,6 +579,8 @@ public class TreeLocation {
             test:
             {
 
+                int size = 32 >> quadtree_level;
+
                 int center_chunk_posX = center_posX >> 4;
                 int center_chunk_posZ = center_posZ >> 4;
                 int start_chunk_posX = 0;
@@ -556,11 +591,13 @@ public class TreeLocation {
                 int scanZ = 0;
                 int step = 0;
 
-                for (int distance = 0; distance <= (((min_distance >> 4) + 1) / 2) * 2; distance = distance + 2) {
+                for (int distance = 0; distance <= (int) Math.ceil((min_distance / 16.0) / (double) size) * size; distance = distance + size) {
 
                     start_chunk_posX = center_chunk_posX - distance;
                     start_chunk_posZ = center_chunk_posZ - distance;
                     step = 1;
+                    scanX = 0;
+                    scanZ = 0;
 
                     while (true) {
 
@@ -609,43 +646,48 @@ public class TreeLocation {
 
                         }
 
-                        if (step == 1) {
+                        // Steps
+                        {
 
-                            scanX = scanX + 2;
+                            if (step == 1) {
 
-                            if (scanX > (distance * 2)) {
+                                scanX = scanX + size;
 
-                                step = 2;
+                                if (scanX > (distance * 2)) {
 
-                            }
+                                    step = 2;
 
-                        } else if (step == 2) {
+                                }
 
-                            scanZ = scanZ + 2;
+                            } else if (step == 2) {
 
-                            if (scanZ > (distance * 2)) {
+                                scanZ = scanZ + size;
 
-                                step = 3;
+                                if (scanZ > (distance * 2)) {
 
-                            }
+                                    step = 3;
 
-                        } else if (step == 3) {
+                                }
 
-                            scanX = scanX - 2;
+                            } else if (step == 3) {
 
-                            if (scanX <= 0) {
+                                scanX = scanX - size;
 
-                                step = 4;
+                                if (scanX <= 0) {
 
-                            }
+                                    step = 4;
 
-                        } else if (step == 4) {
+                                }
 
-                            scanZ = scanZ - 2;
+                            } else if (step == 4) {
 
-                            if (scanZ <= 0) {
+                                scanZ = scanZ - size;
 
-                                break;
+                                if (scanZ <= 0) {
+
+                                    break;
+
+                                }
 
                             }
 
@@ -712,6 +754,11 @@ public class TreeLocation {
                         }
 
                     }
+
+                } else {
+
+                    return_logic = false;
+                    break test;
 
                 }
 
@@ -1045,12 +1092,16 @@ public class TreeLocation {
             // Calculation what chunks have this tree + test exist chunks
             {
 
-                int pointX = center_posX - center_sizeX;
-                int pointZ = center_posZ - center_sizeZ;
+                int from_chunkX = center_posX - center_sizeX;
+                int from_chunkZ = center_posZ - center_sizeZ;
+                int to_chunkX = (from_chunkX + sizeX) >> 4;
+                int to_chunkZ = (from_chunkZ + sizeZ) >> 4;
+                from_chunkX = from_chunkX >> 4;
+                from_chunkZ = from_chunkZ >> 4;
 
-                for (int scanX = pointX >> 4; scanX <= Math.nextUp((pointX + sizeX) / 16.0); scanX++) {
+                for (int scanX = from_chunkX; scanX <= to_chunkX; scanX++) {
 
-                    for (int scanZ = pointZ >> 4; scanZ <= Math.nextUp((pointZ + sizeZ) / 16.0); scanZ++) {
+                    for (int scanZ = from_chunkZ; scanZ <= to_chunkZ; scanZ++) {
 
                         if (level.hasChunk(scanX, scanZ) == true && level.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.FEATURES) == true) {
 
@@ -1064,7 +1115,7 @@ public class TreeLocation {
 
                 writeLocationFile(id, center_posX, center_posY, center_posZ);
                 String other_data = original_height + "/" + ground_block + "/" + dead_tree_level;
-                writePlaceFile(pointX >> 4, pointZ >> 4, (pointX + sizeX) >> 4, (pointZ + sizeZ) >> 4, id, chosen, center_posX, center_posY, center_posZ, rotation, mirrored, other_data);
+                writePlaceFile(from_chunkX, from_chunkZ, to_chunkX, to_chunkZ, id, chosen, center_posX, center_posY, center_posZ, rotation, mirrored, other_data);
 
             }
 
@@ -1088,20 +1139,24 @@ public class TreeLocation {
 
     }
 
-    private static void writePlaceFile(int from_chunk_posX, int from_chunk_posZ, int to_chunk_posX, int to_chunk_posZ, String id, File chosen, int center_posX, int center_posY, int center_posZ, String rotation, String mirrored, String other_data) {
+    private static void writePlaceFile(int from_chunkX, int from_chunkZ, int to_chunkX, int to_chunkZ, String id, File chosen, int center_posX, int center_posY, int center_posZ, String rotation, String mirrored, String other_data) {
 
         StringBuilder write = new StringBuilder();
 
         {
 
-            write.append(from_chunk_posX + "/" + from_chunk_posZ + "|" + to_chunk_posX + "/" + to_chunk_posZ + "|" + id + "|" + chosen.getName() + "|" + center_posX + "/" + center_posY + "/" + center_posZ + "|" + rotation + "/" + mirrored + "|" + other_data);
+            write.append(from_chunkX + "/" + from_chunkZ + "|" + to_chunkX + "/" + to_chunkZ + "|" + id + "|" + chosen.getName() + "|" + center_posX + "/" + center_posY + "/" + center_posZ + "|" + rotation + "/" + mirrored + "|" + other_data);
             write.append("\n");
 
         }
 
-        for (int scanX = from_chunk_posX; scanX <= to_chunk_posX; scanX++) {
+        int size = 32 >> quadtree_level;
+        int to_chunkX_test = ((int) Math.ceil(to_chunkX / (double) size) * size) + size;
+        int to_chunkZ_test = ((int) Math.ceil(to_chunkZ / (double) size) * size) + size;
 
-            for (int scanZ = from_chunk_posZ; scanZ <= to_chunk_posZ; scanZ++) {
+        for (int scanX = from_chunkX; scanX < to_chunkX_test; scanX = scanX + size) {
+
+            for (int scanZ = from_chunkZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
 
                 FileManager.createFolder(Handcode.directory_world_data + "/place/" + (scanX >> 5) + "," + (scanZ >> 5));
                 FileManager.writeTXT(Handcode.directory_world_data + "/place/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + MiscOutside.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);

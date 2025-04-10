@@ -527,7 +527,7 @@ public class TreePlacer {
                 boolean keep = false;
                 BlockState block = Blocks.AIR.defaultBlockState();
                 BlockPos pos = null;
-                double pre_leaves_litter_chance = 0.0;
+                double pre_leaf_litter_chance = 0.0;
                 int height_motion_block = 0;
                 boolean can_run_function = false;
 
@@ -757,17 +757,17 @@ public class TreePlacer {
 
                                                                         if (Misc.isBlockTaggedAs(block, "tanshugetrees:coniferous_leaves_blocks") == true) {
 
-                                                                            pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_chance_coniferous;
+                                                                            pre_leaf_litter_chance = ConfigMain.pre_leaves_litter_chance_coniferous;
 
                                                                         } else {
 
-                                                                            pre_leaves_litter_chance = ConfigMain.pre_leaves_litter_chance;
+                                                                            pre_leaf_litter_chance = ConfigMain.pre_leaves_litter_chance;
 
                                                                         }
 
                                                                     }
 
-                                                                    if (Math.random() < pre_leaves_litter_chance) {
+                                                                    if (Math.random() < pre_leaf_litter_chance) {
 
                                                                         height_motion_block = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, test_posX, test_posZ) + 1;
 

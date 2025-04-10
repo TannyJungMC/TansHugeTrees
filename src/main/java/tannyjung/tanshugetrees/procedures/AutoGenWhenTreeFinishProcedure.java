@@ -150,7 +150,7 @@ public class AutoGenWhenTreeFinishProcedure {
 					}
 					fileReader.close();
 				} catch (IOException e) {
-					TanshugetreesMod.LOGGER.error(e.getMessage());
+					e.printStackTrace();
 				}
 				if (!("").equals("Replace Lines")) {
 					file2 = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/generated"), File.separator + ((entity.getPersistentData().getString("file_name")).replace(" (generating)", "")));
@@ -206,7 +206,7 @@ public class AutoGenWhenTreeFinishProcedure {
 							}
 							fileReader.close();
 						} catch (IOException e) {
-							TanshugetreesMod.LOGGER.error(e.getMessage());
+							e.printStackTrace();
 						}
 						file2bw.close();
 						file2writer.close();

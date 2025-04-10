@@ -2,8 +2,8 @@ package tannyjung.tanshugetrees.procedures;
 
 import tannyjung.tanshugetrees_handcode.world_gen.TreeLocation;
 
-public class OVERLAYGeneratingRegionShowProcedure {
+public class OVERLAYRegionGenShowProcedure {
 	public static boolean execute() {
-		return TreeLocation.generating_region != 0;
+		return TreeLocation.region_gen != 0;
 	}
 }

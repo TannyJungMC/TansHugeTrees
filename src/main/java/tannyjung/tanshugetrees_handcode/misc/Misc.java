@@ -14,10 +14,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class Misc {
 
@@ -83,9 +81,36 @@ public class Misc {
 
 	}
 
-	public static boolean isBiomeTaggedAs (Holder<Biome> biome_get, String tag) {
+	public static String biomeToBiomeID (Holder<Biome> biome) {
 
-		return biome_get.is(TagKey.create(Registries.BIOME, new ResourceLocation(tag)));
+		String return_text = "";
+
+		{
+
+			return_text = biome.toString().replace("Reference{ResourceKey[minecraft:worldgen/biome / ", "");
+			return_text = return_text.substring(0, return_text.indexOf("]"));
+
+		}
+
+		return return_text;
+
+	}
+
+	public static boolean isBiomeTaggedAs (Holder<Biome> biome, String tag) {
+
+		boolean return_logic = false;
+
+		{
+
+			try {
+
+				return_logic = biome.is(TagKey.create(Registries.BIOME, new ResourceLocation(tag)));
+
+			} catch (Exception ignored) {}
+
+		}
+
+		return return_logic;
 
 	}
 

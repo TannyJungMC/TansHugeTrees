@@ -127,7 +127,7 @@ public class RandomTreeTickStartProcedure {
 		if (TanshugetreesModVariables.MapVariables.get(world).auto_gen == true) {
 			AutoGenWhenTreeStartProcedure.execute(world, entity);
 		}
-		if (entity.getPersistentData().getDouble("start_function_chance") > Math.random()) {
+		if (entity.getPersistentData().getDouble("function_start_chance") > Math.random()) {
 			if (TanshugetreesModVariables.MapVariables.get(world).auto_gen == false) {
 				{
 					Entity _ent = entity;
@@ -137,18 +137,22 @@ public class RandomTreeTickStartProcedure {
 					}
 				}
 			} else {
-				file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/generated"), File.separator + (entity.getPersistentData().getString("file_name")));
-				try {
-					FileWriter filewriter = new FileWriter(file);
-					BufferedWriter filebw = new BufferedWriter(filewriter);
-					{
-						filebw.write("f0^0^0fs");
-						filebw.newLine();
+				if (true) {
+					file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/generated"), File.separator + (entity.getPersistentData().getString("file_name")));
+					try {
+						FileWriter filewriter = new FileWriter(file, true);
+						BufferedWriter filebw = new BufferedWriter(filewriter);
+						if (true) {
+							{
+								filebw.write("+f0^0^0fs");
+								filebw.newLine();
+							}
+						}
+						filebw.close();
+						filewriter.close();
+					} catch (IOException exception) {
+						exception.printStackTrace();
 					}
-					filebw.close();
-					filewriter.close();
-				} catch (IOException exception) {
-					exception.printStackTrace();
 				}
 			}
 		}

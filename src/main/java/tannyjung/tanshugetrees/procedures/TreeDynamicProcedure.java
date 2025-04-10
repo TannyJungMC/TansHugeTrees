@@ -374,7 +374,7 @@ public class TreeDynamicProcedure {
 						}
 						fileReader.close();
 					} catch (IOException e) {
-						TanshugetreesMod.LOGGER.error(e.getMessage());
+						e.printStackTrace();
 					}
 					if (entity.getPersistentData().getDouble("process") >= entity.getPersistentData().getDouble("line_count")) {
 						entity.getPersistentData().putDouble("process", 0);
