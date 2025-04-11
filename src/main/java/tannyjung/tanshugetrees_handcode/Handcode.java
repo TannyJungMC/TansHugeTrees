@@ -21,7 +21,7 @@ public class Handcode {
 
 	// --------------------------------------------------
 
-	public static double mod_version = 1.1;
+	public static double mod_version = 1.0;
 	public static String tanny_pack_version = "Alpha";
 
 	// --------------------------------------------------

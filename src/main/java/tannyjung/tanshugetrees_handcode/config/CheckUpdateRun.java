@@ -40,44 +40,35 @@ public class CheckUpdateRun {
 			}
 
 			File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack/version.txt");
+			File file_incompatible = new File(Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Tree-Pack/version.txt");
+			int pack_version = 0;
 
-			if (file.exists() == false) {
+			if ((file.exists() == true && file.isDirectory() == false) || (file_incompatible.exists() == true && file_incompatible.isDirectory() == false)) {
 
-				file = new File(Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Tree-Pack/version.txt");
+				// Get Your Pack Version
+				{
 
-			}
+					try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-			if (file.exists() == true && file.isDirectory() == false) {
+						{
+
+							if (read_all.startsWith("pack_version = ")) {
+
+								pack_version = Integer.parseInt(read_all.replace("pack_version = ", ""));
+								break;
+
+							}
+
+						}
+
+					} buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+
+				}
 
 				try {
 
 					URL url_convert = new URI(url).toURL();
 					int url_pack_version = 0;
-					double mod_version = 0.0;
-					int pack_version = 0;
-
-					// Get Your Version
-					{
-
-						try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
-
-							{
-
-								if (read_all.startsWith("mod_version = ")) {
-
-									mod_version = Double.parseDouble(read_all.replace("mod_version = ", ""));
-
-								} else if (read_all.startsWith("pack_version = ")) {
-
-									pack_version = Integer.parseInt(read_all.replace("pack_version = ", ""));
-
-								}
-
-							}
-
-						} buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
-
-					}
 
 					// Read File From GitHub
 					{
@@ -100,15 +91,7 @@ public class CheckUpdateRun {
 
 					if (pack_version == url_pack_version) {
 
-						if (mod_version == Handcode.mod_version) {
-
-							Misc.sendChatMessage(level, "@a", "gray", "THT : TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") is already up to date");
-
-						} else {
-
-							Misc.sendChatMessage(level, "@a", "gold", "THT : Seems like you update the mod very fast! TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit.");
-
-						}
+						Misc.sendChatMessage(level, "@a", "gray", "THT : TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") is already up to date");
 
 					} else {
 

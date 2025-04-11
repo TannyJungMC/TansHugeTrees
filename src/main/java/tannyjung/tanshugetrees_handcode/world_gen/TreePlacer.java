@@ -12,13 +12,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
-import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
-import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 import net.minecraftforge.registries.ForgeRegistries;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
@@ -219,10 +217,7 @@ public class TreePlacer {
 
                             for (Structure structure : structures) {
 
-                                // structure.type().equals(StructureType.MINESHAFT) == false
-                                // structure.terrainAdaptation().equals(TerrainAdjustment.NONE) == true
-
-                                if (structure.step().equals(GenerationStep.Decoration.SURFACE_STRUCTURES) == true) {
+                                if (structure.type().equals(StructureType.MINESHAFT) == false) {
 
                                     return_logic = false;
                                     break test;
