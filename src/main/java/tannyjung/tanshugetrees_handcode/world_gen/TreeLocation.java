@@ -33,9 +33,9 @@ public class TreeLocation {
 
         int region_posX = context.origin().getX() >> 9;
         int region_posZ = context.origin().getZ() >> 9;
-        File file = new File(Handcode.directory_world_data + "/tree_locations/" + region_posX + "," + region_posZ);
+        File file = new File(Handcode.directory_world_data + "/regions/" + region_posX + "," + region_posZ + ".txt");
 
-        if (file.exists() == false) {
+        if (file.exists() == false && file.isDirectory() == false) {
 
             // Prepairing The Folder
             FileManager.createFolder(file.toPath().toString());
@@ -252,7 +252,7 @@ public class TreeLocation {
 
                                                 biome = read_all.replace("biome = ", "");
 
-                                                if (testBiome(level, biome_center, biome, center_posX, center_posZ) == false) {
+                                                if (testBiome(biome_center, biome) == false) {
 
                                                     skip = true;
 
@@ -456,7 +456,7 @@ public class TreeLocation {
 
                                 biome_center = level.getBiome(new BlockPos(center_posX, level.getMaxBuildHeight(), center_posZ));
 
-                                if (testBiome(level, biome_center, biome, center_posX, center_posZ) == false) {
+                                if (testBiome(biome_center, biome) == false) {
 
                                     continue;
 
@@ -504,7 +504,7 @@ public class TreeLocation {
 
     }
 
-    private static boolean testBiome (LevelAccessor level, Holder<Biome> biome_center, String biome, int center_posX, int center_posZ) {
+    private static boolean testBiome (Holder<Biome> biome_center, String biome) {
 
         boolean return_logic = false;
 

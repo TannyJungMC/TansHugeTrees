@@ -13,10 +13,11 @@ public class ConfigRepairAll {
 
 		FileManager.createFolder(Handcode.directory_config + "/custom_packs/.organized");
 		FileManager.createFolder(Handcode.directory_config + "/generated");
-		FileManager.createFolder(Handcode.directory_world_data + "/data_folder_cleaner");
+		FileManager.createFolder(Handcode.directory_world_data + "/regions");
 		FileManager.createFolder(Handcode.directory_world_data + "/tree_locations");
-		FileManager.createFolder(Handcode.directory_world_data + "/detailed_detection");
 		FileManager.createFolder(Handcode.directory_world_data + "/place");
+		FileManager.createFolder(Handcode.directory_world_data + "/detailed_detection");
+		FileManager.createFolder(Handcode.directory_world_data + "/data_folder_cleaner");
 
 		CustomPackOrganized.clearFolder();
 		CustomPackIncompatible.scanMain();

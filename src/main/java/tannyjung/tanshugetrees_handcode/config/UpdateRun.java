@@ -22,15 +22,13 @@ public class UpdateRun {
 
     public static void start (LevelAccessor level) {
 
-		String url = "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt";
-
 		if (MiscOutside.isConnectedToInternet() == false) {
 
-			Misc.sendChatMessage(level, "@a", "red", "THT : Can't update the tree pack right now, as no internet connection.");
+			Misc.sendChatMessage(level, "@a", "red", "THT : Can't update right now, as no internet connection.");
 
 		} else {
 
-			if (checkModVersion(level, url) == true) {
+			if (checkModVersion(level, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
 
 				Misc.sendChatMessage(level, "@a", "white", "");
 				Misc.sendChatMessage(level, "@a", "gray", "THT : Started the installation, this may take a while.");
@@ -71,9 +69,6 @@ public class UpdateRun {
 
 		}
 
-
-
-
 	}
 
 	private static boolean checkModVersion (LevelAccessor level, String url) {
@@ -111,8 +106,6 @@ public class UpdateRun {
 		if (Handcode.mod_version != mod_version_url) {
 
 			Misc.sendChatMessage(level, "@a", "red", "THT : You're currently using mod version that does not support to new tree pack version, try update the mod and do it again.");
-			TanshugetreesMod.LOGGER.info("Your version is " + Handcode.mod_version + " but tree pack needed " + mod_version_url);
-
 			return_logic = false;
 
 		}
