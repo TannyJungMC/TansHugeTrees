@@ -1,0 +1,8 @@
+{
+  "parent": "block/cross",
+  "textures": {
+    "cross": "tanshugetrees:block/tree_malus_domestica",
+    "particle": "tanshugetrees:block/tree_malus_domestica"
+  },
+  "render_type": "cutout"
+}
