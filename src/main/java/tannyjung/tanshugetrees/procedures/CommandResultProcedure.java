@@ -12,8 +12,7 @@ public class CommandResultProcedure {
 	public static boolean execute(LevelAccessor world, double x, double y, double z, String command) {
 		if (command == null)
 			return false;
-		boolean variable_logic = false;
-		if ((new Object() {
+		return (new Object() {
 			public String getResult(LevelAccessor world, Vec3 pos, String _command) {
 				StringBuilder _result = new StringBuilder();
 				if (world instanceof ServerLevel _level) {
@@ -42,9 +41,6 @@ public class CommandResultProcedure {
 				}
 				return _result.toString();
 			}
-		}.getResult(world, new Vec3(x, y, z), command)).startsWith("Test passed")) {
-			variable_logic = true;
-		}
-		return variable_logic;
+		}.getResult(world, new Vec3(x, y, z), command)).startsWith("Test passed");
 	}
 }

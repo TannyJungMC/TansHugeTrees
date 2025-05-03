@@ -10,8 +10,7 @@ public class CommandResultEntityProcedure {
 	public static boolean execute(Entity entity, String command) {
 		if (entity == null || command == null)
 			return false;
-		boolean variable_logic = false;
-		if ((new Object() {
+		return (new Object() {
 			public String getResult(Entity _ent, String _command) {
 				StringBuilder _result = new StringBuilder();
 				if (!_ent.level().isClientSide() && _ent.getServer() != null) {
@@ -41,9 +40,6 @@ public class CommandResultEntityProcedure {
 				}
 				return _result.toString();
 			}
-		}.getResult(entity, command)).startsWith("Test passed")) {
-			variable_logic = true;
-		}
-		return variable_logic;
+		}.getResult(entity, command)).startsWith("Test passed");
 	}
 }

@@ -5,6 +5,7 @@
     "#minecraft:replaceable",
     "tanshugetrees:block_placer_leaves",
     "tanshugetrees:block_placer_leaves_2",
-    "#tanshugetrees:air_blocks"
+    "#tanshugetrees:air_blocks",
+    "#minecraft:flowers"
   ]
 }

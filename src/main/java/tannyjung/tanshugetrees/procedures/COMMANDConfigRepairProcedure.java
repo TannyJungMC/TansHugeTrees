@@ -1,6 +1,6 @@
 package tannyjung.tanshugetrees.procedures;
 
-import tannyjung.tanshugetrees_handcode.config.ConfigRepairAll;
+import tannyjung.tanshugetrees_handcode.systems.config.ConfigRepairAll;
 
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.Vec2;

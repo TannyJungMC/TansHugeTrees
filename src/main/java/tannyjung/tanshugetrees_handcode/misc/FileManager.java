@@ -1,10 +1,91 @@
 package tannyjung.tanshugetrees_handcode.misc;
 
 import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.*;
 
 public class FileManager {
+
+	public static String quardtreeChunkToNode (int chunkX, int chunkZ) {
+
+		StringBuilder return_text = new StringBuilder();
+
+		{
+
+			int localX = chunkX & 31;
+			int localZ = chunkZ & 31;
+
+			for (int level = 0; level < Handcode.quadtree_level; level++) {
+
+				int size = 32 >> (level + 1);
+				int posX = (localX / size) % 2;
+				int posZ = (localZ / size) % 2;
+
+				if (posX == 0 && posZ == 0) return_text.append("-NW");
+				else if (posX == 1 && posZ == 0) return_text.append("-NE");
+				else if (posX == 0 && posZ == 1) return_text.append("-SW");
+				else return_text.append("-SE");
+
+			}
+
+		}
+
+		return return_text.substring(1);
+
+	}
+
+	public static int[] textPosConverter (String pos, int rotation, boolean mirrored) {
+
+		int[] return_number = new int[3];
+
+		{
+
+			String[] get = pos.split("\\^");
+			int posX = Integer.parseInt(get[0]);
+			int posY = Integer.parseInt(get[1]);
+			int posZ = Integer.parseInt(get[2]);
+
+			// Rotation & Mirrored
+			{
+
+				if (mirrored == true) {
+
+					posX = posX * (-1);
+
+				}
+
+				if (rotation == 2) {
+
+					int posX_save = posX;
+					posX = posZ;
+					posZ = posX_save * (-1);
+
+				} else if (rotation == 3) {
+
+					posX = posX * (-1);
+					posZ = posZ * (-1);
+
+				} else if (rotation == 4) {
+
+					int posX_save = posX;
+					int posZ_save = posZ;
+					posX = posZ_save * (-1);
+					posZ = posX_save;
+
+				}
+
+			}
+
+			return_number[0] = posX;
+			return_number[1] = posY;
+			return_number[2] = posZ;
+
+		}
+
+		return return_number;
+
+	}
 
 	public static void createFolder (String path) {
 
@@ -16,7 +97,7 @@ public class FileManager {
 
 		}
 
-    }
+	}
 
 	public static void writeTXT (String path, String write, boolean append) {
 
@@ -137,7 +218,7 @@ public class FileManager {
 
 			}
 
-			FileManager.writeTXT(file.toPath().toString(), write.toString(), false);
+			writeTXT(file.toPath().toString(), write.toString(), false);
 
 		}
 

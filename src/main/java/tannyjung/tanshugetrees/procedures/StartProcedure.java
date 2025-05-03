@@ -1,6 +1,7 @@
 package tannyjung.tanshugetrees.procedures;
 
-import tannyjung.tanshugetrees_handcode.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.systems.config.CheckUpdateRun;
 
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees.TanshugetreesMod;
@@ -39,17 +40,17 @@ public class StartProcedure {
 			TanshugetreesModVariables.MapVariables.get(world).syncData(world);
 			if (world instanceof ServerLevel _level)
 				_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-						"scoreboard objectives add tanshugetrees dummy");
+						"scoreboard objectives add TANSHUGETREES dummy");
 			if (TanshugetreesModVariables.MapVariables.get(world).auto_gen == true) {
-				if (world instanceof ServerLevel _level)
-					_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-							"execute in tanshugetrees:dimension positioned 0 0 0 run forceload add 16 16 -16 -16");
+				if (TanshugetreesModVariables.MapVariables.get(world).version_1192 == false) {
+					if (world instanceof ServerLevel _level)
+						_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
+								"execute in tanshugetrees:dimension positioned 0 0 0 run forceload add 16 16 -16 -16");
+				}
 			}
 			TanshugetreesMod.queueServerWork(100, () -> {
 				if (ConfigMain.auto_check_update == true) {
-					if (world instanceof ServerLevel _level)
-						_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-								"execute positioned 0 0 0 run tanshugetrees tanny_pack check_update");
+					CheckUpdateRun.start(null);
 				}
 				LoopTickProcedure.execute(world, x, y, z);
 			});

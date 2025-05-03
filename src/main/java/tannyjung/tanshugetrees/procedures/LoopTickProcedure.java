@@ -1,6 +1,6 @@
 package tannyjung.tanshugetrees.procedures;
 
-import tannyjung.tanshugetrees_handcode.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
 
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees.TanshugetreesMod;
@@ -37,13 +37,13 @@ public class LoopTickProcedure {
 			TanshugetreesModVariables.MapVariables.get(world).syncData(world);
 			if (true) {
 				if (!("").equals("Developer Mode")) {
-					if (TanshugetreesModVariables.MapVariables.get(world).auto_gen == true) {
+					if (ConfigMain.developer_mode == true) {
 						if (world instanceof ServerLevel _level)
 							_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-									"execute at @a if entity @e[type=marker,distance=..50] at @e[type=marker,distance=..50,limit=100,sort=random] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
+									"execute at @a at @e[type=marker,tag=TANSHUGETREES,distance=..100] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
 					}
 				}
-				if (!("").equals("RT Dynamic")) {
+				if (!("").equals("Living Tree Mechanics")) {
 					if (ConfigMain.rt_dynamic == true && ConfigMain.tree_location == true) {
 						if (!("").equals("Leaves Drop")) {
 							if (CommandResultProcedure.execute(world, x, y, z, "execute if entity @e[name=THT-leaves_drop]")) {
@@ -92,38 +92,44 @@ public class LoopTickProcedure {
 				}
 			}
 		}
-		if (!("").equals("Tree Dynamic")) {
-			if (false) {
-				if (CommandResultProcedure.execute(world, x, y, z, "execute if entity @e[tag=THT-tree_location,nbt={ForgeData:{rt_dynamic:true}}]")) {
-					if (ConfigMain.rt_dynamic_tick > 0) {
-						if (TanshugetreesModVariables.MapVariables.get(world).rt_dynamic_tick < ConfigMain.rt_dynamic_tick) {
-							TanshugetreesModVariables.MapVariables.get(world).rt_dynamic_tick = TanshugetreesModVariables.MapVariables.get(world).rt_dynamic_tick + 1;
-							TanshugetreesModVariables.MapVariables.get(world).syncData(world);
-						} else {
-							TanshugetreesModVariables.MapVariables.get(world).rt_dynamic_tick = 1;
-							TanshugetreesModVariables.MapVariables.get(world).syncData(world);
-							if (Mth.nextInt(RandomSource.create(), 1, (int) ConfigMain.rt_dynamic_simulation) == 1) {
-								if (TanshugetreesModVariables.MapVariables.get(world).version_1192 == true) {
-									if (world instanceof ServerLevel _level)
-										_level.getServer().getCommands().performPrefixedCommand(
-												new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-												"execute at @p as @e[tag=THT-tree_location,limit=1,sort=random,nbt={ForgeData:{rt_dynamic:true}}] at @s run tanshugetrees dev tree_dynamic tick");
-								} else {
-									if (world instanceof ServerLevel _level)
-										_level.getServer().getCommands().performPrefixedCommand(
-												new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-												"execute at @p as @e[tag=THT-tree_location,limit=1,sort=random,nbt={ForgeData:{rt_dynamic:true}}] at @s if loaded ~ ~ ~ run tanshugetrees dev tree_dynamic tick");
-								}
+		if (!("").equals("Living Tree Mechanics")) {
+			if (ConfigMain.rt_dynamic_tick > 0) {
+				if (TanshugetreesModVariables.MapVariables.get(world).rt_dynamic_tick < ConfigMain.rt_dynamic_tick) {
+					TanshugetreesModVariables.MapVariables.get(world).rt_dynamic_tick = TanshugetreesModVariables.MapVariables.get(world).rt_dynamic_tick + 1;
+					TanshugetreesModVariables.MapVariables.get(world).syncData(world);
+				} else {
+					TanshugetreesModVariables.MapVariables.get(world).rt_dynamic_tick = 1;
+					TanshugetreesModVariables.MapVariables.get(world).syncData(world);
+					if (Mth.nextInt(RandomSource.create(), 1, (int) ConfigMain.rt_dynamic_simulation) == 1) {
+						if (CommandResultProcedure.execute(world, x, y, z, "execute if entity @e[tag=TANSHUGETREES-tree_location]")) {
+							if (TanshugetreesModVariables.MapVariables.get(world).version_1192 == true) {
+								if (world instanceof ServerLevel _level)
+									_level.getServer().getCommands().performPrefixedCommand(
+											new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
+											"execute as @e[tag=TANSHUGETREES-tree_location,limit=1,sort=random] at @s run TANSHUGETREES dev living_tree_mechanics loop_tick");
+							} else {
+								if (world instanceof ServerLevel _level)
+									_level.getServer().getCommands().performPrefixedCommand(
+											new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
+											"execute as @e[tag=TANSHUGETREES-tree_location,limit=1,sort=random] at @s if loaded ~ ~ ~ run TANSHUGETREES dev living_tree_mechanics loop_tick");
 							}
 						}
 					}
-					if (world instanceof ServerLevel _level)
-						_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-								"execute if entity @e[name=THT-leaves_drop] as @e[name=THT-leaves_drop] at @s if block ~ ~1.3 ~ #tanshugetrees:passable_blocks unless block ~ ~2 ~ water unless block ~ ~2 ~ #tanshugetrees:leaves_blocks[waterlogged=true] run tp @s ~ ~-0.1 ~");
-					if (world instanceof ServerLevel _level)
-						_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-								"execute if entity @e[name=THT-leaves_litter_remover] as @e[name=THT-leaves_litter_remover] at @s if block ~ ~ ~ #tanshugetrees:passable_blocks unless block ~ ~ ~ water unless block ~ ~ ~ #tanshugetrees:leaves_blocks[waterlogged=true] run tp @s ~ ~-1 ~");
 				}
+				if (CommandResultProcedure.execute(world, x, y, z, "execute if entity @e[name=TANSHUGETREES-leaf_drop]")) {
+					if (TanshugetreesModVariables.MapVariables.get(world).version_1192 == true) {
+						if (world instanceof ServerLevel _level)
+							_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
+									"execute as @e[name=TANSHUGETREES-leaf_drop] at @s run TANSHUGETREES dev living_tree_mechanics leaf_drop_loop_tick");
+					} else {
+						if (world instanceof ServerLevel _level)
+							_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
+									"execute as @e[name=TANSHUGETREES-leaf_drop] at @s if loaded ~ ~ ~ run TANSHUGETREES dev living_tree_mechanics leaf_drop_loop_tick");
+					}
+				}
+				if (world instanceof ServerLevel _level)
+					_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
+							"execute if entity @e[name=THT-leaves_litter_remover] as @e[name=THT-leaves_litter_remover] at @s if block ~ ~ ~ #tanshugetrees:passable_blocks unless block ~ ~ ~ water unless block ~ ~ ~ #tanshugetrees:leaves_blocks[waterlogged=true] run tp @s ~ ~-1 ~");
 			}
 		}
 		if (!("").equals("Auto Gen")) {

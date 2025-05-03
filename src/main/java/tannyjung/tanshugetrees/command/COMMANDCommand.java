@@ -2,8 +2,6 @@
 package tannyjung.tanshugetrees.command;
 
 import tannyjung.tanshugetrees.procedures.TxtFunctionProcedure;
-import tannyjung.tanshugetrees.procedures.TreeDynamicProcedure;
-import tannyjung.tanshugetrees.procedures.TreeDynamicLeafDropPlaceProcedure;
 import tannyjung.tanshugetrees.procedures.RandomTreeTickProcedure;
 import tannyjung.tanshugetrees.procedures.RandomTreeTickPartCreateBlockConnectorTestProcedure;
 import tannyjung.tanshugetrees.procedures.RandomTreeDetectExistProcedure;
@@ -42,7 +40,7 @@ import com.mojang.brigadier.arguments.DoubleArgumentType;
 public class COMMANDCommand {
 	@SubscribeEvent
 	public static void registerCommand(RegisterCommandsEvent event) {
-		event.getDispatcher().register(Commands.literal("tanshugetrees").requires(s -> s.hasPermission(2)).then(Commands.literal("tanny_pack").then(Commands.literal("check_update").executes(arguments -> {
+		event.getDispatcher().register(Commands.literal("TANSHUGETREES").requires(s -> s.hasPermission(2)).then(Commands.literal("tanny_pack").then(Commands.literal("check_update").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
 			double x = arguments.getSource().getPosition().x();
 			double y = arguments.getSource().getPosition().y();
@@ -224,35 +222,7 @@ public class COMMANDCommand {
 
 			AutoGenStopProcedure.execute(world, x, y, z);
 			return 0;
-		})))).then(Commands.literal("dev").then(Commands.literal("tree_dynamic").then(Commands.literal("tick").executes(arguments -> {
-			Level world = arguments.getSource().getUnsidedLevel();
-			double x = arguments.getSource().getPosition().x();
-			double y = arguments.getSource().getPosition().y();
-			double z = arguments.getSource().getPosition().z();
-			Entity entity = arguments.getSource().getEntity();
-			if (entity == null && world instanceof ServerLevel _servLevel)
-				entity = FakePlayerFactory.getMinecraft(_servLevel);
-			Direction direction = Direction.DOWN;
-			if (entity != null)
-				direction = entity.getDirection();
-
-			TreeDynamicProcedure.execute(world, x, y, z, entity);
-			return 0;
-		})).then(Commands.literal("leaf_drop").executes(arguments -> {
-			Level world = arguments.getSource().getUnsidedLevel();
-			double x = arguments.getSource().getPosition().x();
-			double y = arguments.getSource().getPosition().y();
-			double z = arguments.getSource().getPosition().z();
-			Entity entity = arguments.getSource().getEntity();
-			if (entity == null && world instanceof ServerLevel _servLevel)
-				entity = FakePlayerFactory.getMinecraft(_servLevel);
-			Direction direction = Direction.DOWN;
-			if (entity != null)
-				direction = entity.getDirection();
-
-			TreeDynamicLeafDropPlaceProcedure.execute(world, entity);
-			return 0;
-		}))).then(Commands.literal("random_tree").then(Commands.literal("run").executes(arguments -> {
+		})))).then(Commands.literal("dev").then(Commands.literal("random_tree").then(Commands.literal("run").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
 			double x = arguments.getSource().getPosition().x();
 			double y = arguments.getSource().getPosition().y();

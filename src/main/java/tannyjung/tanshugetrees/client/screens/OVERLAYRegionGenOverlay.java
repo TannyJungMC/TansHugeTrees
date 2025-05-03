@@ -48,11 +48,11 @@ public class OVERLAYRegionGenOverlay {
 			if (DeveloperModeProcedure.execute())
 				event.getGuiGraphics().drawString(Minecraft.getInstance().font,
 
-						OVERLAYRegionGenBiomeProcedure.execute(), 6, 32, -13421773, false);
+						OVERLAYRegionGenBiomeProcedure.execute(), 6, 32, -10066330, false);
 			if (DeveloperModeProcedure.execute())
 				event.getGuiGraphics().drawString(Minecraft.getInstance().font,
 
-						OVERLAYRegionGenTreeProcedure.execute(), 6, 44, -10066330, false);
+						OVERLAYRegionGenTreeProcedure.execute(), 6, 44, -11908534, false);
 		}
 	}
 }
