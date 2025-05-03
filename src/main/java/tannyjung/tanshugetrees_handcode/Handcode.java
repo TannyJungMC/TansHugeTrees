@@ -25,6 +25,8 @@ import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFeature;
 @Mod.EventBusSubscriber
 public class Handcode {
 
+	// Test
+
 	// --------------------------------------------------
 
 	public static double mod_version = 1.1;
