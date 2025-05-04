@@ -1,4 +1,12 @@
-This is the backup of this mod. Open in MCreator the same version as the branch name, with plugins I put in the folder (if have). Or open in programs that can read/edit code, such as IntelliJ. I would recommened to open on both sides, as some of my mods will contain both MCreator parts and handcode.
+This is the backup of this mod. To open this, use IntelliJ (Recommended), or use MCreator. I do both sides, one for complex systems, other one for general and hard things such as GUI and overlay.
+
+# How To Use
+
+For who use IntelliJ. To run client or server, first go to "Gradle" tab at right side, select "Tasks", go to "forgegradle runs", and then double click on "runClient" or "runServer". 
+
+For who use MCreator. Open this by using MCreator the same version as the branch name, with plugins I put in the folder (if have). Then select open project, when on file selection screen, select "XXX.mcreator".
+
+# From Creator
 
 My mods are personal projects, I made them for my feeling first, just like doing an artwork. What I want to do, my ideas, and for my imaginary world. Using methods I like. They're not open for editing and contributions, and I will ignore all suggestions related to my systems. You're welcome to read and study their code, but please do not edit or submit any suggestion to edit parts of it. I'm not okay to let people to draw anything on my canvas. Hope you understand and respect that. (╯ ‿╰ ' )
 
