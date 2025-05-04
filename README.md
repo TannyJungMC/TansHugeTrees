@@ -2,9 +2,12 @@ This is the backup of this mod. To open this, use IntelliJ (Recommended), or use
 
 # How To Use
 
-For who use IntelliJ. To run client or server, first go to "Gradle" tab at right side, select "Tasks", go to "forgegradle runs", and then double click on "runClient" or "runServer". 
+### For IntelliJ
+- To run client or server. Go to "Gradle" tab at right side, select `Tasks / forgegradle runs / runClient or runServer`.
+- To export the mod to JAR format. Go to "Gradle" tab at right side, select `Tasks / build / build`. 
 
-For who use MCreator. Open this by using MCreator the same version as the branch name, with plugins I put in the folder (if have). Then select open project, when on file selection screen, select "XXX.mcreator".
+### For MCreator
+- Open this by using MCreator the same version as the branch name, with plugins I put in the folder (if have). Then select open project, when on file selection screen, select "XXX.mcreator".
 
 # From Creator
 
