@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TansHugeTrees.iml" filepath="$PROJECT_DIR$/.idea/modules/TansHugeTrees.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TansHugeTrees.main.iml" filepath="$PROJECT_DIR$/.idea/modules/TansHugeTrees.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TansHugeTrees.test.iml" filepath="$PROJECT_DIR$/.idea/modules/TansHugeTrees.test.iml" />
     </modules>
   </component>
 </project>
