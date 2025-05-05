@@ -8,7 +8,7 @@ import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 import tannyjung.tanshugetrees_handcode.systems.LeafLitter;
 
-public class LivingTreeMechanicsLeafDropTickLoop {
+public class LivingTreeMechanicsLeafLitterRemoverTickLoop {
 
     public static void start (Entity entity) {
 
@@ -20,7 +20,7 @@ public class LivingTreeMechanicsLeafDropTickLoop {
         // If Area Loaded
         {
 
-            if (Handcode.version_1192 == false && GameUtils.commandResult(level, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
+            if (GameUtils.commandResult(level, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
 
                 return;
 
@@ -33,11 +33,11 @@ public class LivingTreeMechanicsLeafDropTickLoop {
 
         if (GameUtils.isBlockTaggedAs(test_block, "tanshugetrees:passable_blocks") == true && level.isWaterAt(test_pos) == false) {
 
-            GameUtils.runCommandEntity(entity, "tp ~ ~-0.1 ~");
+            GameUtils.runCommandEntity(entity, "tp ~ ~-1 ~");
 
         } else {
 
-            LeafLitter.start(level, posX, posY + 1, posZ, GameUtils.textToBlock(GameUtils.NBTEntityTextGet(entity, "block")), false);
+            LeafLitter.start(level, posX, posY + 1, posZ, GameUtils.textToBlock(GameUtils.NBTEntityTextGet(entity, "block")), true);
             GameUtils.runCommandEntity(entity, "kill @s");
 
         }

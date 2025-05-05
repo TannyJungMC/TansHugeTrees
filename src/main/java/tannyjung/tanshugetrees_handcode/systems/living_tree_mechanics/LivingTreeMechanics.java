@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.misc.FileManager;
 import tannyjung.tanshugetrees_handcode.misc.GameUtils;
@@ -20,6 +21,19 @@ import java.io.FileReader;
 public class LivingTreeMechanics {
 
 	public static void start (Entity entity) {
+
+		LevelAccessor level = entity.level();
+
+		// If Area Loaded
+		{
+
+			if (GameUtils.commandResult(level, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), "execute if loaded ~ ~ ~") == false) {
+
+				return;
+
+			}
+
+		}
 
 		if (ConfigMain.developer_mode == true) {
 
@@ -61,10 +75,14 @@ public class LivingTreeMechanics {
 		}
 
 		File file = new File(Handcode.directory_config + "/custom_packs/" + GameUtils.NBTEntityTextGet(entity, "file"));
-		int process = 0;
 
 		if (file.exists() == true && file.isDirectory() == false) {
 
+			int rotation = (int) GameUtils.NBTEntityNumberGet(entity, "rotation");
+			boolean mirrored = GameUtils.NBTEntityLogicGet(entity, "mirrored");
+			int process = 0;
+
+			// Read Data
 			{
 
 				try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
@@ -93,7 +111,7 @@ public class LivingTreeMechanics {
 
 							if (read_all.endsWith("le1") == true || read_all.endsWith("le2") == true) {
 
-								getData(entity, read_all);
+								getData(level, entity, read_all, rotation, mirrored);
 
 							} else {
 
@@ -115,11 +133,7 @@ public class LivingTreeMechanics {
 
 	}
 
-	private static void getData (Entity entity, String read_all) {
-
-		LevelAccessor level = entity.level();
-		int rotation = (int) GameUtils.NBTEntityNumberGet(entity, "rotation");
-		boolean mirrored = GameUtils.NBTEntityLogicGet(entity, "mirrored");
+	private static void getData (LevelAccessor level, Entity entity, String read_all, int rotation, boolean mirrored) {
 
 		BlockPos pre_pos = null;
 		BlockState pre_block = Blocks.AIR.defaultBlockState();
@@ -130,14 +144,15 @@ public class LivingTreeMechanics {
 
 			if (pre_block_data.startsWith("+b") == true) {
 
-				int[] pre_pos_get = FileManager.textPosConverter(pre_block_data.substring(2, pre_block_data.length() - 3), rotation, mirrored);
-				int pre_posX = entity.getBlockX() + pre_pos_get[0];
-				int pre_posY = entity.getBlockY() + pre_pos_get[1];
-				int pre_posZ = entity.getBlockZ() + pre_pos_get[2];
-				pre_pos = new BlockPos(pre_posX, pre_posY, pre_posZ);
+				int[] get = FileManager.textPosConverter(pre_block_data.substring(2, pre_block_data.length() - 3), rotation, mirrored);
+				int posX = entity.getBlockX() + get[0];
+				int posY = entity.getBlockY() + get[1];
+				int posZ = entity.getBlockZ() + get[2];
+
+				pre_pos = new BlockPos(posX, posY, posZ);
 				pre_block = GameUtils.textToBlock(GameUtils.NBTEntityTextGet(entity, pre_block_data.substring(pre_block_data.length() - 3)));
 
-				if (level.hasChunk(pre_posX >> 4, pre_posZ >> 4) == false) {
+				if (GameUtils.commandResult(level, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
 
 					return;
 
@@ -152,14 +167,15 @@ public class LivingTreeMechanics {
 
 		{
 
-			int[] pos_get = FileManager.textPosConverter(read_all.substring(2, read_all.length() - 3), rotation, mirrored);
-			int posX = entity.getBlockX() + pos_get[0];
-			int posY = entity.getBlockY() + pos_get[1];
-			int posZ = entity.getBlockZ() + pos_get[2];
+			int[] get = FileManager.textPosConverter(read_all.substring(2, read_all.length() - 3), rotation, mirrored);
+			int posX = entity.getBlockX() + get[0];
+			int posY = entity.getBlockY() + get[1];
+			int posZ = entity.getBlockZ() + get[2];
+
 			pos = new BlockPos(posX, posY, posZ);
 			block = GameUtils.textToBlock(GameUtils.NBTEntityTextGet(entity, read_all.substring(read_all.length() - 3)));
 
-			if (level.hasChunk(posX >> 4, posZ >> 4) == false) {
+			if (GameUtils.commandResult(level, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
 
 				return;
 
@@ -192,16 +208,13 @@ public class LivingTreeMechanics {
 			// Leaf Litter Remover
 			{
 
-				if (Math.random() < ConfigMain.leaves_litter_remover_chance) {
+				if (Math.random() < ConfigMain.leaf_litter_remover_chance) {
 
-					// For test because the real use marker falling down and set block, or maybe use this for "Fast" mode.
-					// Also don't forget to add count limit
+					if (GameUtils.scoreGet(level, "leaf_litter_remover") < ConfigMain.leaf_drop_animation_count_limit) {
 
-					int height = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
+						GameUtils.scoreAddRemove(level, "leaf_litter_remover", 1);
 
-					if (height < pos.getY()) {
-
-						LeafLitter.start(level, pos.getX(), height, pos.getZ(), block, true);
+						GameUtils.runCommand(level, pos.getX(), pos.getY(), pos.getZ(), GameUtils.summonEntity("marker", "", "leaf_litter_remover", "white", "ForgeData:{block:\"" + GameUtils.blockToText(block) + "\"}"));
 
 					}
 
@@ -214,39 +227,49 @@ public class LivingTreeMechanics {
 				// Leaf Drop
 				{
 
-					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+					double chance = 0.0;
+					if (TanshugetreesModVariables.MapVariables.get(level).season.equals("summer")) chance = ConfigMain.leaves_drop_chance_summer;
+					else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("autumn")) chance = ConfigMain.leaves_drop_chance_autumn;
+					else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("winter")) chance = ConfigMain.leaves_drop_chance_winter;
+					else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("spring")) chance = ConfigMain.leaves_drop_chance_spring;
 
-					if (ConfigMain.leaves_drop_animation_chance > 0) {
+					if (Math.random() < chance) {
 
-						// Animation
-						{
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 
-							if (Math.random() < ConfigMain.leaves_drop_animation_chance) {
+						if (ConfigMain.leaf_drop_animation_chance > 0) {
 
-								if (GameUtils.commandResult(level, 0,0, 0, "execute if score leaf_drop_count TANSHUGETREES matches .." + ConfigMain.leaves_drop_animation_count_limit) == true) {
+							// Animation
+							{
 
-									String command = "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.blockToTextID(block) + "\"},ForgeData:{block:\"" + GameUtils.blockToText(block) + "\"}";
-									command = GameUtils.summonEntity("minecraft:block_display", "", "leaf_drop", "white", command);
-									GameUtils.runCommand(level, pos.getX(), pos.getY(), pos.getZ(), command);
+								if (Math.random() < ConfigMain.leaf_drop_animation_chance) {
 
-									GameUtils.runCommand(level, 0, 0, 0, "scoreboard players add leaf_drop_count TANSHUGETREES 1");
+									if (GameUtils.scoreGet(level, "leaf_drop") < ConfigMain.leaf_drop_animation_count_limit) {
+
+										GameUtils.scoreAddRemove(level, "leaf_drop", 1);
+
+										String command = "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.blockToTextID(block) + "\"},ForgeData:{block:\"" + GameUtils.blockToText(block) + "\"}";
+										command = GameUtils.summonEntity("block_display", "", "leaf_drop", "white", command);
+										GameUtils.runCommand(level, pos.getX(), pos.getY(), pos.getZ(), command);
+
+									}
 
 								}
 
 							}
 
-						}
+						} else {
 
-					} else {
+							// No Animation
+							{
 
-						// No Animation
-						{
+								int height = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
 
-							int height = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
+								if (height < pos.getY()) {
 
-							if (height < pos.getY()) {
+									LeafLitter.start(level, pos.getX(), height, pos.getZ(), block, false);
 
-								LeafLitter.start(level, pos.getX(), height, pos.getZ(), block, false);
+								}
 
 							}
 
@@ -261,7 +284,17 @@ public class LivingTreeMechanics {
 				// Leaf Regrow
 				{
 
-					level.setBlock(pos, block, 2);
+					double chance = 0.0;
+					if (TanshugetreesModVariables.MapVariables.get(level).season.equals("summer")) chance = ConfigMain.leaves_regrow_chance_summer;
+					else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("autumn")) chance = ConfigMain.leaves_regrow_chance_autumn;
+					else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("winter")) chance = ConfigMain.leaves_regrow_chance_winter;
+					else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("spring")) chance = ConfigMain.leaves_regrow_chance_spring;
+
+					if (Math.random() < chance) {
+
+						level.setBlock(pos, block, 2);
+
+					}
 
 				}
 
