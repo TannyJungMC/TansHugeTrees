@@ -66,17 +66,19 @@ public class ConfigPlacement {
             {
 
                 write.append("""
-                - No need to apply this config, as it automatic applying.
-                - To repair missing values, run this command [ /TANSHUGETREES config repair ] or restart the world.
-                - Very important! You must lock the trees you have edited, to mark it as don't reset. Do it by change "[]" at font of tree ID to "[LOCK]".
-                
-                multiply_rarity = 1.0
-                multiply_min_distance = 1.0
-                multiply_group_size = 1.0
-                multiply_waterside_chance = 1.0
-                multiply_dead_tree_chance = 1.0
-                
-                """);
+                        - No need to apply this config, as it automatic applying.
+                        - To repair missing values, run this command [ /TANSHUGETREES config repair ] or restart the world.
+                        - Very important! You must lock the trees you have edited, to mark it as don't reset. Do it by change "[]" at font of tree ID to "[LOCK]".
+                        
+                        multiply_rarity = 1.0
+                        multiply_min_distance = 1.0
+                        multiply_group_size = 1.0
+                        multiply_waterside_chance = 1.0
+                        multiply_dead_tree_chance = 1.0
+                        
+                        """
+
+                );
 
             }
 
