@@ -1,7 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "tanshugetrees:item/tree_agathos"
-  },
-  "render_type": "translucent"
-}
