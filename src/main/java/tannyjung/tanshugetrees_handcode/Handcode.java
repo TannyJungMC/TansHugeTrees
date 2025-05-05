@@ -1,9 +1,7 @@
 package tannyjung.tanshugetrees_handcode;
 
-import com.sun.jna.platform.win32.OaIdl;
-import net.minecraft.client.main.GameConfig;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -14,7 +12,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 import tannyjung.tanshugetrees_handcode.systems.Loop;
@@ -32,8 +29,11 @@ public class Handcode {
 	public static double mod_version = 1.1;
 	public static String tanny_pack_version = "Alpha";
 
+	public static boolean version_1192 = false;
+
 	// --------------------------------------------------
 
+	public static String modIDBig = "TANSHUGETREES";
 	public static String directory_game = FMLPaths.GAMEDIR.get().toString();
 	public static String directory_config = directory_game + "/config/tanshugetrees";
 	public static String directory_world_data = directory_game + "/config/tanshugetrees-error";
@@ -68,6 +68,9 @@ public class Handcode {
 		directory_world_data = event.getServer().getWorldPath(new LevelResource(".")) + "/data/tanshugetrees";
 		ConfigRepairAll.start(null);
 		ConfigMain.apply(null);
+
+		ServerLevel world = event.getServer().overworld();
+		GameUtils.runCommand(world, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
 
 	}
 
