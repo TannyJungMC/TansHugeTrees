@@ -61,7 +61,7 @@ public class TreeDynamicProcedure {
 				if (true) {
 					if (true) {
 						entity.getPersistentData().putDouble("process_save", (entity.getPersistentData().getDouble("process")));
-						entity.getPersistentData().putDouble("process_next", (entity.getPersistentData().getDouble("process") + ConfigMain.rt_dynamic_process_limit));
+						entity.getPersistentData().putDouble("process_next", (entity.getPersistentData().getDouble("process") + ConfigMain.living_tree_mechanics_process_limit));
 						entity.getPersistentData().putDouble("process", 0);
 					}
 					try {
@@ -363,7 +363,7 @@ public class TreeDynamicProcedure {
 												}
 											}
 										}
-										if (ConfigMain.rt_dynamic_process_limit != 0 && entity.getPersistentData().getDouble("process") >= entity.getPersistentData().getDouble("process_next")) {
+										if (ConfigMain.living_tree_mechanics_process_limit != 0 && entity.getPersistentData().getDouble("process") >= entity.getPersistentData().getDouble("process_next")) {
 											break;
 										}
 									}

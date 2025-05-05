@@ -42,13 +42,13 @@ public class LoopTickProcedure {
 					}
 				}
 				if (!("").equals("Living Tree Mechanics")) {
-					if (ConfigMain.rt_dynamic == true && ConfigMain.tree_location == true) {
+					if (ConfigMain.living_tree_mechanics == true && ConfigMain.tree_location == true) {
 						if (!("").equals("Leaves Drop")) {
 							if (CommandResultProcedure.execute(world, x, y, z, "execute if entity @e[name=THT-leaves_drop]")) {
 								if (world instanceof ServerLevel _level)
 									_level.getServer().getCommands().performPrefixedCommand(
 											new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-											"execute as @e[name=THT-leaves_drop] at @s unless block ~ ~1.3 ~ #tanshugetrees:passable_blocks run tanshugetrees dev rt_dynamic leaves_drop");
+											"execute as @e[name=THT-leaves_drop] at @s unless block ~ ~1.3 ~ #tanshugetrees:passable_blocks run tanshugetrees dev living_tree_mechanics leaves_drop");
 								if (world instanceof ServerLevel _level)
 									_level.getServer().getCommands().performPrefixedCommand(
 											new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
@@ -56,7 +56,7 @@ public class LoopTickProcedure {
 								if (world instanceof ServerLevel _level)
 									_level.getServer().getCommands().performPrefixedCommand(
 											new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-											"execute as @e[name=THT-leaves_drop] at @s if block ~ ~2 ~ water run tanshugetrees dev rt_dynamic leaves_drop");
+											"execute as @e[name=THT-leaves_drop] at @s if block ~ ~2 ~ water run tanshugetrees dev living_tree_mechanics leaves_drop");
 							}
 						}
 						if (!("").equals("Leaves Litter")) {
