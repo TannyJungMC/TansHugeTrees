@@ -62,7 +62,7 @@ public class Loop {
 
         if (season_detector_tick == 0) {
 
-            if (ConfigMain.season_detector == true && ModList.get().isLoaded("sereneseasons") == true) {
+            if (ConfigMain.serene_seasons_compatibility == true && ModList.get().isLoaded("sereneseasons") == true) {
 
                 season_detector_tick = 1;
 
