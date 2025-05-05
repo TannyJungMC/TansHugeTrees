@@ -99,7 +99,7 @@ public class LivingTreeMechanics {
 
 								continue;
 
-							} else if (GameUtils.NBTEntityNumberGet(entity, "process_save") + ConfigMain.rt_dynamic_process_limit <= process) {
+							} else if (GameUtils.NBTEntityNumberGet(entity, "process_save") + ConfigMain.living_tree_mechanics_process_limit <= process) {
 
 								GameUtils.NBTEntityNumberSet(entity, "process_save", process);
 								return;
@@ -128,7 +128,45 @@ public class LivingTreeMechanics {
 
 			}
 
-			GameUtils.NBTEntityNumberSet(entity, "process_save", 0);
+			// At the end of the file
+			{
+
+				if (GameUtils.NBTEntityLogicGet(entity, "dead_tree") == true) {
+
+					GameUtils.commandResultEntity(entity, "kill @s");
+
+				} else {
+
+					boolean dead_tree = false;
+
+					if (level.getBlockState(new BlockPos(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ())).isAir() == true) {
+
+						dead_tree = true;
+
+					} else if (GameUtils.NBTEntityLogicGet(entity, "have_leaves") == false) {
+
+						String season = TanshugetreesModVariables.MapVariables.get(level).season;
+
+						if (season.equals("autumn") == false && season.equals("winter") == false) {
+
+							dead_tree = true;
+
+						}
+
+					}
+
+					if (dead_tree == true) {
+
+						GameUtils.NBTEntityLogicSet(entity, "dead_tree", true);
+
+					}
+
+					GameUtils.NBTEntityNumberSet(entity, "process_save", 0);
+					GameUtils.NBTEntityLogicSet(entity, "have_leaves", false);
+
+				}
+
+			}
 
 		}
 
@@ -184,11 +222,11 @@ public class LivingTreeMechanics {
 
 		}
 
-		run(level, pre_pos, pre_block, pos, block);
+		run(level, entity, pre_pos, pre_block, pos, block);
 
 	}
 
-	private static void run (LevelAccessor level, BlockPos pre_pos, BlockState pre_block, BlockPos pos, BlockState block) {
+	private static void run (LevelAccessor level, Entity entity, BlockPos pre_pos, BlockState pre_block, BlockPos pos, BlockState block) {
 
 		if (level.getBlockState(pre_pos).getBlock().equals(pre_block.getBlock()) == false) {
 
@@ -225,71 +263,81 @@ public class LivingTreeMechanics {
 
 			if (level.getBlockState(pos).getBlock().equals(block.getBlock()) == true) {
 
-				if (true) {
+				// Leaf Drop
+				{
 
-					// Dead Tree / Under Light Level
-					{
+					double chance = 0.0;
 
-						block = GameUtils.blockPropertyBooleanSet(block, "persistent", false);
-						level.setBlock(pos, block, 2);
+					if (ConfigMain.leaf_light_level_detection < 15 && ConfigMain.leaf_light_level_detection > level.getBrightness(LightLayer.SKY, pos)) {
 
-						level.getBrightness(LightLayer.SKY, pos);
+						// By Light Level
+						{
+
+							chance = ConfigMain.leaves_drop_chance_summer;
+
+						}
+
+					} else {
+
+						if (GameUtils.NBTEntityLogicGet(entity, "have_leaves") == false) {
+
+							GameUtils.NBTEntityLogicSet(entity, "have_leaves", true);
+
+						}
+
+						// By Seasons
+						{
+
+							if (TanshugetreesModVariables.MapVariables.get(level).season.equals("summer")) {
+								chance = ConfigMain.leaves_drop_chance_summer;
+							} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("autumn")) {
+								chance = ConfigMain.leaves_drop_chance_autumn;
+							} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("winter")) {
+								chance = ConfigMain.leaves_drop_chance_winter;
+							} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("spring")) {
+								chance = ConfigMain.leaves_drop_chance_spring;
+							}
+
+						}
 
 					}
 
-				} else {
+					if (Math.random() < chance) {
 
-					// Leaf Drop
-					{
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 
-						double chance = 0.0;
-						if (TanshugetreesModVariables.MapVariables.get(level).season.equals("summer")) {
-							chance = ConfigMain.leaves_drop_chance_summer;
-						} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("autumn")) {
-							chance = ConfigMain.leaves_drop_chance_autumn;
-						} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("winter")) {
-							chance = ConfigMain.leaves_drop_chance_winter;
-						} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("spring")) {
-							chance = ConfigMain.leaves_drop_chance_spring;
-						}
+						if (ConfigMain.leaf_drop_animation_chance > 0 && Math.random() < ConfigMain.leaf_drop_animation_chance) {
 
-						if (Math.random() < chance) {
+							// Animation
+							{
 
-							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+								if (GameUtils.scoreGet(level, "leaf_drop") < ConfigMain.leaf_drop_animation_count_limit) {
 
-							if (ConfigMain.leaf_drop_animation_chance > 0) {
+									// Don't create animation, if there's a block below.
+									if (GameUtils.isBlockTaggedAs(level.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())), "tanshugetrees:passable_blocks") == true) {
 
-								// Animation
-								{
+										GameUtils.scoreAddRemove(level, "leaf_drop", 1);
 
-									if (Math.random() < ConfigMain.leaf_drop_animation_chance) {
+										String command = "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.blockToTextID(block) + "\"},ForgeData:{block:\"" + GameUtils.blockToText(block) + "\"}";
+										command = GameUtils.summonEntity("block_display", "", "leaf_drop", "white", command);
+										GameUtils.runCommand(level, pos.getX(), pos.getY(), pos.getZ(), command);
 
-										if (GameUtils.scoreGet(level, "leaf_drop") < ConfigMain.leaf_drop_animation_count_limit) {
-
-											GameUtils.scoreAddRemove(level, "leaf_drop", 1);
-
-											String command = "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.blockToTextID(block) + "\"},ForgeData:{block:\"" + GameUtils.blockToText(block) + "\"}";
-											command = GameUtils.summonEntity("block_display", "", "leaf_drop", "white", command);
-											GameUtils.runCommand(level, pos.getX(), pos.getY(), pos.getZ(), command);
-
-										}
 
 									}
-
 								}
 
-							} else {
+							}
 
-								// No Animation
-								{
+						} else {
 
-									int height = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
+							// No Animation
+							{
 
-									if (height < pos.getY()) {
+								int height_motion = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
 
-										LeafLitter.start(level, pos.getX(), height, pos.getZ(), block, false);
+								if (height_motion < pos.getY()) {
 
-									}
+									LeafLitter.start(level, pos.getX(), height_motion, pos.getZ(), block, false);
 
 								}
 
@@ -302,6 +350,17 @@ public class LivingTreeMechanics {
 				}
 
 			} else {
+
+				// Under Light Level
+				{
+
+					if (ConfigMain.leaf_light_level_detection < 15 && ConfigMain.leaf_light_level_detection > level.getBrightness(LightLayer.SKY, pos)) {
+
+						return;
+
+					}
+
+				}
 
 				// Leaf Regrow
 				{
