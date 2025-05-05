@@ -15,10 +15,11 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraftforge.registries.ForgeRegistries;
+import tannyjung.tanshugetrees_handcode.misc.FileManager;
+import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
-import tannyjung.tanshugetrees_handcode.misc.*;
 import tannyjung.tanshugetrees_handcode.systems.LeafLitter;
 import tannyjung.tanshugetrees_handcode.systems.TreeFunction;
 
@@ -585,6 +586,21 @@ public class TreePlacer {
 
                                 }
 
+                                // No Roots
+                                {
+
+                                    if (ConfigMain.world_gen_roots == false) {
+
+                                        if (get_short.startsWith("se") == true || get_short.startsWith("te") == true || get_short.startsWith("fi") == true) {
+
+                                            continue;
+
+                                        }
+
+                                    }
+
+                                }
+
                                 // Dead Tree
                                 {
 
@@ -802,14 +818,18 @@ public class TreePlacer {
 
                                                 summon_marker = true;
 
-                                                if (ConfigMain.living_tree_mechanics == true && living_tree_mechanics == true) {
+                                                if (ConfigMain.tree_location == true) {
 
-                                                    if (read_all.equals("+b0^0^0tro") == true) {
+                                                    if (ConfigMain.living_tree_mechanics == true && living_tree_mechanics == true) {
 
-                                                        if (dead_tree_level == 0) {
+                                                        if (read_all.equals("+b0^0^0tro") == true) {
 
-                                                            marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
-                                                            GameUtils.runCommand(world_gen.getLevel(), center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.summonEntity("marker", "tree_location", id, "white", marker_data));
+                                                            if (dead_tree_level == 0) {
+
+                                                                marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
+                                                                GameUtils.runCommand(world_gen.getLevel(), center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.summonEntity("marker", "tree_location", id, "white", marker_data));
+
+                                                            }
 
                                                         }
 
