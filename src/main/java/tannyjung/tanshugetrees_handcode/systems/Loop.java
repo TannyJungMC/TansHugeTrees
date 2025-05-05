@@ -2,15 +2,11 @@ package tannyjung.tanshugetrees_handcode.systems;
 
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.fml.ModList;
 import tannyjung.tanshugetrees.TanshugetreesMod;
-import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
-
-import java.lang.reflect.Method;
 
 public class Loop {
 
@@ -63,8 +59,6 @@ public class Loop {
     }
 
     private static void season_detector (LevelAccessor level) {
-
-        TanshugetreesMod.LOGGER.info(season_detector_tick);
 
         if (season_detector_tick == 0) {
 
@@ -141,11 +135,11 @@ public class Loop {
         // Main
         {
 
-            if (ConfigMain.rt_dynamic_tick > 0) {
+            if (ConfigMain.living_tree_mechanics_tick > 0) {
 
                 living_tree_mechanics_tick = living_tree_mechanics_tick + 1;
 
-                if (living_tree_mechanics_tick >= ConfigMain.rt_dynamic_tick) {
+                if (living_tree_mechanics_tick >= ConfigMain.living_tree_mechanics_tick) {
 
                     living_tree_mechanics_tick = 0;
 
@@ -153,9 +147,9 @@ public class Loop {
 
                         boolean pass = false;
 
-                        if (ConfigMain.rt_dynamic_simulation > GameUtils.scoreGet(level, "tree_location")) {
+                        if (ConfigMain.living_tree_mechanics_simulation > GameUtils.scoreGet(level, "tree_location")) {
 
-                            int random = ConfigMain.rt_dynamic_simulation - GameUtils.scoreGet(level, "tree_location");
+                            int random = ConfigMain.living_tree_mechanics_simulation - GameUtils.scoreGet(level, "tree_location");
                             pass = Mth.nextInt(RandomSource.create(), 0, random) == 0;
 
                         } else {
