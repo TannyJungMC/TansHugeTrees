@@ -263,6 +263,12 @@ public class LivingTreeMechanics {
 
 			if (level.getBlockState(pos).getBlock().equals(block.getBlock()) == true) {
 
+				if (GameUtils.NBTEntityLogicGet(entity, "have_leaves") == false) {
+
+					GameUtils.NBTEntityLogicSet(entity, "have_leaves", true);
+
+				}
+
 				// Leaf Drop
 				{
 
@@ -279,23 +285,33 @@ public class LivingTreeMechanics {
 
 					} else {
 
-						if (GameUtils.NBTEntityLogicGet(entity, "have_leaves") == false) {
+						if (GameUtils.isBlockTaggedAs(block, "tanshugetrees:coniferous_leaves_blocks") == true) {
 
-							GameUtils.NBTEntityLogicSet(entity, "have_leaves", true);
+							chance = ConfigMain.leaves_drop_chance_coniferous;
 
-						}
+						} else {
 
-						// By Seasons
-						{
+							// By Seasons
+							{
 
-							if (TanshugetreesModVariables.MapVariables.get(level).season.equals("summer")) {
-								chance = ConfigMain.leaves_drop_chance_summer;
-							} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("autumn")) {
-								chance = ConfigMain.leaves_drop_chance_autumn;
-							} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("winter")) {
-								chance = ConfigMain.leaves_drop_chance_winter;
-							} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("spring")) {
-								chance = ConfigMain.leaves_drop_chance_spring;
+								if (TanshugetreesModVariables.MapVariables.get(level).season.equals("summer")) {
+
+									chance = ConfigMain.leaves_drop_chance_summer;
+
+								} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("autumn")) {
+
+									chance = ConfigMain.leaves_drop_chance_autumn;
+
+								} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("winter")) {
+
+									chance = ConfigMain.leaves_drop_chance_winter;
+
+								} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("spring")) {
+
+									chance = ConfigMain.leaves_drop_chance_spring;
+
+								}
+
 							}
 
 						}
@@ -351,7 +367,7 @@ public class LivingTreeMechanics {
 
 			} else {
 
-				// Under Light Level
+				// Cancel By Light Level
 				{
 
 					if (ConfigMain.leaf_light_level_detection < 15 && ConfigMain.leaf_light_level_detection > level.getBrightness(LightLayer.SKY, pos)) {
