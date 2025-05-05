@@ -382,14 +382,36 @@ public class LivingTreeMechanics {
 				{
 
 					double chance = 0.0;
-					if (TanshugetreesModVariables.MapVariables.get(level).season.equals("summer")) {
-						chance = ConfigMain.leaves_regrow_chance_summer;
-					} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("autumn")) {
-						chance = ConfigMain.leaves_regrow_chance_autumn;
-					} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("winter")) {
-						chance = ConfigMain.leaves_regrow_chance_winter;
-					} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("spring")) {
-						chance = ConfigMain.leaves_regrow_chance_spring;
+
+					if (GameUtils.isBlockTaggedAs(block, "tanshugetrees:coniferous_leaves_blocks") == true) {
+
+						chance = ConfigMain.leaves_regrow_chance_coniferous;
+
+					} else {
+
+						// By Seasons
+						{
+
+							if (TanshugetreesModVariables.MapVariables.get(level).season.equals("summer")) {
+
+								chance = ConfigMain.leaves_regrow_chance_summer;
+
+							} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("autumn")) {
+
+								chance = ConfigMain.leaves_regrow_chance_autumn;
+
+							} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("winter")) {
+
+								chance = ConfigMain.leaves_regrow_chance_winter;
+
+							} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("spring")) {
+
+								chance = ConfigMain.leaves_regrow_chance_spring;
+
+							}
+
+						}
+
 					}
 
 					if (Math.random() < chance) {
