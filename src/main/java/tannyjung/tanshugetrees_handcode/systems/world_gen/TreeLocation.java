@@ -15,7 +15,6 @@ import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.misc.*;
-import tannyjung.tanshugetrees_handcode.systems.config.ConfigUtils;
 
 import java.io.*;
 import java.util.concurrent.*;
@@ -270,7 +269,7 @@ public class TreeLocation {
 
                                                 biome = read_all.replace("biome = ", "");
 
-                                                if (ConfigUtils.testBiome(biome_center, biome) == false) {
+                                                if (testBiome(biome_center, biome) == false) {
 
                                                     skip = true;
 
@@ -474,7 +473,7 @@ public class TreeLocation {
 
                                 biome_center = world_gen.getBiome(new BlockPos(center_posX, world_gen.getMaxBuildHeight(), center_posZ));
 
-                                if (ConfigUtils.testBiome(biome_center, biome) == false) {
+                                if (testBiome(biome_center, biome) == false) {
 
                                     continue;
 
@@ -519,6 +518,72 @@ public class TreeLocation {
             }
 
         }
+
+    }
+
+    private static boolean testBiome (Holder<Biome> biome_center, String config_value) {
+
+        boolean return_logic = false;
+
+        {
+
+            String biome_centerID = GameUtils.biomeToBiomeID(biome_center);
+
+            for (String split : config_value.split(" / ")) {
+
+                return_logic = true;
+
+                for (String split2 : split.split(" & ")) {
+
+                    String split_get = split2.replaceAll("[#!]", "");
+
+                    {
+
+                        if (split2.contains("#") == false) {
+
+                            if (biome_centerID.equals(split_get) == false) {
+
+                                return_logic = false;
+
+                            }
+
+                        } else {
+
+                            if (GameUtils.isBiomeTaggedAs(biome_center, split_get) == false) {
+
+                                return_logic = false;
+
+                            }
+
+                        }
+
+                        if (split2.contains("!") == true) {
+
+                            return_logic = !return_logic;
+
+                        }
+
+                    }
+
+                    if (return_logic == false) {
+
+                        break;
+
+                    }
+
+                }
+
+                if (return_logic == true) {
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+        return return_logic;
 
     }
 
