@@ -11,10 +11,11 @@ import net.minecraft.world.level.chunk.*;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import tannyjung.tanshugetrees_handcode.misc.FileManager;
+import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
-import tannyjung.tanshugetrees_handcode.misc.*;
 
 import java.io.*;
 import java.util.concurrent.*;
@@ -111,7 +112,7 @@ public class TreeLocation {
 
                         region_gen_bar = region_gen_bar + 1;
 
-                        if (Math.random() < ConfigMain.region_scan_percentage * 0.01) {
+                        if (Math.random() < ConfigMain.region_scan_chance * 0.01) {
 
                             chunk_posX = (region_posX * 32) + scanX;
                             chunk_posZ = (region_posZ * 32) + scanZ;
@@ -147,12 +148,6 @@ public class TreeLocation {
 
             boolean start_test = false;
             boolean skip = true;
-
-            double multiply_rarity = 0.0;
-            double multiply_min_distance = 0.0;
-            double multiply_group_size = 0.0;
-            double multiply_waterside_chance = 0.0;
-            double multiply_dead_tree_chance = 0.0;
             Holder<Biome> biome_center = null;
 
             String id = "";
@@ -193,33 +188,6 @@ public class TreeLocation {
                                     if (ConfigMain.developer_mode == true) {
 
                                         region_gen_biome = "Biome : " + GameUtils.biomeToBiomeID(biome_center);
-
-                                    }
-
-                                }
-
-                                // Get Multiply Values
-                                {
-
-                                    if (read_all.startsWith("multiply_rarity = ") == true) {
-
-                                        multiply_rarity = Double.parseDouble(read_all.replace("multiply_rarity = ", ""));
-
-                                    } else if (read_all.startsWith("multiply_min_distance = ") == true) {
-
-                                        multiply_min_distance = Double.parseDouble(read_all.replace("multiply_min_distance = ", ""));
-
-                                    } else if (read_all.startsWith("multiply_group_size = ") == true) {
-
-                                        multiply_group_size = Double.parseDouble(read_all.replace("multiply_group_size = ", ""));
-
-                                    } else if (read_all.startsWith("multiply_waterside_chance = ") == true) {
-
-                                        multiply_waterside_chance = Double.parseDouble(read_all.replace("multiply_waterside_chance = ", ""));
-
-                                    } else if (read_all.startsWith("multiply_dead_tree_chance = ") == true) {
-
-                                        multiply_dead_tree_chance = Double.parseDouble(read_all.replace("multiply_dead_tree_chance = ", ""));
 
                                     }
 
@@ -305,7 +273,7 @@ public class TreeLocation {
                                             {
 
                                                 rarity = Double.parseDouble(read_all.replace("rarity = ", ""));
-                                                rarity = rarity * (multiply_rarity * 0.01);
+                                                rarity = rarity * (ConfigMain.multiply_rarity * 0.01);
 
                                                 if (Math.random() >= rarity) {
 
@@ -320,7 +288,7 @@ public class TreeLocation {
                                             {
 
                                                 min_distance = Integer.parseInt(read_all.replace("min_distance = ", ""));
-                                                min_distance = (int) Math.ceil(min_distance * multiply_min_distance);
+                                                min_distance = (int) Math.ceil(min_distance * ConfigMain.multiply_min_distance);
 
                                                 if (min_distance > 0) {
 
@@ -341,8 +309,8 @@ public class TreeLocation {
                                                 String[] get = read_all.replace("group_size = ", "").split(" <> ");
                                                 int min = Integer.parseInt(get[0]);
                                                 int max = Integer.parseInt(get[1]);
-                                                min = (int) Math.ceil(min * multiply_group_size);
-                                                max = (int) Math.ceil(max * multiply_group_size);
+                                                min = (int) Math.ceil(min * ConfigMain.multiply_group_size);
+                                                max = (int) Math.ceil(max * ConfigMain.multiply_group_size);
 
                                                 // Round if lower than 0
                                                 {
@@ -370,7 +338,7 @@ public class TreeLocation {
                                             {
 
                                                 waterside_chance = Double.parseDouble(read_all.replace("waterside_chance = ", ""));
-                                                waterside_chance = waterside_chance * multiply_waterside_chance;
+                                                waterside_chance = waterside_chance * ConfigMain.multiply_waterside_chance;
 
                                             }
 
@@ -379,7 +347,7 @@ public class TreeLocation {
                                             {
 
                                                 dead_tree_chance = Double.parseDouble(read_all.replace("dead_tree_chance = ", ""));
-                                                dead_tree_chance = dead_tree_chance * multiply_dead_tree_chance;
+                                                dead_tree_chance = dead_tree_chance * ConfigMain.multiply_dead_tree_chance;
 
                                             }
 
