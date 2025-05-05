@@ -9,6 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -20,8 +21,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.Score;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class GameUtils {
 
@@ -42,6 +46,60 @@ public class GameUtils {
 		}
 
     }
+
+	public static String summonEntity (String id, String tag, String name, String name_color, String custom) {
+
+		StringBuilder return_text = new StringBuilder();
+
+		return_text.append("summon ")
+				.append(id)
+				.append(" ~ ~ ~ {Tags:[\"")
+				.append(Handcode.modIDBig)
+		;
+
+		if (tag.equals("") == false) {
+
+			return_text
+					.append("\",\"")
+					.append(Handcode.modIDBig)
+					.append("-")
+					.append(tag.replace(" / ", "\",\""))
+			;
+
+		}
+
+		return_text.append("\"]");
+
+		if (name.equals("") == false) {
+
+			return_text
+					.append(",CustomName:'{\"text\":\"")
+					.append(Handcode.modIDBig)
+					.append("-")
+					.append(name)
+					.append("\",\"color\":\"")
+					.append(name_color)
+					.append("\"}'")
+			;
+
+		}
+
+		if (custom.equals("") == false) {
+
+			return_text
+					.append(",")
+					.append(custom)
+			;
+
+		}
+
+		return return_text + "}";
+
+	}
+
+	// --------------------------------------------------
+	// Command
+	// --------------------------------------------------
 
 	public static void sendChatMessage (LevelAccessor level, String target, String color, String text) {
 
@@ -122,56 +180,61 @@ public class GameUtils {
 
 	}
 
-	public static String summonEntity (String id, String tag, String name, String name_color, String custom) {
+	public static String commandResultCustom (LevelAccessor level, int posX, int posY, int posZ, String command) {
 
-		StringBuilder return_text = new StringBuilder();
+		StringBuilder result = new StringBuilder();
 
-		return_text.append("summon ")
-				.append(id)
-				.append(" ~ ~ ~ {Tags:[\"")
-				.append(TanshugetreesMod.MODID.toUpperCase())
-		;
+		CommandSource data_consumer = new CommandSource() {
 
-		if (tag.equals("") == false) {
+			@Override public void sendSystemMessage(Component component) {
 
-			return_text
-					.append("\",\"")
-					.append(TanshugetreesMod.MODID.toUpperCase())
-					.append("-")
-					.append(tag.replace(" / ", "\",\""))
-			;
+				result.append(component);
 
-		}
+			}
 
-		return_text.append("\"]");
+			@Override public boolean acceptsSuccess() {return true;}
+			@Override public boolean acceptsFailure() { return true; }
+			@Override public boolean shouldInformAdmins() { return false; }
 
-		if (name.equals("") == false) {
+		};
 
-			return_text
-                    .append(",CustomName:'{\"text\":\"")
-					.append(TanshugetreesMod.MODID.toUpperCase())
-					.append("-")
-					.append(name)
-					.append("\",\"color\":\"")
-					.append(name_color)
-					.append("\"}'")
-			;
-
-		}
-
-		if (custom.equals("") == false) {
-
-			return_text
-					.append(",")
-					.append(custom)
-			;
-
-		}
-
-		return return_text + "}";
+		if (level instanceof ServerLevel world) world.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, new Vec3(posX, posY, posZ), Vec2.ZERO, world, 4, "", Component.literal(""), world.getServer(), null), command);
+		return result.toString();
 
 	}
 
+
+	// --------------------------------------------------
+	// Scoreboard
+	// --------------------------------------------------
+
+	public static int scoreGet (LevelAccessor level, String player) {
+
+		ServerScoreboard score = level.getServer().getScoreboard();
+		Objective objective = score.getObjective(Handcode.modIDBig);
+
+		return score.getOrCreatePlayerScore(player, objective).getScore();
+
+	}
+
+	public static void scoreSet (LevelAccessor level, String player, int value) {
+
+		ServerScoreboard score = level.getServer().getScoreboard();
+		Objective objective = score.getObjective(Handcode.modIDBig);
+
+		score.getOrCreatePlayerScore(player, objective).setScore(value);
+
+	}
+
+	public static void scoreAddRemove (LevelAccessor level, String player, int value) {
+
+		ServerScoreboard score = level.getServer().getScoreboard();
+		Objective objective = score.getObjective(Handcode.modIDBig);
+		int old_value = scoreGet(level, player);
+
+		score.getOrCreatePlayerScore(player, objective).setScore(old_value + value);
+
+	}
 
 	// --------------------------------------------------
 	// Dimension
