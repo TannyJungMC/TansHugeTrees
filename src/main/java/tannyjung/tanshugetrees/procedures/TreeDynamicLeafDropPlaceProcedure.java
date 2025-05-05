@@ -25,7 +25,7 @@ public class TreeDynamicLeafDropPlaceProcedure {
 		String variable_text = "";
 		BlockState block = Blocks.AIR.defaultBlockState();
 		BlockState variable_block = Blocks.AIR.defaultBlockState();
-		if (ConfigMain.leaves_litter == true) {
+		if (ConfigMain.leaf_litter == true) {
 			variable_text = (entity.getPersistentData().getString("block")).replace("keep", "");
 			if (variable_text.endsWith("]")) {
 				variable_text = variable_text.substring(0, variable_text.indexOf("[", 0));

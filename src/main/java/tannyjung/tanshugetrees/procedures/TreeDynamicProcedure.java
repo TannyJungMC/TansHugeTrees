@@ -4,8 +4,6 @@ import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
 
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 
-import org.checkerframework.checker.units.qual.s;
-
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.fml.loading.FMLPaths;
 
@@ -212,8 +210,8 @@ public class TreeDynamicProcedure {
 															} else {
 																if (!((world.getBlockState(BlockPos.containing(posX, posY, posZ))).getBlock() == block.getBlock())) {
 																	if (!("").equals("Litter Remover")) {
-																		if (ConfigMain.leaves_litter == true) {
-																			if (ConfigMain.leaves_litter_remover_chance > Math.random()) {
+																		if (ConfigMain.leaf_litter == true) {
+																			if (ConfigMain.leaf_litter_remover_chance > Math.random()) {
 																				if (world instanceof ServerLevel _level)
 																					_level.getServer().getCommands().performPrefixedCommand(
 																							new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null)
@@ -229,14 +227,14 @@ public class TreeDynamicProcedure {
 																							new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null)
 																									.withSuppressedOutput(),
 																							(("execute if score leaves_litter_remover THT matches .."
-																									+ (new java.text.DecimalFormat("##.##").format(ConfigMain.leaves_litter_remover_count_limit - 1)).replace(".0", "") + " run ")
+																									+ (new java.text.DecimalFormat("##.##").format(ConfigMain.leaf_litter_remover_count_limit - 1)).replace(".0", "") + " run ")
 																									+ "scoreboard players add leaves_litter_remover THT 1"));
 																				if (world instanceof ServerLevel _level)
 																					_level.getServer().getCommands().performPrefixedCommand(
 																							new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null)
 																									.withSuppressedOutput(),
 																							(("execute if score leaves_litter_remover THT matches .."
-																									+ (new java.text.DecimalFormat("##.##").format(ConfigMain.leaves_litter_remover_count_limit - 1)).replace(".0", "") + " run ") + ""
+																									+ (new java.text.DecimalFormat("##.##").format(ConfigMain.leaf_litter_remover_count_limit - 1)).replace(".0", "") + " run ") + ""
 																									+ "summon marker ~ ~ ~ {Tag:[\"THT\"],CustomName:'{\"text\":\"THT-leaves_litter_remover\"}'}"));
 																			}
 																		}
@@ -282,7 +280,7 @@ public class TreeDynamicProcedure {
 																				}
 																			} else {
 																				if (block.is(BlockTags.create(new ResourceLocation("tanshugetrees:coniferous_leaves_blocks")))) {
-																					if ((world.getMaxLocalRawBrightness(BlockPos.containing(posX, posY, posZ)) < ConfigMain.leaves_light_level_detection
+																					if ((world.getMaxLocalRawBrightness(BlockPos.containing(posX, posY, posZ)) < ConfigMain.leaf_light_level_detection
 																							|| (TanshugetreesModVariables.MapVariables.get(world).season).equals("Summer")) && ConfigMain.leaves_drop_chance_coniferous <= Math.random()) {
 																						continue;
 																					}
@@ -293,7 +291,7 @@ public class TreeDynamicProcedure {
 																							continue;
 																						}
 																					}
-																					if (world.getMaxLocalRawBrightness(BlockPos.containing(posX, posY, posZ)) < ConfigMain.leaves_light_level_detection) {
+																					if (world.getMaxLocalRawBrightness(BlockPos.containing(posX, posY, posZ)) < ConfigMain.leaf_light_level_detection) {
 																						if (ConfigMain.leaves_drop_chance_summer <= Math.random()) {
 																							continue;
 																						}
@@ -306,8 +304,8 @@ public class TreeDynamicProcedure {
 																					}
 																				}
 																			}
-																			if (ConfigMain.leaves_drop_animation_chance == 0) {
-																				if (ConfigMain.leaves_litter == true) {
+																			if (ConfigMain.leaf_drop_animation_chance == 0) {
+																				if (ConfigMain.leaf_litter == true) {
 																					if (posY >= world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int) posX, (int) posZ)) {
 																						posY = world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int) posX, (int) posZ);
 																					} else {
@@ -325,7 +323,7 @@ public class TreeDynamicProcedure {
 																					}
 																					world.setBlock(BlockPos.containing(posX, posY, posZ), block, 2);
 																				}
-																			} else if (ConfigMain.leaves_drop_animation_chance > Math.random()) {
+																			} else if (ConfigMain.leaf_drop_animation_chance > Math.random()) {
 																				if (world instanceof ServerLevel _level)
 																					_level.getServer().getCommands().performPrefixedCommand(
 																							new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null)
@@ -342,14 +340,14 @@ public class TreeDynamicProcedure {
 																								new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null)
 																										.withSuppressedOutput(),
 																								(("execute if score leaves_drop THT matches .."
-																										+ (new java.text.DecimalFormat("##.##").format(ConfigMain.leaves_drop_animation_count_limit - 1)).replace(".0", "") + " run ")
+																										+ (new java.text.DecimalFormat("##.##").format(ConfigMain.leaf_drop_animation_count_limit - 1)).replace(".0", "") + " run ")
 																										+ "scoreboard players add leaves_drop THT 1"));
 																					if (world instanceof ServerLevel _level)
 																						_level.getServer().getCommands().performPrefixedCommand(
 																								new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null)
 																										.withSuppressedOutput(),
 																								(("execute if score leaves_drop THT matches .."
-																										+ (new java.text.DecimalFormat("##.##").format(ConfigMain.leaves_drop_animation_count_limit - 1)).replace(".0", "") + " run ") + ""
+																										+ (new java.text.DecimalFormat("##.##").format(ConfigMain.leaf_drop_animation_count_limit - 1)).replace(".0", "") + " run ") + ""
 																										+ "summon armor_stand ~ ~ ~ {Tag:[\"THT\"],CustomName:'{\"text\":\"THT-leaves_drop\"}',Invisible:1b,Marker:1b,NoGravity:1b,ArmorItems:[{},{},{},{id:\""
 																										+ ForgeRegistries.BLOCKS.getKey(block.getBlock()).toString() + "\",Count:1b}],ForgeData:{block:\""
 																										+ ForgeRegistries.BLOCKS.getKey(block.getBlock()).toString() + "\"}}"));
