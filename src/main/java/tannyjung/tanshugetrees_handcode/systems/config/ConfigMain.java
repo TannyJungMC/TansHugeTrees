@@ -3,7 +3,6 @@ package tannyjung.tanshugetrees_handcode.systems.config;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
-;
 import tannyjung.tanshugetrees_handcode.misc.FileManager;
 import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 
@@ -36,12 +35,12 @@ public class ConfigMain {
 	public static int rt_dynamic_process_limit = 0;
 	public static int rt_dynamic_simulation = 0;
 	public static boolean season_detector = false;
-	public static boolean leaves_litter = false;
-	public static double leaves_litter_remover_chance = 0.0;
-	public static int leaves_litter_remover_count_limit = 0;
-	public static double leaves_drop_animation_chance = 0.0;
-	public static int leaves_drop_animation_count_limit = 0;
-	public static int leaves_light_level_detection = 0;
+	public static boolean leaf_litter = false;
+	public static double leaf_litter_remover_chance = 0.0;
+	public static int leaf_litter_remover_count_limit = 0;
+	public static double leaf_drop_animation_chance = 0.0;
+	public static int leaf_drop_animation_count_limit = 0;
+	public static int leaf_light_level_detection = 0;
 
 	public static double leaves_regrow_chance_spring = 0.0;
 	public static double leaves_regrow_chance_summer = 0.0;
@@ -192,11 +191,11 @@ public class ConfigMain {
 			| Count limit of the leaves litter remover
 			| Default is 10
 	
-			leaves_drop_animation_chance = 0.1
+			leaf_drop_animation_chance = 0.1
 			| Chance of animation that will appear at leaves drop block on the tree
 			| Default is 0.1
 	
-			leaves_drop_animation_count_limit = 50
+			leaf_drop_animation_count_limit = 50
 			| Count limit of leaves drop animation
 			| Default is 50
 	
@@ -359,12 +358,12 @@ public class ConfigMain {
 		rt_dynamic_process_limit = Get.numberInt("living_tree_mechanics_process_limit");
 		rt_dynamic_simulation = Get.numberInt("living_tree_mechanics_simulation");
 		season_detector = Get.logic("season_detector");
-		leaves_litter = Get.logic("leaf_litter");
-		leaves_litter_remover_chance = Get.numberDouble("leaf_litter_remover_chance");
-		leaves_litter_remover_count_limit = Get.numberInt("leaf_litter_remover_count_limit");
-		leaves_drop_animation_chance = Get.numberDouble("leaves_drop_animation_chance");
-		leaves_drop_animation_count_limit = Get.numberInt("leaves_drop_animation_count_limit");
-		leaves_light_level_detection = Get.numberInt("leaves_light_level_detection");
+		leaf_litter = Get.logic("leaf_litter");
+		leaf_litter_remover_chance = Get.numberDouble("leaf_litter_remover_chance");
+		leaf_litter_remover_count_limit = Get.numberInt("leaf_litter_remover_count_limit");
+		leaf_drop_animation_chance = Get.numberDouble("leaf_drop_animation_chance");
+		leaf_drop_animation_count_limit = Get.numberInt("leaf_drop_animation_count_limit");
+		leaf_light_level_detection = Get.numberInt("leaves_light_level_detection");
 
 		leaves_regrow_chance_spring = Get.numberDouble("leaves_regrow_chance_spring");
 		leaves_regrow_chance_summer = Get.numberDouble("leaves_regrow_chance_summer");
