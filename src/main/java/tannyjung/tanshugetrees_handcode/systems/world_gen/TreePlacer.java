@@ -802,7 +802,7 @@ public class TreePlacer {
 
                                                 summon_marker = true;
 
-                                                if (ConfigMain.rt_dynamic == true && living_tree_mechanics == true) {
+                                                if (ConfigMain.living_tree_mechanics == true && living_tree_mechanics == true) {
 
                                                     if (read_all.equals("+b0^0^0tro") == true) {
 
