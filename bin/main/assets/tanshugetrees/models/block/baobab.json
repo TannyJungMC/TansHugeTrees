@@ -1,8 +1,0 @@
-{
-  "parent": "block/cross",
-  "textures": {
-    "cross": "tanshugetrees:block/tree_baobab",
-    "particle": "tanshugetrees:block/tree_baobab"
-  },
-  "render_type": "cutout"
-}
