@@ -220,7 +220,7 @@ public class ConfigMain {
 					| Default is 500
 					
 					deciduous_leaves_list = minecraft:oak_leaves / minecraft:birch_leaves
-					| List of deciduous leaves blocks. Deciduous is oak trees, and similar. They will drop their leaves before winter.
+					| List of deciduous leaves blocks. Deciduous is oak trees, and similar. They will drop their leaves before winter, but note that they won't do in tropical biomes.
 					| Default is minecraft:oak_leaves / minecraft:birch_leaves
 					
 					coniferous_leaves_list = minecraft:spruce_leaves
@@ -232,7 +232,7 @@ public class ConfigMain {
 					----------------------------------------------------------------------------------------------------
 					
 					serene_seasons_compatibility = true
-					| Sync tree seasons with Serene Seasons mod. Using area at world spawn to detect current season.
+					| Sync the mod seasons with Serene Seasons mod. Using area at world spawn to detect current season.
 					| Default is true
 					
 					leaves_drop_chance_spring = 0
