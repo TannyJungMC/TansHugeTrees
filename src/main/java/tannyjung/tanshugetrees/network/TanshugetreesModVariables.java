@@ -93,11 +93,7 @@ public class TanshugetreesModVariables {
 		public double auto_gen_count = 0;
 		public String auto_gen_teleport_player_back = "";
 		public boolean detect_exist = false;
-		public double generation_distance_max = 0;
-		public double loop_second = 0;
-		public double rt_dynamic_tick = 0;
 		public String season = "";
-		public double season_detector_tick = 0;
 		public boolean version_1192 = false;
 
 		public static MapVariables load(CompoundTag tag) {
@@ -113,11 +109,7 @@ public class TanshugetreesModVariables {
 			auto_gen_count = nbt.getDouble("auto_gen_count");
 			auto_gen_teleport_player_back = nbt.getString("auto_gen_teleport_player_back");
 			detect_exist = nbt.getBoolean("detect_exist");
-			generation_distance_max = nbt.getDouble("generation_distance_max");
-			loop_second = nbt.getDouble("loop_second");
-			rt_dynamic_tick = nbt.getDouble("rt_dynamic_tick");
 			season = nbt.getString("season");
-			season_detector_tick = nbt.getDouble("season_detector_tick");
 			version_1192 = nbt.getBoolean("version_1192");
 		}
 
@@ -129,11 +121,7 @@ public class TanshugetreesModVariables {
 			nbt.putDouble("auto_gen_count", auto_gen_count);
 			nbt.putString("auto_gen_teleport_player_back", auto_gen_teleport_player_back);
 			nbt.putBoolean("detect_exist", detect_exist);
-			nbt.putDouble("generation_distance_max", generation_distance_max);
-			nbt.putDouble("loop_second", loop_second);
-			nbt.putDouble("rt_dynamic_tick", rt_dynamic_tick);
 			nbt.putString("season", season);
-			nbt.putDouble("season_detector_tick", season_detector_tick);
 			nbt.putBoolean("version_1192", version_1192);
 			return nbt;
 		}

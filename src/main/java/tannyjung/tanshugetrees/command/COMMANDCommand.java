@@ -94,7 +94,7 @@ public class COMMANDCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			COMMANDConfigApplyProcedure.execute(world, x, y, z);
+			COMMANDConfigApplyProcedure.execute(world, x, y, z, entity);
 			return 0;
 		}))).then(Commands.literal("command").then(Commands.literal("txt_function").then(Commands.argument("file", StringArgumentType.word()).then(Commands.argument("folder", MessageArgument.message()).executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
