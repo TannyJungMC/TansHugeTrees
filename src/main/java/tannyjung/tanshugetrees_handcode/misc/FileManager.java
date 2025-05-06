@@ -224,4 +224,77 @@ public class FileManager {
 
 	}
 
+	public static class GetConfigValue {
+
+		public static boolean logic (String path, String name) {
+
+			return Boolean.parseBoolean(find(path, name));
+
+		}
+
+		public static int numberInt (String path, String name) {
+
+			return Integer.parseInt(find(path, name));
+
+		}
+
+		public static double numberDouble (String path, String name) {
+
+			return Double.parseDouble(find(path, name));
+
+		}
+
+		public static String text (String path, String name) {
+
+			return find(path, name);
+
+		}
+
+		public static String find (String path, String name) {
+
+			String return_text = "";
+			name = name + " = ";
+
+			{
+
+				File file = new File(path);
+
+				{
+
+					try {
+						BufferedReader buffered_reader = new BufferedReader(new FileReader(file));
+						String read_all = "";
+						while ((read_all = buffered_reader.readLine()) != null) {
+
+							{
+
+								if (read_all.startsWith("|") == false) {
+
+									if (read_all.startsWith(name) == true) {
+
+										return_text = read_all.replace(name, "");
+										break;
+
+									}
+
+								}
+
+							}
+
+						}
+						buffered_reader.close();
+					} catch (Exception e) {
+						TanshugetreesMod.LOGGER.error(e.getMessage());
+					}
+
+				}
+
+			}
+
+			return return_text;
+
+		}
+
+	}
+
 }
