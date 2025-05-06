@@ -320,6 +320,11 @@ public class ConfigMain {
 		wip_version = Get.logic("wip_version");
 
 		region_scan_chance = Get.numberDouble("region_scan_chance");
+		multiply_rarity = Get.numberDouble("multiply_rarity");
+		multiply_min_distance = Get.numberDouble("multiply_min_distance");
+		multiply_group_size = Get.numberDouble("multiply_group_size");
+		multiply_waterside_chance = Get.numberDouble("multiply_waterside_chance");
+		multiply_dead_tree_chance = Get.numberDouble("multiply_dead_tree_chance");
 		tree_location = Get.logic("tree_location");
 		world_gen_roots = Get.logic("config_world_gen_roots");
 		surface_smoothness_detection = Get.logic("surface_smoothness_detection");
