@@ -2,6 +2,7 @@ package tannyjung.tanshugetrees_handcode.systems.world_gen;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.server.Main;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -11,6 +12,7 @@ import net.minecraft.world.level.chunk.*;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.misc.FileManager;
 import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
@@ -22,10 +24,10 @@ import java.util.concurrent.*;
 
 public class TreeLocation {
 
-    public static int region_gen = 0;
-    public static int region_gen_bar = 0;
-    public static String region_gen_biome = "";
-    public static String region_gen_tree = "";
+    public static int world_gen_overlay_animation = 0;
+    public static int world_gen_overlay_bar = 0;
+    public static String world_gen_overlay_details_biome = "";
+    public static String world_gen_overlay_details_tree = "";
 
     public static void start (FeaturePlaceContext <NoneFeatureConfiguration> context) {
 
@@ -66,8 +68,8 @@ public class TreeLocation {
             int center_posX = 0;
             int center_posZ = 0;
 
-            region_gen = 4;
-            region_gen_bar = 0;
+            world_gen_overlay_animation = 4;
+            world_gen_overlay_bar = 0;
             TanshugetreesMod.LOGGER.info("Generating Region (" + region_posX + "/" + region_posZ + ")");
 
             // Overlay Loading Loop
@@ -75,15 +77,15 @@ public class TreeLocation {
 
                 CompletableFuture.runAsync(() -> {
 
-                    while (region_gen != 0) {
+                    while (world_gen_overlay_animation != 0) {
 
-                        if (region_gen < 4) {
+                        if (world_gen_overlay_animation < 4) {
 
-                            region_gen = region_gen + 1;
+                            world_gen_overlay_animation = world_gen_overlay_animation + 1;
 
                         } else {
 
-                            region_gen = 1;
+                            world_gen_overlay_animation = 1;
 
                         }
 
@@ -110,9 +112,9 @@ public class TreeLocation {
 
                     for (int scanZ = 0; scanZ < 32; scanZ++) {
 
-                        region_gen_bar = region_gen_bar + 1;
+                        world_gen_overlay_bar = world_gen_overlay_bar + 1;
 
-                        if (Math.random() < ConfigMain.region_scan_chance * 0.01) {
+                        if (Math.random() < ConfigMain.region_scan_chance) {
 
                             chunk_posX = (region_posX * 32) + scanX;
                             chunk_posZ = (region_posZ * 32) + scanZ;
@@ -133,7 +135,7 @@ public class TreeLocation {
 
             }
 
-            region_gen = 0;
+            world_gen_overlay_animation = 0;
             TanshugetreesMod.LOGGER.info("Completed!");
 
         }
@@ -187,7 +189,7 @@ public class TreeLocation {
 
                                     if (ConfigMain.developer_mode == true) {
 
-                                        region_gen_biome = "Biome : " + GameUtils.biomeToBiomeID(biome_center);
+                                        world_gen_overlay_details_biome = GameUtils.biomeToBiomeID(biome_center);
 
                                     }
 
@@ -213,7 +215,7 @@ public class TreeLocation {
 
                                     }
 
-                                    region_gen_tree = "";
+                                    world_gen_overlay_details_tree = "";
 
                                 } else {
 
@@ -250,11 +252,11 @@ public class TreeLocation {
 
                                                 if (skip == false) {
 
-                                                    region_gen_tree = "Tree : " + id;
+                                                    world_gen_overlay_details_tree = id;
 
                                                 } else {
 
-                                                    region_gen_tree = "Tree : No tree have set for this biome";
+                                                    world_gen_overlay_details_tree = "No tree have set for this biome";
 
                                                 }
 
@@ -273,7 +275,7 @@ public class TreeLocation {
                                             {
 
                                                 rarity = Double.parseDouble(read_all.replace("rarity = ", ""));
-                                                rarity = rarity * (ConfigMain.multiply_rarity * 0.01);
+                                                rarity = (rarity * 0.01) * ConfigMain.multiply_rarity;
 
                                                 if (Math.random() >= rarity) {
 
