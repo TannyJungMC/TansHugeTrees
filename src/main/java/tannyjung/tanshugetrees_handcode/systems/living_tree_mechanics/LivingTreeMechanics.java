@@ -49,7 +49,7 @@ public class LivingTreeMechanics {
 
 			File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + GameUtils.NBTEntityTextGet(entity, "settings"));
 			String id = "";
-			int leaves_type_test = 0;
+			String get = "";
 
 			if (file.exists() == true && file.isDirectory() == false) {
 
@@ -61,46 +61,44 @@ public class LivingTreeMechanics {
 
 							if (read_all.startsWith("Block ") == true) {
 
-								GameUtils.NBTEntityTextSet(entity, read_all.substring(6, 9), read_all.substring(12));
+								id = read_all.substring(("Block ").length(), ("Block ###").length());
+								get = read_all.substring(("Block ### = ").length());
+								GameUtils.NBTEntityTextSet(entity, id, get);
 
 								// Test Leaves Type
 								{
 
-									id = read_all.substring(6, 9);
-
 									if (id.startsWith("le") == true) {
 
-										id = GameUtils.NBTEntityTextGet(entity, "id");
+										if (get.endsWith(" keep") == true) {
 
-										if (id.endsWith("]") == true) {
-
-											id = id.substring(0, id.indexOf("["));
+											get = get.substring(0, get.length() - (" keep").length());
 
 										}
 
-										if (ConfigMain.deciduous_leaves_list.contains(id) == true) {
+										if (get.endsWith("]") == true) {
 
-											leaves_type_test = 1;
+											get = get.substring(0, get.indexOf("["));
 
-										} else if (ConfigMain.coniferous_leaves_list.contains(id) == true) {
+										}
 
-											leaves_type_test = 2;
+										int test = 0;
+
+										if (ConfigMain.deciduous_leaves_list.contains(get) == true) {
+
+											test = 1;
+
+										} else if (ConfigMain.coniferous_leaves_list.contains(get) == true) {
+
+											test = 2;
 
 										} else {
 
-											leaves_type_test = 0;
+											test = 0;
 
 										}
 
-										if (id.endsWith("1") == true) {
-
-											leaves_type[0] = leaves_type_test;
-
-										} else {
-
-											leaves_type[1] = leaves_type_test;
-
-										}
+										leaves_type[Integer.parseInt(id.substring(2)) - 1] = test;
 
 									}
 
@@ -250,30 +248,22 @@ public class LivingTreeMechanics {
 
 		BlockPos pos = null;
 		BlockState block = Blocks.AIR.defaultBlockState();
-		int leaves_type_get = 0;
+		int[] get = FileManager.textPosConverter(read_all.substring(2, read_all.length() - 3), rotation, mirrored);
+		int posX = entity.getBlockX() + get[0];
+		int posY = entity.getBlockY() + get[1];
+		int posZ = entity.getBlockZ() + get[2];
+		pos = new BlockPos(posX, posY, posZ);
+		String id = read_all.substring(read_all.length() - 3);
+		block = GameUtils.textToBlock(GameUtils.NBTEntityTextGet(entity, id));
 
-		{
 
-			int[] get = FileManager.textPosConverter(read_all.substring(2, read_all.length() - 3), rotation, mirrored);
-			int posX = entity.getBlockX() + get[0];
-			int posY = entity.getBlockY() + get[1];
-			int posZ = entity.getBlockZ() + get[2];
+		if (GameUtils.commandResult(level, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
 
-			pos = new BlockPos(posX, posY, posZ);
-
-			String id = read_all.substring(read_all.length() - 3);
-			block = GameUtils.textToBlock(GameUtils.NBTEntityTextGet(entity, id));
-			leaves_type_get = leaves_type[Integer.parseInt(id.substring(2))];
-
-			if (GameUtils.commandResult(level, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
-
-				return;
-
-			}
+			return;
 
 		}
 
-		run(level, entity, pre_pos, pre_block, pos, block, leaves_type_get);
+		run(level, entity, pre_pos, pre_block, pos, block, leaves_type[Integer.parseInt(id.substring(2)) - 1]);
 
 	}
 
@@ -294,6 +284,8 @@ public class LivingTreeMechanics {
 			}
 
 		} else {
+
+			BlockPos center_pos = new BlockPos(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
 
 			// Leaf Litter Remover
 			{
@@ -338,24 +330,32 @@ public class LivingTreeMechanics {
 
 						if (leaves_type == 1) {
 
-							// By Seasons
-							{
+							if (GameUtils.isBiomeTaggedAs(level.getBiome(center_pos), "tanshugetrees:tropical_biomes") == true) {
 
-								if (TanshugetreesModVariables.MapVariables.get(level).season.equals("summer")) {
+								chance = ConfigMain.leaves_drop_chance_summer;
 
-									chance = ConfigMain.leaves_drop_chance_summer;
+							} else {
 
-								} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("autumn")) {
+								// By Seasons
+								{
 
-									chance = ConfigMain.leaves_drop_chance_autumn;
+									if (TanshugetreesModVariables.MapVariables.get(level).season.equals("summer")) {
 
-								} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("winter")) {
+										chance = ConfigMain.leaves_drop_chance_summer;
 
-									chance = ConfigMain.leaves_drop_chance_winter;
+									} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("autumn")) {
 
-								} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("spring")) {
+										chance = ConfigMain.leaves_drop_chance_autumn;
 
-									chance = ConfigMain.leaves_drop_chance_spring;
+									} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("winter")) {
+
+										chance = ConfigMain.leaves_drop_chance_winter;
+
+									} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("spring")) {
+
+										chance = ConfigMain.leaves_drop_chance_spring;
+
+									}
 
 								}
 
@@ -363,7 +363,16 @@ public class LivingTreeMechanics {
 
 						} else if (leaves_type == 2) {
 
-							chance = ConfigMain.leaves_drop_chance_coniferous;
+							// Only drop coniferous leaves in summer
+							{
+
+								if (TanshugetreesModVariables.MapVariables.get(level).season.equals("summer") == true) {
+
+									chance = ConfigMain.leaves_drop_chance_coniferous;
+
+								}
+
+							}
 
 						} else {
 
@@ -440,24 +449,28 @@ public class LivingTreeMechanics {
 
 					if (leaves_type == 1) {
 
-						// By Seasons
-						{
+						if (GameUtils.isBiomeTaggedAs(level.getBiome(center_pos), "forge:is_snowy") == false) {
 
-							if (TanshugetreesModVariables.MapVariables.get(level).season.equals("summer")) {
+							// By Seasons
+							{
 
-								chance = ConfigMain.leaves_regrow_chance_summer;
+								if (TanshugetreesModVariables.MapVariables.get(level).season.equals("summer")) {
 
-							} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("autumn")) {
+									chance = ConfigMain.leaves_regrow_chance_summer;
 
-								chance = ConfigMain.leaves_regrow_chance_autumn;
+								} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("autumn")) {
 
-							} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("winter")) {
+									chance = ConfigMain.leaves_regrow_chance_autumn;
 
-								chance = ConfigMain.leaves_regrow_chance_winter;
+								} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("winter")) {
 
-							} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("spring")) {
+									chance = ConfigMain.leaves_regrow_chance_winter;
 
-								chance = ConfigMain.leaves_regrow_chance_spring;
+								} else if (TanshugetreesModVariables.MapVariables.get(level).season.equals("spring")) {
+
+									chance = ConfigMain.leaves_regrow_chance_spring;
+
+								}
 
 							}
 
