@@ -2325,6 +2325,11 @@
   ],
   "sound_elements": [],
   "tag_elements": {
+    "ITEMS:mod:block_placer_blacklist_secondary_root": [
+      "CUSTOM:BlockPlacerTaprootCore",
+      "CUSTOM:BlockPlacerTaprootInner",
+      "CUSTOM:BlockPlacerTaprootOuter"
+    ],
     "BLOCKS:mod:block_placer_blacklist_twig": [
       "CUSTOM:BlockPlacerTaprootOuter",
       "CUSTOM:BlockPlacerTaprootInner",
@@ -2341,20 +2346,6 @@
       "CUSTOM:BlockPlacerTrunkCore",
       "CUSTOM:BlockPlacerTrunkInner",
       "CUSTOM:BlockPlacerTrunkOuter"
-    ],
-    "BIOMES:mod:no_snow_biomes": [
-      "#forge:is_hot",
-      "#forge:is_wet"
-    ],
-    "BLOCKS:mod:air_blocks": [
-      "Blocks.AIR",
-      "Blocks.VOID_AIR",
-      "Blocks.CAVE_AIR"
-    ],
-    "ITEMS:mod:block_placer_blacklist_secondary_root": [
-      "CUSTOM:BlockPlacerTaprootCore",
-      "CUSTOM:BlockPlacerTaprootInner",
-      "CUSTOM:BlockPlacerTaprootOuter"
     ],
     "BLOCKS:mod:passable_blocks": [
       "TAG:minecraft:replaceable_by_trees",
@@ -2385,6 +2376,15 @@
       "CUSTOM:BlockPlacerSecondaryRootCore",
       "CUSTOM:BlockPlacerSecondaryRootInner",
       "CUSTOM:BlockPlacerSecondaryRootOuter"
+    ],
+    "BLOCKS:mod:air_blocks": [
+      "Blocks.AIR",
+      "Blocks.VOID_AIR",
+      "Blocks.CAVE_AIR"
+    ],
+    "BIOMES:mod:tropical_biome": [
+      "#forge:is_hot",
+      "#forge:is_wet"
     ],
     "BLOCKS:mod:block_placer_blacklist_leaves_twig": [
       "CUSTOM:BlockPlacerTaprootOuter",
