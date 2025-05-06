@@ -2,6 +2,7 @@ package tannyjung.tanshugetrees_handcode;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -13,8 +14,10 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
 import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 import tannyjung.tanshugetrees_handcode.systems.Loop;
+import tannyjung.tanshugetrees_handcode.systems.config.CheckUpdateRun;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigRepairAll;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFeature;
@@ -65,21 +68,46 @@ public class Handcode {
 	@SubscribeEvent
 	public static void startWorld (ServerLifecycleEvent event) {
 
+		ServerLevel world = event.getServer().overworld();
 		directory_world_data = event.getServer().getWorldPath(new LevelResource(".")) + "/data/tanshugetrees";
+		TanshugetreesModVariables.MapVariables.get(world).version_1192 = version_1192;
+
 		ConfigRepairAll.start(null);
 		ConfigMain.apply(null);
-
-		ServerLevel world = event.getServer().overworld();
-		GameUtils.runCommand(world, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
 
 	}
 
 	@SubscribeEvent
 	public static void playerJoin (PlayerEvent.PlayerLoggedInEvent event) {
 
-		if (GameUtils.playerCount(event.getEntity().level()) == 1) {
+		// One time running, only when start the world and first player joined.
+		{
 
-			Loop.start(event.getEntity().level());
+			LevelAccessor level = event.getEntity().level();
+
+			if (GameUtils.playerCount(level) == 1) {
+
+				GameUtils.runCommand(level, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
+
+				if (Handcode.version_1192 == false && TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
+
+					GameUtils.runCommand(level, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 0 0 run forceload add 16 16 -16 -16");
+
+				}
+
+				TanshugetreesMod.queueServerWork(100, () -> {
+
+					Loop.start(level);
+
+					if (ConfigMain.auto_check_update == true) {
+
+						CheckUpdateRun.start(level);
+
+					}
+
+				});
+
+			}
 
 		}
 
