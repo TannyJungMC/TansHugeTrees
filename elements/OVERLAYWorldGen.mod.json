@@ -1,0 +1,93 @@
+{
+  "_fv": 77,
+  "_type": "overlay",
+  "definition": {
+    "priority": "NORMAL",
+    "components": [
+      {
+        "type": "sprite",
+        "data": {
+          "sprite": "overlay_region_gen.png",
+          "spritesCount": 4,
+          "spriteIndex": {
+            "fixedValue": 0.0,
+            "name": "OVERLAYWorldGenAnimation"
+          },
+          "anchorPoint": "TOP_LEFT",
+          "x": 6,
+          "y": 8,
+          "locked": false
+        }
+      },
+      {
+        "type": "sprite",
+        "data": {
+          "sprite": "overlay_region_gen_bar.png",
+          "spritesCount": 17,
+          "spriteIndex": {
+            "fixedValue": 0.0,
+            "name": "OVERLAYWorldGenBar"
+          },
+          "anchorPoint": "TOP_LEFT",
+          "x": 22,
+          "y": 8,
+          "locked": false
+        }
+      },
+      {
+        "type": "label",
+        "data": {
+          "name": "label_proc_overlay_region_gen_biome",
+          "text": {
+            "fixedValue": "",
+            "name": "OVERLAYWorldGenDetailsBiome"
+          },
+          "color": {
+            "value": -10066330,
+            "falpha": 0.0
+          },
+          "displayCondition": {
+            "name": "OVERLAYWorldGenShowDetails"
+          },
+          "anchorPoint": "TOP_LEFT",
+          "x": 6,
+          "y": 32,
+          "locked": false
+        }
+      },
+      {
+        "type": "label",
+        "data": {
+          "name": "label_proc_overlay_region_gen_tree",
+          "text": {
+            "fixedValue": "",
+            "name": "OVERLAYWorldGenDetailsTree"
+          },
+          "color": {
+            "value": -11908534,
+            "falpha": 0.0
+          },
+          "displayCondition": {
+            "name": "OVERLAYWorldGenShowDetails"
+          },
+          "anchorPoint": "TOP_LEFT",
+          "x": 6,
+          "y": 44,
+          "locked": false
+        }
+      }
+    ],
+    "baseTexture": "",
+    "overlayTarget": "Ingame",
+    "displayCondition": {
+      "name": "OVERLAYWorldGenShow"
+    },
+    "gridSettings": {
+      "sx": 16,
+      "sy": 8,
+      "ox": 11,
+      "oy": 15,
+      "snapOnGrid": true
+    }
+  }
+}
