@@ -42,10 +42,14 @@ public class LivingTreeMechanics {
 
 		}
 
+		int[] leaves_type = new int[2];
+
 		// Get Settings
 		{
 
 			File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + GameUtils.NBTEntityTextGet(entity, "settings"));
+			String id = "";
+			int leaves_type_test = 0;
 
 			if (file.exists() == true && file.isDirectory() == false) {
 
@@ -58,6 +62,49 @@ public class LivingTreeMechanics {
 							if (read_all.startsWith("Block ") == true) {
 
 								GameUtils.NBTEntityTextSet(entity, read_all.substring(6, 9), read_all.substring(12));
+
+								// Test Leaves Type
+								{
+
+									id = read_all.substring(6, 9);
+
+									if (id.startsWith("le") == true) {
+
+										id = GameUtils.NBTEntityTextGet(entity, "id");
+
+										if (id.endsWith("]") == true) {
+
+											id = id.substring(0, id.indexOf("["));
+
+										}
+
+										if (ConfigMain.deciduous_leaves_list.contains(id) == true) {
+
+											leaves_type_test = 1;
+
+										} else if (ConfigMain.coniferous_leaves_list.contains(id) == true) {
+
+											leaves_type_test = 2;
+
+										} else {
+
+											leaves_type_test = 0;
+
+										}
+
+										if (id.endsWith("1") == true) {
+
+											leaves_type[0] = leaves_type_test;
+
+										} else {
+
+											leaves_type[1] = leaves_type_test;
+
+										}
+
+									}
+
+								}
 
 							}
 
@@ -79,9 +126,9 @@ public class LivingTreeMechanics {
 
 		if (file.exists() == true && file.isDirectory() == false) {
 
+			int process = 0;
 			int rotation = (int) GameUtils.NBTEntityNumberGet(entity, "rotation");
 			boolean mirrored = GameUtils.NBTEntityLogicGet(entity, "mirrored");
-			int process = 0;
 
 			// Read Data
 			{
@@ -112,7 +159,7 @@ public class LivingTreeMechanics {
 
 							if (read_all.endsWith("le1") == true || read_all.endsWith("le2") == true) {
 
-								getData(level, entity, read_all, rotation, mirrored);
+								getData(level, entity, read_all, rotation, mirrored, leaves_type);
 
 							} else {
 
@@ -172,7 +219,7 @@ public class LivingTreeMechanics {
 
 	}
 
-	private static void getData (LevelAccessor level, Entity entity, String read_all, int rotation, boolean mirrored) {
+	private static void getData (LevelAccessor level, Entity entity, String read_all, int rotation, boolean mirrored, int[] leaves_type) {
 
 		BlockPos pre_pos = null;
 		BlockState pre_block = Blocks.AIR.defaultBlockState();
@@ -203,6 +250,7 @@ public class LivingTreeMechanics {
 
 		BlockPos pos = null;
 		BlockState block = Blocks.AIR.defaultBlockState();
+		int leaves_type_get = 0;
 
 		{
 
@@ -212,7 +260,10 @@ public class LivingTreeMechanics {
 			int posZ = entity.getBlockZ() + get[2];
 
 			pos = new BlockPos(posX, posY, posZ);
-			block = GameUtils.textToBlock(GameUtils.NBTEntityTextGet(entity, read_all.substring(read_all.length() - 3)));
+
+			String id = read_all.substring(read_all.length() - 3);
+			block = GameUtils.textToBlock(GameUtils.NBTEntityTextGet(entity, id));
+			leaves_type_get = leaves_type[Integer.parseInt(id.substring(2))];
 
 			if (GameUtils.commandResult(level, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
 
@@ -222,11 +273,11 @@ public class LivingTreeMechanics {
 
 		}
 
-		run(level, entity, pre_pos, pre_block, pos, block);
+		run(level, entity, pre_pos, pre_block, pos, block, leaves_type_get);
 
 	}
 
-	private static void run (LevelAccessor level, Entity entity, BlockPos pre_pos, BlockState pre_block, BlockPos pos, BlockState block) {
+	private static void run (LevelAccessor level, Entity entity, BlockPos pre_pos, BlockState pre_block, BlockPos pos, BlockState block, int leaves_type) {
 
 		if (level.getBlockState(pre_pos).getBlock().equals(pre_block.getBlock()) == false) {
 
@@ -285,11 +336,7 @@ public class LivingTreeMechanics {
 
 					} else {
 
-						if (GameUtils.isBlockTaggedAs(block, "tanshugetrees:coniferous_leaves_blocks") == true) {
-
-							chance = ConfigMain.leaves_drop_chance_coniferous;
-
-						} else {
+						if (leaves_type == 1) {
 
 							// By Seasons
 							{
@@ -313,6 +360,14 @@ public class LivingTreeMechanics {
 								}
 
 							}
+
+						} else if (leaves_type == 2) {
+
+							chance = ConfigMain.leaves_drop_chance_coniferous;
+
+						} else {
+
+							chance = ConfigMain.leaves_drop_chance_summer;
 
 						}
 
@@ -383,11 +438,7 @@ public class LivingTreeMechanics {
 
 					double chance = 0.0;
 
-					if (GameUtils.isBlockTaggedAs(block, "tanshugetrees:coniferous_leaves_blocks") == true) {
-
-						chance = ConfigMain.leaves_regrow_chance_coniferous;
-
-					} else {
+					if (leaves_type == 1) {
 
 						// By Seasons
 						{
@@ -411,6 +462,14 @@ public class LivingTreeMechanics {
 							}
 
 						}
+
+					} else if (leaves_type == 2) {
+
+						chance = ConfigMain.leaves_regrow_chance_coniferous;
+
+					} else {
+
+						chance = ConfigMain.leaves_regrow_chance_summer;
 
 					}
 
