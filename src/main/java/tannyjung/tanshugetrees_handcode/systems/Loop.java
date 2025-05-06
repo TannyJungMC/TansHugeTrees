@@ -5,6 +5,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.fml.ModList;
 import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
+import tannyjung.tanshugetrees.procedures.AutoGenLoopTickProcedure;
 import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
 
@@ -49,12 +51,63 @@ public class Loop {
 
         living_tree_mechanics_tick(level);
 
+        if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
+
+            GameUtils.runCommand(level, 0, 0, 0, "execute in tanshugetrees:dimension if entity @e[name=THT-random_tree] positioned 0 0 0 as @e[name=THT-random_tree,limit=1,distance=..1000] at @s run tanshugetrees dev random_tree run");
+
+        }
+
+        // Random Tree
+        {
+
+            if (GameUtils.commandResult(level, 0, 0, 0, "execute if entity @e[name=THT-random_tree]") == true) {
+
+                if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == false && ConfigMain.global_speed > 0) {
+
+                    StringBuilder custom = new StringBuilder();
+
+                    if (ConfigMain.count_limit > 0) {
+
+                        custom.append(",sort=nearest,limit=" + ConfigMain.count_limit);
+
+                    }
+
+                    if (ConfigMain.distance_limit > 0) {
+
+                        custom.append(",distance=.." + ConfigMain.distance_limit);
+
+                    }
+
+                    GameUtils.runCommand(level, 0, 0, 0, "execute at @p as @e[name=THT-random_tree" + custom + "] at @s run tanshugetrees dev random_tree run");
+
+                }
+
+            }
+
+        }
+
     }
 
     private static void second (LevelAccessor level) {
 
         season_detector(level);
         living_tree_mechanics_second(level);
+
+        if (ConfigMain.developer_mode == true) {
+
+            GameUtils.runCommand(level, 0, 0, 0, "execute at @a at @e[type=marker,tag=TANSHUGETREES,distance=..100] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
+
+        }
+
+        if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
+
+            if (GameUtils.commandResult(level, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 0 0 unless entity @e[tag=THT-random_tree,distance=..1000]") == true) {
+
+                AutoGenLoopTickProcedure.execute(level, 0, 0, 0);
+
+            }
+
+        }
 
     }
 
@@ -78,11 +131,11 @@ public class Loop {
         int posZ = level.getLevelData().getZSpawn();
         int posY = level.getMinBuildHeight() + 1;
 
-        if (season_detector_tick == 1 || season_detector_tick == 3 || season_detector_tick == 5 || season_detector_tick == 7 || season_detector_tick == 9) {
+        if (season_detector_tick == 1 || season_detector_tick == 3 || season_detector_tick == 5 || season_detector_tick == 7 || season_detector_tick == 59) {
 
             GameUtils.runCommand(level, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
 
-            if (season_detector_tick == 9) {
+            if (season_detector_tick == 59) {
 
                 season_detector_tick = 0;
                 return;
