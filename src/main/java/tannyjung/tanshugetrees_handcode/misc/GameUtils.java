@@ -54,14 +54,14 @@ public class GameUtils {
 		return_text.append("summon ")
 				.append(id)
 				.append(" ~ ~ ~ {Tags:[\"")
-				.append(Handcode.modIDBig)
+				.append(TanshugetreesMod.MODID.toUpperCase())
 		;
 
 		if (tag.equals("") == false) {
 
 			return_text
 					.append("\",\"")
-					.append(Handcode.modIDBig)
+					.append(TanshugetreesMod.MODID.toUpperCase())
 					.append("-")
 					.append(tag.replace(" / ", "\",\""))
 			;
@@ -74,7 +74,7 @@ public class GameUtils {
 
 			return_text
 					.append(",CustomName:'{\"text\":\"")
-					.append(Handcode.modIDBig)
+					.append(TanshugetreesMod.MODID.toUpperCase())
 					.append("-")
 					.append(name)
 					.append("\",\"color\":\"")
@@ -211,7 +211,7 @@ public class GameUtils {
 	public static int scoreGet (LevelAccessor level, String player) {
 
 		ServerScoreboard score = level.getServer().getScoreboard();
-		Objective objective = score.getObjective(Handcode.modIDBig);
+		Objective objective = score.getObjective(TanshugetreesMod.MODID.toUpperCase());
 
 		return score.getOrCreatePlayerScore(player, objective).getScore();
 
@@ -220,7 +220,7 @@ public class GameUtils {
 	public static void scoreSet (LevelAccessor level, String player, int value) {
 
 		ServerScoreboard score = level.getServer().getScoreboard();
-		Objective objective = score.getObjective(Handcode.modIDBig);
+		Objective objective = score.getObjective(TanshugetreesMod.MODID.toUpperCase());
 
 		score.getOrCreatePlayerScore(player, objective).setScore(value);
 
@@ -229,7 +229,7 @@ public class GameUtils {
 	public static void scoreAddRemove (LevelAccessor level, String player, int value) {
 
 		ServerScoreboard score = level.getServer().getScoreboard();
-		Objective objective = score.getObjective(Handcode.modIDBig);
+		Objective objective = score.getObjective(TanshugetreesMod.MODID.toUpperCase());
 		int old_value = scoreGet(level, player);
 
 		score.getOrCreatePlayerScore(player, objective).setScore(old_value + value);

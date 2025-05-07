@@ -36,13 +36,12 @@ public class Handcode {
 
 	// --------------------------------------------------
 
-	public static String modIDBig = "TANSHUGETREES";
 	public static String directory_game = FMLPaths.GAMEDIR.get().toString();
 	public static String directory_config = directory_game + "/config/tanshugetrees";
-	public static String directory_world_data = directory_game + "/config/tanshugetrees-error";
-	public static String tanny_pack_version_name = "";
+	public static String directory_world_data = directory_game + "/saves/tanshugetrees-error";
+	public static String tanny_pack_version_name = ""; // Make this because version can swap to "WIP" by config
 
-	public static int quadtree_level = 4; // 1 = 32x32 / 2 = 16x16 / 3 = 8x8 / ...
+	public static int quadtree_level = 32 >> 4;
 
 	public Handcode () {}
 
