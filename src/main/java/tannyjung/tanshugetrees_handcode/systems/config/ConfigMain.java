@@ -1,17 +1,12 @@
 package tannyjung.tanshugetrees_handcode.systems.config;
 
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.misc.FileManager;
+import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class ConfigMain {
 
@@ -45,6 +40,7 @@ public class ConfigMain {
 	public static int living_tree_mechanics_process_limit = 0;
 	public static int living_tree_mechanics_simulation = 0;
 	public static int leaf_light_level_detection = 0;
+	public static double leaf_light_level_detection_drop_chance = 0.0;
 	public static boolean leaf_litter = false;
 	public static double leaf_litter_remover_chance = 0.0;
 	public static int leaf_litter_remover_count_limit = 0;
@@ -54,16 +50,16 @@ public class ConfigMain {
 	public static Set<String> coniferous_leaves_list = null;
 
 	public static boolean serene_seasons_compatibility = false;
-	public static double leaves_drop_chance_spring = 0;
-	public static double leaves_drop_chance_summer = 0.0;
-	public static double leaves_drop_chance_autumn = 0.0;
-	public static double leaves_drop_chance_winter = 0.0;
-	public static double leaves_regrow_chance_spring = 0.0;
-	public static double leaves_regrow_chance_summer = 0.0;
-	public static double leaves_regrow_chance_autumn = 0;
-	public static double leaves_regrow_chance_winter = 0;
-	public static double leaves_regrow_chance_coniferous = 0.0;
-	public static double leaves_drop_chance_coniferous = 0.0;
+	public static double leaf_drop_chance_spring = 0;
+	public static double leaf_drop_chance_summer = 0.0;
+	public static double leaf_drop_chance_autumn = 0.0;
+	public static double leaf_drop_chance_winter = 0.0;
+	public static double leaf_regrowth_chance_spring = 0.0;
+	public static double leaf_regrowth_chance_summer = 0.0;
+	public static double leaf_regrowth_chance_autumn = 0;
+	public static double leaf_regrowth_chance_winter = 0;
+	public static double leaf_regrowth_chance_coniferous = 0.0;
+	public static double leaf_drop_chance_coniferous = 0.0;
 
 	public static boolean global_speed_enable = false;
 	public static int global_speed = 0;
@@ -176,7 +172,7 @@ public class ConfigMain {
 					----------------------------------------------------------------------------------------------------
 					
 					living_tree_mechanics = true
-					| Enable some special features such as leaves drop and regrow, leaves litter, drop leaves if their twig is missing, and abscission.
+					| Enable some special features such as leaf drop and regrowth, leaves litter, drop leaves if their twig is missing, and abscission.
 					| Default is true
 					
 					living_tree_mechanics_tick = 5
@@ -191,16 +187,16 @@ public class ConfigMain {
 					| Simulate fake tree to slowdown tree process. For example, when I set tree speed for 100 trees. But it's only 1 tree in the area, it will drop and regrow leaves very fast because that's the speed for 100 trees. Set this config will simulate fake tree locations and make that 1 tree slowdown it process like it's 99 trees around it.
 					| Default is 100
 					
-					abscission = true
-					| ???
-					| Default is true
-					
 					leaf_light_level_detection = 7
 					| Minimum light level that tree leaves can survive, leaves will drop itself if light level is under this value. Set to 15 for only full bright level. Set to 0 for no light level affect.
 					| Default is 7
 					
+					leaf_light_level_detection_drop_chance = 0.1
+					| Chance of leaves to drop when light level is lower than config
+					| Default is 0.1
+					
 					leaf_litter = true
-					| Create leaves block on the ground and on water. Disable leaves drop animation to make this instantly create leaves little instead of create when leaves drop animation touch the ground, also disable that will use full chance to be leaves litter.
+					| Create leaves block on the ground and on water. Disable leaf drop animation to make this instantly create leaves little instead of create when leaf drop animation touch the ground, also disable that will use full chance to be leaves litter.
 					| Default is true
 					
 					leaf_litter_remover_chance = 0.001
@@ -212,11 +208,11 @@ public class ConfigMain {
 					| Default is 100
 					
 					leaf_drop_animation_chance = 0.1
-					| Chance of animation that will appear at leaves drop block on the tree
+					| Chance of animation that will appear at leaf drop block on the tree
 					| Default is 0.1
 					
 					leaf_drop_animation_count_limit = 500
-					| Count limit of leaves drop animation
+					| Count limit of leaf drop animation
 					| Default is 500
 					
 					deciduous_leaves_list = minecraft:oak_leaves / minecraft:birch_leaves
@@ -235,22 +231,22 @@ public class ConfigMain {
 					| Sync the mod seasons with Serene Seasons mod. Using area at world spawn to detect current season.
 					| Default is true
 					
-					leaves_drop_chance_spring = 0
-					leaves_drop_chance_summer = 0.01
-					leaves_drop_chance_autumn = 0.05
-					leaves_drop_chance_winter = 0.1
-					| Chance of leaves to drop based on seasons. For general leaves, that not marked as deciduous, will use summer value.
-					| Default is 0 / 0.01 / 0.05 / 0.1
+					leaf_drop_chance_spring = 0.0
+					leaf_drop_chance_summer = 0.05
+					leaf_drop_chance_autumn = 0.1
+					leaf_drop_chance_winter = 0.1
+					| Chance of deciduous leaves to drop based on seasons, but note that it will only use summer value when in tropical biomes. For general leaves that not marked as deciduous, will use summer value.
+					| Default is 0.0 / 0.05 / 0.1 / 0.1
 					
-					leaves_regrow_chance_spring = 0.01
-					leaves_regrow_chance_summer = 0.05
-					leaves_regrow_chance_autumn = 0
-					leaves_regrow_chance_winter = 0
-					| Chance of leaves to regrow based on seasons. For general leaves, that not marked as deciduous, will use summer value.
-					| Default is 0.01 / 0.05 / 0 / 0
+					leaf_regrowth_chance_spring = 0.05
+					leaf_regrowth_chance_summer = 0.1
+					leaf_regrowth_chance_autumn = 0.0
+					leaf_regrowth_chance_winter = 0.0
+					| Chance of deciduous leaves to regrow based on seasons, but note that it will only use summer value when in tropical biomes. For general leaves that not marked as deciduous, will use summer value.
+					| Default is 0.05 / 0.1 / 0.0 / 0.0
 					
-					leaves_regrow_chance_coniferous = 0.005
-					leaves_drop_chance_coniferous = 0.001
+					leaf_regrowth_chance_coniferous = 0.005
+					leaf_drop_chance_coniferous = 0.001
 					| Chance of coniferous leaves to drop in summer and regrow in any season
 					| Default is 0.005 / 0.001
 					
@@ -328,85 +324,92 @@ public class ConfigMain {
 
 	public static void apply (LevelAccessor level) {
 
-		String path = Handcode.directory_config + "/config.txt";
+		CompletableFuture.runAsync(() -> {
 
-		auto_check_update = FileManager.GetConfigValue.logic(path, "auto_check_update");
-		auto_update = FileManager.GetConfigValue.logic(path, "auto_update");
-		wip_version = FileManager.GetConfigValue.logic(path, "wip_version");
+			String path = Handcode.directory_config + "/config.txt";
 
-		region_scan_chance = FileManager.GetConfigValue.numberDouble(path, "region_scan_chance");
-		multiply_rarity = FileManager.GetConfigValue.numberDouble(path, "multiply_rarity");
-		multiply_min_distance = FileManager.GetConfigValue.numberDouble(path, "multiply_min_distance");
-		multiply_group_size = FileManager.GetConfigValue.numberDouble(path, "multiply_group_size");
-		multiply_waterside_chance = FileManager.GetConfigValue.numberDouble(path, "multiply_waterside_chance");
-		multiply_dead_tree_chance = FileManager.GetConfigValue.numberDouble(path, "multiply_dead_tree_chance");
-		tree_location = FileManager.GetConfigValue.logic(path, "tree_location");
-		world_gen_roots = FileManager.GetConfigValue.logic(path, "world_gen_roots");
-		surface_smoothness_detection = FileManager.GetConfigValue.logic(path, "surface_smoothness_detection");
-		waterside_detection = FileManager.GetConfigValue.logic(path, "waterside_detection");
-		surrounding_area_detection_size = FileManager.GetConfigValue.numberInt(path, "surrounding_area_detection_size");
-		surface_smoothness_detection_height = FileManager.GetConfigValue.numberInt(path, "surface_smoothness_detection_height");
-		pre_leaves_litter = FileManager.GetConfigValue.logic(path, "pre_leaf_litter");
-		pre_leaves_litter_chance = FileManager.GetConfigValue.numberDouble(path, "pre_leaf_litter_chance");
-		pre_leaves_litter_chance_coniferous = FileManager.GetConfigValue.numberDouble(path, "pre_leaf_litter_chance_coniferous");
-		pre_leaves_litter_classic = FileManager.GetConfigValue.logic(path, "pre_leaf_litter_classic");
-		pre_leaves_litter_classic_only = FileManager.GetConfigValue.logic(path, "pre_leaf_litter_classic_only");
-		abscission_world_gen = FileManager.GetConfigValue.logic(path, "abscission_world_gen");
+			auto_check_update = FileManager.GetConfigValue.logic(path, "auto_check_update");
+			auto_update = FileManager.GetConfigValue.logic(path, "auto_update");
+			wip_version = FileManager.GetConfigValue.logic(path, "wip_version");
 
-		living_tree_mechanics = FileManager.GetConfigValue.logic(path, "living_tree_mechanics");
-		living_tree_mechanics_tick = FileManager.GetConfigValue.numberInt(path, "living_tree_mechanics_tick");
-		living_tree_mechanics_process_limit = FileManager.GetConfigValue.numberInt(path, "living_tree_mechanics_process_limit");
-		living_tree_mechanics_simulation = FileManager.GetConfigValue.numberInt(path, "living_tree_mechanics_simulation");
-		leaf_light_level_detection = FileManager.GetConfigValue.numberInt(path, "leaf_light_level_detection");
-		leaf_litter = FileManager.GetConfigValue.logic(path, "leaf_litter");
-		leaf_litter_remover_chance = FileManager.GetConfigValue.numberDouble(path, "leaf_litter_remover_chance");
-		leaf_litter_remover_count_limit = FileManager.GetConfigValue.numberInt(path, "leaf_litter_remover_count_limit");
-		leaf_drop_animation_chance = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_animation_chance");
-		leaf_drop_animation_count_limit = FileManager.GetConfigValue.numberInt(path, "leaf_drop_animation_count_limit");
-		deciduous_leaves_list = new HashSet<>(Arrays.asList(FileManager.GetConfigValue.text(path, "deciduous_leaves_list").split(" / ")));
-		coniferous_leaves_list = new HashSet<>(Arrays.asList(FileManager.GetConfigValue.text(path, "coniferous_leaves_list").split(" / ")));
+			region_scan_chance = FileManager.GetConfigValue.numberDouble(path, "region_scan_chance");
+			multiply_rarity = FileManager.GetConfigValue.numberDouble(path, "multiply_rarity");
+			multiply_min_distance = FileManager.GetConfigValue.numberDouble(path, "multiply_min_distance");
+			multiply_group_size = FileManager.GetConfigValue.numberDouble(path, "multiply_group_size");
+			multiply_waterside_chance = FileManager.GetConfigValue.numberDouble(path, "multiply_waterside_chance");
+			multiply_dead_tree_chance = FileManager.GetConfigValue.numberDouble(path, "multiply_dead_tree_chance");
+			tree_location = FileManager.GetConfigValue.logic(path, "tree_location");
+			world_gen_roots = FileManager.GetConfigValue.logic(path, "world_gen_roots");
+			surface_smoothness_detection = FileManager.GetConfigValue.logic(path, "surface_smoothness_detection");
+			waterside_detection = FileManager.GetConfigValue.logic(path, "waterside_detection");
+			surrounding_area_detection_size = FileManager.GetConfigValue.numberInt(path, "surrounding_area_detection_size");
+			surface_smoothness_detection_height = FileManager.GetConfigValue.numberInt(path, "surface_smoothness_detection_height");
+			pre_leaves_litter = FileManager.GetConfigValue.logic(path, "pre_leaf_litter");
+			pre_leaves_litter_chance = FileManager.GetConfigValue.numberDouble(path, "pre_leaf_litter_chance");
+			pre_leaves_litter_chance_coniferous = FileManager.GetConfigValue.numberDouble(path, "pre_leaf_litter_chance_coniferous");
+			pre_leaves_litter_classic = FileManager.GetConfigValue.logic(path, "pre_leaf_litter_classic");
+			pre_leaves_litter_classic_only = FileManager.GetConfigValue.logic(path, "pre_leaf_litter_classic_only");
+			abscission_world_gen = FileManager.GetConfigValue.logic(path, "abscission_world_gen");
 
-		serene_seasons_compatibility = FileManager.GetConfigValue.logic(path, "serene_seasons_compatibility");
-		leaves_drop_chance_spring = FileManager.GetConfigValue.numberDouble(path, "leaves_drop_chance_spring");
-		leaves_drop_chance_summer = FileManager.GetConfigValue.numberDouble(path, "leaves_drop_chance_summer");
-		leaves_drop_chance_autumn = FileManager.GetConfigValue.numberDouble(path, "leaves_drop_chance_autumn");
-		leaves_drop_chance_winter = FileManager.GetConfigValue.numberDouble(path, "leaves_drop_chance_winter");
-		leaves_regrow_chance_spring = FileManager.GetConfigValue.numberDouble(path, "leaves_regrow_chance_spring");
-		leaves_regrow_chance_summer = FileManager.GetConfigValue.numberDouble(path, "leaves_regrow_chance_summer");
-		leaves_regrow_chance_autumn = FileManager.GetConfigValue.numberDouble(path, "leaves_regrow_chance_autumn");
-		leaves_regrow_chance_winter = FileManager.GetConfigValue.numberDouble(path, "leaves_regrow_chance_winter");
-		leaves_regrow_chance_coniferous = FileManager.GetConfigValue.numberDouble(path, "leaves_regrow_chance_coniferous");
-		leaves_drop_chance_coniferous = FileManager.GetConfigValue.numberDouble(path, "leaves_drop_chance_coniferous");
+			living_tree_mechanics = FileManager.GetConfigValue.logic(path, "living_tree_mechanics");
+			living_tree_mechanics_tick = FileManager.GetConfigValue.numberInt(path, "living_tree_mechanics_tick");
+			living_tree_mechanics_process_limit = FileManager.GetConfigValue.numberInt(path, "living_tree_mechanics_process_limit");
+			living_tree_mechanics_simulation = FileManager.GetConfigValue.numberInt(path, "living_tree_mechanics_simulation");
+			leaf_light_level_detection = FileManager.GetConfigValue.numberInt(path, "leaf_light_level_detection");
+			leaf_light_level_detection_drop_chance = FileManager.GetConfigValue.numberDouble(path, "leaf_light_level_detection_drop_chance");
+			leaf_litter = FileManager.GetConfigValue.logic(path, "leaf_litter");
+			leaf_litter_remover_chance = FileManager.GetConfigValue.numberDouble(path, "leaf_litter_remover_chance");
+			leaf_litter_remover_count_limit = FileManager.GetConfigValue.numberInt(path, "leaf_litter_remover_count_limit");
+			leaf_drop_animation_chance = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_animation_chance");
+			leaf_drop_animation_count_limit = FileManager.GetConfigValue.numberInt(path, "leaf_drop_animation_count_limit");
+			deciduous_leaves_list = new HashSet<>(Arrays.asList(FileManager.GetConfigValue.text(path, "deciduous_leaves_list").split(" / ")));
+			coniferous_leaves_list = new HashSet<>(Arrays.asList(FileManager.GetConfigValue.text(path, "coniferous_leaves_list").split(" / ")));
 
-		global_speed_enable = FileManager.GetConfigValue.logic(path, "global_speed_enable");
-		global_speed = FileManager.GetConfigValue.numberInt(path, "global_speed");
-		global_speed_repeat = FileManager.GetConfigValue.numberInt(path, "global_speed_repeat");
-		global_speed_tp = FileManager.GetConfigValue.numberInt(path, "global_speed_tp");
-		count_limit = FileManager.GetConfigValue.numberInt(path, "count_limit");
-		distance_limit = FileManager.GetConfigValue.numberInt(path, "distance_limit");
+			serene_seasons_compatibility = FileManager.GetConfigValue.logic(path, "serene_seasons_compatibility");
+			leaf_drop_chance_spring = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_chance_spring");
+			leaf_drop_chance_summer = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_chance_summer");
+			leaf_drop_chance_autumn = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_chance_autumn");
+			leaf_drop_chance_winter = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_chance_winter");
+			leaf_regrowth_chance_spring = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_spring");
+			leaf_regrowth_chance_summer = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_summer");
+			leaf_regrowth_chance_autumn = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_autumn");
+			leaf_regrowth_chance_winter = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_winter");
+			leaf_regrowth_chance_coniferous = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_coniferous");
+			leaf_drop_chance_coniferous = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_chance_coniferous");
 
-		square_parts = FileManager.GetConfigValue.logic(path, "square_parts");
-		square_leaves = FileManager.GetConfigValue.logic(path, "square_leaves");
-		rt_roots = FileManager.GetConfigValue.numberInt(path, "rt_roots");
-		no_core = FileManager.GetConfigValue.logic(path, "no_core");
+			global_speed_enable = FileManager.GetConfigValue.logic(path, "global_speed_enable");
+			global_speed = FileManager.GetConfigValue.numberInt(path, "global_speed");
+			global_speed_repeat = FileManager.GetConfigValue.numberInt(path, "global_speed_repeat");
+			global_speed_tp = FileManager.GetConfigValue.numberInt(path, "global_speed_tp");
+			count_limit = FileManager.GetConfigValue.numberInt(path, "count_limit");
+			distance_limit = FileManager.GetConfigValue.numberInt(path, "distance_limit");
 
-		developer_mode = FileManager.GetConfigValue.logic(path, "developer_mode");
-		fireworks = FileManager.GetConfigValue.logic(path,"fireworks");
+			square_parts = FileManager.GetConfigValue.logic(path, "square_parts");
+			square_leaves = FileManager.GetConfigValue.logic(path, "square_leaves");
+			rt_roots = FileManager.GetConfigValue.numberInt(path, "rt_roots");
+			no_core = FileManager.GetConfigValue.logic(path, "no_core");
 
-		// After Applying
-		{
+			developer_mode = FileManager.GetConfigValue.logic(path, "developer_mode");
+			fireworks = FileManager.GetConfigValue.logic(path, "fireworks");
 
-			if (wip_version == true) {
+			// After Applying
+			{
 
-				Handcode.tanny_pack_version_name = "WIP";
+				if (wip_version == true) {
 
-			} else {
+					Handcode.tanny_pack_version_name = "WIP";
 
-				Handcode.tanny_pack_version_name = Handcode.tanny_pack_version;
+				} else {
+
+					Handcode.tanny_pack_version_name = Handcode.tanny_pack_version;
+
+				}
 
 			}
 
-		}
+			GameUtils.sendChatMessage(level, "@a", "gray", "THT : Applied The Config");
+
+		});
 
 	}
 	
