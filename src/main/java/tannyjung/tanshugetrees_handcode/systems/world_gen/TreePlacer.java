@@ -344,11 +344,6 @@ public class TreePlacer {
 
         String storage_directory = "";
         String tree_settings = "";
-        Map<String, String> map_block = new HashMap<>();
-        boolean living_tree_mechanics = false;
-        boolean can_disable_roots = false;
-        int leaves1_type = 0;
-        int leaves2_type = 0;
 
         // Scan "World Gen" File
         {
@@ -359,40 +354,39 @@ public class TreePlacer {
 
                 {
 
-                    try {
-                        BufferedReader buffered_reader = new BufferedReader(new FileReader(file));
-                        String read_all = "";
-                        while ((read_all = buffered_reader.readLine()) != null) {
+                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-                            {
+                        {
 
-                                if (read_all.startsWith("storage_directory = ") == true) {
+                            if (read_all.startsWith("storage_directory = ") == true) {
 
-                                    storage_directory = read_all.replace("storage_directory = ", "");
+                                storage_directory = read_all.replace("storage_directory = ", "");
 
-                                } else if (read_all.startsWith("tree_settings = ") == true) {
+                            } else if (read_all.startsWith("tree_settings = ") == true) {
 
-                                    tree_settings = read_all.replace("tree_settings = ", "");
+                                tree_settings = read_all.replace("tree_settings = ", "");
 
-                                } else {
+                            } else {
 
-                                    break;
-
-                                }
+                                break;
 
                             }
 
                         }
-                        buffered_reader.close();
-                    } catch (Exception e) {
-                        TanshugetreesMod.LOGGER.error(e.getMessage());
-                    }
+
+                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
                 }
 
             }
 
         }
+
+        Map<String, String> map_block = new HashMap<>();
+        boolean living_tree_mechanics = false;
+        boolean can_disable_roots = false;
+        int leaves1_type = 0;
+        int leaves2_type = 0;
 
         // Scan "Tree Settings" File
         {
@@ -581,19 +575,18 @@ public class TreePlacer {
 
             String get_short = "";
             String get = "";
-
             String get_pos = "";
             int[] get_pos_array = new int[0];
             int test_posX = 0;
             int test_posY = 0;
             int test_posZ = 0;
 
+            boolean in_snowy_biome = GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(center_posX, center_posY, center_posZ)), "forge:is_snowy");
             boolean can_run_function = false;
             BlockState block = Blocks.AIR.defaultBlockState();
             BlockPos pos = null;
             double pre_leaf_litter_chance = 0.0;
             int height_motion_block = 0;
-
             boolean summon_marker = false;
             String marker_data = "";
 
@@ -831,7 +824,7 @@ public class TreePlacer {
 
                                                                 if ((get_short.endsWith("1") == true && leaves1_type == 1) || (get_short.endsWith("2") == true && leaves2_type == 1)) {
 
-                                                                    if (GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(center_posX, center_posY, center_posZ)), "forge:is_snowy") == true) {
+                                                                    if (in_snowy_biome == true) {
 
                                                                         continue;
 
