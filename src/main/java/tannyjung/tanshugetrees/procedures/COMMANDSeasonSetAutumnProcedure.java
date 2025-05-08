@@ -6,7 +6,7 @@ import net.minecraft.world.level.LevelAccessor;
 
 public class COMMANDSeasonSetAutumnProcedure {
 	public static void execute(LevelAccessor world) {
-		TanshugetreesModVariables.MapVariables.get(world).season = "autumn";
+		TanshugetreesModVariables.MapVariables.get(world).season = "Autumn";
 		TanshugetreesModVariables.MapVariables.get(world).syncData(world);
 	}
 }

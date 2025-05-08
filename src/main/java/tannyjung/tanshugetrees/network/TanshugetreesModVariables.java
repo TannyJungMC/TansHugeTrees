@@ -93,7 +93,7 @@ public class TanshugetreesModVariables {
 		public double auto_gen_count = 0;
 		public String auto_gen_teleport_player_back = "";
 		public boolean detect_exist = false;
-		public String season = "";
+		public String season = "Summer";
 		public boolean version_1192 = false;
 
 		public static MapVariables load(CompoundTag tag) {
