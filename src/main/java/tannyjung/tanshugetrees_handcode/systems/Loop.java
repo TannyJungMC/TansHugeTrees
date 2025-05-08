@@ -7,14 +7,13 @@ import net.minecraftforge.fml.ModList;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees.procedures.AutoGenLoopTickProcedure;
+import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
 
 public class Loop {
 
     private static int second = 1;
-
-    private static int season_detector_tick = 0;
     private static int living_tree_mechanics_tick = 0;
 
     public static void start (LevelAccessor level) {
@@ -90,100 +89,44 @@ public class Loop {
 
     private static void second (LevelAccessor level) {
 
-        season_detector(level);
         living_tree_mechanics_second(level);
 
-        if (ConfigMain.developer_mode == true) {
+        // Developer Mode
+        {
 
-            GameUtils.runCommand(level, 0, 0, 0, "execute at @a at @e[type=marker,tag=TANSHUGETREES,distance=..100] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
+            if (ConfigMain.developer_mode == true) {
 
-        }
-
-        if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
-
-            if (GameUtils.commandResult(level, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 0 0 unless entity @e[tag=THT-random_tree,distance=..1000]") == true) {
-
-                AutoGenLoopTickProcedure.execute(level, 0, 0, 0);
+                GameUtils.runCommand(level, 0, 0, 0, "execute at @a at @e[type=marker,tag=TANSHUGETREES,distance=..100] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
 
             }
 
         }
 
-    }
+        // Auto Gen
+        {
 
-    private static void season_detector (LevelAccessor level) {
+            if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
 
-        if (season_detector_tick == 0) {
+                if (GameUtils.commandResult(level, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 0 0 unless entity @e[tag=THT-random_tree,distance=..1000]") == true) {
 
-            if (ConfigMain.serene_seasons_compatibility == true && ModList.get().isLoaded("sereneseasons") == true) {
+                    AutoGenLoopTickProcedure.execute(level, 0, 0, 0);
 
-                season_detector_tick = 1;
-
-            } else {
-
-                return;
+                }
 
             }
 
         }
-
-        int posX = level.getLevelData().getXSpawn();
-        int posZ = level.getLevelData().getZSpawn();
-        int posY = level.getMinBuildHeight() + 1;
-
-        if (season_detector_tick == 1 || season_detector_tick == 3 || season_detector_tick == 5 || season_detector_tick == 7 || season_detector_tick == 59) {
-
-            GameUtils.runCommand(level, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
-
-            if (season_detector_tick == 59) {
-
-                season_detector_tick = 0;
-                return;
-
-            }
-
-        } else {
-
-            String season = "";
-            int season_number = 0;
-
-            if (season_detector_tick == 2) {
-
-                season = "spring";
-                season_number = 0;
-
-            } else if (season_detector_tick == 4) {
-
-                season = "summer";
-                season_number = 1;
-
-            } else if (season_detector_tick == 6) {
-
-                season = "autumn";
-                season_number = 2;
-
-            } else if (season_detector_tick == 8) {
-
-                season = "winter";
-                season_number = 3;
-
-            }
-
-            TanshugetreesMod.LOGGER.info(">>>");
-            TanshugetreesMod.LOGGER.info("setblock ~ ~ ~ command_block[facing=up]{Command:\"TANSHUGETREES command season set " + season + "\"}");
-            TanshugetreesMod.LOGGER.info("setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
-
-
-            GameUtils.runCommand(level, posX, posY, posZ, "setblock ~ ~ ~ command_block[facing=up]{Command:\"TANSHUGETREES command season set " + season + "\"}");
-            GameUtils.runCommand(level, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
-
-        }
-
-        season_detector_tick = season_detector_tick + 1;
 
     }
 
     private static void living_tree_mechanics_tick (LevelAccessor level) {
+
+        if (ConfigMain.developer_mode == true) {
+
+            // GameUtils.runCommand(level, 0, 0, 0, "execute as @e[name=TANSHUGETREES-leaf_drop] at @s if loaded ~ ~ ~ positioned as @a positioned ~ ~1.5 ~ facing entity @s feet run particle minecraft:soul_fire_flame ^ ^ ^10 0 0 0 0 1 force");
+            // GameUtils.runCommand(level, 0, 0, 0, "execute as @e[name=TANSHUGETREES-leaf_litter_remover] at @s if loaded ~ ~ ~ positioned as @a positioned ~ ~1.5 ~ facing entity @s feet run particle minecraft:flame ^ ^ ^10 0 0 0 0 1 force");
+
+        }
 
         // Main
         {
@@ -196,28 +139,11 @@ public class Loop {
 
                     living_tree_mechanics_tick = 0;
 
-                    {
+                    if (Math.random() < (double) GameUtils.scoreGet(level, "tree_location") / (double) ConfigMain.living_tree_mechanics_simulation) {
 
-                        boolean pass = false;
+                        if (GameUtils.commandResult(level, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_location]") == true) {
 
-                        if (ConfigMain.living_tree_mechanics_simulation > GameUtils.scoreGet(level, "tree_location")) {
-
-                            int random = ConfigMain.living_tree_mechanics_simulation - GameUtils.scoreGet(level, "tree_location");
-                            pass = Mth.nextInt(RandomSource.create(), 0, random) == 0;
-
-                        } else {
-
-                            pass = true;
-
-                        }
-
-                        if (pass == true) {
-
-                            if (GameUtils.commandResult(level, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_location]") == true) {
-
-                                GameUtils.runCommand(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_location,limit=1,sort=random] at @s run TANSHUGETREES dev living_tree_mechanics loop_tick");
-
-                            }
+                            GameUtils.runCommand(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_location,limit=1,sort=random] at @s run TANSHUGETREES dev living_tree_mechanics loop_tick");
 
                         }
 
@@ -256,12 +182,23 @@ public class Loop {
     private static void living_tree_mechanics_second (LevelAccessor level) {
 
         GameUtils.scoreSet(level, "tree_location", 0);
-        GameUtils.runCommand(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] run scoreboard players add tree_location TANSHUGETREES 1");
-
         GameUtils.scoreSet(level, "leaf_drop", 0);
-        GameUtils.runCommand(level, 0, 0, 0, "execute at @e[name=TANSHUGETREES-leaf_drop] run scoreboard players add leaf_drop TANSHUGETREES 1");
         GameUtils.scoreSet(level, "leaf_litter_remover", 0);
-        GameUtils.runCommand(level, 0, 0, 0, "execute at @e[name=TANSHUGETREES-leaf_litter_remover] run scoreboard players add leaf_litter_remover TANSHUGETREES 1");
+
+        if (Handcode.version_1192 == false) {
+
+            GameUtils.runCommand(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] if loaded ~ ~ ~ run scoreboard players add tree_location TANSHUGETREES 1");
+            GameUtils.runCommand(level, 0, 0, 0, "execute at @e[name=TANSHUGETREES-leaf_drop] if loaded ~ ~ ~ run scoreboard players add leaf_drop TANSHUGETREES 1");
+            GameUtils.runCommand(level, 0, 0, 0, "execute at @e[name=TANSHUGETREES-leaf_litter_remover] if loaded ~ ~ ~ run scoreboard players add leaf_litter_remover TANSHUGETREES 1");
+
+        } else {
+
+            GameUtils.runCommand(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] run scoreboard players add tree_location TANSHUGETREES 1");
+            GameUtils.runCommand(level, 0, 0, 0, "execute at @e[name=TANSHUGETREES-leaf_drop] run scoreboard players add leaf_drop TANSHUGETREES 1");
+            GameUtils.runCommand(level, 0, 0, 0, "execute at @e[name=TANSHUGETREES-leaf_litter_remover] run scoreboard players add leaf_litter_remover TANSHUGETREES 1");
+
+
+        }
 
     }
 
