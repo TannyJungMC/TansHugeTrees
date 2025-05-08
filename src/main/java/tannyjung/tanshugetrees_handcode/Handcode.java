@@ -9,6 +9,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerLifecycleEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -20,6 +21,7 @@ import tannyjung.tanshugetrees_handcode.systems.Loop;
 import tannyjung.tanshugetrees_handcode.systems.config.CheckUpdateRun;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigRepairAll;
+import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDetector;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFeature;
 
 @Mod.EventBusSubscriber
@@ -73,6 +75,17 @@ public class Handcode {
 
 		ConfigRepairAll.start(null);
 		ConfigMain.apply(null);
+
+		// Season Detector
+		{
+
+			if (ConfigMain.serene_seasons_compatibility == true && ModList.get().isLoaded("sereneseasons") == true) {
+
+				SeasonDetector.start(world);
+
+			}
+
+		}
 
 	}
 
