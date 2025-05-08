@@ -150,7 +150,7 @@ public class TreeLocation {
 
             boolean start_test = false;
             boolean skip = true;
-            Holder<Biome> biome_center = null;
+            Holder<Biome> biome_center = world_gen.getBiome(new BlockPos(center_posX, world_gen.getMaxBuildHeight(), center_posZ));
 
             String id = "";
             String biome = "";
@@ -165,7 +165,9 @@ public class TreeLocation {
             String rotation = "";
             String mirrored = "";
 
-            // Read / Test / Get Values
+            world_gen_overlay_details_biome = GameUtils.biomeToBiomeID(biome_center);
+
+            // Read Placement Config
             {
 
                 try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
@@ -180,42 +182,29 @@ public class TreeLocation {
 
                                     start_test = true;
 
-                                    // Get Biome at Center
-                                    {
-
-                                        biome_center = world_gen.getBiome(new BlockPos(center_posX, world_gen.getMaxBuildHeight(), center_posZ));
-
-                                    }
-
-                                    if (ConfigMain.developer_mode == true) {
-
-                                        world_gen_overlay_details_biome = GameUtils.biomeToBiomeID(biome_center);
-
-                                    }
-
                                 }
 
                             } else {
 
                                 if (read_all.startsWith("[") == true) {
 
-                                    if (read_all.startsWith("[INCOMPATIBLE] ") == true) {
+                                    // Reset The Test
+                                    {
 
-                                        skip = true;
+                                        if (read_all.startsWith("[INCOMPATIBLE] ") == true) {
 
-                                    } else {
+                                            skip = true;
 
-                                        // Reset The Test
-                                        {
+                                        } else {
 
                                             id = read_all.substring(read_all.indexOf("]") + 2).replace(" > ", "/");
                                             skip = false;
 
+                                            world_gen_overlay_details_tree = id;
+
                                         }
 
                                     }
-
-                                    world_gen_overlay_details_tree = "";
 
                                 } else {
 
@@ -242,21 +231,6 @@ public class TreeLocation {
                                                 if (testBiome(biome_center, biome) == false) {
 
                                                     skip = true;
-
-                                                }
-
-                                            }
-
-                                            // Set Region Gen Tree ID
-                                            {
-
-                                                if (skip == false) {
-
-                                                    world_gen_overlay_details_tree = id;
-
-                                                } else {
-
-                                                    world_gen_overlay_details_tree = "No tree have set for this biome";
 
                                                 }
 
@@ -1076,7 +1050,7 @@ public class TreeLocation {
 
             }
 
-            // Calculation what chunks have this tree + test exist chunks
+            // Calculation
             {
 
                 int from_chunkX = center_posX - center_sizeX;
@@ -1086,13 +1060,18 @@ public class TreeLocation {
                 from_chunkX = from_chunkX >> 4;
                 from_chunkZ = from_chunkZ >> 4;
 
-                for (int scanX = from_chunkX; scanX <= to_chunkX; scanX++) {
+                // Test Exist Chunk
+                {
 
-                    for (int scanZ = from_chunkZ; scanZ <= to_chunkZ; scanZ++) {
+                    for (int scanX = from_chunkX; scanX <= to_chunkX; scanX++) {
 
-                        if (world_gen.hasChunk(scanX, scanZ) == true && world_gen.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.FEATURES) == true) {
+                        for (int scanZ = from_chunkZ; scanZ <= to_chunkZ; scanZ++) {
 
-                            return;
+                            if (world_gen.hasChunk(scanX, scanZ) == true && world_gen.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.FEATURES.getParent()) == true) {
+
+                                return;
+
+                            }
 
                         }
 
