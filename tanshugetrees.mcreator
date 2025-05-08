@@ -2314,7 +2314,7 @@
       "name": "season",
       "type": "string",
       "scope": "map",
-      "value": ""
+      "value": "Summer"
     },
     {
       "name": "version_1192",
