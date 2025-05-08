@@ -332,7 +332,7 @@ public class GameUtils {
 	}
 
 	// --------------------------------------------------
-	// Block
+	// NBT
 	// --------------------------------------------------
 
 	public static String NBTEntityTextGet (Entity entity, String name) {
