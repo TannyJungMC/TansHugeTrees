@@ -52,7 +52,7 @@ public class Loop {
 
         if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
 
-            GameUtils.runCommand(level, 0, 0, 0, "execute in tanshugetrees:dimension if entity @e[name=THT-random_tree] positioned 0 0 0 as @e[name=THT-random_tree,limit=1,distance=..1000] at @s run tanshugetrees dev random_tree run");
+            GameUtils.runCommand(level, 0, 0, 0, "execute in tanshugetrees:dimension if entity @e[name=THT-random_tree] positioned 0 0 0 as @e[name=THT-random_tree,limit=1,distance=..1000] at @s run TANSHUGETREES dev random_tree run");
 
         }
 
@@ -77,7 +77,7 @@ public class Loop {
 
                     }
 
-                    GameUtils.runCommand(level, 0, 0, 0, "execute at @p as @e[name=THT-random_tree" + custom + "] at @s run tanshugetrees dev random_tree run");
+                    GameUtils.runCommand(level, 0, 0, 0, "execute at @p as @e[name=THT-random_tree" + custom + "] at @s run TANSHUGETREES dev random_tree run");
 
                 }
 
@@ -121,12 +121,12 @@ public class Loop {
 
     private static void living_tree_mechanics_tick (LevelAccessor level) {
 
-        if (ConfigMain.developer_mode == true) {
+        // if (ConfigMain.developer_mode == true) {
 
             // GameUtils.runCommand(level, 0, 0, 0, "execute as @e[name=TANSHUGETREES-leaf_drop] at @s if loaded ~ ~ ~ positioned as @a positioned ~ ~1.5 ~ facing entity @s feet run particle minecraft:soul_fire_flame ^ ^ ^10 0 0 0 0 1 force");
             // GameUtils.runCommand(level, 0, 0, 0, "execute as @e[name=TANSHUGETREES-leaf_litter_remover] at @s if loaded ~ ~ ~ positioned as @a positioned ~ ~1.5 ~ facing entity @s feet run particle minecraft:flame ^ ^ ^10 0 0 0 0 1 force");
 
-        }
+        // }
 
         // Main
         {
