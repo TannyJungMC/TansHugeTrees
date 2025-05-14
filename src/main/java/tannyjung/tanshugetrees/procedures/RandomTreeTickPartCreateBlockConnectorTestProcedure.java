@@ -18,6 +18,42 @@ public class RandomTreeTickPartCreateBlockConnectorTestProcedure {
 		double posZ = 0;
 		String pos = "";
 		if (true) {
+			try {
+				posX = new Object() {
+					public double getX() {
+						try {
+							return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getX();
+						} catch (CommandSyntaxException e) {
+							e.printStackTrace();
+							return 0;
+						}
+					}
+				}.getX();
+				posY = new Object() {
+					public double getY() {
+						try {
+							return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getY();
+						} catch (CommandSyntaxException e) {
+							e.printStackTrace();
+							return 0;
+						}
+					}
+				}.getY();
+				posZ = new Object() {
+					public double getZ() {
+						try {
+							return BlockPosArgument.getLoadedBlockPos(arguments, "pos").getZ();
+						} catch (CommandSyntaxException e) {
+							e.printStackTrace();
+							return 0;
+						}
+					}
+				}.getZ();
+			} catch (Exception e) {
+				return;
+			}
+		}
+		if (true) {
 			posX = new Object() {
 				public double getX() {
 					try {
