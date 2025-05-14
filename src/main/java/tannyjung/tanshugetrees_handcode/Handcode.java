@@ -76,28 +76,28 @@ public class Handcode {
 		ConfigRepairAll.start(null);
 		ConfigMain.apply(null);
 
-		// Season Detector
-		{
-
-			if (ConfigMain.serene_seasons_compatibility == true && ModList.get().isLoaded("sereneseasons") == true) {
-
-				SeasonDetector.start(world);
-
-			}
-
-		}
-
 	}
 
 	@SubscribeEvent
 	public static void playerJoin (PlayerEvent.PlayerLoggedInEvent event) {
 
-		// One time running, only when start the world and first player joined.
-		{
+		LevelAccessor level = event.getEntity().level();
 
-			LevelAccessor level = event.getEntity().level();
+		if (GameUtils.playerCount(level) == 1) {
 
-			if (GameUtils.playerCount(level) == 1) {
+			// One time running, only when start the world and first player joined.
+			{
+
+				// Season Detector
+				{
+
+					if (ConfigMain.serene_seasons_compatibility == true && ModList.get().isLoaded("sereneseasons") == true) {
+
+						SeasonDetector.start(level);
+
+					}
+
+				}
 
 				GameUtils.runCommand(level, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
 
