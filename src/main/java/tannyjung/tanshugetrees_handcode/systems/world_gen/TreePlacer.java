@@ -286,7 +286,7 @@ public class TreePlacer {
 
                 return_logic = true;
 
-                for (String split2 : split.split(" & ")) {
+                for (String split2 : split.split(", ")) {
 
                     String split_get = split2.replaceAll("[#!]", "");
 
