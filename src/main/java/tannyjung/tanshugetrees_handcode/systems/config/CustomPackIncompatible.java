@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.systems.config;
 
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
@@ -13,20 +14,13 @@ import java.nio.file.Path;
 
 public class CustomPackIncompatible {
 
-    public static void start () {
-
-        scanMain();
-        scanOrganized();
-
-    }
-
-    public static void scanMain () {
+    public static void scanMain (LevelAccessor level) {
 
         for (File pack : new File(Handcode.directory_config + "/custom_packs").listFiles()) {
 
             if (pack.getName().equals(".organized") == false) {
 
-                testVersion(new File(pack.toPath() + "/version.txt"));
+                testVersion(level, new File(pack.toPath() + "/version.txt"));
 
             }
 
@@ -34,7 +28,7 @@ public class CustomPackIncompatible {
 
     }
 
-    public static void scanOrganized () {
+    public static void scanOrganized (LevelAccessor level) {
 
         File file = new File(Handcode.directory_config + "/custom_packs/.organized");
 
@@ -50,7 +44,7 @@ public class CustomPackIncompatible {
 
                             if (source.toFile().isDirectory() == false) {
 
-                                testTreeSettings(source);
+                                testTreeSettings(level, source);
 
                             }
 
@@ -70,7 +64,7 @@ public class CustomPackIncompatible {
 
     }
 
-    private static void testVersion (File file) {
+    private static void testVersion (LevelAccessor level, File file) {
 
         boolean incompatible = false;
 
@@ -87,6 +81,7 @@ public class CustomPackIncompatible {
                             if (Double.parseDouble(read_all.replace("mod_version = ", "")) != Handcode.mod_version) {
 
                                 incompatible = true;
+                                GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible pack, caused by unsupported mod version. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
                                 break;
 
                             }
@@ -104,6 +99,7 @@ public class CustomPackIncompatible {
         } else {
 
             incompatible = true;
+            GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible pack, caused by no version file. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
 
         }
 
@@ -111,7 +107,7 @@ public class CustomPackIncompatible {
 
     }
 
-    private static void testTreeSettings (Path source) {
+    private static void testTreeSettings (LevelAccessor level, Path source) {
 
         boolean incompatible = false;
         String tree_settings = "";
@@ -156,6 +152,7 @@ public class CustomPackIncompatible {
                                 if (GameUtils.textToBlock(id).getBlock() == Blocks.AIR) {
 
                                     incompatible = true;
+                                    GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible tree, caused by unknown block ID. [ " + source.toFile().getParentFile().getName() + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
                                     break;
 
                                 }
@@ -173,6 +170,7 @@ public class CustomPackIncompatible {
         } else {
 
             incompatible = true;
+            GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible tree, caused by no tree settings. [ " + source.toFile().getParentFile().getName() + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
 
         }
 
@@ -182,17 +180,17 @@ public class CustomPackIncompatible {
 
     private static void rename (File file, boolean incompatible) {
 
-        if (incompatible == true) {
+        if (incompatible == false) {
+
+            file.renameTo(new File(file.getParentFile().toPath() + "/" + file.getName().replace("[INCOMPATIBLE] ", "")));
+
+        } else {
 
             if (file.getName().startsWith("[INCOMPATIBLE]") == false) {
 
                 file.renameTo(new File(file.getParentFile().toPath() + "/[INCOMPATIBLE] " + file.getName()));
 
             }
-
-        } else {
-
-            file.renameTo(new File(file.getParentFile().toPath() + "/" + file.getName().replace("[INCOMPATIBLE] ", "")));
 
         }
 

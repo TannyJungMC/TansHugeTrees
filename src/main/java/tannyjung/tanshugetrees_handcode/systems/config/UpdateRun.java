@@ -21,7 +21,7 @@ public class UpdateRun {
 
 	private static String error = "";
 
-    public static void start (LevelAccessor level) {
+    public static void run (LevelAccessor level) {
 
 		if (OutsideUtils.isConnectedToInternet() == false) {
 
@@ -51,18 +51,19 @@ public class UpdateRun {
 
 				if (error.equals("") == false) {
 
-					GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation, please wait and try again. For some info, it caused by [ " + error + " ].");
+					GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation, please wait or moving around, then try again. For some info, it caused by [ " + error + " ].");
 
 				} else {
 
 					GameUtils.sendChatMessage(level, "@a", "gray", "THT : Install Completed!");
-					ConfigRepairAll.start(null);
-					ConfigMain.apply(null);
+
+					ConfigRepairAll.run(level, true);
+					ConfigMain.apply(level);
 
 					GameUtils.sendChatMessage(level, "@a", "white", "");
-					FileCount.start(level, 0, 0, 0);
+					FileCount.run(level, 0, 0, 0);
 					GameUtils.sendChatMessage(level, "@a", "white", "");
-					PackMessage.start(level);
+					PackMessage.run(level);
 
 				}
 
@@ -104,10 +105,15 @@ public class UpdateRun {
 
         }
 
-		if (Handcode.mod_version != mod_version_url) {
+		if (Handcode.mod_version > mod_version_url) {
 
-			GameUtils.sendChatMessage(level, "@a", "red", "THT : You're currently using mod version that does not support to new tree pack version, try update the mod and do it again.");
 			return_logic = false;
+			GameUtils.sendChatMessage(level, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to available.");
+
+		} else if (Handcode.mod_version < mod_version_url) {
+
+			return_logic = false;
+			GameUtils.sendChatMessage(level, "@a", "red", "THT : You're currently using mod version that does not support to new tree pack version, try update the mod and do it again.");
 
 		}
 
