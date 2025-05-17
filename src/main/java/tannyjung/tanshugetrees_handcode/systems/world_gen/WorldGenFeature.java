@@ -15,9 +15,9 @@ public class WorldGenFeature extends Feature <NoneFeatureConfiguration> {
     @Override
     public boolean place (FeaturePlaceContext <NoneFeatureConfiguration> context) {
 
-        TreeLocation.start(context);
-        TreePlacer.start(context);
-        DataFolderCleaner.start(context);
+        TreeLocation.run(context);
+        TreePlacer.run(context);
+        DataFolderCleaner.run(context);
 
         return true;
 

@@ -29,7 +29,7 @@ public class TreeLocation {
     public static String world_gen_overlay_details_biome = "";
     public static String world_gen_overlay_details_tree = "";
 
-    public static void start (FeaturePlaceContext <NoneFeatureConfiguration> context) {
+    public static void run (FeaturePlaceContext <NoneFeatureConfiguration> context) {
 
         WorldGenLevel world_gen = context.level();
         ServerLevel world = context.level().getLevel();
@@ -43,25 +43,7 @@ public class TreeLocation {
         if (file.exists() == false) {
 
             // Create Empty File
-            {
-
-                FileManager.createFolder(file.getParent());
-
-                {
-
-                    StringBuilder write = new StringBuilder();
-
-                    {
-
-                        write.append("");
-
-                    }
-
-                    FileManager.writeTXT(file.toPath().toString(), write.toString(), true);
-
-                }
-
-            }
+            FileManager.writeTXT(file.toPath().toString(), "", true);
 
             int chunk_posX = 0;
             int chunk_posZ = 0;
@@ -1067,7 +1049,7 @@ public class TreeLocation {
 
                         for (int scanZ = from_chunkZ; scanZ <= to_chunkZ; scanZ++) {
 
-                            if (world_gen.hasChunk(scanX, scanZ) == true && world_gen.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.FEATURES.getParent()) == true) {
+                            if (world_gen.hasChunk(scanX, scanZ) == true && world_gen.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.FEATURES) == true) {
 
                                 return;
 

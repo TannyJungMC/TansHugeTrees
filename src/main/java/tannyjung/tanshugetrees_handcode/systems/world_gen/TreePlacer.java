@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class TreePlacer {
 
-    public static void start (FeaturePlaceContext<NoneFeatureConfiguration> context) {
+    public static void run (FeaturePlaceContext<NoneFeatureConfiguration> context) {
 
         WorldGenLevel world_gen = context.level();
         int chunk_posX = context.origin().getX() >> 4;
@@ -159,7 +159,6 @@ public class TreePlacer {
 
             if (file.exists() == false) {
 
-                FileManager.createFolder(file.getParent());
                 FileManager.writeTXT(file.toPath().toString(), "", true);
 
             }
@@ -807,7 +806,7 @@ public class TreePlacer {
 
                                                                     if (height_motion_block < test_posY) {
 
-                                                                        LeafLitter.start(world_gen, test_posX, height_motion_block, test_posZ, block, false);
+                                                                        LeafLitter.run(world_gen, test_posX, height_motion_block, test_posZ, block, false);
 
                                                                     }
 

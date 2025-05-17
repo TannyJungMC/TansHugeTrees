@@ -13,13 +13,14 @@ import java.io.FileReader;
 
 public class DataFolderCleaner {
 
-    public static void start (FeaturePlaceContext<NoneFeatureConfiguration> context) {
+    public static void run (FeaturePlaceContext<NoneFeatureConfiguration> context) {
 
-        String dimension = GameUtils.getCurrentDimensionID(context.level()).replace(":", "-");
-        String name = (context.origin().getX() >> 9) + "," + (context.origin().getZ() >> 9);
+        String dimension = GameUtils.getCurrentDimensionID(context.level().getLevel()).replace(":", "-");
+        int chunk_posX = context.origin().getX() >> 4;
+        int chunk_posZ = context.origin().getZ() >> 4;
+        String name = (chunk_posX >> 5) + "," + (chunk_posZ >> 5) + "/" + FileManager.quardtreeChunkToNode(chunk_posX, chunk_posZ) + ".txt";
 
-        File file = new File(Handcode.directory_world_data + "/data_folder_cleaner/" + dimension + "/" + name + ".txt");
-        FileManager.createFolder(file.getParent());
+        File file = new File(Handcode.directory_world_data + "/data_folder_cleaner/" + dimension + "/" + name);
 
         // Write
         {
@@ -36,7 +37,7 @@ public class DataFolderCleaner {
 
         }
 
-        boolean region_full = false;
+        boolean full = false;
 
         // Read to get text length
         {
@@ -45,9 +46,9 @@ public class DataFolderCleaner {
 
                 {
 
-                    if (read_all.length() >= 1024) {
+                    if (read_all.length() >= Math.pow(32 >> Handcode.quadtree_level, 2)) {
 
-                        region_full = true;
+                        full = true;
 
                     }
 
@@ -57,7 +58,7 @@ public class DataFolderCleaner {
 
         }
 
-        if (region_full == true) {
+        if (full == true) {
 
             file.delete();
             new File(Handcode.directory_world_data + "/place/" + dimension + "/" + name).delete();
