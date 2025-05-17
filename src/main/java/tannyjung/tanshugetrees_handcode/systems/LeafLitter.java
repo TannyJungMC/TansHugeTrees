@@ -15,7 +15,7 @@ import java.io.FileReader;
 
 public class LeafLitter {
 
-    public static void start (LevelAccessor level, int posX, int posY, int posZ, BlockState block, boolean remove) {
+    public static void run (LevelAccessor level, int posX, int posY, int posZ, BlockState block, boolean remove) {
 
         File file = new File(Handcode.directory_config + "/custom_packs/.organized/leaf_litter/" + GameUtils.blockToTextID(block).replace(":", "-") + ".txt");
 
