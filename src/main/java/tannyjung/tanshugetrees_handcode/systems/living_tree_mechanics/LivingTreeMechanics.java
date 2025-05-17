@@ -21,7 +21,7 @@ import java.io.FileReader;
 
 public class LivingTreeMechanics {
 
-	public static void start (Entity entity) {
+	public static void run (Entity entity) {
 
 		LevelAccessor level = entity.level();
 
@@ -48,7 +48,7 @@ public class LivingTreeMechanics {
 		// Get Block Settings
 		{
 
-			File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + GameUtils.NBTEntityTextGet(entity, "settings"));
+			File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + GameUtils.NBTTextGet(entity, "settings"));
 			String id = "";
 			String get = "";
 
@@ -64,7 +64,7 @@ public class LivingTreeMechanics {
 
 								id = read_all.substring(("Block ").length(), ("Block ###").length());
 								get = read_all.substring(("Block ### = ").length());
-								GameUtils.NBTEntityTextSet(entity, id, get);
+								GameUtils.NBTTextSet(entity, id, get);
 
 								// Test Leaves Type
 								{
@@ -126,7 +126,7 @@ public class LivingTreeMechanics {
 
 		}
 
-		File file = new File(Handcode.directory_config + "/custom_packs/" + GameUtils.NBTEntityTextGet(entity, "file"));
+		File file = new File(Handcode.directory_config + "/custom_packs/" + GameUtils.NBTTextGet(entity, "file"));
 
 		if (file.exists() == true && file.isDirectory() == false) {
 
@@ -153,8 +153,8 @@ public class LivingTreeMechanics {
 			{
 
 				int process = 0;
-				int rotation = (int) GameUtils.NBTEntityNumberGet(entity, "rotation");
-				boolean mirrored = GameUtils.NBTEntityLogicGet(entity, "mirrored");
+				int rotation = (int) GameUtils.NBTNumberGet(entity, "rotation");
+				boolean mirrored = GameUtils.NBTLogicGet(entity, "mirrored");
 
 				String id = "";
 				int[] get = null;
@@ -179,7 +179,7 @@ public class LivingTreeMechanics {
 							// Out of Save
 							{
 
-								if (process < GameUtils.NBTEntityNumberGet(entity, "process_save")) {
+								if (process < GameUtils.NBTNumberGet(entity, "process_save")) {
 
 									continue;
 
@@ -190,9 +190,9 @@ public class LivingTreeMechanics {
 							// Out of Process Limit
 							{
 
-								if (GameUtils.NBTEntityNumberGet(entity, "process_save") + ConfigMain.living_tree_mechanics_process_limit <= process) {
+								if (GameUtils.NBTNumberGet(entity, "process_save") + ConfigMain.living_tree_mechanics_process_limit <= process) {
 
-									GameUtils.NBTEntityNumberSet(entity, "process_save", process);
+									GameUtils.NBTNumberSet(entity, "process_save", process);
 									return;
 
 								}
@@ -205,7 +205,7 @@ public class LivingTreeMechanics {
 
 							if (read_all.endsWith("le1") == false && read_all.endsWith("le2") == false) {
 
-								GameUtils.NBTEntityTextSet(entity, "pre_block", read_all);
+								GameUtils.NBTTextSet(entity, "pre_block", read_all);
 
 							} else {
 
@@ -224,7 +224,7 @@ public class LivingTreeMechanics {
 									}
 
 									id = read_all.substring(read_all.length() - 3);
-									block = GameUtils.textToBlock(GameUtils.NBTEntityTextGet(entity, id));
+									block = GameUtils.textToBlock(GameUtils.NBTTextGet(entity, id));
 									pos = new BlockPos(posX, posY, posZ);
 
 								}
@@ -232,7 +232,7 @@ public class LivingTreeMechanics {
 								// Get Previous Block Data
 								{
 
-									pre_block_data = GameUtils.NBTEntityTextGet(entity, "pre_block");
+									pre_block_data = GameUtils.NBTTextGet(entity, "pre_block");
 
 									get = FileManager.textPosConverter(pre_block_data.substring(2, pre_block_data.length() - 3), rotation, mirrored);
 									posX = entity.getBlockX() + get[0];
@@ -246,13 +246,13 @@ public class LivingTreeMechanics {
 									}
 
 									pre_pos = new BlockPos(posX, posY, posZ);
-									pre_block = GameUtils.textToBlock(GameUtils.NBTEntityTextGet(entity, pre_block_data.substring(pre_block_data.length() - 3)));
+									pre_block = GameUtils.textToBlock(GameUtils.NBTTextGet(entity, pre_block_data.substring(pre_block_data.length() - 3)));
 
 								}
 
 								if (level.getBlockState(pre_pos).getBlock() == pre_block.getBlock()) {
 
-									run(level, entity, pos, block, leaves_block.toString(), leaves_type[Integer.parseInt(id.substring(2))], biome_type, current_season);
+									run(level, entity, pos, block, leaves_block.toString(), leaves_type[Integer.parseInt(id.substring(2)) - 1], biome_type, current_season);
 
 								} else {
 
@@ -283,13 +283,13 @@ public class LivingTreeMechanics {
 			// At the end of the file
 			{
 
-				if (GameUtils.NBTEntityLogicGet(entity, "dead_tree") == true) {
+				if (GameUtils.NBTLogicGet(entity, "dead_tree") == true) {
 
 					GameUtils.commandResultEntity(entity, "kill @s");
 
 				} else {
 
-					GameUtils.NBTEntityNumberSet(entity, "process_save", 0);
+					GameUtils.NBTNumberSet(entity, "process_save", 0);
 
 					if (level.getBlockState(center_pos).isAir() == false) {
 
@@ -297,14 +297,14 @@ public class LivingTreeMechanics {
 
 					}
 
-					if (GameUtils.NBTEntityLogicGet(entity, "still_alive") == true) {
+					if (GameUtils.NBTLogicGet(entity, "still_alive") == true) {
 
-						GameUtils.NBTEntityLogicSet(entity, "still_alive", false);
+						GameUtils.NBTLogicSet(entity, "still_alive", false);
 						return;
 
 					}
 
-					GameUtils.NBTEntityLogicSet(entity, "dead_tree", true);
+					GameUtils.NBTLogicSet(entity, "dead_tree", true);
 
 				}
 
@@ -322,11 +322,11 @@ public class LivingTreeMechanics {
 		// Leaves Straighten Test
 		{
 
-			if ((GameUtils.NBTEntityNumberGet(entity, "straighten_highestX") != pos.getX() || GameUtils.NBTEntityNumberGet(entity, "straighten_highestY") < pos.getY() || GameUtils.NBTEntityNumberGet(entity, "straighten_highestZ") != pos.getZ())) {
+			if ((GameUtils.NBTNumberGet(entity, "straighten_highestX") != pos.getX() || GameUtils.NBTNumberGet(entity, "straighten_highestY") < pos.getY() || GameUtils.NBTNumberGet(entity, "straighten_highestZ") != pos.getZ())) {
 
-				GameUtils.NBTEntityNumberSet(entity, "straighten_highestX", pos.getX());
-				GameUtils.NBTEntityNumberSet(entity, "straighten_highestY", pos.getY());
-				GameUtils.NBTEntityNumberSet(entity, "straighten_highestZ", pos.getZ());
+				GameUtils.NBTNumberSet(entity, "straighten_highestX", pos.getX());
+				GameUtils.NBTNumberSet(entity, "straighten_highestY", pos.getY());
+				GameUtils.NBTNumberSet(entity, "straighten_highestZ", pos.getZ());
 
 			} else {
 
@@ -342,7 +342,7 @@ public class LivingTreeMechanics {
 			if (ConfigMain.leaf_light_level_detection <= level.getBrightness(LightLayer.SKY, pos) + 1) {
 
 				can_pos_photosynthesis = true;
-				GameUtils.NBTEntityLogicSet(entity, "still_alive", true);
+				GameUtils.NBTLogicSet(entity, "still_alive", true);
 
 			}
 
@@ -374,7 +374,7 @@ public class LivingTreeMechanics {
 
 				if (straighten == true) {
 
-					BlockState test_block = level.getBlockState(new BlockPos(pos.getX(), (int) GameUtils.NBTEntityNumberGet(entity, "straighten_highestY"), pos.getZ()));
+					BlockState test_block = level.getBlockState(new BlockPos(pos.getX(), (int) GameUtils.NBTNumberGet(entity, "straighten_highestY"), pos.getZ()));
 
 					if (leaves_block.contains("|" + GameUtils.blockToTextID(test_block) + "|") == false) {
 
@@ -390,15 +390,7 @@ public class LivingTreeMechanics {
 
 					if (leaves_type == 1) {
 
-						if (biome_type == 1) {
-
-							chance = ConfigMain.leaf_drop_chance_winter;
-
-						} else if (biome_type == 2) {
-
-							chance = ConfigMain.leaf_drop_chance_summer;
-
-						} else {
+						if (biome_type == 0) {
 
 							// By Seasons
 							{
@@ -412,6 +404,14 @@ public class LivingTreeMechanics {
 								};
 
 							}
+
+						} else if (biome_type == 1) {
+
+							chance = ConfigMain.leaf_drop_chance_winter;
+
+						} else if (biome_type == 2) {
+
+							chance = ConfigMain.leaf_drop_chance_summer;
 
 						}
 
@@ -470,7 +470,7 @@ public class LivingTreeMechanics {
 
 							if (height_motion < pos.getY()) {
 
-								LeafLitter.start(level, pos.getX(), height_motion, pos.getZ(), block, false);
+								LeafLitter.run(level, pos.getX(), height_motion, pos.getZ(), block, false);
 
 							}
 

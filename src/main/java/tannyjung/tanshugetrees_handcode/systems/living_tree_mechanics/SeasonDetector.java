@@ -8,11 +8,11 @@ public class SeasonDetector {
 
     private static int season_detector_tick = 0;
 
-    public static void start (LevelAccessor level) {
+    public static void run (LevelAccessor level) {
 
         TanshugetreesMod.queueServerWork(20, () -> {
 
-           start(level);
+           run(level);
 
         });
 

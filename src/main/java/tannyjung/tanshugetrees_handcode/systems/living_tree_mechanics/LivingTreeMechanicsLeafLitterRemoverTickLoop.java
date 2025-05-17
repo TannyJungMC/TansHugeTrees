@@ -9,7 +9,7 @@ import tannyjung.tanshugetrees_handcode.systems.LeafLitter;
 
 public class LivingTreeMechanicsLeafLitterRemoverTickLoop {
 
-    public static void start (Entity entity) {
+    public static void run (Entity entity) {
 
         LevelAccessor level = entity.level();
         int posX = entity.getBlockX();
@@ -36,7 +36,7 @@ public class LivingTreeMechanicsLeafLitterRemoverTickLoop {
 
         } else {
 
-            LeafLitter.start(level, posX, posY + 1, posZ, GameUtils.textToBlock(GameUtils.NBTEntityTextGet(entity, "block")), true);
+            LeafLitter.run(level, posX, posY + 1, posZ, GameUtils.textToBlock(GameUtils.NBTTextGet(entity, "block")), true);
             GameUtils.runCommandEntity(entity, "kill @s");
 
         }
