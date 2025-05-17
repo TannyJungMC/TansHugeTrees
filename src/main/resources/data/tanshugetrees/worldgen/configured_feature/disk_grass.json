@@ -8,12 +8,13 @@
         "max_inclusive": 8
       }
     },
-    "half_height": 3,
+    "half_height": 4,
     "target": {
       "type": "minecraft:matching_blocks",
       "blocks": [
         "minecraft:stone",
-        "minecraft:sand"
+        "minecraft:sand",
+        "minecraft:red_sand"
       ]
     },
     "state_provider": {
@@ -105,6 +106,35 @@
               {
                 "data": {
                   "Name": "minecraft:sand"
+                },
+                "weight": 2
+              },
+              {
+                "data": {
+                  "Name": "minecraft:grass_block"
+                },
+                "weight": 5
+              },
+              {
+                "data": {
+                  "Name": "minecraft:coarse_dirt"
+                },
+                "weight": 3
+              }
+            ]
+          }
+        },
+        {
+          "if_true": {
+            "type": "minecraft:matching_blocks",
+            "blocks": "minecraft:red_sand"
+          },
+          "then": {
+            "type": "minecraft:weighted_state_provider",
+            "entries": [
+              {
+                "data": {
+                  "Name": "minecraft:red_sand"
                 },
                 "weight": 2
               },
