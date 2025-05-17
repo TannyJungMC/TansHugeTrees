@@ -13,6 +13,6 @@ public class COMMANDLivingTreeMechanicsLeafLitterRemoverLoopTickProcedure {
 		if (false) {
 			TanshugetreesMod.LOGGER.info(entity);
 		}
-		LivingTreeMechanicsLeafLitterRemoverTickLoop.start(entity);
+		LivingTreeMechanicsLeafLitterRemoverTickLoop.run(entity);
 	}
 }

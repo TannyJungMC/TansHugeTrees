@@ -13,6 +13,6 @@ public class COMMANDLivingTreeMechanicsLoopTickProcedure {
 		if (false) {
 			TanshugetreesMod.LOGGER.info(entity);
 		}
-		LivingTreeMechanics.start(entity);
+		LivingTreeMechanics.run(entity);
 	}
 }
