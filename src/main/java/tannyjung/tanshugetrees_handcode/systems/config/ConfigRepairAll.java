@@ -10,21 +10,21 @@ import java.util.concurrent.CompletableFuture;
 
 public class ConfigRepairAll {
 
-	public static void start (LevelAccessor level) {
+	public static void run (LevelAccessor level, boolean send_chat) {
 
 		FileManager.createFolder(Handcode.directory_config + "/custom_packs/.organized");
 		FileManager.createFolder(Handcode.directory_config + "/generated");
 
-		CustomPackOrganized.clearFolder();
-		CustomPackIncompatible.scanMain();
-		CustomPackOrganized.start();
-		CustomPackIncompatible.scanOrganized();
-
 		ConfigMain.repair();
 		ConfigAutoGen.repair();
-		ConfigPlacement.start();
+		CustomPackOrganized.run(level);
+		ConfigPlacement.run();
 
-		GameUtils.sendChatMessage(level, "@a", "gray", "THT : Repaired The Config");
+		if (send_chat == true) {
+
+			GameUtils.sendChatMessage(level, "@a", "gray", "THT : Repaired The Config");
+
+		}
 
 	}
 

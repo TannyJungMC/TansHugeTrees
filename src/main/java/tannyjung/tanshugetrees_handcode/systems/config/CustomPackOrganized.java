@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.systems.config;
 
+import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
@@ -11,11 +12,13 @@ import java.util.Comparator;
 
 public class CustomPackOrganized {
 
-    public static void start () {
+    public static void run (LevelAccessor level) {
 
         clearFolder();
+        CustomPackIncompatible.scanMain(level);
         organizing();
         replace();
+        CustomPackIncompatible.scanOrganized(level);
 
     }
 

@@ -51,7 +51,7 @@ public class FileCount {
 
 
 
-    public static void start (LevelAccessor level, double x, double y, double z) {
+    public static void run (LevelAccessor level, double x, double y, double z) {
 
 
 
@@ -67,7 +67,7 @@ public class FileCount {
 
 
         file_size_mb = (double) (file_size  / (1024.0 * 1024.0));
-        GameUtils.runCommand(level, 0, 0, 0, "tellraw @a [{\"text\":\"There are now \",\"color\":\"white\"},{\"text\":\"" + count_tree + "\",\"color\":\"yellow\"},{\"text\":\" species in TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + "), and \",\"color\":\"white\"},{\"text\":\"" + count_file + "\",\"color\":\"yellow\"},{\"text\":\" different shapes in total! (\",\"color\":\"white\"},{\"text\":\"" + String.format("%.1f", file_size_mb) + " MB\",\"color\":\"yellow\"},{\"text\":\")\",\"color\":\"white\"}]");
+        GameUtils.runCommand(level, 0, 0, 0, "tellraw @a [{\"text\":\"There are now \",\"color\":\"white\"},{\"text\":\"" + count_tree + "\",\"color\":\"yellow\"},{\"text\":\" species in TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + "), and \",\"color\":\"white\"},{\"text\":\"" + count_file + "\",\"color\":\"yellow\"},{\"text\":\" different shapes in total! Used about \",\"color\":\"white\"},{\"text\":\"" + String.format("%.1f", file_size_mb) + " MB\",\"color\":\"yellow\"},{\"text\":\" of your space.\",\"color\":\"white\"}]");
 
     }
 

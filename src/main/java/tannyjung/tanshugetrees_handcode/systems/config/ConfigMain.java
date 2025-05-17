@@ -66,7 +66,6 @@ public class ConfigMain {
 	public static int global_speed_repeat = 0;
 	public static int global_speed_tp = 0;
 	public static int count_limit = 0;
-	public static int distance_limit = 0;
 
 	public static boolean square_parts = false;
 	public static boolean square_leaves = false;
@@ -207,9 +206,9 @@ public class ConfigMain {
 					| Count limit of the leaves litter remover
 					| Default is 100
 					
-					leaf_drop_animation_chance = 0.1
+					leaf_drop_animation_chance = 1.0
 					| Chance of animation that will appear at leaf drop block on the tree
-					| Default is 0.1
+					| Default is 1.0
 					
 					leaf_drop_animation_count_limit = 500
 					| Count limit of leaf drop animation
@@ -273,11 +272,6 @@ public class ConfigMain {
 					count_limit = 1
 					| How many trees will generate in the same time. Set to 0 for no limit.
 					| Default is 1
-					
-					////////////////////////////////////////////////// Remove this
-					distance_limit = 0
-					| How far the trees will process. Set to 0 for no limit.
-					| Default is 500
 					
 					----------------------------------------------------------------------------------------------------
 					Tree Generator = Quality
@@ -380,7 +374,6 @@ public class ConfigMain {
 		global_speed_repeat = FileManager.GetConfigValue.numberInt(path, "global_speed_repeat");
 		global_speed_tp = FileManager.GetConfigValue.numberInt(path, "global_speed_tp");
 		count_limit = FileManager.GetConfigValue.numberInt(path, "count_limit");
-		distance_limit = FileManager.GetConfigValue.numberInt(path, "distance_limit");
 
 		square_parts = FileManager.GetConfigValue.logic(path, "square_parts");
 		square_leaves = FileManager.GetConfigValue.logic(path, "square_leaves");

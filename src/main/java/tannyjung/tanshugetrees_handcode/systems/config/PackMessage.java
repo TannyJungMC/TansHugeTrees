@@ -12,7 +12,7 @@ import java.io.FileReader;
 
 public class PackMessage {
 
-    public static void start (LevelAccessor level) {
+    public static void run (LevelAccessor level) {
 
 		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack/message.txt");
 		StringBuilder message = new StringBuilder();
