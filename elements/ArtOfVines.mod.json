@@ -37,13 +37,13 @@
     "name": "Art of Vines",
     "specialInformation": {
       "fixedValue": [
-        "--------------------------------------------------",
-        "Size : Medium",
-        "Blocks : Oak Leaves",
-        "Special : Can crawl on the ground to long distance",
-        "--------------------------------------------------",
-        "This is random tree sapling, it may take long time to generate!",
-        "--------------------------------------------------"
+        "§8--------------------------------------------------",
+        "§8This is random tree sapling, it may take long time to generate!",
+        "",
+        "§8Size : Medium",
+        "§8Blocks : Oak Leaves",
+        "§8Special : Can crawl on the ground to long distance",
+        "§8--------------------------------------------------"
       ]
     },
     "hardness": 0.0,

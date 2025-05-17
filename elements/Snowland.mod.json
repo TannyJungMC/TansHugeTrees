@@ -37,13 +37,13 @@
     "name": "Snowland",
     "specialInformation": {
       "fixedValue": [
-        "--------------------------------------------------",
-        "Size : Medium",
-        "Blocks : Spruce Wood / Stripped Spruce Wood / Spruce Leaves",
-        "Special : Can generate with snow on leaves",
-        "--------------------------------------------------",
-        "This is random tree sapling, it may take long time to generate!",
-        "--------------------------------------------------"
+        "§8--------------------------------------------------",
+        "§8This is random tree sapling, it may take long time to generate!",
+        "",
+        "§8Size : Medium",
+        "§8Blocks : Spruce Wood / Stripped Spruce Wood / Spruce Leaves",
+        "§8Special : Can generate with snow on leaves",
+        "§8--------------------------------------------------"
       ]
     },
     "hardness": 0.0,

@@ -37,13 +37,13 @@
     "name": "Legion",
     "specialInformation": {
       "fixedValue": [
-        "--------------------------------------------------",
-        "Size : Huge",
-        "Blocks : Spruce Wood / Stripped Spruce Wood / Spruce Leaves",
-        "Special : None",
-        "--------------------------------------------------",
-        "This is random tree sapling, it may take long time to generate!",
-        "--------------------------------------------------"
+        "§8--------------------------------------------------",
+        "§8This is random tree sapling, it may take long time to generate!",
+        "",
+        "§8Size : Huge",
+        "§8Blocks : Spruce Wood / Stripped Spruce Wood / Spruce Leaves",
+        "§8Special : None",
+        "§8--------------------------------------------------"
       ]
     },
     "hardness": 0.0,

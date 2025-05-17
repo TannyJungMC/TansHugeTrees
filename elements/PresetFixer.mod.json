@@ -30,9 +30,9 @@
     "damageVsEntity": 0.0,
     "specialInformation": {
       "fixedValue": [
-        "--------------------------------------------------",
-        "This is developer tool, not related to game play. For fix presets, reordering and repairing missing options.",
-        "--------------------------------------------------"
+        "§8--------------------------------------------------",
+        "§8This is developer tool, not related to game play. For fix presets, reordering and repairing missing options.",
+        "§8--------------------------------------------------"
       ]
     },
     "glowCondition": {

@@ -37,9 +37,9 @@
     "name": "Random Tree (Unset)",
     "specialInformation": {
       "fixedValue": [
-        "--------------------------------------------------",
-        "This is random tree sapling, it may take long time to generate!",
-        "--------------------------------------------------"
+        "§8--------------------------------------------------",
+        "§8This is random tree sapling, it may take long time to generate!",
+        "§8--------------------------------------------------"
       ]
     },
     "hardness": 0.0,

@@ -37,13 +37,13 @@
     "name": "The Aspirant",
     "specialInformation": {
       "fixedValue": [
-        "--------------------------------------------------",
-        "Size : Medium",
-        "Blocks : Acacia Wood / Stripped Acacia Wood / Acacia Leaves",
-        "Special : None",
-        "--------------------------------------------------",
-        "This is random tree sapling, it may take long time to generate!",
-        "--------------------------------------------------"
+        "§8--------------------------------------------------",
+        "§8This is random tree sapling, it may take long time to generate!",
+        "",
+        "§8Size : Medium",
+        "§8Blocks : Acacia Wood / Stripped Acacia Wood / Acacia Leaves",
+        "§8Special : None",
+        "§8--------------------------------------------------"
       ]
     },
     "hardness": 0.0,

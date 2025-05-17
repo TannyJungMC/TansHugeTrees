@@ -37,13 +37,13 @@
     "name": "White Fairy",
     "specialInformation": {
       "fixedValue": [
-        "--------------------------------------------------",
-        "Size : Medium",
-        "Blocks : Birch Wood / Stripped Birch Wood / Birch Leaves",
-        "Special : None",
-        "--------------------------------------------------",
-        "This is random tree sapling, it may take long time to generate!",
-        "--------------------------------------------------"
+        "§8--------------------------------------------------",
+        "§8This is random tree sapling, it may take long time to generate!",
+        "",
+        "§8Size : Medium",
+        "§8Blocks : Birch Wood / Stripped Birch Wood / Birch Leaves",
+        "§8Special : None",
+        "§8--------------------------------------------------"
       ]
     },
     "hardness": 0.0,
