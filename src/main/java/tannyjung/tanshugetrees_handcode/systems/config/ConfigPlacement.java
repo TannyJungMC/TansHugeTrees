@@ -1,8 +1,10 @@
 package tannyjung.tanshugetrees_handcode.systems.config;
 
+import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.misc.FileManager;
+import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +16,7 @@ import java.nio.file.StandardCopyOption;
 
 public class ConfigPlacement {
 
-    public static void start () {
+    public static void run () {
 
         createTemp();
         create();
@@ -173,13 +175,16 @@ public class ConfigPlacement {
     private static void write (Path source, String name) {
 
         boolean replace = true;
+        String name_fix = name.replace("[INCOMPATIBLE] ", "");
 
-        // Test Locked
+        // Test Old File
         {
 
             File file = new File(Handcode.directory_config + "/config_placement_temp.txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
+
+                String read_all_fix = "";
 
                 {
 
@@ -189,9 +194,16 @@ public class ConfigPlacement {
 
                             if (read_all.startsWith("[") == true) {
 
-                                if (read_all.endsWith("[LOCK] " + name.replace("[INCOMPATIBLE] ", "")) == true) {
+                                if (read_all.endsWith("] " + name_fix) == true) {
 
-                                    replace = false;
+                                    read_all_fix = read_all.replace("[INCOMPATIBLE] ", "");
+
+                                    if (read_all_fix.startsWith("[LOCK]") == true) {
+
+                                        replace = false;
+
+                                    }
+
                                     break;
 
                                 }
@@ -242,7 +254,7 @@ public class ConfigPlacement {
 
                     }
 
-                    write.append(name.replace("[INCOMPATIBLE] ", ""));
+                    write.append(name_fix);
                     write.append("\n");
                     write.append("----------------------------------------------------------------------------------------------------");
                     write.append("\n");
@@ -283,7 +295,7 @@ public class ConfigPlacement {
 
                                                                 if (read_all2.startsWith("[") == true) {
 
-                                                                    if (read_all2.endsWith(name.replace("[INCOMPATIBLE] ", "")) == true) {
+                                                                    if (read_all2.endsWith(name_fix) == true) {
 
                                                                         thisID = true;
 
