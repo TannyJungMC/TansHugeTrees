@@ -108,6 +108,8 @@ public class FileManager {
 
 			if (file.exists() == false) {
 
+				FileManager.createFolder(file.getParent());
+
 				try {
 
 					file.createNewFile();
