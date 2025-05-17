@@ -31,7 +31,7 @@ public class Handcode {
 
 	// --------------------------------------------------
 
-	public static double mod_version = 1.1;
+	public static double mod_version = 1.2;
 	public static String tanny_pack_version = "Alpha";
 
 	public static boolean version_1192 = false;
@@ -43,7 +43,7 @@ public class Handcode {
 	public static String directory_world_data = directory_game + "/saves/tanshugetrees-error";
 	public static String tanny_pack_version_name = ""; // Make this because version can swap to "WIP" by config
 
-	public static int quadtree_level = 32 >> 4;
+	public static int quadtree_level = 2;
 
 	public Handcode () {}
 
@@ -61,7 +61,7 @@ public class Handcode {
 
 		}
 
-		ConfigRepairAll.start(null);
+		ConfigRepairAll.run(null, false);
 		ConfigMain.apply(null);
 
 	}
@@ -70,11 +70,9 @@ public class Handcode {
 	public static void startWorld (ServerLifecycleEvent event) {
 
 		ServerLevel world = event.getServer().overworld();
+
 		directory_world_data = event.getServer().getWorldPath(new LevelResource(".")) + "/data/tanshugetrees";
 		TanshugetreesModVariables.MapVariables.get(world).version_1192 = version_1192;
-
-		ConfigRepairAll.start(null);
-		ConfigMain.apply(null);
 
 	}
 
@@ -93,7 +91,7 @@ public class Handcode {
 
 					if (ConfigMain.serene_seasons_compatibility == true && ModList.get().isLoaded("sereneseasons") == true) {
 
-						SeasonDetector.start(level);
+						SeasonDetector.run(level);
 
 					}
 
@@ -109,11 +107,13 @@ public class Handcode {
 
 				TanshugetreesMod.queueServerWork(100, () -> {
 
-					Loop.start(level);
+					Loop.run(level);
 
 					if (ConfigMain.auto_check_update == true) {
 
-						CheckUpdateRun.start(level);
+						ConfigRepairAll.run(level, false);
+						ConfigMain.apply(null);
+						CheckUpdateRun.run(level);
 
 					}
 
