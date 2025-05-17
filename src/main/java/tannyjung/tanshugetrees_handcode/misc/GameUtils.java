@@ -22,10 +22,8 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Objective;
-import net.minecraft.world.scores.Score;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import tannyjung.tanshugetrees.TanshugetreesMod;
-import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class GameUtils {
 
@@ -244,7 +242,7 @@ public class GameUtils {
 
 		if (level instanceof ServerLevel world) {
 
-			world.dimension().location().toString();
+			return world.dimension().location().toString();
 
 		}
 
@@ -281,7 +279,13 @@ public class GameUtils {
 
 	public static boolean isBlockTaggedAs (BlockState block, String tag) {
 
-		return block.is(BlockTags.create(new ResourceLocation(tag)));
+		try {
+
+			return block.is(BlockTags.create(new ResourceLocation(tag)));
+
+		} catch (Exception ignored) {}
+
+		return false;
 
 	}
 
@@ -335,37 +339,37 @@ public class GameUtils {
 	// NBT
 	// --------------------------------------------------
 
-	public static String NBTEntityTextGet (Entity entity, String name) {
+	public static String NBTTextGet(Entity entity, String name) {
 
 		return entity.getPersistentData().getString(name);
 
 	}
 
-	public static Boolean NBTEntityLogicGet (Entity entity, String name) {
+	public static Boolean NBTLogicGet(Entity entity, String name) {
 
 		return entity.getPersistentData().getBoolean(name);
 
 	}
 
-	public static double NBTEntityNumberGet (Entity entity, String name) {
+	public static double NBTNumberGet(Entity entity, String name) {
 
 		return entity.getPersistentData().getDouble(name);
 
 	}
 
-	public static void NBTEntityTextSet (Entity entity, String name, String value) {
+	public static void NBTTextSet(Entity entity, String name, String value) {
 
 		entity.getPersistentData().putString(name, value);
 
 	}
 
-	public static void NBTEntityLogicSet (Entity entity, String name, boolean value) {
+	public static void NBTLogicSet(Entity entity, String name, boolean value) {
 
 		entity.getPersistentData().putBoolean(name, value);
 
 	}
 
-	public static void NBTEntityNumberSet (Entity entity, String name, double value) {
+	public static void NBTNumberSet(Entity entity, String name, double value) {
 
 		entity.getPersistentData().putDouble(name, value);
 
