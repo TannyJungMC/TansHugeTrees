@@ -47,8 +47,7 @@ public class TreePlacer {
 
                 String[] array_text = null;
 
-                String[] from_chunk = null;
-                String[] to_chunk = null;
+                String[] from_to_chunk = null;
                 int from_chunk_posX = 0;
                 int from_chunk_posZ = 0;
                 int to_chunk_posX = 0;
