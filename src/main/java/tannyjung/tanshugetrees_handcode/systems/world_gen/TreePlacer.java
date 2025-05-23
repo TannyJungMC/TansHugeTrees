@@ -131,7 +131,7 @@ public class TreePlacer {
                                     // Detailed Detection
                                     {
 
-                                        if (detailed_detection(world_gen, dimension, center_posX, center_posZ, original_height, ground_block) == false) {
+                                        if (detailed_detection(world_gen, dimension, chunk_posX, chunk_posZ, from_chunk_posX, to_chunk_posX, from_chunk_posZ, to_chunk_posZ, id, center_posX, center_posZ, original_height, ground_block) == false) {
 
                                             continue;
 
@@ -157,44 +157,45 @@ public class TreePlacer {
 
     }
 
-    private static boolean detailed_detection (WorldGenLevel world_gen, String dimension, int center_posX, int center_posZ, int original_height, String ground_block) {
+    private static boolean detailed_detection (WorldGenLevel world_gen, String dimension, int chunk_posX, int chunk_posZ, int from_chunk_posX, int to_chunk_posX, int from_chunk_posZ, int to_chunk_posZ, String id, int center_posX, int center_posZ, int original_height, String ground_block) {
 
         boolean return_logic = true;
         boolean already_tested = false;
 
-        File file = new File(Handcode.directory_world_data + "/detailed_detection/" + dimension + "/" + (center_posX >> 9) + "," + (center_posZ >> 9) + "/" + FileManager.quardtreeChunkToNode((center_posX >> 4), (center_posZ >> 4)) + ".txt");
-
-        // Create Empty File
-        {
-
-            if (file.exists() == false) {
-
-                FileManager.writeTXT(file.toPath().toString(), "", true);
-
-            }
-
-        }
-
         // Read to test is it already tested
         {
 
-            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+            File file = new File(Handcode.directory_world_data + "/detailed_detection/" + dimension + "/" + (chunk_posX >> 5) + "," + (chunk_posZ >> 5) + "/" + FileManager.quardtreeChunkToNode(chunk_posX, chunk_posZ) + ".txt");
 
-                if (read_all.startsWith(center_posX + "/" + center_posZ) == true) {
+            if (file.exists() == true && file.isDirectory() == false) {
 
-                    already_tested = true;
+                {
 
-                    if (read_all.endsWith("true") == false) {
+                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-                        return_logic = false;
+                        {
 
-                    }
+                            if (read_all.startsWith(id + "|" + center_posX + "/" + center_posZ + "|") == true) {
 
-                    break;
+                                already_tested = true;
+
+                                if (read_all.endsWith("true") == false) {
+
+                                    return_logic = false;
+
+                                }
+
+                                break;
+
+                            }
+
+                        }
+
+                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
                 }
 
-            } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+            }
 
         }
 
@@ -246,8 +247,6 @@ public class TreePlacer {
 
                             }
 
-                            break test;
-
                         }
 
                     }
@@ -264,6 +263,8 @@ public class TreePlacer {
                 {
 
                     write
+                            .append(id)
+                            .append("|")
                             .append(center_posX)
                             .append("/")
                             .append(center_posZ)
@@ -275,7 +276,19 @@ public class TreePlacer {
 
                 }
 
-                FileManager.writeTXT(file.toPath().toString(), write.toString(), true);
+                int size = 32 >> Handcode.quadtree_level;
+                int to_chunkX_test = ((int) Math.ceil(to_chunk_posX / (double) size) * size) + size;
+                int to_chunkZ_test = ((int) Math.ceil(to_chunk_posZ / (double) size) * size) + size;
+
+                for (int scanX = from_chunk_posX; scanX < to_chunkX_test; scanX = scanX + size) {
+
+                    for (int scanZ = from_chunk_posZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
+
+                        FileManager.writeTXT(Handcode.directory_world_data + "/detailed_detection/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + FileManager.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
+
+                    }
+
+                }
 
             }
 

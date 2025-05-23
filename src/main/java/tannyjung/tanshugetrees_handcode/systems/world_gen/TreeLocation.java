@@ -38,12 +38,12 @@ public class TreeLocation {
 
         int region_posX = context.origin().getX() >> 9;
         int region_posZ = context.origin().getZ() >> 9;
-        File file = new File(Handcode.directory_world_data + "/regions/" + dimension + "/" + region_posX + "," + region_posZ + ".txt");
+        File file = new File(Handcode.directory_world_data + "/regions/" + dimension + "/" + region_posX + "," + region_posZ);
 
         if (file.exists() == false) {
 
             // Create Empty File
-            FileManager.writeTXT(file.toPath().toString(), "", true);
+            FileManager.createFolder(file.toPath().toString());
 
             int chunk_posX = 0;
             int chunk_posZ = 0;
@@ -366,7 +366,7 @@ public class TreeLocation {
 
             if (skip == false) {
 
-                int center_posY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
+                int center_posY = world_gen.getMaxBuildHeight();
 
                 // Surface Smoothness Detector & Waterside Chance
                 {
@@ -378,6 +378,9 @@ public class TreeLocation {
                     }
 
                 }
+
+                // ################################################### Maybe delete this
+                center_posY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
 
                 String tree_data = id + "|" + ground_block + "|" + start_height_offset + "|" + rotation + "|" + mirrored + "|" + dead_tree_chance + "|" + dead_tree_level;
                 readTreeFile(world_gen, world, chunk_generator, dimension, tree_data, center_posX, center_posY, center_posZ);
@@ -654,10 +657,35 @@ public class TreeLocation {
 
         {
 
+            if (ConfigMain.surrounding_area_detection_size > 0) {
+
+                if (ConfigMain.waterside_detection == true && waterside_detection == true) {
+
+                    if (Math.random() < waterside_chance) {
+
+                        int size = ConfigMain.surrounding_area_detection_size;
+                        boolean waterside_test1 = GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(center_posX + size, world_gen.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
+                        boolean waterside_test2 = GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(center_posX + size, world_gen.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
+                        boolean waterside_test3 = GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(center_posX - size, world_gen.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
+                        boolean waterside_test4 = GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(center_posX - size, world_gen.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
+
+                        if (waterside_test1 == false && waterside_test2 == false && waterside_test3 == false && waterside_test4 == false) {
+
+                            return_logic = false;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            /*
+
             test:
             if (ConfigMain.surface_smoothness_detection == true || ConfigMain.waterside_detection == true) {
 
-                int size = ConfigMain.surrounding_area_detection_size;
                 int ocean_floor1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
                 int ocean_floor2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
                 int ocean_floor3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
@@ -675,6 +703,17 @@ public class TreeLocation {
                     }
 
                 }
+
+
+
+
+
+
+
+
+
+
+                // Fix this - If waterside disable in config but that tree need waterside
 
                 if (ConfigMain.waterside_detection == true) {
 
@@ -706,6 +745,8 @@ public class TreeLocation {
                 }
 
             }
+
+             */
 
         }
 
@@ -1103,56 +1144,49 @@ public class TreeLocation {
 
     private static void writePlaceFile(String dimension, int from_chunkX, int from_chunkZ, int to_chunkX, int to_chunkZ, String id, File chosen, int center_posX, int center_posY, int center_posZ, String rotation, String mirrored, String other_data) {
 
+        StringBuilder write = new StringBuilder();
+
         {
 
-            StringBuilder write = new StringBuilder();
+            write
+                    .append(from_chunkX)
+                    .append("/")
+                    .append(from_chunkZ)
+                    .append("/")
+                    .append(to_chunkX)
+                    .append("/")
+                    .append(to_chunkZ)
+                    .append("|")
+                    .append(id)
+                    .append("|")
+                    .append(chosen.getName())
+                    .append("|")
+                    .append(center_posX)
+                    .append("/")
+                    .append(center_posY)
+                    .append("/")
+                    .append(center_posZ)
+                    .append("|")
+                    .append(rotation)
+                    .append("/")
+                    .append(mirrored)
+                    .append("|")
+                    .append(other_data)
+            ;
 
-            {
+            write.append("\n");
 
-                write
-                        .append(from_chunkX)
-                        .append("/")
-                        .append(from_chunkZ)
-                        .append("|")
-                        .append(to_chunkX)
-                        .append("/")
-                        .append(to_chunkZ)
-                        .append("|")
-                        .append(id)
-                        .append("|")
-                        .append(chosen.getName())
-                        .append("|")
-                        .append(center_posX)
-                        .append("/")
-                        .append(center_posY)
-                        .append("/")
-                        .append(center_posZ)
-                        .append("|")
-                        .append(rotation)
-                        .append("/")
-                        .append(mirrored)
-                        .append("|")
-                        .append(other_data)
-                ;
+        }
 
-                write.append("\n");
+        int size = 32 >> Handcode.quadtree_level;
+        int to_chunkX_test = ((int) Math.ceil(to_chunkX / (double) size) * size) + size;
+        int to_chunkZ_test = ((int) Math.ceil(to_chunkZ / (double) size) * size) + size;
 
-            }
+        for (int scanX = from_chunkX; scanX < to_chunkX_test; scanX = scanX + size) {
 
-            int size = 32 >> Handcode.quadtree_level;
-            int to_chunkX_test = ((int) Math.ceil(to_chunkX / (double) size) * size) + size;
-            int to_chunkZ_test = ((int) Math.ceil(to_chunkZ / (double) size) * size) + size;
-            String folder = "";
+            for (int scanZ = from_chunkZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
 
-            for (int scanX = from_chunkX; scanX < to_chunkX_test; scanX = scanX + size) {
-
-                for (int scanZ = from_chunkZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
-
-                    folder = Handcode.directory_world_data + "/place/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5);
-                    FileManager.createFolder(folder);
-                    FileManager.writeTXT(folder + "/" + FileManager.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
-
-                }
+                FileManager.writeTXT(Handcode.directory_world_data + "/place/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + FileManager.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
 
             }
 
