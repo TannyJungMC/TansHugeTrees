@@ -80,17 +80,22 @@ public class TreePlacer {
 
                             if (read_all.equals("") == false) {
 
+                                array_text = read_all.split("\\|");
+
                                 // Get Tree Chunk Pos
                                 {
 
-                                    array_text = read_all.split("\\|");
+                                    try {
 
-                                    from_chunk = array_text[0].split("/");
-                                    to_chunk = array_text[1].split("/");
-                                    from_chunk_posX = Integer.parseInt(from_chunk[0]);
-                                    from_chunk_posZ = Integer.parseInt(from_chunk[1]);
-                                    to_chunk_posX = Integer.parseInt(to_chunk[0]);
-                                    to_chunk_posZ = Integer.parseInt(to_chunk[1]);
+                                        from_to_chunk = array_text[0].split("/");
+                                        from_chunk_posX = Integer.parseInt(from_to_chunk[0]);
+                                        from_chunk_posZ = Integer.parseInt(from_to_chunk[1]);
+                                        to_chunk_posX = Integer.parseInt(from_to_chunk[2]);
+                                        to_chunk_posZ = Integer.parseInt(from_to_chunk[3]);
+
+                                    } catch (Exception ignored) {
+
+                                    }
 
                                 }
 
@@ -99,22 +104,28 @@ public class TreePlacer {
                                     // Get Tree Data
                                     {
 
-                                        id = array_text[2];
-                                        chosen = array_text[3];
+                                        try {
 
-                                        center_pos = array_text[4].split("/");
-                                        center_posX = Integer.parseInt(center_pos[0]);
-                                        center_posY = Integer.parseInt(center_pos[1]);
-                                        center_posZ = Integer.parseInt(center_pos[2]);
+                                            id = array_text[1];
+                                            chosen = array_text[2];
 
-                                        rotation_mirrored = array_text[5].split("/");
-                                        rotation = Integer.parseInt(rotation_mirrored[0]);
-                                        mirrored = Boolean.parseBoolean(rotation_mirrored[1]);
+                                            center_pos = array_text[3].split("/");
+                                            center_posX = Integer.parseInt(center_pos[0]);
+                                            center_posY = Integer.parseInt(center_pos[1]);
+                                            center_posZ = Integer.parseInt(center_pos[2]);
 
-                                        other_data = array_text[6].split("(?<! )/(?! )");
-                                        original_height = Integer.parseInt(other_data[0]);
-                                        ground_block = other_data[1];
-                                        dead_tree_level = Integer.parseInt(other_data[2]);
+                                            rotation_mirrored = array_text[4].split("/");
+                                            rotation = Integer.parseInt(rotation_mirrored[0]);
+                                            mirrored = Boolean.parseBoolean(rotation_mirrored[1]);
+
+                                            other_data = array_text[5].split("(?<! )/(?! )");
+                                            original_height = Integer.parseInt(other_data[0]);
+                                            ground_block = other_data[1];
+                                            dead_tree_level = Integer.parseInt(other_data[2]);
+
+                                        } catch (Exception ignored) {
+
+                                        }
 
                                     }
 
