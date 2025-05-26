@@ -28,7 +28,6 @@ import tannyjung.tanshugetrees_handcode.systems.TreeFunction;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.security.SignatureSpi;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -229,7 +228,7 @@ public class TreePlacer {
 
                     center_chunk = world_gen.getChunk(center_chunkX, center_chunkZ);
 
-                    if (center_chunk.getStatus().isOrAfter(ChunkStatus.CARVERS) == true) {
+                    if (center_chunk.getStatus().isOrAfter(ChunkStatus.SURFACE) == true) {
 
                         centerY = center_chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, centerX, centerZ);
 
@@ -396,7 +395,7 @@ public class TreePlacer {
 
         if (pass == true) {
 
-            getData(world_gen, chunk_pos, id, chosen, centerX, centerY, centerZ, rotation, mirrored, dead_tree_level);
+            getData(world_gen, world, chunk_pos, id, chosen, centerX, centerY, centerZ, rotation, mirrored, dead_tree_level);
 
         }
 
@@ -466,7 +465,7 @@ public class TreePlacer {
 
     }
 
-    private static void getData (WorldGenLevel world_gen, ChunkPos chunk_pos, String id, String chosen, int centerX, int centerY, int centerZ, int rotation, boolean mirrored, int dead_tree_level) {
+    private static void getData (WorldGenLevel world_gen, ServerLevel world, ChunkPos chunk_pos, String id, String chosen, int centerX, int centerY, int centerZ, int rotation, boolean mirrored, int dead_tree_level) {
 
         String storage_directory = "";
         String tree_settings = "";
@@ -984,18 +983,14 @@ public class TreePlacer {
 
                                             summon_marker = true;
 
-                                            if (ConfigMain.tree_location == true) {
+                                            if (dead_tree_level == 0) {
 
-                                                if (ConfigMain.living_tree_mechanics == true && living_tree_mechanics == true) {
+                                                if (ConfigMain.tree_location == true && ConfigMain.living_tree_mechanics == true && living_tree_mechanics == true) {
 
                                                     if (read_all.equals("+b0^0^0tro") == true) {
 
-                                                        if (dead_tree_level == 0) {
-
-                                                            marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
-                                                            GameUtils.runCommand(world_gen, centerX + 0.5, centerY + 0.5, centerZ + 0.5, GameUtils.summonEntity("marker", "tree_location", id, "white", marker_data));
-
-                                                        }
+                                                        marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
+                                                        GameUtils.runCommand(world, centerX + 0.5, centerY + 0.5, centerZ + 0.5, GameUtils.summonEntity("marker", "tree_location", id, "white", marker_data));
 
                                                     }
 
