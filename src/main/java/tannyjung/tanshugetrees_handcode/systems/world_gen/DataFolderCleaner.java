@@ -55,11 +55,16 @@ public class DataFolderCleaner {
             file_detailed_detection.delete();
 
             // If finish placing all chunks in region
-            if (file_place.getParentFile().listFiles() != null && file_place.getParentFile().listFiles().length == 0) {
+            if (false && file_place.getParentFile().listFiles() == null) {
 
-                file_region.getParentFile().delete();
-                file_place.getParentFile().delete();
-                file_detailed_detection.getParentFile().delete();
+                // file_region.getParentFile().delete();
+                // file_place.getParentFile().delete();
+                // file_detailed_detection.getParentFile().delete();
+
+                System.out.println("Delete region folders...");
+                System.out.println(file_region.getParentFile().delete());
+                System.out.println(file_place.getParentFile().delete());
+                System.out.println(file_detailed_detection.getParentFile().delete());
 
             }
 
