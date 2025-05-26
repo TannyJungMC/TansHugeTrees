@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.misc.GameUtils;
@@ -19,7 +20,7 @@ public class LeafLitter {
 
         File file = new File(Handcode.directory_config + "/custom_packs/.organized/leaf_litter/" + GameUtils.blockToTextID(block).replace(":", "-") + ".txt");
 
-        if (ConfigMain.pre_leaves_litter_classic_only == false && (file.exists() == true && file.isDirectory() == false)) {
+        if (ConfigMain.leaf_litter_classic_only == false && (file.exists() == true && file.isDirectory() == false)) {
 
             // Get from custom pack for custom
             {
@@ -190,7 +191,7 @@ public class LeafLitter {
 
         } else {
 
-            if (ConfigMain.pre_leaves_litter_classic == true) {
+            if (ConfigMain.leaf_litter_classic == true) {
 
                 // Classic Style
                 {
