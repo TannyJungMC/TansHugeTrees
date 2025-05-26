@@ -28,6 +28,7 @@ import tannyjung.tanshugetrees_handcode.systems.TreeFunction;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.security.SignatureSpi;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -228,7 +229,7 @@ public class TreePlacer {
 
                     center_chunk = world_gen.getChunk(center_chunkX, center_chunkZ);
 
-                    if (center_chunk.getStatus().isOrAfter(ChunkStatus.SURFACE) == true) {
+                    if (center_chunk.getStatus().isOrAfter(ChunkStatus.CARVERS) == true) {
 
                         centerY = center_chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, centerX, centerZ);
 
@@ -273,10 +274,14 @@ public class TreePlacer {
                     // Ground Block
                     {
 
-                        if (testGroundBlock(world_gen.getBlockState(new BlockPos(centerX, originalY - 1, centerZ)), ground_block) == false) {
+                        if (center_chunk.getStatus().isOrAfter(ChunkStatus.SURFACE) == true) {
 
-                            pass = false;
-                            break test;
+                            if (testGroundBlock(center_chunk.getBlockState(new BlockPos(centerX, originalY - 1, centerZ)), ground_block) == false) {
+
+                                pass = false;
+                                break test;
+
+                            }
 
                         }
 
@@ -292,7 +297,7 @@ public class TreePlacer {
                         int pos3 = chunk_generator.getBaseHeight(centerX - size, centerZ + size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
                         int pos4 = chunk_generator.getBaseHeight(centerX - size, centerZ - size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
 
-                        if ((Math.abs(centerY - pos1) > height) || (Math.abs(centerY - pos2) > height) || (Math.abs(centerY - pos3) > height) || (Math.abs(centerY - pos4) > height)) {
+                        if ((Math.abs(originalY - pos1) > height) || (Math.abs(originalY - pos2) > height) || (Math.abs(originalY - pos3) > height) || (Math.abs(originalY - pos4) > height)) {
 
                             pass = false;
                             break test;
@@ -320,11 +325,19 @@ public class TreePlacer {
 
                     if (Math.random() >= dead_tree_chance) {
 
-                        int highestY = chunk_generator.getBaseHeight(centerX, centerZ, Heightmap.Types.WORLD_SURFACE_WG, world_gen, world.getChunkSource().randomState());
-
-                        if ((tree_type.equals("land") == true && (originalY == highestY)) || (tree_type.equals("water") == true && (originalY < highestY))) {
+                        if (tree_type.equals("adapt") == true) {
 
                             dead_tree_level = 0;
+
+                        } else {
+
+                            int highestY = chunk_generator.getBaseHeight(centerX, centerZ, Heightmap.Types.WORLD_SURFACE_WG, world_gen, world.getChunkSource().randomState());
+
+                            if ((tree_type.equals("land") == true && (originalY == highestY)) || (tree_type.equals("water") == true && (originalY < highestY))) {
+
+                                dead_tree_level = 0;
+
+                            }
 
                         }
 
