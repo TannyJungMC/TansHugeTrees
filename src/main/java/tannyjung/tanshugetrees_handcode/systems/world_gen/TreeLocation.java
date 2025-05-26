@@ -33,7 +33,6 @@ public class TreeLocation {
 
         WorldGenLevel world_gen = context.level();
         ServerLevel world = context.level().getLevel();
-        ChunkGenerator chunk_generator = context.chunkGenerator();
         String dimension = GameUtils.getCurrentDimensionID(world).replace(":", "-");
 
         int region_posX = context.origin().getX() >> 9;
@@ -52,7 +51,7 @@ public class TreeLocation {
 
             world_gen_overlay_animation = 4;
             world_gen_overlay_bar = 0;
-            TanshugetreesMod.LOGGER.info("Generating Region (" + region_posX + "/" + region_posZ + ")");
+            TanshugetreesMod.LOGGER.info("Generating tree locations for a new region (" + dimension.replace("-", ":") + " -> " + region_posX + "/" + region_posZ + ")");
 
             // Overlay Loading Loop
             {
@@ -105,7 +104,7 @@ public class TreeLocation {
 
                                 center_posX = (chunk_posX * 16) + (int) (Math.random() * 16);
                                 center_posZ = (chunk_posZ * 16) + (int) (Math.random() * 16);
-                                getData(world_gen, world, chunk_generator, dimension, center_posX, center_posZ);
+                                getData(world_gen, dimension, center_posX, center_posZ);
 
                             }
 
@@ -124,7 +123,7 @@ public class TreeLocation {
 
     }
 
-    private static void getData (WorldGenLevel world_gen, ServerLevel world, ChunkGenerator chunk_generator, String dimension, int center_posX, int center_posZ) {
+    private static void getData (WorldGenLevel world_gen, String dimension, int center_posX, int center_posZ) {
 
         File file = new File(Handcode.directory_config + "/config_placement.txt");
 
@@ -366,12 +365,10 @@ public class TreeLocation {
 
             if (skip == false) {
 
-                int center_posY = world_gen.getMaxBuildHeight();
-
-                // Surface Smoothness Detector & Waterside Chance
+                // Waterside Detection
                 {
 
-                    if (testSurroundingArea(world_gen, world, chunk_generator, center_posX, center_posY, center_posZ, true, waterside_chance) == false) {
+                    if (testWaterSide(world_gen, center_posX, center_posZ, waterside_chance) == false) {
 
                         return;
 
@@ -379,11 +376,8 @@ public class TreeLocation {
 
                 }
 
-                // ################################################### Maybe delete this
-                center_posY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
-
                 String tree_data = id + "|" + ground_block + "|" + start_height_offset + "|" + rotation + "|" + mirrored + "|" + dead_tree_chance + "|" + dead_tree_level;
-                readTreeFile(world_gen, world, chunk_generator, dimension, tree_data, center_posX, center_posY, center_posZ);
+                readTreeFile(world_gen, dimension, tree_data, center_posX, center_posZ);
 
                 // Group Spawning
                 {
@@ -395,7 +389,6 @@ public class TreeLocation {
                             group_size = group_size - 1;
                             center_posX = center_posX + Mth.nextInt(RandomSource.create(), -(min_distance + 1), (min_distance + 1));
                             center_posZ = center_posZ + Mth.nextInt(RandomSource.create(), -(min_distance + 1), (min_distance + 1));
-                            center_posY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
 
                             // Biome
                             {
@@ -425,18 +418,7 @@ public class TreeLocation {
 
                             }
 
-                            // Surface Smoothness Detector
-                            {
-
-                                if (testSurroundingArea(world_gen, world, chunk_generator, center_posX, center_posY, center_posZ, false, waterside_chance) == false) {
-
-                                    return;
-
-                                }
-
-                            }
-
-                            readTreeFile(world_gen, world, chunk_generator, dimension, tree_data, center_posX, center_posY, center_posZ);
+                            readTreeFile(world_gen, dimension, tree_data, center_posX, center_posZ);
 
                         }
 
@@ -571,7 +553,7 @@ public class TreeLocation {
                                                 get = read_all.split("\\|");
                                                 pos = get[1].split("/");
                                                 posX = Integer.parseInt(pos[0]);
-                                                posZ = Integer.parseInt(pos[2]);
+                                                posZ = Integer.parseInt(pos[1]);
 
                                                 if ((Math.abs(center_posX - posX) <= min_distance) && (Math.abs(center_posZ - posZ) <= min_distance)) {
 
@@ -651,102 +633,31 @@ public class TreeLocation {
 
     }
 
-    private static boolean testSurroundingArea (WorldGenLevel world_gen, ServerLevel world, ChunkGenerator chunk_generator, int center_posX, int center_posY, int center_posZ, boolean waterside_detection, double waterside_chance) {
+    private static boolean testWaterSide (WorldGenLevel world_gen, int center_posX, int center_posZ, double waterside_chance) {
 
         boolean return_logic = true;
 
         {
 
-            if (ConfigMain.surrounding_area_detection_size > 0) {
+            if (ConfigMain.surrounding_area_detection == true && ConfigMain.waterside_detection == true) {
 
-                if (ConfigMain.waterside_detection == true && waterside_detection == true) {
+                if (Math.random() < waterside_chance) {
 
-                    if (Math.random() < waterside_chance) {
+                    int size = ConfigMain.surrounding_area_detection_size;
+                    boolean waterside_test1 = GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(center_posX + size, world_gen.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
+                    boolean waterside_test2 = GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(center_posX + size, world_gen.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
+                    boolean waterside_test3 = GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(center_posX - size, world_gen.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
+                    boolean waterside_test4 = GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(center_posX - size, world_gen.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
 
-                        int size = ConfigMain.surrounding_area_detection_size;
-                        boolean waterside_test1 = GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(center_posX + size, world_gen.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
-                        boolean waterside_test2 = GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(center_posX + size, world_gen.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
-                        boolean waterside_test3 = GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(center_posX - size, world_gen.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
-                        boolean waterside_test4 = GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(center_posX - size, world_gen.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
-
-                        if (waterside_test1 == false && waterside_test2 == false && waterside_test3 == false && waterside_test4 == false) {
-
-                            return_logic = false;
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            /*
-
-            test:
-            if (ConfigMain.surface_smoothness_detection == true || ConfigMain.waterside_detection == true) {
-
-                int ocean_floor1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
-                int ocean_floor2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
-                int ocean_floor3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
-                int ocean_floor4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
-
-                if (ConfigMain.surface_smoothness_detection == true) {
-
-                    int height = ConfigMain.surface_smoothness_detection_height;
-
-                    if ((Math.abs(center_posY - ocean_floor1) > height) || (Math.abs(center_posY - ocean_floor2) > height) || (Math.abs(center_posY - ocean_floor3) > height) || (Math.abs(center_posY - ocean_floor4) > height)) {
+                    if (waterside_test1 == false && waterside_test2 == false && waterside_test3 == false && waterside_test4 == false) {
 
                         return_logic = false;
-                        break test;
 
                     }
-
-                }
-
-
-
-
-
-
-
-
-
-
-                // Fix this - If waterside disable in config but that tree need waterside
-
-                if (ConfigMain.waterside_detection == true) {
-
-                    if (waterside_detection == true) {
-
-                        if (Math.random() < waterside_chance) {
-
-                            int surface1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.WORLD_SURFACE_WG, world_gen, world.getChunkSource().randomState());
-                            int surface2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.WORLD_SURFACE_WG, world_gen, world.getChunkSource().randomState());
-                            int surface3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.WORLD_SURFACE_WG, world_gen, world.getChunkSource().randomState());
-                            int surface4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.WORLD_SURFACE_WG, world_gen, world.getChunkSource().randomState());
-
-                            if (surface1 == ocean_floor1 && surface2 == ocean_floor2 && surface3 == ocean_floor3 && surface4 == ocean_floor4) {
-
-                                return_logic = false;
-                                break test;
-
-                            }
-
-                        }
-
-                    }
-
-                } else {
-
-                    return_logic = false;
-                    break test;
 
                 }
 
             }
-
-             */
 
         }
 
@@ -754,19 +665,36 @@ public class TreeLocation {
 
     }
 
-    private static void readTreeFile (WorldGenLevel world_gen, ServerLevel world, ChunkGenerator chunk_generator, String dimension, String tree_data, int center_posX, int center_posY, int center_posZ) {
+    private static void readTreeFile (WorldGenLevel world_gen, String dimension, String tree_data, int center_posX, int center_posZ) {
+
+        String id = "";
+        String ground_block = "";
+        String start_height_offset = "";
+        String rotation = "";
+        String mirrored = "";
+        double dead_tree_chance = 0.0;
+        String[] dead_tree_levels = new String[0];
+
+        try {
+
+            String[] get = tree_data.split("\\|");
+
+            id = get[0];
+            ground_block = get[1];
+            start_height_offset = get[2];
+            rotation = get[3];
+            mirrored = get[4];
+            dead_tree_chance = Double.parseDouble(get[5]);
+            dead_tree_levels = get[6].split(" / ");
+
+        } catch (Exception e) {
+
+            return;
+
+        }
 
         String storage_directory = "";
         String tree_settings = "";
-
-        String[] get = tree_data.split("\\|");
-        String id = get[0];
-        String ground_block = get[1];
-        String start_height_offset = get[2];
-        String rotation = get[3];
-        String mirrored = get[4];
-        double dead_tree_chance = Double.parseDouble(get[5]);
-        String dead_tree_level_all = get[6];
 
         // Scan "World Gen" File
         {
@@ -822,59 +750,13 @@ public class TreeLocation {
 
         if (chosen.exists() == true && chosen.isDirectory() == false) {
 
-            String tree_type = "";
-            int start_height = 0;
-            int dead_tree_level = 0;
-            int original_height = center_posY;
-
-            // Scan "Tree Settings" File
-            {
-
-                File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
-
-                if (file.exists() == true && file.isDirectory() == false) {
-
-                    {
-
-                        try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
-
-                            {
-
-                                if (read_all.startsWith("tree_type = ") == true) {
-
-                                    {
-
-                                        tree_type = read_all.replace("tree_type = ", "");
-
-                                    }
-
-                                } else if (read_all.startsWith("start_height = ") == true) {
-
-                                    {
-
-                                        start_height = Integer.parseInt(read_all.replace("start_height = ", ""));
-
-                                    }
-
-                                }
-
-                            }
-
-                        } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
-
-                    }
-
-                }
-
-            }
-
             int sizeX = 0;
             int sizeY = 0;
             int sizeZ = 0;
             int center_sizeX = 0;
             int center_sizeZ = 0;
 
-            // Get Values
+            // Get Size
             {
 
                 try { BufferedReader buffered_reader = new BufferedReader(new FileReader(chosen)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
@@ -922,70 +804,6 @@ public class TreeLocation {
                     }
 
                 } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
-
-            }
-
-            // Start Height
-            {
-
-                int offset = 0;
-
-                // Offset
-                {
-
-                    String[] offset_get = start_height_offset.split(" <> ");
-                    int offset_min = Integer.parseInt(offset_get[0]);
-                    int offset_max = Integer.parseInt(offset_get[1]);
-                    offset = Mth.nextInt(RandomSource.create(), offset_min, offset_max);
-
-                }
-
-                center_posY = center_posY + start_height + offset;
-
-            }
-
-            // Test World Height
-            {
-
-                if (center_posY + sizeY > world_gen.getMaxBuildHeight()) {
-
-                    return;
-
-                }
-
-            }
-
-            // Dead Tree
-            {
-
-                boolean dead_tree = false;
-
-                if (Math.random() < dead_tree_chance) {
-
-                    dead_tree = true;
-
-                } else {
-
-                    int highest_point = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.WORLD_SURFACE_WG, world_gen, world.getChunkSource().randomState());
-
-                    if (
-                        (tree_type.equals("land") == true && (original_height < highest_point))
-                        ||
-                        (tree_type.equals("water") == true && (original_height == highest_point))
-                    ) {
-
-                        dead_tree = true;
-
-                    }
-
-                }
-
-                if (dead_tree == true) {
-
-                    String[] levels = dead_tree_level_all.split(" / ");
-                    dead_tree_level = Integer.parseInt(levels[(int) (Math.random() * (levels.length - 1))]);
-
-                }
 
             }
 
@@ -1073,6 +891,60 @@ public class TreeLocation {
 
             }
 
+            String tree_type = "";
+            int start_height = 0;
+            int dead_tree_level = Integer.parseInt(dead_tree_levels[(int) (Math.random() * (dead_tree_levels.length - 1))]);
+
+            // Scan "Tree Settings" File
+            {
+
+                File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
+
+                if (file.exists() == true && file.isDirectory() == false) {
+
+                    {
+
+                        try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+
+                            {
+
+                                if (read_all.startsWith("tree_type = ") == true) {
+
+                                    {
+
+                                        tree_type = read_all.replace("tree_type = ", "");
+
+                                    }
+
+                                } else if (read_all.startsWith("start_height = ") == true) {
+
+                                    {
+
+                                        start_height = Integer.parseInt(read_all.replace("start_height = ", ""));
+
+                                    }
+
+                                }
+
+                            }
+
+                        } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+
+                    }
+
+                }
+
+            }
+
+            // Random Start Height
+            {
+
+                String[] offset_get = start_height_offset.split(" <> ");
+                int offset = Mth.nextInt(RandomSource.create(), Integer.parseInt(offset_get[0]), Integer.parseInt(offset_get[1]));
+                start_height = start_height + offset;
+
+            }
+
             // Calculation
             {
 
@@ -1102,9 +974,9 @@ public class TreeLocation {
 
                 }
 
-                writeLocationFile(dimension, id, center_posX, center_posY, center_posZ);
-                String other_data = original_height + "/" + ground_block + "/" + dead_tree_level;
-                writePlaceFile(dimension, from_chunkX, from_chunkZ, to_chunkX, to_chunkZ, id, chosen, center_posX, center_posY, center_posZ, rotation, mirrored, other_data);
+                writeLocationFile(dimension, id, center_posX, center_posZ);
+                String other_data = tree_type + "/" + start_height + "/" + sizeY + "/" + ground_block + "/" + dead_tree_chance + "/" + dead_tree_level;
+                writePlaceFile(dimension, from_chunkX, from_chunkZ, to_chunkX, to_chunkZ, id, chosen, center_posX, center_posZ, rotation, mirrored, other_data);
 
             }
 
@@ -1112,37 +984,30 @@ public class TreeLocation {
 
     }
 
-    private static void writeLocationFile(String dimension, String id, int center_posX, int center_posY, int center_posZ) {
+    private static void writeLocationFile(String dimension, String id, int center_posX, int center_posZ) {
+
+        StringBuilder write = new StringBuilder();
 
         {
 
-            StringBuilder write = new StringBuilder();
+            write
+                    .append(id)
+                    .append("|")
+                    .append(center_posX)
+                    .append("/")
+                    .append(center_posZ)
+            ;
 
-            {
-
-                write
-                        .append(id)
-                        .append("|")
-                        .append(center_posX)
-                        .append("/")
-                        .append(center_posY)
-                        .append("/")
-                        .append(center_posZ)
-                ;
-
-                write.append("\n");
-
-            }
-
-            String folder = Handcode.directory_world_data + "/tree_locations/" + dimension + "/" + (center_posX >> 9) + "," + (center_posZ >> 9);
-            FileManager.createFolder(folder);
-            FileManager.writeTXT(folder + "/" + FileManager.quardtreeChunkToNode((center_posX >> 4), (center_posZ >> 4)) + ".txt", write.toString(), true);
+            write.append("\n");
 
         }
 
+        String folder = Handcode.directory_world_data + "/tree_locations/" + dimension + "/" + (center_posX >> 9) + "," + (center_posZ >> 9);
+        FileManager.writeTXT(folder + "/" + FileManager.quardtreeChunkToNode((center_posX >> 4), (center_posZ >> 4)) + ".txt", write.toString(), true);
+
     }
 
-    private static void writePlaceFile(String dimension, int from_chunkX, int from_chunkZ, int to_chunkX, int to_chunkZ, String id, File chosen, int center_posX, int center_posY, int center_posZ, String rotation, String mirrored, String other_data) {
+    private static void writePlaceFile(String dimension, int from_chunkX, int from_chunkZ, int to_chunkX, int to_chunkZ, String id, File chosen, int center_posX, int center_posZ, String rotation, String mirrored, String other_data) {
 
         StringBuilder write = new StringBuilder();
 
@@ -1162,8 +1027,6 @@ public class TreeLocation {
                     .append(chosen.getName())
                     .append("|")
                     .append(center_posX)
-                    .append("/")
-                    .append(center_posY)
                     .append("/")
                     .append(center_posZ)
                     .append("|")
