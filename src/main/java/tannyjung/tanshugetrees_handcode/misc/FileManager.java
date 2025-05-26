@@ -41,20 +41,10 @@ public class FileManager {
 
 		{
 
-			int posX = 0;
-			int posY = 0;
-			int posZ = 0;
-
-			try {
-
-				String[] get = pos.split("\\^");
-				posX = Integer.parseInt(get[0]);
-				posY = Integer.parseInt(get[1]);
-				posZ = Integer.parseInt(get[2]);
-
-			} catch (Exception ignored) {
-
-			}
+			String[] get = pos.split("\\^");
+			int posX = Integer.parseInt(get[0]);
+			int posY = Integer.parseInt(get[1]);
+			int posZ = Integer.parseInt(get[2]);
 
 			// Rotation & Mirrored
 			{

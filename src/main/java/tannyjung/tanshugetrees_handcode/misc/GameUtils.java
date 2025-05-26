@@ -238,15 +238,9 @@ public class GameUtils {
 	// Dimension
 	// --------------------------------------------------
 
-	public static String getCurrentDimensionID(LevelAccessor level) {
+	public static String getCurrentDimensionID(ServerLevel world) {
 
-		if (level instanceof ServerLevel world) {
-
-			return world.dimension().location().toString();
-
-		}
-
-		return "";
+		return world.dimension().location().toString();
 
 	}
 
@@ -267,7 +261,9 @@ public class GameUtils {
 
 			return biome.is(TagKey.create(Registries.BIOME, new ResourceLocation(tag)));
 
-		} catch (Exception ignored) {}
+		} catch (Exception ignored) {
+
+		}
 
 		return false;
 
@@ -283,7 +279,9 @@ public class GameUtils {
 
 			return block.is(BlockTags.create(new ResourceLocation(tag)));
 
-		} catch (Exception ignored) {}
+		} catch (Exception ignored) {
+
+		}
 
 		return false;
 
@@ -295,7 +293,9 @@ public class GameUtils {
 
 			return BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), id, true).blockState();
 
-		} catch (Exception ignored) {}
+		} catch (Exception ignored) {
+
+		}
 
 		return Blocks.AIR.defaultBlockState();
 
