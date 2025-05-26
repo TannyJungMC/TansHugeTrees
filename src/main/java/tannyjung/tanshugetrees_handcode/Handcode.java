@@ -43,7 +43,7 @@ public class Handcode {
 	public static String directory_world_data = directory_game + "/saves/tanshugetrees-error";
 	public static String tanny_pack_version_name = ""; // Make this because version can swap to "WIP" by config
 
-	public static int quadtree_level = 2;
+	public static int quadtree_level = 2; // 1 = 16x16 / 2 = 8x8 / 3 = 4x4 / ...
 
 	public Handcode () {}
 
