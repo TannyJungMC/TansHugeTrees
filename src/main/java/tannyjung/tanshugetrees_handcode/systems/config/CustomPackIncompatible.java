@@ -81,7 +81,7 @@ public class CustomPackIncompatible {
                             if (Double.parseDouble(read_all.replace("mod_version = ", "")) != Handcode.mod_version) {
 
                                 incompatible = true;
-                                GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible pack, caused by unsupported mod version. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+                                GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible pack. Caused by unsupported mod version. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
                                 break;
 
                             }
@@ -99,7 +99,7 @@ public class CustomPackIncompatible {
         } else {
 
             incompatible = true;
-            GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible pack, caused by no version file. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+            GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible pack. Caused by no version file. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
 
         }
 
@@ -152,7 +152,7 @@ public class CustomPackIncompatible {
                                 if (GameUtils.textToBlock(id).getBlock() == Blocks.AIR) {
 
                                     incompatible = true;
-                                    GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible tree, caused by unknown block ID. [ " + source.toFile().getParentFile().getName() + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+                                    GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible tree. Caused by unknown block ID. [ " + source.toFile().getParentFile().getName() + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
                                     break;
 
                                 }
@@ -170,7 +170,7 @@ public class CustomPackIncompatible {
         } else {
 
             incompatible = true;
-            GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible tree, caused by no tree settings. [ " + source.toFile().getParentFile().getName() + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+            GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible tree. Caused by no tree settings. [ " + source.toFile().getParentFile().getParentFile().getName() + " > " + source.toFile().getParentFile().getName() + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
 
         }
 
