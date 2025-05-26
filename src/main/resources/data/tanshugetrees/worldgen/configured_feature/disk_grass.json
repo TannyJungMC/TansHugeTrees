@@ -78,19 +78,19 @@
                 "data": {
                   "Name": "minecraft:stone"
                 },
-                "weight": 2
+                "weight": 4
               },
               {
                 "data": {
                   "Name": "minecraft:grass_block"
                 },
-                "weight": 5
+                "weight": 4
               },
               {
                 "data": {
                   "Name": "minecraft:coarse_dirt"
                 },
-                "weight": 3
+                "weight": 2
               }
             ]
           }
@@ -107,19 +107,19 @@
                 "data": {
                   "Name": "minecraft:sand"
                 },
-                "weight": 2
+                "weight": 4
               },
               {
                 "data": {
                   "Name": "minecraft:grass_block"
                 },
-                "weight": 5
+                "weight": 4
               },
               {
                 "data": {
                   "Name": "minecraft:coarse_dirt"
                 },
-                "weight": 3
+                "weight": 2
               }
             ]
           }
@@ -136,19 +136,19 @@
                 "data": {
                   "Name": "minecraft:red_sand"
                 },
-                "weight": 2
+                "weight": 4
               },
               {
                 "data": {
                   "Name": "minecraft:grass_block"
                 },
-                "weight": 5
+                "weight": 4
               },
               {
                 "data": {
                   "Name": "minecraft:coarse_dirt"
                 },
-                "weight": 3
+                "weight": 2
               }
             ]
           }
