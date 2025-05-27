@@ -46,8 +46,6 @@ public class TreeLocation {
 
             int chunk_posX = 0;
             int chunk_posZ = 0;
-            int center_posX = 0;
-            int center_posZ = 0;
 
             world_gen_overlay_animation = 4;
             world_gen_overlay_bar = 0;
@@ -102,7 +100,7 @@ public class TreeLocation {
 
                             if (world_gen.hasChunk(chunk_posX, chunk_posZ) == false || (world_gen.hasChunk(chunk_posX, chunk_posZ) == true && world_gen.getChunk(chunk_posX, chunk_posZ).getStatus().isOrAfter(ChunkStatus.FULL)) == false) {
 
-                                getData(world_gen, dimension, center_posX, center_posZ);
+                                getData(world_gen, dimension, chunk_posX, chunk_posZ);
 
                             }
 
@@ -121,7 +119,7 @@ public class TreeLocation {
 
     }
 
-    private static void getData (WorldGenLevel world_gen, String dimension, int center_posX, int center_posZ) {
+    private static void getData (WorldGenLevel world_gen, String dimension, int chunk_posX, int chunk_posZ) {
 
         File file = new File(Handcode.directory_config + "/config_placement.txt");
 
@@ -129,7 +127,10 @@ public class TreeLocation {
 
             boolean start_test = false;
             boolean skip = true;
-            Holder<Biome> biome_center = world_gen.getBiome(new BlockPos(center_posX, world_gen.getMaxBuildHeight(), center_posZ));
+
+            int center_posX = 0;
+            int center_posZ = 0;
+            Holder<Biome> biome_center = null;
 
             String id = "";
             String biome = "";
@@ -143,8 +144,6 @@ public class TreeLocation {
             String start_height_offset = "";
             String rotation = "";
             String mirrored = "";
-
-            world_gen_overlay_details_biome = GameUtils.biomeToBiomeID(biome_center);
 
             // Read Placement Config
             {
@@ -178,9 +177,11 @@ public class TreeLocation {
 
                                             skip = false;
                                             id = read_all.substring(read_all.indexOf("]") + 2).replace(" > ", "/");
-                                            center_posX = center_posX + (int) (Math.random() * 16);
-                                            center_posZ = center_posZ + (int) (Math.random() * 16);
+                                            center_posX = (chunk_posX * 16) + (int) (Math.random() * 16);
+                                            center_posZ = (chunk_posZ * 16) + (int) (Math.random() * 16);
+                                            biome_center = world_gen.getBiome(new BlockPos(center_posX, world_gen.getMaxBuildHeight(), center_posZ));
 
+                                            world_gen_overlay_details_biome = GameUtils.biomeToBiomeID(biome_center);
                                             world_gen_overlay_details_tree = id;
 
                                         }
