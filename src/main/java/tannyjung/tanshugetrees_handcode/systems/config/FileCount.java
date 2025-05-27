@@ -3,131 +3,128 @@ package tannyjung.tanshugetrees_handcode.systems.config;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 import net.minecraft.world.level.LevelAccessor;
+import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 
 import java.io.File;
+import java.nio.file.Files;
 
 public class FileCount {
 
+    private static double file_size = 0.0;
+    private static int count_shape = 0;
+    private static int count_variation = 0;
 
+    public static void start (LevelAccessor level) {
 
+        file_size = 0.0;
+        count_shape = 0;
+        count_variation = 0;
 
-    // --------------------------------------------------
-    // Custom
-    // --------------------------------------------------
+        fileSize();
+        countShape();
+        countVariation();
 
+        file_size = Double.parseDouble(String.format("%.2f", file_size  / (1024.0 * 1024.0)));
 
+        GameUtils.runCommand(level, 0, 0, 0, "tellraw @a [{\"text\":\"There are now \",\"color\":\"white\"},{\"text\":\"" + count_variation + "\",\"color\":\"yellow\"},{\"text\":\" variation of species from all installed packs, and \",\"color\":\"white\"},{\"text\":\"" + count_shape + "\",\"color\":\"yellow\"},{\"text\":\" different shapes in total! Used about \",\"color\":\"white\"},{\"text\":\"" + String.format("%.1f", file_size) + " MB\",\"color\":\"yellow\"},{\"text\":\" of the space.\",\"color\":\"white\"}]");
 
-	// Change to "FMLPaths.GAMEDIR.get().toString();" for game directory
-    static String game_directory = FMLPaths.GAMEDIR.get().toString();
-    
-    static String folder_scan = game_directory + "/config/tanshugetrees/custom_packs";
+    }
 
+    private static void fileSize () {
 
+        File file = new File(Handcode.directory_config + "/custom_packs");
 
-    // --------------------------------------------------
-    // Variables
-    // --------------------------------------------------
+        if (file.exists() == true) {
 
+            {
 
+                try {
 
-    static File directory;
-    static File[] list_pack;
-    static File[] list_tree;
-    static File[] list_file;
+                    Files.walk(file.toPath()).forEach(source -> {
 
-    static int count_tree = 0;
-    static int count_file = 0;
-    static String tree_name = "";
-    static long file_size = 0;
-    static double file_size_mb = 0;
-    
+                        if (source.toFile().isDirectory() == false && source.toString().contains("\\.organized\\") == false) {
 
+                            file_size = file_size + source.toFile().length();
 
-    // --------------------------------------------------
-    // Run System
-    // --------------------------------------------------
+                        }
 
+                    });
 
+                } catch (Exception e) {
 
-    public static void run (LevelAccessor level, double x, double y, double z) {
+                    TanshugetreesMod.LOGGER.error(e.getMessage());
 
+                }
 
+            }
 
-	    count_tree = 0;
-	    count_file = 0;
-	    file_size = 0;
-
-        try {
-            scan_tree();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
 
-
-        file_size_mb = (double) (file_size  / (1024.0 * 1024.0));
-        GameUtils.runCommand(level, 0, 0, 0, "tellraw @a [{\"text\":\"There are now \",\"color\":\"white\"},{\"text\":\"" + count_tree + "\",\"color\":\"yellow\"},{\"text\":\" species in TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + "), and \",\"color\":\"white\"},{\"text\":\"" + count_file + "\",\"color\":\"yellow\"},{\"text\":\" different shapes in total! Used about \",\"color\":\"white\"},{\"text\":\"" + String.format("%.1f", file_size_mb) + " MB\",\"color\":\"yellow\"},{\"text\":\" of your space.\",\"color\":\"white\"}]");
-
     }
 
+    private static void countVariation () {
 
+        File file = new File(Handcode.directory_config + "/custom_packs/.organized/world_gen");
 
-    // ----------------------------------------------------------------------------------------------------
-    // Scan Tree
-    // ----------------------------------------------------------------------------------------------------
+        if (file.exists() == true) {
 
+            {
 
+                try {
 
-    private static void scan_tree () throws Exception {
-        
-        directory = new File(folder_scan + "/TannyJung-Tree-Pack/presets");
-        list_tree = directory.listFiles();
+                    Files.walk(file.toPath()).forEach(source -> {
 
-        if (list_tree != null) {for (int i_tree = 0; i_tree < list_tree.length;) {
+                        if (source.toFile().isDirectory() == false) {
 
-            if (list_tree[i_tree].isDirectory()) {
+                            count_variation = count_variation + 1;
 
-                tree_name = list_tree[i_tree].getName();
+                        }
 
-                count_tree = count_tree + 1;
+                    });
 
-                scan_file();
+                } catch (Exception e) {
+
+                    TanshugetreesMod.LOGGER.error(e.getMessage());
+
+                }
 
             }
 
-            i_tree = i_tree + 1;
-
-        }}
+        }
 
     }
 
+    private static void countShape () {
 
+        File file = new File(Handcode.directory_config + "/custom_packs/");
 
-    // ----------------------------------------------------------------------------------------------------
-    // Scan Storage
-    // ----------------------------------------------------------------------------------------------------
+        if (file.exists() == true) {
 
+            {
 
+                try {
 
-    private static void scan_file () throws Exception {
+                    Files.walk(file.toPath()).forEach(source -> {
 
-        directory = new File(folder_scan + "/TannyJung-Tree-Pack/presets/" + tree_name + "/storage");
-        list_file = directory.listFiles();
+                        if (source.toFile().isDirectory() == false && source.toString().contains("\\.organized\\") == false && source.toString().contains("\\storage\\") == true) {
 
-        if (list_file != null) {for (int i_file = 0; i_file < list_file.length;) {
+                            count_shape = count_shape + 1;
 
-            if (list_file[i_file].isFile() == true) {
+                        }
 
-                count_file = count_file + 1;
+                    });
 
-                file_size = file_size + list_file[i_file].length();
+                } catch (Exception e) {
+
+                    TanshugetreesMod.LOGGER.error(e.getMessage());
+
+                }
 
             }
 
-            i_file = i_file + 1;
-
-        }}
+        }
 
     }
 
