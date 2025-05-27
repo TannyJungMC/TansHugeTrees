@@ -344,7 +344,66 @@ public class TreeLocation {
                                             // If it not skips that tree to the end of test, it will run this.
                                             if (skip == false) {
 
-                                                break;
+                                                // Waterside Detection
+                                                {
+
+                                                    if (testWaterSide(world_gen, center_posX, center_posZ, waterside_chance) == false) {
+
+                                                        return;
+
+                                                    }
+
+                                                }
+
+                                                String tree_data = id + "|" + ground_block + "|" + start_height_offset + "|" + rotation + "|" + mirrored + "|" + dead_tree_chance + "|" + dead_tree_level;
+                                                readTreeFile(world_gen, dimension, tree_data, center_posX, center_posZ);
+
+                                                // Group Spawning
+                                                {
+
+                                                    if (group_size > 1) {
+
+                                                        while (group_size > 0) {
+
+                                                            group_size = group_size - 1;
+                                                            center_posX = center_posX + Mth.nextInt(RandomSource.create(), -(min_distance + 1), (min_distance + 1));
+                                                            center_posZ = center_posZ + Mth.nextInt(RandomSource.create(), -(min_distance + 1), (min_distance + 1));
+
+                                                            // Biome
+                                                            {
+
+                                                                biome_center = world_gen.getBiome(new BlockPos(center_posX, world_gen.getMaxBuildHeight(), center_posZ));
+
+                                                                if (testBiome(biome_center, biome) == false) {
+
+                                                                    continue;
+
+                                                                }
+
+                                                            }
+
+                                                            // Min Distance
+                                                            {
+
+                                                                if (min_distance > 0) {
+
+                                                                    if (testDistance(dimension, id, center_posX, center_posZ, min_distance) == false) {
+
+                                                                        continue;
+
+                                                                    }
+
+                                                                }
+
+                                                            }
+
+                                                            readTreeFile(world_gen, dimension, tree_data, center_posX, center_posZ);
+
+                                                        }
+
+                                                    }
+
+                                                }
 
                                             }
 
@@ -361,71 +420,6 @@ public class TreeLocation {
                     }
 
                 } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
-
-            }
-
-            if (skip == false) {
-
-                // Waterside Detection
-                {
-
-                    if (testWaterSide(world_gen, center_posX, center_posZ, waterside_chance) == false) {
-
-                        return;
-
-                    }
-
-                }
-
-                String tree_data = id + "|" + ground_block + "|" + start_height_offset + "|" + rotation + "|" + mirrored + "|" + dead_tree_chance + "|" + dead_tree_level;
-                readTreeFile(world_gen, dimension, tree_data, center_posX, center_posZ);
-
-                // Group Spawning
-                {
-
-                    if (group_size > 1) {
-
-                        while (group_size > 0) {
-
-                            group_size = group_size - 1;
-                            center_posX = center_posX + Mth.nextInt(RandomSource.create(), -(min_distance + 1), (min_distance + 1));
-                            center_posZ = center_posZ + Mth.nextInt(RandomSource.create(), -(min_distance + 1), (min_distance + 1));
-
-                            // Biome
-                            {
-
-                                biome_center = world_gen.getBiome(new BlockPos(center_posX, world_gen.getMaxBuildHeight(), center_posZ));
-
-                                if (testBiome(biome_center, biome) == false) {
-
-                                    continue;
-
-                                }
-
-                            }
-
-                            // Min Distance
-                            {
-
-                                if (min_distance > 0) {
-
-                                    if (testDistance(dimension, id, center_posX, center_posZ, min_distance) == false) {
-
-                                        continue;
-
-                                    }
-
-                                }
-
-                            }
-
-                            readTreeFile(world_gen, dimension, tree_data, center_posX, center_posZ);
-
-                        }
-
-                    }
-
-                }
 
             }
 
@@ -755,6 +749,7 @@ public class TreeLocation {
             int sizeY = 0;
             int sizeZ = 0;
             int center_sizeX = 0;
+            int center_sizeY = 0;
             int center_sizeZ = 0;
 
             // Get Size
@@ -790,6 +785,10 @@ public class TreeLocation {
 
                                         center_sizeX = Integer.parseInt(read_all.replace("center_sizeX = ", ""));
 
+                                    } else if (read_all.startsWith("center_sizeY = ")) {
+
+                                        center_sizeY = Integer.parseInt(read_all.replace("center_sizeY = ", ""));
+
                                     } else if (read_all.startsWith("center_sizeZ = ")) {
 
                                         center_sizeZ = Integer.parseInt(read_all.replace("center_sizeZ = ", ""));
@@ -807,6 +806,8 @@ public class TreeLocation {
                 } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
             }
+
+            sizeY = sizeY - center_sizeY;
 
             // Rotation & Mirrored
             {
