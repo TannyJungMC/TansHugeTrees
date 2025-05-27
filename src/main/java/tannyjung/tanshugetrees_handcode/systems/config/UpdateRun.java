@@ -51,7 +51,8 @@ public class UpdateRun {
 
 				if (error.equals("") == false) {
 
-					GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation, please wait or moving around, then try again. For some info, it caused by [ " + error + " ].");
+					GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation, please wait or moving around, then try again.");
+					TanshugetreesMod.LOGGER.error("Error -> " + error);
 
 				} else {
 
@@ -61,7 +62,7 @@ public class UpdateRun {
 					ConfigMain.apply(level);
 
 					GameUtils.sendChatMessage(level, "@a", "white", "");
-					FileCount.run(level, 0, 0, 0);
+					FileCount.start(level);
 					GameUtils.sendChatMessage(level, "@a", "white", "");
 					PackMessage.run(level);
 
@@ -76,7 +77,7 @@ public class UpdateRun {
 	private static boolean checkModVersion (LevelAccessor level, String url) {
 
 		boolean return_logic = true;
-		double mod_version_url = 0.0;
+		double data_structure_version_url = 0.0;
 
 		// Read URL
 		{
@@ -88,9 +89,9 @@ public class UpdateRun {
 
 				while ((read_all = buffered_reader.readLine()) != null) {
 
-					if (read_all.startsWith("mod_version = ")) {
+					if (read_all.startsWith("data_structure_version = ")) {
 
-						mod_version_url = Double.parseDouble(read_all.replace("mod_version = ", ""));
+						data_structure_version_url = Double.parseDouble(read_all.replace("data_structure_version = ", ""));
 
 					}
 
@@ -105,12 +106,12 @@ public class UpdateRun {
 
         }
 
-		if (Handcode.mod_version > mod_version_url) {
+		if (Handcode.data_structure_version_pack > data_structure_version_url) {
 
 			return_logic = false;
 			GameUtils.sendChatMessage(level, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to available.");
 
-		} else if (Handcode.mod_version < mod_version_url) {
+		} else if (Handcode.data_structure_version_pack < data_structure_version_url) {
 
 			return_logic = false;
 			GameUtils.sendChatMessage(level, "@a", "red", "THT : You're currently using mod version that does not support to new tree pack version, try update the mod and do it again.");

@@ -76,9 +76,9 @@ public class CustomPackIncompatible {
 
                     {
 
-                        if (read_all.startsWith("mod_version = ")) {
+                        if (read_all.startsWith("data_structure_version = ")) {
 
-                            if (Double.parseDouble(read_all.replace("mod_version = ", "")) != Handcode.mod_version) {
+                            if (Double.parseDouble(read_all.replace("data_structure_version = ", "")) != Handcode.data_structure_version_pack) {
 
                                 incompatible = true;
                                 GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible pack. Caused by unsupported mod version. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
@@ -132,7 +132,7 @@ public class CustomPackIncompatible {
 
         }
 
-        File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
+        File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings.replace("[INCOMPATIBLE] ", ""));
 
         if (file.exists() == true && file.isDirectory() == false) {
 

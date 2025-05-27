@@ -54,7 +54,7 @@ public class CheckUpdateRun {
 
 					URL url_convert = new URI(url).toURL();
 					int url_pack_version = 0;
-					double url_mod_version = 0.0;
+					double url_data_structure_version = 0.0;
 					int pack_version = 0;
 
 					// Get Your Version
@@ -83,9 +83,9 @@ public class CheckUpdateRun {
 
 							{
 
-								if (read_all.startsWith("mod_version = ")) {
+								if (read_all.startsWith("data_structure_version = ")) {
 
-									url_mod_version = Double.parseDouble(read_all.replace("mod_version = ", ""));
+									url_data_structure_version = Double.parseDouble(read_all.replace("data_structure_version = ", ""));
 
 								} else if (read_all.startsWith("pack_version = ")) {
 
@@ -105,7 +105,7 @@ public class CheckUpdateRun {
 
 					} else {
 
-						if (Handcode.mod_version <= url_mod_version) {
+						if (Handcode.data_structure_version_pack <= url_data_structure_version) {
 
 							if (ConfigMain.auto_check_update == true) {
 
@@ -138,7 +138,7 @@ public class CheckUpdateRun {
 
 			} else {
 
-				GameUtils.runCommand(level, 0, 0, 0, "tellraw @a [{\"text\":\"THT : Not detected TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") in the custom packs folder. You can manual download and install by follow the guide in \",\"color\":\"gold\"},{\"text\":\"GitHub\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + github + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:air\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + github + "\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/TANSHUGETREES tanny_pack update\"}},{\"text\":\" to let the mod do it.\",\"color\":\"gold\"}]");
+				GameUtils.runCommand(level, 0, 0, 0, "tellraw @a [{\"text\":\"THT : Not detected TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") in the config folder. You can manual install by follow the guide in \",\"color\":\"gold\"},{\"text\":\"GitHub\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + github + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:air\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + github + "\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/TANSHUGETREES tanny_pack update\"}},{\"text\":\" to let the mod do it.\",\"color\":\"gold\"}]");
 
 			}
 
