@@ -102,8 +102,6 @@ public class TreeLocation {
 
                             if (world_gen.hasChunk(chunk_posX, chunk_posZ) == false || (world_gen.hasChunk(chunk_posX, chunk_posZ) == true && world_gen.getChunk(chunk_posX, chunk_posZ).getStatus().isOrAfter(ChunkStatus.FULL)) == false) {
 
-                                center_posX = (chunk_posX * 16) + (int) (Math.random() * 16);
-                                center_posZ = (chunk_posZ * 16) + (int) (Math.random() * 16);
                                 getData(world_gen, dimension, center_posX, center_posZ);
 
                             }
@@ -178,8 +176,10 @@ public class TreeLocation {
 
                                         } else {
 
-                                            id = read_all.substring(read_all.indexOf("]") + 2).replace(" > ", "/");
                                             skip = false;
+                                            id = read_all.substring(read_all.indexOf("]") + 2).replace(" > ", "/");
+                                            center_posX = center_posX + (int) (Math.random() * 16);
+                                            center_posZ = center_posZ + (int) (Math.random() * 16);
 
                                             world_gen_overlay_details_tree = id;
 
