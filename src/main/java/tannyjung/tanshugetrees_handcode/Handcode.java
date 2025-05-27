@@ -21,17 +21,16 @@ import tannyjung.tanshugetrees_handcode.systems.Loop;
 import tannyjung.tanshugetrees_handcode.systems.config.CheckUpdateRun;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigRepairAll;
+import tannyjung.tanshugetrees_handcode.systems.config.FileCount;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDetector;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFeature;
 
 @Mod.EventBusSubscriber
 public class Handcode {
 
-	// Test
-
 	// --------------------------------------------------
 
-	public static double mod_version = 1.2;
+	public static double data_structure_version_pack = 1.2;
 	public static String tanny_pack_version = "Alpha";
 
 	public static boolean version_1192 = false;
