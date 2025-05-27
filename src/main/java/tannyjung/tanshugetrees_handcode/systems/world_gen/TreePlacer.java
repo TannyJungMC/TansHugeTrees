@@ -222,7 +222,7 @@ public class TreePlacer {
                 // Center Chunk Loaded
                 {
 
-                    if (world_gen.hasChunk(center_chunkX, center_chunkZ) == true && world_gen.getChunk(center_chunkX, center_chunkZ).getStatus().isOrAfter(ChunkStatus.CARVERS) == true) {
+                    if (world_gen.hasChunk(center_chunkX, center_chunkZ) == true) {
 
                         center_chunk = world_gen.getChunk(center_chunkX, center_chunkZ);
                         centerY = center_chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, centerX, centerZ);
