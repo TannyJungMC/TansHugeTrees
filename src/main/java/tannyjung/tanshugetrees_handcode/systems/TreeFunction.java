@@ -153,7 +153,7 @@ public class TreeFunction {
 
 												}
 
-												if (level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4) == true && level.getChunk(pos).getStatus().isOrAfter(ChunkStatus.SURFACE) == true) {
+												if (level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4) == true && level.getChunk(pos).getStatus().isOrAfter(ChunkStatus.CARVERS) == true) {
 
 													level.setBlock(new BlockPos(pos), block, 2);
 

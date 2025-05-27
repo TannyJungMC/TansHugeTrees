@@ -141,12 +141,12 @@ public class ConfigMain {
 					| Default is [ true ]
 					
 					surface_smoothness_detection = true
-					| Control the trees to only spawn on flat areas
+					| Control the trees to only spawn on flat areas. Surrounding area detection must be enable to use this feature.
 					| Default is [ true ]
 					
-					surface_smoothness_detection_height = 10
+					surface_smoothness_detection_height = 5
 					| Set height of surface smoothness detection. This value for each up and down. If the detector detects that the surface is rough than this height, it will cancel that tree.
-					| Default is [ 10 ]
+					| Default is [ 5 ]
 					
 					pre_leaf_litter = true
 					pre_leaf_litter_chance = 0.25
