@@ -304,10 +304,10 @@ public class TreePlacer {
 
                             int size = ConfigMain.surrounding_area_detection_size;
                             int height = ConfigMain.surface_smoothness_detection_height;
-                            int pos1 = chunk_generator.getBaseHeight(centerX + size, centerZ + size, Heightmap.Types.WORLD_SURFACE_WG, world_gen, world.getChunkSource().randomState());
-                            int pos2 = chunk_generator.getBaseHeight(centerX + size, centerZ - size, Heightmap.Types.WORLD_SURFACE_WG, world_gen, world.getChunkSource().randomState());
-                            int pos3 = chunk_generator.getBaseHeight(centerX - size, centerZ + size, Heightmap.Types.WORLD_SURFACE_WG, world_gen, world.getChunkSource().randomState());
-                            int pos4 = chunk_generator.getBaseHeight(centerX - size, centerZ - size, Heightmap.Types.WORLD_SURFACE_WG, world_gen, world.getChunkSource().randomState());
+                            int pos1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
+                            int pos2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
+                            int pos3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
+                            int pos4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
 
                             if ((Math.abs(originalY - pos1) > height) || (Math.abs(originalY - pos2) > height) || (Math.abs(originalY - pos3) > height) || (Math.abs(originalY - pos4) > height)) {
 
