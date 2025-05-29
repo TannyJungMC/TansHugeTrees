@@ -32,7 +32,7 @@ public class RandomTreeTickPartCreateBlockConnectorProcedure {
 			}
 			if (world instanceof ServerLevel _level)
 				_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-						("execute as @e[name=THT-tree_part_create_" + entity.getPersistentData().getString("tree_id") + "] at @s run TANSHUGETREES dev random_tree block_connector " + entity.getPersistentData().getString("block_connect_previous")));
+						("execute as @e[name=THT-tree_part_create_" + entity.getPersistentData().getString("tree_id") + "] at @s run TANSHUGETREES dev tree_generator block_connector " + entity.getPersistentData().getString("block_connect_previous")));
 		}
 		if (true) {
 			{
