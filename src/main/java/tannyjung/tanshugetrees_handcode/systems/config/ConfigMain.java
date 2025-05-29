@@ -101,7 +101,7 @@ public class ConfigMain {
 					| Default is [ false ]
 					
 					wip_version = false
-					| Use WIP version instead of release version. It's development version before full version, may contain new trees that still work in progress. Warning that not recommended for game play.
+					| Use WIP version instead of release version. Not recommended for game play, as it might contains new trees that still work in progress, also might needed development version of the mod.
 					| Default is [ false ]
 					
 					----------------------------------------------------------------------------------------------------
@@ -132,9 +132,9 @@ public class ConfigMain {
 					| ###
 					| Default is [ true ]
 					
-					surrounding_area_detection_size = 10
+					surrounding_area_detection_size = 8
 					| Set size of the detectors, for all detectors at 8 directions.
-					| Default is [ 10 ]
+					| Default is [ 8 ]
 					
 					waterside_detection = true
 					| ###
@@ -144,9 +144,9 @@ public class ConfigMain {
 					| Control the trees to only spawn on flat areas. Surrounding area detection must be enable to use this feature.
 					| Default is [ true ]
 					
-					surface_smoothness_detection_height = 5
+					surface_smoothness_detection_height = 8
 					| Set height of surface smoothness detection. This value for each up and down. If the detector detects that the surface is rough than this height, it will cancel that tree.
-					| Default is [ 5 ]
+					| Default is [ 8 ]
 					
 					pre_leaf_litter = true
 					pre_leaf_litter_chance = 0.25
