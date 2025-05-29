@@ -44,7 +44,7 @@
           }
         ]
       },
-      "path": "~/Random Tree"
+      "path": "~/Tree Generator"
     },
     {
       "name": "RandomTreeBlock",
@@ -97,7 +97,7 @@
           }
         ]
       },
-      "path": "~/Random Tree"
+      "path": "~/Tree Generator"
     },
     {
       "name": "RandomTreeTickPartCreate",
@@ -132,7 +132,7 @@
           }
         ]
       },
-      "path": "~/Random Tree"
+      "path": "~/Tree Generator"
     },
     {
       "name": "TxtFunction",
@@ -269,7 +269,7 @@
           }
         ]
       },
-      "path": "~/Random Tree"
+      "path": "~/Tree Generator"
     },
     {
       "name": "RandomTreeTickCreate",
@@ -304,7 +304,7 @@
           }
         ]
       },
-      "path": "~/Random Tree"
+      "path": "~/Tree Generator"
     },
     {
       "name": "RandomTreeTickWayFunction",
@@ -327,7 +327,7 @@
           }
         ]
       },
-      "path": "~/Random Tree"
+      "path": "~/Tree Generator"
     },
     {
       "name": "RandomTreeTickPartCreateCoreTest",
@@ -346,7 +346,7 @@
           }
         ]
       },
-      "path": "~/Random Tree"
+      "path": "~/Tree Generator"
     },
     {
       "name": "AutoGenStart",
@@ -462,7 +462,7 @@
           }
         ]
       },
-      "path": "~/Random Tree"
+      "path": "~/Tree Generator"
     },
     {
       "name": "BlockPlacerTick",
@@ -493,7 +493,7 @@
           }
         ]
       },
-      "path": "~/Random Tree"
+      "path": "~/Tree Generator"
     },
     {
       "name": "AutoGenWhenTreeStart",
@@ -997,7 +997,7 @@
           "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_taproot_outer.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerTaprootInner",
@@ -1015,7 +1015,7 @@
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerTaprootInnerBlockEntity.java"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerTaprootCore",
@@ -1033,7 +1033,7 @@
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_taproot_core.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerSecondaryRootCore",
@@ -1051,7 +1051,7 @@
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_secondary_root_core.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerSecondaryRootInner",
@@ -1069,7 +1069,7 @@
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerSecondaryRootInnerBlockEntity.java"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerSecondaryRootOuter",
@@ -1087,7 +1087,7 @@
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_secondary_root_outer.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerTertiaryRootCore",
@@ -1105,7 +1105,7 @@
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_tertiary_root_core.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerTertiaryRootInner",
@@ -1123,7 +1123,7 @@
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_tertiary_root_inner.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerTertiaryRootOuter",
@@ -1141,7 +1141,7 @@
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerTertiaryRootOuterBlock.java"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerFineRootCore",
@@ -1159,7 +1159,7 @@
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_fine_root_core.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerFineRootInner",
@@ -1177,7 +1177,7 @@
           "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_fine_root_inner.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerFineRootOuter",
@@ -1195,7 +1195,7 @@
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_fine_root_outer.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerTrunkCore",
@@ -1213,7 +1213,7 @@
           "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_trunk_core.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerTrunkInner",
@@ -1231,7 +1231,7 @@
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_trunk_inner.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerTrunkOuter",
@@ -1249,7 +1249,7 @@
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerTrunkOuterBlockEntity.java"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerBranchCore",
@@ -1267,7 +1267,7 @@
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_branch_core.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerBranchInner",
@@ -1285,7 +1285,7 @@
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_branch_inner.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerBranchOuter",
@@ -1303,7 +1303,7 @@
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_branch_outer.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerTwigCore",
@@ -1321,7 +1321,7 @@
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_twig_core.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerTwigInner",
@@ -1339,7 +1339,7 @@
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_twig_inner.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerTwigOuter",
@@ -1357,7 +1357,7 @@
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_twig_outer.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerLeaves",
@@ -1375,7 +1375,7 @@
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_leaves.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerLeaves2",
@@ -1393,7 +1393,7 @@
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerLeaves2Block.java"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerLeavesTwigCore",
@@ -1411,7 +1411,7 @@
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_leaves_twig_core.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerLeavesTwigInner",
@@ -1429,7 +1429,7 @@
           "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_leaves_twig_inner.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "BlockPlacerLeavesTwigOuter",
@@ -1447,7 +1447,7 @@
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_leaves_twig_outer.json"
         ]
       },
-      "path": "~/Random Tree/Block Placer"
+      "path": "~/Tree Generator/Block Placer"
     },
     {
       "name": "PresetFixer",
@@ -1550,7 +1550,7 @@
           }
         ]
       },
-      "path": "~/Random Tree"
+      "path": "~/Tree Generator"
     },
     {
       "name": "RandomTreeTickPartCreateBlockConnectorTest",
@@ -1573,7 +1573,7 @@
           }
         ]
       },
-      "path": "~/Random Tree"
+      "path": "~/Tree Generator"
     },
     {
       "name": "GiantPumpkin",
@@ -1772,7 +1772,7 @@
           }
         ]
       },
-      "path": "~/Random Tree"
+      "path": "~/Tree Generator"
     },
     {
       "name": "COMMAND",
@@ -2273,17 +2273,52 @@
       "path": "~/. Other/Overlay"
     },
     {
-      "name": "COMMANDRandomTree",
+      "name": "COMMANDTreeGenerator",
       "type": "command",
       "compiles": true,
       "locked_code": false,
-      "registry_name": "command_random_tree",
+      "registry_name": "command_tree_generator",
       "metadata": {
         "files": [
-          "src/main/java/tannyjung/tanshugetrees/command/COMMANDRandomTreeCommand.java"
+          "src/main/java/tannyjung/tanshugetrees/command/COMMANDTreeGeneratorCommand.java"
         ]
       },
-      "path": "~/Random Tree"
+      "path": "~/Tree Generator"
+    },
+    {
+      "name": "COMMANDTreeGeneratorLoopTick",
+      "type": "procedure",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "command_tree_generator_loop_tick",
+      "metadata": {
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDTreeGeneratorLoopTickProcedure.java"
+        ],
+        "dependencies": [
+          {
+            "name": "entity",
+            "type": "entity"
+          },
+          {
+            "name": "x",
+            "type": "number"
+          },
+          {
+            "name": "y",
+            "type": "number"
+          },
+          {
+            "name": "z",
+            "type": "number"
+          },
+          {
+            "name": "world",
+            "type": "world"
+          }
+        ]
+      },
+      "path": "~/Tree Generator"
     }
   ],
   "variable_elements": [
@@ -3044,7 +3079,7 @@
     "name": "~",
     "children": [
       {
-        "name": "Random Tree",
+        "name": "Tree Generator",
         "children": [
           {
             "name": "Block Placer",
@@ -3095,7 +3130,7 @@
   "workspaceSettings": {
     "modid": "tanshugetrees",
     "modName": "Tan\u0027s Huge Trees",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "description": "Generate trees and nature stuffs around the world",
     "author": "TannyJung",
     "websiteURL": "https://legacy.curseforge.com/minecraft/mc-mods/tans-huge-trees",
