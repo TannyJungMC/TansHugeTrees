@@ -152,7 +152,7 @@ public class CustomPackIncompatible {
                                 if (GameUtils.textToBlock(id).getBlock() == Blocks.AIR) {
 
                                     incompatible = true;
-                                    GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible tree. Caused by unknown block ID. [ " + source.toFile().getParentFile().getName() + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+                                    TanshugetreesMod.LOGGER.error("Detected incompatible tree. Caused by unknown block ID. [ " + source.toFile().getParentFile().getName() + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
                                     break;
 
                                 }
@@ -170,7 +170,7 @@ public class CustomPackIncompatible {
         } else {
 
             incompatible = true;
-            GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible tree. Caused by no tree settings. [ " + source.toFile().getParentFile().getParentFile().getName() + " > " + source.toFile().getParentFile().getName() + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+            TanshugetreesMod.LOGGER.error("Detected incompatible tree. Caused by no tree settings. [ " + source.toFile().getParentFile().getParentFile().getName() + " > " + source.toFile().getParentFile().getName() + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
 
         }
 
