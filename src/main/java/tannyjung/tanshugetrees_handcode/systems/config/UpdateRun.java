@@ -51,7 +51,7 @@ public class UpdateRun {
 
 				if (error.equals("") == false) {
 
-					GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation, please wait or moving around, then try again.");
+					GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 					TanshugetreesMod.LOGGER.error("Error -> " + error);
 
 				} else {
