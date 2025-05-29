@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -13,8 +13,6 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraftforge.registries.ForgeRegistries;
 import tannyjung.tanshugetrees_handcode.misc.FileManager;
@@ -33,13 +31,7 @@ import java.util.Map;
 
 public class TreePlacer {
 
-    public static void run (FeaturePlaceContext<NoneFeatureConfiguration> context) {
-
-        WorldGenLevel world_gen = context.level();
-        ServerLevel world = context.level().getLevel();
-        ChunkGenerator chunk_generator = context.chunkGenerator();
-        ChunkPos chunk_pos = new ChunkPos(context.origin().getX() >> 4, context.origin().getZ() >> 4);
-        String dimension = GameUtils.getCurrentDimensionID(world).replace(":", "-");
+    public static void run (LevelAccessor level, ServerLevel world, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos) {
 
         // Read To Get Tree(s)
         {
@@ -54,8 +46,8 @@ public class TreePlacer {
                 String id = "";
                 String chosen = "";
                 String[] center_pos = null;
-                int centerX = 0;
-                int centerZ = 0;
+                int center_posX = 0;
+                int center_posZ = 0;
                 String[] rotation_mirrored = null;
                 int rotation = 0;
                 boolean mirrored = false;
@@ -102,8 +94,8 @@ public class TreePlacer {
                                             chosen = array_text[2];
 
                                             center_pos = array_text[3].split("/");
-                                            centerX = Integer.parseInt(center_pos[0]);
-                                            centerZ = Integer.parseInt(center_pos[1]);
+                                            center_posX = Integer.parseInt(center_pos[0]);
+                                            center_posZ = Integer.parseInt(center_pos[1]);
                                             rotation_mirrored = array_text[4].split("/");
                                             rotation = Integer.parseInt(rotation_mirrored[0]);
                                             mirrored = Boolean.parseBoolean(rotation_mirrored[1]);
@@ -118,7 +110,7 @@ public class TreePlacer {
 
                                     }
 
-                                    testing(world_gen, world, chunk_generator, dimension, chunk_pos, from_to_chunk, id, chosen, centerX, centerZ, rotation, mirrored, other_data);
+                                    testing(level, world, chunk_generator, dimension, chunk_pos, from_to_chunk, id, chosen, center_posX, center_posZ, rotation, mirrored, other_data);
 
                                 }
 
@@ -136,11 +128,11 @@ public class TreePlacer {
 
     }
 
-    private static void testing (WorldGenLevel world_gen, ServerLevel world, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos, int[] from_to_chunk, String id, String chosen, int centerX, int centerZ, int rotation, boolean mirrored, String[] other_data) {
+    private static void testing (LevelAccessor level, ServerLevel world, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos, int[] from_to_chunk, String id, String chosen, int center_posX, int center_posZ, int rotation, boolean mirrored, String[] other_data) {
 
         boolean already_tested = false;
         boolean pass = true;
-        int centerY = 0;
+        int center_posY = 0;
         int dead_tree_level = 0;
 
         // Already Tested
@@ -158,7 +150,7 @@ public class TreePlacer {
 
                         {
 
-                            if (read_all.startsWith(id + "|" + centerX + "/" + centerZ + "|") == true) {
+                            if (read_all.startsWith(id + "|" + center_posX + "/" + center_posZ + "|") == true) {
 
                                 already_tested = true;
 
@@ -166,7 +158,7 @@ public class TreePlacer {
 
                                     get = read_all.split("\\|");
                                     pass = Boolean.parseBoolean(get[2]);
-                                    centerY = Integer.parseInt(get[3]);
+                                    center_posY = Integer.parseInt(get[3]);
                                     dead_tree_level = Integer.parseInt(get[4]);
 
                                 } catch (Exception e) {
@@ -214,40 +206,24 @@ public class TreePlacer {
 
                 }
 
-                ChunkAccess center_chunk = null;
-                int center_chunkX = centerX >> 4;
-                int center_chunkZ = centerZ >> 4;
-                int originalY = chunk_generator.getBaseHeight(centerX, centerZ, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
-
-                // Center Chunk Loaded
-                {
-
-                    if (world_gen.hasChunk(center_chunkX, center_chunkZ) == true) {
-
-                        center_chunk = world_gen.getChunk(center_chunkX, center_chunkZ);
-                        centerY = center_chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, centerX, centerZ);
-
-                    } else {
-
-                        centerY = originalY;
-
-                    }
-
-                }
-
-                centerY = centerY + start_height;
+                int center_chunkX = center_posX >> 4;
+                int center_chunkZ = center_posZ >> 4;
+                int originalY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
+                center_posY = originalY;
 
                 test:
                 {
 
-                    if (center_chunk != null) {
+                    if (level.hasChunk(center_chunkX, center_chunkZ) == true) {
 
-                        // Structure Area
-                        {
+                        ChunkAccess chunk = level.getChunk(center_chunkX, center_chunkZ);
 
-                            if (center_chunk.getStatus().isOrAfter(ChunkStatus.STRUCTURE_REFERENCES) == true) {
+                        if (chunk.getStatus().isOrAfter(ChunkStatus.STRUCTURE_REFERENCES) == true) {
 
-                                Structure[] structures = center_chunk.getAllReferences().keySet().toArray(new Structure[0]);
+                            // Structure Area
+                            {
+
+                                Structure[] structures = chunk.getAllReferences().keySet().toArray(new Structure[0]);
 
                                 for (Structure structure : structures) {
 
@@ -267,12 +243,12 @@ public class TreePlacer {
 
                         }
 
-                        // Ground Block
-                        {
+                        if (chunk.getStatus().isOrAfter(ChunkStatus.CARVERS) == true) {
 
-                            if (center_chunk.getStatus().isOrAfter(ChunkStatus.CARVERS) == true) {
+                            // Ground Block
+                            {
 
-                                if (GameUtils.isBlockTaggedAs(center_chunk.getBlockState(new BlockPos(centerX, originalY, centerZ)), "tanshugetrees:passable_blocks") == true && testGroundBlock(center_chunk.getBlockState(new BlockPos(centerX, originalY - 1, centerZ)), ground_block) == false) {
+                                if (GameUtils.isBlockTaggedAs(chunk.getBlockState(new BlockPos(center_posX, originalY, center_posZ)), "tanshugetrees:passable_blocks") == true && testGroundBlock(chunk.getBlockState(new BlockPos(center_posX, originalY - 1, center_posZ)), ground_block) == false) {
 
                                     pass = false;
                                     break test;
@@ -281,14 +257,23 @@ public class TreePlacer {
 
                             }
 
+                            // Get Y Level
+                            {
+
+                                center_posY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, center_posX, center_posZ);
+
+                            }
+
                         }
 
                     }
 
+                    center_posY = center_posY + start_height;
+
                     // World Height
                     {
 
-                        if (centerY + sizeY > world_gen.getMaxBuildHeight()) {
+                        if (center_posY + sizeY > level.getMaxBuildHeight()) {
 
                             pass = false;
                             break test;
@@ -304,10 +289,10 @@ public class TreePlacer {
 
                             int size = ConfigMain.surrounding_area_detection_size;
                             int height = ConfigMain.surface_smoothness_detection_height;
-                            int pos1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
-                            int pos2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
-                            int pos3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
-                            int pos4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, world_gen, world.getChunkSource().randomState());
+                            int pos1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
+                            int pos2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
+                            int pos3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
+                            int pos4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, level, world.getChunkSource().randomState());
 
                             if ((Math.abs(originalY - pos1) > height) || (Math.abs(originalY - pos2) > height) || (Math.abs(originalY - pos3) > height) || (Math.abs(originalY - pos4) > height)) {
 
@@ -331,7 +316,7 @@ public class TreePlacer {
 
                             } else {
 
-                                int highestY = chunk_generator.getBaseHeight(centerX, centerZ, Heightmap.Types.WORLD_SURFACE_WG, world_gen, world.getChunkSource().randomState());
+                                int highestY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.WORLD_SURFACE_WG, level, world.getChunkSource().randomState());
 
                                 if ((tree_type.equals("land") == true && (originalY == highestY)) || (tree_type.equals("water") == true && (originalY < highestY))) {
 
@@ -361,13 +346,13 @@ public class TreePlacer {
                         write
                                 .append(id)
                                 .append("|")
-                                .append(centerX)
+                                .append(center_posX)
                                 .append("/")
-                                .append(centerZ)
+                                .append(center_posZ)
                                 .append("|")
                                 .append(pass)
                                 .append("|")
-                                .append(centerY)
+                                .append(center_posY)
                                 .append("|")
                                 .append(dead_tree_level)
                         ;
@@ -398,7 +383,7 @@ public class TreePlacer {
 
         if (pass == true) {
 
-            getData(world_gen, world, chunk_pos, id, chosen, centerX, centerY, centerZ, rotation, mirrored, dead_tree_level);
+            getData(level, world, chunk_pos, id, chosen, center_posX, center_posY, center_posZ, rotation, mirrored, dead_tree_level);
 
         }
 
@@ -468,7 +453,7 @@ public class TreePlacer {
 
     }
 
-    private static void getData (WorldGenLevel world_gen, ServerLevel world, ChunkPos chunk_pos, String id, String chosen, int centerX, int centerY, int centerZ, int rotation, boolean mirrored, int dead_tree_level) {
+    private static void getData (LevelAccessor level, ServerLevel world, ChunkPos chunk_pos, String id, String chosen, int center_posX, int center_posY, int center_posZ, int rotation, boolean mirrored, int dead_tree_level) {
 
         String storage_directory = "";
         String tree_settings = "";
@@ -640,30 +625,25 @@ public class TreePlacer {
                     // Get Trunk Count
                     {
 
-                        try {
-                            BufferedReader buffered_reader = new BufferedReader(new FileReader(file));
-                            String read_all = "";
-                            while ((read_all = buffered_reader.readLine()) != null) {
+                        try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-                                {
+                            {
 
-                                    if (skip == false) {
+                                if (skip == false) {
 
-                                        if (read_all.equals("--------------------------------------------------")) {
+                                    if (read_all.equals("--------------------------------------------------")) {
 
-                                            skip = true;
+                                        skip = true;
 
-                                        }
+                                    }
 
-                                    } else {
+                                } else {
 
-                                        if (read_all.startsWith("+b")) {
+                                    if (read_all.startsWith("+b")) {
 
-                                            if (read_all.substring(read_all.length() - 3, read_all.length() - 1).equals("tr") == true) {
+                                        if (read_all.substring(read_all.length() - 3, read_all.length() - 1).equals("tr") == true) {
 
-                                                trunk_count = trunk_count + 1;
-
-                                            }
+                                            trunk_count = trunk_count + 1;
 
                                         }
 
@@ -672,20 +652,18 @@ public class TreePlacer {
                                 }
 
                             }
-                            buffered_reader.close();
-                        } catch (Exception e) {
-                            TanshugetreesMod.LOGGER.error(e.getMessage());
-                        }
+
+                        } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
 
                     }
 
                     if (dead_tree_level >= 6) {
 
-                        trunk_count = (int) (Mth.nextDouble(RandomSource.create(), 0.1, 0.5) * trunk_count);
+                        trunk_count = (int) (Mth.nextDouble(RandomSource.create(center_posX + center_posY + center_posZ), 0.1, 0.5) * trunk_count);
 
                     } else {
 
-                        trunk_count = (int) (Mth.nextDouble(RandomSource.create(), 0.5, 1) * trunk_count);
+                        trunk_count = (int) (Mth.nextDouble(RandomSource.create(center_posX + center_posY + center_posZ), 0.5, 1) * trunk_count);
 
                     }
 
@@ -707,7 +685,7 @@ public class TreePlacer {
             int testY = 0;
             int testZ = 0;
 
-            boolean in_snowy_biome = GameUtils.isBiomeTaggedAs(world_gen.getBiome(new BlockPos(centerX, centerY, centerZ)), "forge:is_snowy");
+            boolean in_snowy_biome = GameUtils.isBiomeTaggedAs(level.getBiome(new BlockPos(center_posX, center_posY, center_posZ)), "forge:is_snowy");
             boolean can_run_function = false;
             BlockState block = Blocks.AIR.defaultBlockState();
             BlockPos pos = null;
@@ -860,9 +838,9 @@ public class TreePlacer {
                                 get_pos_array = FileManager.textPosConverter(get_pos, rotation, mirrored);
 
                                 // Apply Block Pos With Real Pos
-                                testX = centerX + get_pos_array[0];
-                                testY = centerY + get_pos_array[1];
-                                testZ = centerZ + get_pos_array[2];
+                                testX = center_posX + get_pos_array[0];
+                                testY = center_posY + get_pos_array[1];
+                                testZ = center_posZ + get_pos_array[2];
 
                             }
 
@@ -878,7 +856,7 @@ public class TreePlacer {
 
                                         get = get.replace(" keep", "");
 
-                                        if (GameUtils.isBlockTaggedAs(world_gen.getBlockState(pos), "tanshugetrees:passable_blocks") == false || world_gen.isWaterAt(pos) == true) {
+                                        if (GameUtils.isBlockTaggedAs(level.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level.isWaterAt(pos) == true) {
 
                                             continue;
 
@@ -924,11 +902,11 @@ public class TreePlacer {
 
                                                             if (Math.random() < pre_leaf_litter_chance) {
 
-                                                                height_motion_block = world_gen.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, testX, testZ);
+                                                                height_motion_block = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, testX, testZ);
 
                                                                 if (height_motion_block < testY) {
 
-                                                                    LeafLitter.run(world_gen, testX, height_motion_block, testZ, block, false);
+                                                                    LeafLitter.run(level, testX, height_motion_block, testZ, block, false);
 
                                                                 }
 
@@ -964,7 +942,7 @@ public class TreePlacer {
                                             // Automatic Waterlogged
                                             {
 
-                                                if (world_gen.isWaterAt(pos) == true) {
+                                                if (level.isWaterAt(pos) == true) {
 
                                                     block = GameUtils.blockPropertyBooleanSet(block, "waterlogged", true);
 
@@ -972,7 +950,7 @@ public class TreePlacer {
 
                                             }
 
-                                            world_gen.setBlock(pos, block, 2);
+                                            level.setBlock(pos, block, 2);
                                             can_run_function = true;
 
                                         }
@@ -993,7 +971,7 @@ public class TreePlacer {
                                                     if (read_all.equals("+b0^0^0tro") == true) {
 
                                                         marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
-                                                        GameUtils.runCommand(world, centerX + 0.5, centerY + 0.5, centerZ + 0.5, GameUtils.summonEntity("marker", "tree_location", id, "white", marker_data));
+                                                        GameUtils.runCommand(world, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.summonEntity("marker", "tree_location", id, "white", marker_data));
 
                                                     }
 
@@ -1013,7 +991,7 @@ public class TreePlacer {
                                         // Separate like this because start and end function doesn't need to test "can_run_function"
                                         if (can_run_function == true || get_short.equals("fs") == true || get_short.equals("fe") == true) {
 
-                                            TreeFunction.run(world_gen, get, testX, testY, testZ);
+                                            TreeFunction.run(level, get, testX, testY, testZ);
 
                                         }
 
