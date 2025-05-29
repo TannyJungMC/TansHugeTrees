@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems.random_tree;
+package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -8,7 +8,7 @@ import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
 
-public class RandomTreeLoopTick {
+public class TreeGeneratorLoopTick {
 
     public static void run (LevelAccessor level, Entity entity) {
 
