@@ -1,11 +1,23 @@
 package tannyjung.tanshugetrees_handcode;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.level.ChunkDataEvent;
+import net.minecraftforge.event.level.ChunkEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerLifecycleEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -23,6 +35,9 @@ import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigRepairAll;
 import tannyjung.tanshugetrees_handcode.systems.config.FileCount;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDetector;
+import tannyjung.tanshugetrees_handcode.systems.world_gen.DataFolderCleaner;
+import tannyjung.tanshugetrees_handcode.systems.world_gen.TreeLocation;
+import tannyjung.tanshugetrees_handcode.systems.world_gen.TreePlacer;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFeature;
 
 @Mod.EventBusSubscriber
@@ -30,7 +45,7 @@ public class Handcode {
 
 	// --------------------------------------------------
 
-	public static double data_structure_version_pack = 1.2;
+	public static double data_structure_version_pack = 1.3;
 	public static String tanny_pack_version = "Alpha";
 
 	public static boolean version_1192 = false;
