@@ -1,16 +1,12 @@
 package tannyjung.tanshugetrees_handcode.systems;
 
-import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraftforge.fml.ModList;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees.procedures.AutoGenLoopTickProcedure;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
-import tannyjung.tanshugetrees_handcode.systems.random_tree.RandomTreeLoopTick;
 
 public class Loop {
 
@@ -49,31 +45,43 @@ public class Loop {
 
     private static void tick (LevelAccessor level) {
 
-        if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
-
-            GameUtils.runCommand(level, 0, 0, 0, "execute in tanshugetrees:dimension if entity @e[name=THT-random_tree] positioned 0 0 0 as @e[name=THT-random_tree,limit=1,distance=..1000] at @s run TANSHUGETREES dev random_tree run");
-
-        }
-
-        // Random Tree
+        // Tree Generator
         {
 
             if (GameUtils.commandResult(level, 0, 0, 0, "execute if entity @e[name=THT-random_tree]") == true) {
 
-                if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == false && ConfigMain.global_speed > 0) {
+                if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == false) {
 
-                    StringBuilder custom = new StringBuilder();
+                    // From Saplings
+                    {
 
-                    if (ConfigMain.count_limit > 0) {
+                        if (ConfigMain.global_speed > 0) {
 
-                        custom
-                                .append(",sort=nearest,limit=")
-                                .append(ConfigMain.count_limit)
-                        ;
+                            StringBuilder custom = new StringBuilder();
+
+                            if (ConfigMain.count_limit > 0) {
+
+                                custom
+                                        .append(",sort=nearest,limit=")
+                                        .append(ConfigMain.count_limit)
+                                ;
+
+                            }
+
+                            GameUtils.runCommand(level, 0, 0, 0, "execute at @p as @e[name=THT-random_tree" + custom + "] at @s run TANSHUGETREES dev tree_generator loop_tick");
+
+                        }
 
                     }
 
-                    GameUtils.runCommand(level, 0, 0, 0, "execute at @p as @e[name=THT-random_tree" + custom + "] at @s run TANSHUGETREES dev random_tree loop_tick");
+                } else {
+
+                    // From Converter
+                    {
+
+                        GameUtils.runCommand(level, 0, 0, 0, "execute at @p in tanshugetrees:dimension positioned 0 0 0 as @e[name=THT-random_tree,limit=1,sort=nearest] at @s run TANSHUGETREES dev tree_generator loop_tick");
+
+                    }
 
                 }
 
