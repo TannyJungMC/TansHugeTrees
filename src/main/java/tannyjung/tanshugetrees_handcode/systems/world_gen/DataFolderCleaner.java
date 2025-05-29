@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.systems.world_gen;
 
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import tannyjung.tanshugetrees.TanshugetreesMod;
@@ -13,13 +14,10 @@ import java.io.FileReader;
 
 public class DataFolderCleaner {
 
-    public static void run (FeaturePlaceContext<NoneFeatureConfiguration> context) {
+    public static void run (String dimension, ChunkPos chunk_pos) {
 
-        int chunk_posX = context.origin().getX() >> 4;
-        int chunk_posZ = context.origin().getZ() >> 4;
-        String dimension = GameUtils.getCurrentDimensionID(context.level().getLevel()).replace(":", "-");
-        String region = (chunk_posX >> 5) + "," + (chunk_posZ >> 5);
-        String node = FileManager.quardtreeChunkToNode(chunk_posX, chunk_posZ);
+        String region = (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5);
+        String node = FileManager.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z);
         String file_path = dimension + "/" + region + "/" + node + ".txt";
 
         boolean full_node = false;
