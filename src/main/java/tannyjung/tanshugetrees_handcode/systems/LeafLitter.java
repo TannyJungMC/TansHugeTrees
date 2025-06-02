@@ -4,10 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkAccess;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.misc.GameUtils;
+import tannyjung.misc.GameUtils;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
 
 import java.io.BufferedReader;
@@ -16,7 +15,7 @@ import java.io.FileReader;
 
 public class LeafLitter {
 
-    public static void run (LevelAccessor level, int posX, int posY, int posZ, BlockState block, boolean remove) {
+    public static void start (LevelAccessor level, int posX, int posY, int posZ, BlockState block, boolean remove) {
 
         File file = new File(Handcode.directory_config + "/custom_packs/.organized/leaf_litter/" + GameUtils.blockToTextID(block).replace(":", "-") + ".txt");
 

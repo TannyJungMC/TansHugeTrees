@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.misc.GameUtils;
+import tannyjung.misc.GameUtils;
 ;
 
 import java.io.BufferedReader;
@@ -21,7 +21,7 @@ import java.io.FileReader;
 
 public class TreeFunction {
 
-	public static void run (LevelAccessor level, String path, int posX, int posY, int posZ) {
+	public static void start (LevelAccessor level, String path, int posX, int posY, int posZ) {
 
 		File file = new File(Handcode.directory_config + "/custom_packs/.organized/functions/" + path);
 
