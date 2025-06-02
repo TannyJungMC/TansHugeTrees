@@ -8,8 +8,8 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.*;
-import tannyjung.tanshugetrees_handcode.misc.FileManager;
-import tannyjung.tanshugetrees_handcode.misc.GameUtils;
+import tannyjung.misc.FileManager;
+import tannyjung.misc.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
@@ -24,7 +24,7 @@ public class TreeLocation {
     public static String world_gen_overlay_details_biome = "";
     public static String world_gen_overlay_details_tree = "";
 
-    public static void run (LevelAccessor level, String dimension, ChunkPos chunk_pos) {
+    public static void start (LevelAccessor level, String dimension, ChunkPos chunk_pos) {
 
         int region_posX = chunk_pos.x >> 5;
         int region_posZ = chunk_pos.z >> 5;

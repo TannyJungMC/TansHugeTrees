@@ -15,8 +15,8 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraftforge.registries.ForgeRegistries;
-import tannyjung.tanshugetrees_handcode.misc.FileManager;
-import tannyjung.tanshugetrees_handcode.misc.GameUtils;
+import tannyjung.misc.FileManager;
+import tannyjung.misc.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class TreePlacer {
 
-    public static void run (LevelAccessor level, ServerLevel world, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos) {
+    public static void start (LevelAccessor level, ServerLevel world, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos) {
 
         // Read To Get Tree(s)
         {
@@ -906,7 +906,7 @@ public class TreePlacer {
 
                                                                 if (height_motion_block < testY) {
 
-                                                                    LeafLitter.run(level, testX, height_motion_block, testZ, block, false);
+                                                                    LeafLitter.start(level, testX, height_motion_block, testZ, block, false);
 
                                                                 }
 
@@ -971,7 +971,7 @@ public class TreePlacer {
                                                     if (read_all.equals("+b0^0^0tro") == true) {
 
                                                         marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
-                                                        GameUtils.runCommand(world, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.summonEntity("marker", "tree_location", id, "white", marker_data));
+                                                        GameUtils.runCommand(world, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.summonEntity("marker", "tree_location", id, marker_data));
 
                                                     }
 
@@ -991,7 +991,7 @@ public class TreePlacer {
                                         // Separate like this because start and end function doesn't need to test "can_run_function"
                                         if (can_run_function == true || get_short.equals("fs") == true || get_short.equals("fe") == true) {
 
-                                            TreeFunction.run(level, get, testX, testY, testZ);
+                                            TreeFunction.start(level, get, testX, testY, testZ);
 
                                         }
 
