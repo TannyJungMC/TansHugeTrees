@@ -12,12 +12,12 @@ import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 ;
-import tannyjung.tanshugetrees_handcode.misc.GameUtils;
-import tannyjung.tanshugetrees_handcode.misc.OutsideUtils;
+import tannyjung.misc.GameUtils;
+import tannyjung.misc.OutsideUtils;
 
 public class CheckUpdateRun {
 
-    public static void run (LevelAccessor level) {
+    public static void start (LevelAccessor level) {
 
 		if (OutsideUtils.isConnectedToInternet() == false) {
 
@@ -112,7 +112,7 @@ public class CheckUpdateRun {
 								if (ConfigMain.auto_update == true) {
 
 									GameUtils.sendChatMessage(level, "@a", "gold", "THT : Detected new version for TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + "). Starting auto update...");
-									UpdateRun.run(level);
+									UpdateRun.start(level);
 
 								} else {
 

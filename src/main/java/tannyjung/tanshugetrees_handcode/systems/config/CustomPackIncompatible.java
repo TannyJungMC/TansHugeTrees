@@ -4,7 +4,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.misc.GameUtils;
+import tannyjung.misc.GameUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -152,7 +152,7 @@ public class CustomPackIncompatible {
                                 if (GameUtils.textToBlock(id).getBlock() == Blocks.AIR) {
 
                                     incompatible = true;
-                                    TanshugetreesMod.LOGGER.error("Detected incompatible tree. Caused by unknown block ID. [ " + source.toFile().getParentFile().getName() + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+                                    TanshugetreesMod.LOGGER.error("Detected incompatible tree. Caused by unknown block ID. [ " + source.toFile().getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
                                     break;
 
                                 }
@@ -170,7 +170,7 @@ public class CustomPackIncompatible {
         } else {
 
             incompatible = true;
-            TanshugetreesMod.LOGGER.error("Detected incompatible tree. Caused by no tree settings. [ " + source.toFile().getParentFile().getParentFile().getName() + " > " + source.toFile().getParentFile().getName() + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+            TanshugetreesMod.LOGGER.error("Detected incompatible tree. Caused by no tree settings. [ " + source.toFile().getParentFile().getParentFile().getName() + " > " + source.toFile().getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
 
         }
 

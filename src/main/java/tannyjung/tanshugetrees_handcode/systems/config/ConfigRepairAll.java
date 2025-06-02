@@ -3,22 +3,20 @@ package tannyjung.tanshugetrees_handcode.systems.config;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_handcode.Handcode;
 ;
-import tannyjung.tanshugetrees_handcode.misc.FileManager;
-import tannyjung.tanshugetrees_handcode.misc.GameUtils;
-
-import java.util.concurrent.CompletableFuture;
+import tannyjung.misc.FileManager;
+import tannyjung.misc.GameUtils;
 
 public class ConfigRepairAll {
 
-	public static void run (LevelAccessor level, boolean send_chat) {
+	public static void start (LevelAccessor level, boolean send_chat) {
 
 		FileManager.createFolder(Handcode.directory_config + "/custom_packs/.organized");
 		FileManager.createFolder(Handcode.directory_config + "/generated");
 
 		ConfigMain.repair();
 		ConfigAutoGen.repair();
-		CustomPackOrganized.run(level);
-		ConfigPlacement.run();
+		CustomPackOrganized.start(level);
+		ConfigPlacement.start();
 
 		if (send_chat == true) {
 

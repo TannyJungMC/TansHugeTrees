@@ -12,7 +12,7 @@ import java.util.Comparator;
 
 public class CustomPackOrganized {
 
-    public static void run (LevelAccessor level) {
+    public static void start (LevelAccessor level) {
 
         clearFolder();
         CustomPackIncompatible.scanMain(level);

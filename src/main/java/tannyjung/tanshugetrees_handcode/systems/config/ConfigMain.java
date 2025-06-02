@@ -2,8 +2,8 @@ package tannyjung.tanshugetrees_handcode.systems.config;
 
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.misc.FileManager;
-import tannyjung.tanshugetrees_handcode.misc.GameUtils;
+import tannyjung.misc.FileManager;
+import tannyjung.misc.GameUtils;
 
 import java.util.*;
 
@@ -37,8 +37,6 @@ public class ConfigMain {
 	public static int living_tree_mechanics_tick = 0;
 	public static int living_tree_mechanics_process_limit = 0;
 	public static int living_tree_mechanics_simulation = 0;
-	public static int leaf_light_level_detection = 0;
-	public static double leaf_light_level_detection_drop_chance = 0.0;
 	public static boolean leaf_litter = false;
 	public static boolean leaf_litter_classic = false;
 	public static boolean leaf_litter_classic_only = false;
@@ -46,6 +44,8 @@ public class ConfigMain {
 	public static int leaf_litter_remover_count_limit = 0;
 	public static double leaf_drop_animation_chance = 0.0;
 	public static int leaf_drop_animation_count_limit = 0;
+	public static int leaf_light_level_detection = 0;
+	public static double leaf_light_level_detection_drop_chance = 0.0;
 	public static Set<String> deciduous_leaves_list = null;
 	public static Set<String> coniferous_leaves_list = null;
 
@@ -58,8 +58,8 @@ public class ConfigMain {
 	public static double leaf_regrowth_chance_summer = 0.0;
 	public static double leaf_regrowth_chance_autumn = 0;
 	public static double leaf_regrowth_chance_winter = 0;
-	public static double leaf_regrowth_chance_coniferous = 0.0;
 	public static double leaf_drop_chance_coniferous = 0.0;
+	public static double leaf_regrowth_chance_coniferous = 0.0;
 
 	public static boolean global_speed_enable = false;
 	public static int global_speed = 0;
@@ -109,7 +109,7 @@ public class ConfigMain {
 					----------------------------------------------------------------------------------------------------
 					
 					region_scan_chance = 1.0
-					| Set chance of chunk scan per region, for region pre-location system. One region contains 32x32 chunks, or 1,024 chunks. Lower this can reduce scan time, also lower the chance of all tree.
+					| Set chance of chunk scan per region, for region pre-location system. One region contains 32x32 chunks, or 1,024 chunks. Lower this can reduce scan time, also lower the chance of all trees.
 					| Default is [ 1.0 ]
 					
 					multiply_rarity = 1.0
@@ -125,7 +125,7 @@ public class ConfigMain {
 					| Default is [ true ]
 					
 					world_gen_roots = true
-					| Enable tree roots in world gen. Note that disable this feature will not affect to some trees and nature stuffs because roots is important part for them, also not affect to tree taproot part.
+					| Enable tree roots in world gen. Note that disable this feature will not affect to some trees, because roots is important part for them. Also not affect to taproot part.
 					| Default is [ true ]
 					
 					surrounding_area_detection = true
@@ -149,10 +149,13 @@ public class ConfigMain {
 					| Default is [ 8 ]
 					
 					pre_leaf_litter = true
+					| Create leaf litter on ground and water while on world generation. Leaf litter config must be enable, to allow this.
+					| Default is [ 0.25 ] [ 0.1 ]
+					
 					pre_leaf_litter_chance = 0.25
 					pre_leaf_litter_chance_coniferous = 0.05
-					| Create leaf litter on ground and water while on world generation. Leaf litter config must be enable, to allow this.
-					| Default is [ true ] [ 0.25 ] [ 0.1 ]
+					| Chance of leaf litter on world gen
+					| Default is [ true ]
 					
 					abscission_world_gen = true
 					| ###
@@ -167,24 +170,16 @@ public class ConfigMain {
 					| Default is [ true ]
 					
 					living_tree_mechanics_tick = 5
-					| How fast of RT dynamic system per tick. Set to 0 to temporary pause the tick.
+					| How fast in tick of living tree mechanics system. Set to 0 to temporary pause the tick.
 					| Default is [ 5 ]
 					
 					living_tree_mechanics_process_limit = 100
-					| How many process for trees to run RT dynamic system. Set to 0 for one time process.
+					| How many process for trees to run living tree mechanics system per time. Set to 0 for one time process.
 					| Default is [ 100 ]
 					
 					living_tree_mechanics_simulation = 100
 					| Simulate fake tree to slowdown tree process. For example, when I set tree speed for 100 trees. But it's only 1 tree in the area, it will drop and regrow leaves very fast because that's the speed for 100 trees. Set this config will simulate fake tree locations and make that 1 tree slowdown it process like it's 99 trees around it.
 					| Default is [ 100 ]
-					
-					leaf_light_level_detection = 7
-					| Minimum light level that tree leaves can survive, leaves will drop itself if light level is under this value. Set to 15 for only full bright level. Set to 0 for no light level affect.
-					| Default is [ 7 ]
-					
-					leaf_light_level_detection_drop_chance = 0.1
-					| Chance of leaves to drop when light level is lower than config
-					| Default is [ 0.1 ]
 					
 					leaf_litter = true
 					| Create leaves block on the ground and on water. Disable leaf drop animation to make this instantly create leaves little instead of create when leaf drop animation touch the ground, also disable that will use full chance to be leaves litter.
@@ -214,6 +209,14 @@ public class ConfigMain {
 					| Count limit of leaf drop animation
 					| Default is [ 500 ]
 					
+					leaf_light_level_detection = 7
+					| Minimum light level that tree leaves can survive, leaves will drop themselves if light level is under this value. Set to 15 for only full bright level. Set to 0 for no light level affect.
+					| Default is [ 7 ]
+					
+					leaf_light_level_detection_drop_chance = 0.1
+					| Chance of leaves to drop when light level is lower than config
+					| Default is [ 0.1 ]
+					
 					deciduous_leaves_list = minecraft:oak_leaves / minecraft:birch_leaves
 					coniferous_leaves_list = minecraft:spruce_leaves
 					| List of deciduous and coniferous leaves blocks. Deciduous is oak trees, and similar. They will drop their leaves before winter, but note that they won't do in tropical biomes. Coniferous is pine trees. They will drop their leaves only in summer, and almost rare.
@@ -241,8 +244,8 @@ public class ConfigMain {
 					| Chance of deciduous leaves to regrow based on seasons, but note that it will only use summer value when in tropical biomes. For general leaves that not marked as deciduous, will use summer value.
 					| Default is [ 0.05 ] [ 0.1 ] [ 0.0 ] [ 0.0 ]
 					
-					leaf_regrowth_chance_coniferous = 0.005
 					leaf_drop_chance_coniferous = 0.001
+					leaf_regrowth_chance_coniferous = 0.005
 					| Chance of coniferous leaves to drop in summer and regrow in any season
 					| Default is [ 0.005 ] [ 0.001 ]
 					
@@ -271,7 +274,7 @@ public class ConfigMain {
 					| Default is [ 1 ]
 					
 					----------------------------------------------------------------------------------------------------
-					Tree Generator = Quality
+					Tree Generator : Quality
 					----------------------------------------------------------------------------------------------------
 					
 					square_parts = false
@@ -339,8 +342,6 @@ public class ConfigMain {
 		living_tree_mechanics_tick = FileManager.GetConfigValue.numberInt(path, "living_tree_mechanics_tick");
 		living_tree_mechanics_process_limit = FileManager.GetConfigValue.numberInt(path, "living_tree_mechanics_process_limit");
 		living_tree_mechanics_simulation = FileManager.GetConfigValue.numberInt(path, "living_tree_mechanics_simulation");
-		leaf_light_level_detection = FileManager.GetConfigValue.numberInt(path, "leaf_light_level_detection");
-		leaf_light_level_detection_drop_chance = FileManager.GetConfigValue.numberDouble(path, "leaf_light_level_detection_drop_chance");
 		leaf_litter = FileManager.GetConfigValue.logic(path, "leaf_litter");
 		leaf_litter_classic = FileManager.GetConfigValue.logic(path, "leaf_litter_classic");
 		leaf_litter_classic_only = FileManager.GetConfigValue.logic(path, "leaf_litter_classic_only");
@@ -348,6 +349,8 @@ public class ConfigMain {
 		leaf_litter_remover_count_limit = FileManager.GetConfigValue.numberInt(path, "leaf_litter_remover_count_limit");
 		leaf_drop_animation_chance = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_animation_chance");
 		leaf_drop_animation_count_limit = FileManager.GetConfigValue.numberInt(path, "leaf_drop_animation_count_limit");
+		leaf_light_level_detection = FileManager.GetConfigValue.numberInt(path, "leaf_light_level_detection");
+		leaf_light_level_detection_drop_chance = FileManager.GetConfigValue.numberDouble(path, "leaf_light_level_detection_drop_chance");
 		deciduous_leaves_list = new HashSet<>(Arrays.asList(FileManager.GetConfigValue.text(path, "deciduous_leaves_list").split(" / ")));
 		coniferous_leaves_list = new HashSet<>(Arrays.asList(FileManager.GetConfigValue.text(path, "coniferous_leaves_list").split(" / ")));
 
@@ -360,8 +363,8 @@ public class ConfigMain {
 		leaf_regrowth_chance_summer = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_summer");
 		leaf_regrowth_chance_autumn = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_autumn");
 		leaf_regrowth_chance_winter = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_winter");
-		leaf_regrowth_chance_coniferous = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_coniferous");
 		leaf_drop_chance_coniferous = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_chance_coniferous");
+		leaf_regrowth_chance_coniferous = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_coniferous");
 
 		global_speed_enable = FileManager.GetConfigValue.logic(path, "global_speed_enable");
 		global_speed = FileManager.GetConfigValue.numberInt(path, "global_speed");

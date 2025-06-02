@@ -14,14 +14,14 @@ import java.util.zip.ZipOutputStream;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 ;
-import tannyjung.tanshugetrees_handcode.misc.GameUtils;
-import tannyjung.tanshugetrees_handcode.misc.OutsideUtils;
+import tannyjung.misc.GameUtils;
+import tannyjung.misc.OutsideUtils;
 
 public class UpdateRun {
 
-	private static String error = "";
+	public static boolean install_pause_systems = false;
 
-    public static void run (LevelAccessor level) {
+    public static void start (LevelAccessor level) {
 
 		if (OutsideUtils.isConnectedToInternet() == false) {
 
@@ -31,42 +31,62 @@ public class UpdateRun {
 
 			if (checkModVersion(level, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
 
-				GameUtils.sendChatMessage(level, "@a", "white", "");
-				GameUtils.sendChatMessage(level, "@a", "gray", "THT : Started the installation, this may take a while.");
-				error = "";
+				install_pause_systems = true;
 
-				// Delete Old Folders
-				{
+				TanshugetreesMod.queueServerWork(20, () -> {
 
-					deleteOldPackFolder(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack");
-					deleteOldPackFolder(Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Tree-Pack");
+					GameUtils.sendChatMessage(level, "@a", "white", "");
+					GameUtils.sendChatMessage(level, "@a", "gray", "THT : Started the installation, this may take a while.");
 
-				}
+					// Delete Old Folders
+					{
 
-				if (error.equals("") == true) {createZIP();}
-				if (error.equals("") == true) {download();}
-				if (error.equals("") == true) {unzip();}
-				if (error.equals("") == true) {deleteZIP();}
-				if (error.equals("") == true) {renameFolder();}
+						if (deleteOldPackFolder(level, Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack") == false) {
+							return;
+						}
+						if (deleteOldPackFolder(level, Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Tree-Pack") == false) {
+							return;
+						}
 
-				if (error.equals("") == false) {
+					}
 
-					GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
-					TanshugetreesMod.LOGGER.error("Error -> " + error);
+					// Systems
+					{
 
-				} else {
+						if (createZIP(level) == false) {
+							return;
+						}
+						if (createZIP(level) == false) {
+							return;
+						}
+						if (download(level) == false) {
+							return;
+						}
+						if (unzip(level) == false) {
+							return;
+						}
+						if (deleteZIP(level) == false) {
+							return;
+						}
+						if (renameFolder(level) == false) {
+							return;
+						}
+
+					}
 
 					GameUtils.sendChatMessage(level, "@a", "gray", "THT : Install Completed!");
 
-					ConfigRepairAll.run(level, true);
+					ConfigRepairAll.start(level, true);
 					ConfigMain.apply(level);
 
 					GameUtils.sendChatMessage(level, "@a", "white", "");
 					FileCount.start(level);
 					GameUtils.sendChatMessage(level, "@a", "white", "");
-					PackMessage.run(level);
+					PackMessage.start(level);
 
-				}
+					install_pause_systems = false;
+
+				});
 
 			}
 
@@ -122,7 +142,7 @@ public class UpdateRun {
 
 	}
 
-	private static void deleteOldPackFolder (String path) {
+	private static boolean deleteOldPackFolder (LevelAccessor level, String path) {
 
 		if (new File(path).exists() == true) {
 
@@ -130,29 +150,24 @@ public class UpdateRun {
 
 				Files.walk(Paths.get(path)).sorted(Comparator.reverseOrder()).forEach(source -> {
 
-					try {
-
-						Files.delete(source);
-
-					} catch (Exception e) {
-
-						error = "Deleting Old Pack Folder";
-
-					}
+					source.toFile().delete();
 
 				});
 
-			} catch (Exception e) {
+			} catch (Exception ignored) {
 
-				error = "Deleting Old Pack Folder > File Walk Path";
+				GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+				return false;
 
 			}
 
 		}
+		
+		return true;
 
 	}
 
-	private static void createZIP () {
+	private static boolean createZIP (LevelAccessor level) {
 
 		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip");
 		ZipOutputStream out = null;
@@ -162,15 +177,18 @@ public class UpdateRun {
 			out = new ZipOutputStream(new FileOutputStream(file));
 			out.close();
 
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 
-			error = "Creating ZIP";
+			GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+			return false;
 
 		}
+		
+		return true;
 
 	}
 
-	private static void download () {
+	private static boolean download (LevelAccessor level) {
 
 		String download_from = "https://github.com/TannyJungMC/THT-tree_pack/archive/refs/heads/" + Handcode.tanny_pack_version_name.toLowerCase() + ".zip";
 		String download_to = Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip";
@@ -192,17 +210,20 @@ public class UpdateRun {
 
 			}
 
-			TanshugetreesMod.LOGGER.info("THT : Downloaded " + download_from);
+			TanshugetreesMod.LOGGER.info("Downloaded " + download_from);
 
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 
-			error = "Downloading The Pack From " + download_from;
+			GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+			return false;
 
 		}
 
+		return true;
+
 	}
 
-	private static void unzip () {
+	private static boolean unzip (LevelAccessor level) {
 
 		File unzip = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip");
 		File unzip_to = new File(Handcode.directory_config + "/custom_packs");
@@ -217,13 +238,14 @@ public class UpdateRun {
 
 				while (zipEntry != null) {
 
-					File newFile = unzip2(unzip_to, zipEntry);
+					File newFile = new File(unzip_to + "/" + zipEntry.getName());
 
 					if (zipEntry.isDirectory()) {
 
 						if (!newFile.isDirectory() && !newFile.mkdirs()) {
 
-							error = "Create Directory " + newFile;
+							GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+							return false;
 
 						}
 
@@ -235,7 +257,8 @@ public class UpdateRun {
 
 						if (!parent.isDirectory() && !parent.mkdirs()) {
 
-							error = "Create Directory " + parent;
+							GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+							return false;
 
 						}
 
@@ -261,43 +284,18 @@ public class UpdateRun {
 
 			}
 
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 
-			error = "Unzipping";
-
-		}
-
-	}
-
-	public static File unzip2 (File destinationDir, ZipEntry zipEntry) {
-
-		File destFile;
-		String destDirPath;
-		String destFilePath;
-		destFile = new File(destinationDir, zipEntry.getName());
-
-		try {
-
-			destDirPath = destinationDir.getCanonicalPath();
-			destFilePath = destFile.getCanonicalPath();
-
-			if (!destFilePath.startsWith(destDirPath + File.separator)) {
-
-				error = "Entry is outside of the target dir " + zipEntry.getName();
-
-			}
-
-		} catch (Exception e) {
-
-			TanshugetreesMod.LOGGER.error(e.getMessage());
+			GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+			return false;
 
 		}
 
-		return destFile;
+		return true;
 
 	}
 
-	private static void deleteZIP () {
+	private static boolean deleteZIP (LevelAccessor level) {
 
 		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip");
 
@@ -311,35 +309,41 @@ public class UpdateRun {
 
                         Files.delete(path);
 
-                    } catch (Exception e) {
+					} catch (Exception ignored) {
 
-						error = "Deleting ZIP";
+						return;
 
-                    }
+					}
 
                 });
 
-            } catch (Exception e) {
+			} catch (Exception ignored) {
 
-				error = "Deleting ZIP > File Walk Path";
+				GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+				return false;
 
-            }
+			}
 
 		}
 
+		return true;
+
 	}
 
-	private static void renameFolder () {
+	private static boolean renameFolder (LevelAccessor level) {
 
 		File rename_from = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-" + Handcode.tanny_pack_version_name.toLowerCase());
 		File rename_to = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack");
 
 		if (rename_from.renameTo(rename_to) == false) {
 
-			error = "Renaming The Folder From " + rename_from + " to " + rename_to;
+			GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+			return false;
 
 		}
 
-	}
+        return true;
+
+    }
 
 }

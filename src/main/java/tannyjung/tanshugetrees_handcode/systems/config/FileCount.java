@@ -1,11 +1,9 @@
 package tannyjung.tanshugetrees_handcode.systems.config;
 
-import net.minecraftforge.fml.loading.FMLPaths;
-
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.misc.GameUtils;
+import tannyjung.misc.GameUtils;
 
 import java.io.File;
 import java.nio.file.Files;
