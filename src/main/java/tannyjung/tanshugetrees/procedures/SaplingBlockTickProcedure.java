@@ -91,10 +91,10 @@ public class SaplingBlockTickProcedure {
 					}
 					if (world instanceof ServerLevel _level)
 						_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-								"summon marker ~0.5 ~0.5 ~0.5 {Tags:[\"TANSHUGETREES\",\"THT-random_tree\"],CustomName:'{\"text\":\"THT-random_tree\"}'}");
+								"summon marker ~0.5 ~0.5 ~0.5 {Tags:[\"TANSHUGETREES\",\"TANSHUGETREES-tree_generator\"],CustomName:'{\"text\":\"Tree Generator\"}'}");
 					if (world instanceof ServerLevel _level)
 						_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-								"data modify entity @e[name=THT-random_tree,limit=1,sort=nearest] ForgeData set from block ~ ~ ~ ForgeData");
+								"data modify entity @e[tag=TANSHUGETREES-tree_generator,limit=1,sort=nearest] ForgeData set from block ~ ~ ~ ForgeData");
 					world.setBlock(BlockPos.containing(x, y, z), Blocks.AIR.defaultBlockState(), 3);
 				} else {
 					if (true) {
@@ -120,7 +120,7 @@ public class SaplingBlockTickProcedure {
 									if (world instanceof ServerLevel _level)
 										_level.getServer().getCommands().performPrefixedCommand(
 												new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-												("summon marker ~0.5 ~0.5 ~0.5 {Tags:[\"TANSHUGETREES\",\"THT-random_tree\"],CustomName:'{\"text\":\"THT-random_tree\"}'," + "" + merge_text));
+												("summon marker ~0.5 ~0.5 ~0.5 {Tags:[\"TANSHUGETREES\",\"TANSHUGETREES-tree_generator\"],CustomName:'{\"text\":\"Tree Generator\"}'," + "" + merge_text));
 									break;
 								} else {
 									merge_text_pos = merge_text_pos + 1;
