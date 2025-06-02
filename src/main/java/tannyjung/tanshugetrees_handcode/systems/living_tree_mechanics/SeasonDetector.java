@@ -2,17 +2,17 @@ package tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics;
 
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
-import tannyjung.misc.GameUtils;
+import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 
 public class SeasonDetector {
 
     private static int season_detector_tick = 0;
 
-    public static void start (LevelAccessor level) {
+    public static void run (LevelAccessor level) {
 
         TanshugetreesMod.queueServerWork(20, () -> {
 
-           start(level);
+           run(level);
 
         });
 

@@ -10,8 +10,8 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.misc.FileManager;
-import tannyjung.misc.GameUtils;
+import tannyjung.tanshugetrees_handcode.misc.FileManager;
+import tannyjung.tanshugetrees_handcode.misc.GameUtils;
 import tannyjung.tanshugetrees_handcode.systems.LeafLitter;
 import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
 
@@ -21,7 +21,7 @@ import java.io.FileReader;
 
 public class LivingTreeMechanics {
 
-	public static void start (Entity entity) {
+	public static void run (Entity entity) {
 
 		LevelAccessor level = entity.level();
 
@@ -357,7 +357,7 @@ public class LivingTreeMechanics {
 
 					GameUtils.scoreAddRemove(level, "leaf_litter_remover", 1);
 
-					GameUtils.runCommand(level, pos.getX(), pos.getY(), pos.getZ(), GameUtils.summonEntity("marker", "leaf_litter_remover", "Leaf Litter Remover", "ForgeData:{block:\"" + GameUtils.blockToText(block) + "\"}"));
+					GameUtils.runCommand(level, pos.getX(), pos.getY(), pos.getZ(), GameUtils.summonEntity("marker", "", "leaf_litter_remover", "white", "ForgeData:{block:\"" + GameUtils.blockToText(block) + "\"}"));
 
 				}
 
@@ -453,7 +453,7 @@ public class LivingTreeMechanics {
 									GameUtils.scoreAddRemove(level, "leaf_drop", 1);
 
 									String command = "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.blockToTextID(block) + "\"},ForgeData:{block:\"" + GameUtils.blockToText(block) + "\"}";
-									command = GameUtils.summonEntity("block_display", "leaf_drop", "Falling Leaf", command);
+									command = GameUtils.summonEntity("block_display", "", "leaf_drop", "white", command);
 									GameUtils.runCommand(level, pos.getX(), pos.getY(), pos.getZ(), command);
 
 								}
@@ -470,7 +470,7 @@ public class LivingTreeMechanics {
 
 							if (height_motion < pos.getY()) {
 
-								LeafLitter.start(level, pos.getX(), height_motion, pos.getZ(), block, false);
+								LeafLitter.run(level, pos.getX(), height_motion, pos.getZ(), block, false);
 
 							}
 
