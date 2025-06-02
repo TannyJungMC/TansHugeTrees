@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.misc;
+package tannyjung.misc;
 
 import java.net.HttpURLConnection;
 import java.net.URI;

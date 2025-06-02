@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.misc;
+package tannyjung.misc;
 
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;

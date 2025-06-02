@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.misc;
+package tannyjung.misc;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSource;
@@ -7,6 +7,8 @@ import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ServerScoreboard;
@@ -45,7 +47,7 @@ public class GameUtils {
 
     }
 
-	public static String summonEntity (String id, String tag, String name, String name_color, String custom) {
+	public static String summonEntity (String id, String tag, String name, String custom) {
 
 		StringBuilder return_text = new StringBuilder();
 
@@ -61,7 +63,7 @@ public class GameUtils {
 					.append("\",\"")
 					.append(TanshugetreesMod.MODID.toUpperCase())
 					.append("-")
-					.append(tag.replace(" / ", "\",\""))
+					.append(tag.replace(" / ", "\",\"" + TanshugetreesMod.MODID.toUpperCase() + "-"))
 			;
 
 		}
@@ -72,11 +74,7 @@ public class GameUtils {
 
 			return_text
 					.append(",CustomName:'{\"text\":\"")
-					.append(TanshugetreesMod.MODID.toUpperCase())
-					.append("-")
 					.append(name)
-					.append("\",\"color\":\"")
-					.append(name_color)
 					.append("\"}'")
 			;
 
@@ -339,21 +337,27 @@ public class GameUtils {
 	// NBT
 	// --------------------------------------------------
 
-	public static String NBTTextGet(Entity entity, String name) {
+	public static String NBTTextGet (Entity entity, String name) {
 
 		return entity.getPersistentData().getString(name);
 
 	}
 
-	public static Boolean NBTLogicGet(Entity entity, String name) {
+	public static Boolean NBTLogicGet (Entity entity, String name) {
 
 		return entity.getPersistentData().getBoolean(name);
 
 	}
 
-	public static double NBTNumberGet(Entity entity, String name) {
+	public static double NBTNumberGet (Entity entity, String name) {
 
 		return entity.getPersistentData().getDouble(name);
+
+	}
+
+	public static ListTag NBTListNumberGet (Entity entity, String name) {
+
+		return entity.getPersistentData().getList(name, Tag.TAG_DOUBLE);
 
 	}
 
@@ -363,15 +367,21 @@ public class GameUtils {
 
 	}
 
-	public static void NBTLogicSet(Entity entity, String name, boolean value) {
+	public static void NBTLogicSet (Entity entity, String name, boolean value) {
 
 		entity.getPersistentData().putBoolean(name, value);
 
 	}
 
-	public static void NBTNumberSet(Entity entity, String name, double value) {
+	public static void NBTNumberSet (Entity entity, String name, double value) {
 
 		entity.getPersistentData().putDouble(name, value);
+
+	}
+
+	public static void NBTNumberAdd (Entity entity, String name, double value) {
+
+		entity.getPersistentData().putDouble(name, entity.getPersistentData().getDouble(name) + value);
 
 	}
 
