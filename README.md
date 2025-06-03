@@ -9,12 +9,14 @@ For IntelliJ
 For MCreator
 - Open this by using MCreator the same version as the branch name, with plugins I put in the folder. Then select open project, when on file selection screen, select "XXX.mcreator".
 
-# Agreements
+# Terms of Use
 
-- You can read and study from my codes. But do not copy, edit, and suggest about the edit.
+- You can use my mods in your modpacks and in videos. You can also put credit to mod page and supporting by donate, as appropriate.
+- Suggestions and requests is not open for all my mods, except contents in the custom packs that's half open.
+- Source code is open publicly. You can read, study, and edit my codes privately. But do not suggest about your edit, and publish your own edit to public.
 
 # From Creator
 
-My mods are personal projects, they're not open for editing and contributions, and I will ignore all suggestions related to my systems. You're welcome to read and study their codes, but please do not copy, edit or submit any suggestion to edit parts of it. I made mods for my feeling first, just like doing an artwork. What I want to do, my ideas, and for my imaginary world. Using methods I like. Hope you understand and respect that. (╯ ‿╰ ' )
+Thank you all for playing my mods! I'm happy to see people enjoy my hobby. Feel free to use my mods in modpack. You can also put credit and a little of donation, as appropriate. If you want to support me, you can become my Patreon membership, and buying my artworks. Anyway, you can easily support me by playing my mods, and follow my artworks. I maybe not a great modder, who always open for requests and suggestions. I made mods for my feeling first, just like doing an artwork. What I want to do, my ideas, and for my imaginary world. Using methods I like. Hope you understand and respect that. (╯ ‿╰ ' )
 
-What about Fabric port of my mods? Unfortunately, I'm not fan of Fabric. I don't want to spend my lifetime to do that, when I don't even have fun to do it. Also please understand that I have 3 mods, which all is very complex and detailed. Fabric port will be a lot hard work for me, like living in hell. There maybe someone in the future, who interested in helping port it. But that I have to consider that first, and they must agree with my decision at above.
+Will I do Fabric port of my mods? Unfortunately, I'm not fan of Fabric. I don't want to spend my lifetime to do that, when I don't even have fun to do it. Also please understand that I have 3 mods, which all is very complex and detailed. Fabric port will be a lot hard work for me, like living in hell. There maybe someone in the future, who interested in helping port it. But that I have to consider that first, and they must agree with my decision at above.
