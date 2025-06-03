@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems;
+package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;

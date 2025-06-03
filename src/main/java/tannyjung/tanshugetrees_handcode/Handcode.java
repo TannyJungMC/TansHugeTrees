@@ -18,9 +18,9 @@ import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.misc.GameUtils;
 import tannyjung.tanshugetrees_handcode.systems.Loop;
-import tannyjung.tanshugetrees_handcode.systems.config.CheckUpdateRun;
-import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
-import tannyjung.tanshugetrees_handcode.systems.config.ConfigRepairAll;
+import tannyjung.tanshugetrees_handcode.config.CheckUpdateRun;
+import tannyjung.tanshugetrees_handcode.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.config.ConfigRepairAll;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDetector;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFeature;
 

@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems.config;
+package tannyjung.tanshugetrees_handcode.config;
 
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;

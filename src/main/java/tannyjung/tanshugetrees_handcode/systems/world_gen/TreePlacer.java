@@ -19,9 +19,9 @@ import tannyjung.misc.FileManager;
 import tannyjung.misc.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
-import tannyjung.tanshugetrees_handcode.systems.LeafLitter;
-import tannyjung.tanshugetrees_handcode.systems.TreeFunction;
+import tannyjung.tanshugetrees_handcode.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LeafLitter;
+import tannyjung.tanshugetrees_handcode.systems.tree_generator.TreeFunction;
 
 import java.io.BufferedReader;
 import java.io.File;

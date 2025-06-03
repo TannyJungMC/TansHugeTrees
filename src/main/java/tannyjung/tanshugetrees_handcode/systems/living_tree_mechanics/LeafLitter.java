@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems;
+package tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.misc.GameUtils;
-import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 
 import java.io.BufferedReader;
 import java.io.File;

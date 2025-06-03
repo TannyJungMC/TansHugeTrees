@@ -12,8 +12,7 @@ import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.misc.FileManager;
 import tannyjung.misc.GameUtils;
-import tannyjung.tanshugetrees_handcode.systems.LeafLitter;
-import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 
 import java.io.BufferedReader;
 import java.io.File;

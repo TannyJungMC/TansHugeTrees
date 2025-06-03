@@ -6,7 +6,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.misc.GameUtils;
-import tannyjung.tanshugetrees_handcode.systems.LeafLitter;
 
 public class LivingTreeMechanicsLeafDropTickLoop {
 

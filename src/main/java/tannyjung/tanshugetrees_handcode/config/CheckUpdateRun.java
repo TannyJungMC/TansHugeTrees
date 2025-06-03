@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems.config;
+package tannyjung.tanshugetrees_handcode.config;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

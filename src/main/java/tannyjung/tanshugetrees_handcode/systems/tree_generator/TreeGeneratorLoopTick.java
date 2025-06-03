@@ -9,9 +9,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.misc.GameUtils;
-import tannyjung.tanshugetrees_handcode.systems.config.ConfigMain;
-
-import java.util.Arrays;
+import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 
 public class TreeGeneratorLoopTick {
 
