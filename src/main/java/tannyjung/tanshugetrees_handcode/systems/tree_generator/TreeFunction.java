@@ -71,7 +71,7 @@ public class TreeFunction {
 
 										get = read_all.replace("block = ", "").split(" \\| ");
 										chance = Double.parseDouble(get[0]);
-										block = GameUtils.textToBlock(get[3]);
+										block = GameUtils.block.fromText(get[3]);
 										keep = get[4].equals("true");
 
 									} catch (Exception e) {
@@ -143,7 +143,7 @@ public class TreeFunction {
 
 													if (keep == true) {
 
-														if (GameUtils.isBlockTaggedAs(level.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level.isWaterAt(pos) == true) {
+														if (GameUtils.block.isTaggedAs(level.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level.isWaterAt(pos) == true) {
 
 															continue;
 
@@ -198,7 +198,7 @@ public class TreeFunction {
 
 							} else {
 
-								GameUtils.runCommand(level, posX, posY, posZ, read_all);
+								GameUtils.command.run(level, posX, posY, posZ, read_all);
 
 							}
 
