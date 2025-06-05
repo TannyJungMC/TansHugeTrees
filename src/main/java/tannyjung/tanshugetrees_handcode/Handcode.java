@@ -79,7 +79,7 @@ public class Handcode {
 
 		LevelAccessor level = event.getEntity().level();
 
-		if (GameUtils.playerCount(level) == 1) {
+		if (GameUtils.misc.playerCount(level) == 1) {
 
 			// One time running, only when start the world and first player joined.
 			{
@@ -95,11 +95,11 @@ public class Handcode {
 
 				}
 
-				GameUtils.runCommand(level, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
+				GameUtils.command.run(level, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
 
 				if (Handcode.version_1192 == false && TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
 
-					GameUtils.runCommand(level, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 0 0 run forceload add 16 16 -16 -16");
+					GameUtils.command.run(level, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 0 0 run forceload add 16 16 -16 -16");
 
 				}
 

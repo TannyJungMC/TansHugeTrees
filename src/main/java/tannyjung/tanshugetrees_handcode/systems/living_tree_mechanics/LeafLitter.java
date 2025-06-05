@@ -17,7 +17,7 @@ public class LeafLitter {
 
     public static void start (LevelAccessor level, int posX, int posY, int posZ, BlockState block, boolean remove) {
 
-        File file = new File(Handcode.directory_config + "/custom_packs/.organized/leaf_litter/" + GameUtils.blockToTextID(block).replace(":", "-") + ".txt");
+        File file = new File(Handcode.directory_config + "/custom_packs/.organized/leaf_litter/" + GameUtils.block.toTextID(block).replace(":", "-") + ".txt");
 
         if (ConfigMain.leaf_litter_classic_only == false && (file.exists() == true && file.isDirectory() == false)) {
 
@@ -81,7 +81,7 @@ public class LeafLitter {
 
                                             get_to = get_from_to[1].split("/");
                                             pos_to = new BlockPos(posX, posY + Integer.parseInt(get_to[0]), posZ);
-                                            block_to = GameUtils.textToBlock(get_to[1]);
+                                            block_to = GameUtils.block.fromText(get_to[1]);
 
                                         }
 
@@ -99,9 +99,9 @@ public class LeafLitter {
 
                                                     {
 
-                                                        if (GameUtils.isBlockTaggedAs(level.getBlockState(new BlockPos(posX, posY, posZ)), "tanshugetrees:air_blocks") == true) {
+                                                        if (GameUtils.block.isTaggedAs(level.getBlockState(new BlockPos(posX, posY, posZ)), "tanshugetrees:air_blocks") == true) {
 
-                                                            if (GameUtils.isBlockTaggedAs(block_from, "tanshugetrees:passable_blocks") == false) {
+                                                            if (GameUtils.block.isTaggedAs(block_from, "tanshugetrees:passable_blocks") == false) {
 
                                                                 pass = true;
 
@@ -115,7 +115,7 @@ public class LeafLitter {
 
                                                     {
 
-                                                        if (GameUtils.isBlockTaggedAs(level.getBlockState(new BlockPos(posX, posY, posZ)), "tanshugetrees:air_blocks") == true) {
+                                                        if (GameUtils.block.isTaggedAs(level.getBlockState(new BlockPos(posX, posY, posZ)), "tanshugetrees:air_blocks") == true) {
 
                                                             if (level.isWaterAt(pos_from) == true) {
 
@@ -131,7 +131,7 @@ public class LeafLitter {
 
                                                     if (block_from_text.startsWith("#") == true) {
 
-                                                        if (GameUtils.isBlockTaggedAs(block_from, block_from_text.substring(1)) == true) {
+                                                        if (GameUtils.block.isTaggedAs(block_from, block_from_text.substring(1)) == true) {
 
                                                             pass = true;
 
@@ -139,7 +139,7 @@ public class LeafLitter {
 
                                                     } else {
 
-                                                        if (GameUtils.textToBlock(block_from_text) == block_from) {
+                                                        if (GameUtils.block.fromText(block_from_text) == block_from) {
 
                                                             pass = true;
 
@@ -202,12 +202,12 @@ public class LeafLitter {
                         // Place
                         {
 
-                            if (GameUtils.isBlockTaggedAs(level.getBlockState(pos), "tanshugetrees:air_blocks") == true) {
+                            if (GameUtils.block.isTaggedAs(level.getBlockState(pos), "tanshugetrees:air_blocks") == true) {
 
                                 // If Found Water
                                 if (level.isWaterAt(new BlockPos(posX, posY - 1, posZ)) == true) {
 
-                                    block = GameUtils.blockPropertyBooleanSet(block, "waterlogged", true);
+                                    block = GameUtils.block.propertyBooleanSet(block, "waterlogged", true);
                                     posY = posY - 1;
 
                                 }
@@ -225,7 +225,7 @@ public class LeafLitter {
 
                             if (level.getBlockState(pos).getBlock().equals(block.getBlock()) == true) {
 
-                                if (GameUtils.blockPropertyBooleanGet(level.getBlockState(pos), "waterlogged") == true) {
+                                if (GameUtils.block.propertyBooleanGet(level.getBlockState(pos), "waterlogged") == true) {
 
                                     level.setBlock(pos, Blocks.WATER.defaultBlockState(), 2);
 

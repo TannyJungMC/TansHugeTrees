@@ -172,7 +172,7 @@ public class TreeLocation {
                                             center_posZ = (chunk_posZ * 16) + (int) (Math.random() * 16);
                                             biome_center = level.getBiome(new BlockPos(center_posX, level.getMaxBuildHeight(), center_posZ));
 
-                                            world_gen_overlay_details_biome = GameUtils.biomeToBiomeID(biome_center);
+                                            world_gen_overlay_details_biome = GameUtils.biome.toID(biome_center);
                                             world_gen_overlay_details_tree = id;
 
                                         }
@@ -424,7 +424,7 @@ public class TreeLocation {
 
         {
 
-            String biome_centerID = GameUtils.biomeToBiomeID(biome_center);
+            String biome_centerID = GameUtils.biome.toID(biome_center);
 
             for (String split : config_value.split(" / ")) {
 
@@ -446,7 +446,7 @@ public class TreeLocation {
 
                         } else {
 
-                            if (GameUtils.isBiomeTaggedAs(biome_center, split_get) == false) {
+                            if (GameUtils.biome.isTaggedAs(biome_center, split_get) == false) {
 
                                 return_logic = false;
 
@@ -630,10 +630,10 @@ public class TreeLocation {
                 if (Math.random() < waterside_chance) {
 
                     int size = ConfigMain.surrounding_area_detection_size;
-                    boolean waterside_test1 = GameUtils.isBiomeTaggedAs(level.getBiome(new BlockPos(center_posX + size, level.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
-                    boolean waterside_test2 = GameUtils.isBiomeTaggedAs(level.getBiome(new BlockPos(center_posX + size, level.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
-                    boolean waterside_test3 = GameUtils.isBiomeTaggedAs(level.getBiome(new BlockPos(center_posX - size, level.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
-                    boolean waterside_test4 = GameUtils.isBiomeTaggedAs(level.getBiome(new BlockPos(center_posX - size, level.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
+                    boolean waterside_test1 = GameUtils.biome.isTaggedAs(level.getBiome(new BlockPos(center_posX + size, level.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
+                    boolean waterside_test2 = GameUtils.biome.isTaggedAs(level.getBiome(new BlockPos(center_posX + size, level.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
+                    boolean waterside_test3 = GameUtils.biome.isTaggedAs(level.getBiome(new BlockPos(center_posX - size, level.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
+                    boolean waterside_test4 = GameUtils.biome.isTaggedAs(level.getBiome(new BlockPos(center_posX - size, level.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
 
                     if (waterside_test1 == false && waterside_test2 == false && waterside_test3 == false && waterside_test4 == false) {
 

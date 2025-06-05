@@ -81,7 +81,7 @@ public class CustomPackIncompatible {
                             if (Double.parseDouble(read_all.replace("data_structure_version = ", "")) != Handcode.data_structure_version_pack) {
 
                                 incompatible = true;
-                                GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible pack. Caused by unsupported mod version. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+                                GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Detected incompatible pack. Caused by unsupported mod version. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
                                 break;
 
                             }
@@ -99,7 +99,7 @@ public class CustomPackIncompatible {
         } else {
 
             incompatible = true;
-            GameUtils.sendChatMessage(level, "@a", "red", "THT : Detected incompatible pack. Caused by no version file. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+            GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Detected incompatible pack. Caused by no version file. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
 
         }
 
@@ -149,7 +149,7 @@ public class CustomPackIncompatible {
 
                             if (id.equals("") == false) {
 
-                                if (GameUtils.textToBlock(id).getBlock() == Blocks.AIR) {
+                                if (GameUtils.block.fromText(id).getBlock() == Blocks.AIR) {
 
                                     incompatible = true;
                                     TanshugetreesMod.LOGGER.error("Detected incompatible tree. Caused by unknown block ID. [ " + source.toFile().getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");

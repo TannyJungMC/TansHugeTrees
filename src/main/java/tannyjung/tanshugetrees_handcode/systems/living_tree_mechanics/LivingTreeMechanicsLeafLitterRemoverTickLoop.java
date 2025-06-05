@@ -18,7 +18,7 @@ public class LivingTreeMechanicsLeafLitterRemoverTickLoop {
         // If Area Loaded
         {
 
-            if (GameUtils.commandResult(level, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
+            if (GameUtils.command.result(level, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
 
                 return;
 
@@ -29,14 +29,14 @@ public class LivingTreeMechanicsLeafLitterRemoverTickLoop {
         BlockPos test_pos = new BlockPos(posX, posY, posZ);
         BlockState test_block = level.getBlockState(test_pos);
 
-        if (GameUtils.isBlockTaggedAs(test_block, "tanshugetrees:passable_blocks") == true && level.isWaterAt(test_pos) == false) {
+        if (GameUtils.block.isTaggedAs(test_block, "tanshugetrees:passable_blocks") == true && level.isWaterAt(test_pos) == false) {
 
-            GameUtils.runCommandEntity(entity, "tp ~ ~-1 ~");
+            GameUtils.command.runEntity(entity, "tp ~ ~-1 ~");
 
         } else {
 
-            LeafLitter.start(level, posX, posY + 1, posZ, GameUtils.textToBlock(GameUtils.NBTTextGet(entity, "block")), true);
-            GameUtils.runCommandEntity(entity, "kill @s");
+            LeafLitter.start(level, posX, posY + 1, posZ, GameUtils.block.fromText(GameUtils.NBT.entity.getText(entity, "block")), true);
+            GameUtils.command.runEntity(entity, "kill @s");
 
         }
 

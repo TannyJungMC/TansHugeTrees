@@ -25,7 +25,7 @@ public class UpdateRun {
 
 		if (OutsideUtils.isConnectedToInternet() == false) {
 
-			GameUtils.sendChatMessage(level, "@a", "red", "THT : Can't update right now, as no internet connection.");
+			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Can't update right now, as no internet connection.");
 
 		} else {
 
@@ -35,8 +35,8 @@ public class UpdateRun {
 
 				TanshugetreesMod.queueServerWork(20, () -> {
 
-					GameUtils.sendChatMessage(level, "@a", "white", "");
-					GameUtils.sendChatMessage(level, "@a", "gray", "THT : Started the installation, this may take a while.");
+					GameUtils.misc.sendChatMessage(level, "@a", "white", "");
+					GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Started the installation, this may take a while.");
 
 					// Delete Old Folders
 					{
@@ -74,14 +74,14 @@ public class UpdateRun {
 
 					}
 
-					GameUtils.sendChatMessage(level, "@a", "gray", "THT : Install Completed!");
+					GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Install Completed!");
 
 					ConfigRepairAll.start(level, true);
 					ConfigMain.apply(level);
 
-					GameUtils.sendChatMessage(level, "@a", "white", "");
+					GameUtils.misc.sendChatMessage(level, "@a", "white", "");
 					FileCount.start(level);
-					GameUtils.sendChatMessage(level, "@a", "white", "");
+					GameUtils.misc.sendChatMessage(level, "@a", "white", "");
 					PackMessage.start(level);
 
 					install_pause_systems = false;
@@ -129,12 +129,12 @@ public class UpdateRun {
 		if (Handcode.data_structure_version_pack > data_structure_version_url) {
 
 			return_logic = false;
-			GameUtils.sendChatMessage(level, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to available.");
+			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to available.");
 
 		} else if (Handcode.data_structure_version_pack < data_structure_version_url) {
 
 			return_logic = false;
-			GameUtils.sendChatMessage(level, "@a", "red", "THT : You're currently using mod version that does not support to new tree pack version, try update the mod and do it again.");
+			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : You're currently using mod version that does not support to new tree pack version, try update the mod and do it again.");
 
 		}
 
@@ -156,7 +156,7 @@ public class UpdateRun {
 
 			} catch (Exception ignored) {
 
-				GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+				GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
 				return false;
 
 			}
@@ -179,7 +179,7 @@ public class UpdateRun {
 
 		} catch (Exception ignored) {
 
-			GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
 			return false;
 
 		}
@@ -214,7 +214,7 @@ public class UpdateRun {
 
 		} catch (Exception ignored) {
 
-			GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
 			return false;
 
 		}
@@ -244,7 +244,7 @@ public class UpdateRun {
 
 						if (!newFile.isDirectory() && !newFile.mkdirs()) {
 
-							GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+							GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
 							return false;
 
 						}
@@ -257,7 +257,7 @@ public class UpdateRun {
 
 						if (!parent.isDirectory() && !parent.mkdirs()) {
 
-							GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+							GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
 							return false;
 
 						}
@@ -286,7 +286,7 @@ public class UpdateRun {
 
 		} catch (Exception ignored) {
 
-			GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
 			return false;
 
 		}
@@ -319,7 +319,7 @@ public class UpdateRun {
 
 			} catch (Exception ignored) {
 
-				GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+				GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
 				return false;
 
 			}
@@ -337,7 +337,7 @@ public class UpdateRun {
 
 		if (rename_from.renameTo(rename_to) == false) {
 
-			GameUtils.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
 			return false;
 
 		}

@@ -16,7 +16,7 @@ public class Loop {
 
     public static void start (LevelAccessor level) {
 
-        if (GameUtils.playerCount(level) > 0) {
+        if (GameUtils.misc.playerCount(level) > 0) {
 
             TanshugetreesMod.queueServerWork(1, () -> {
 
@@ -53,7 +53,7 @@ public class Loop {
         // Tree Generator
         {
 
-            if (GameUtils.commandResult(level, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_generator]") == true) {
+            if (GameUtils.command.result(level, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_generator]") == true) {
 
                 if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == false) {
 
@@ -73,7 +73,7 @@ public class Loop {
 
                             }
 
-                            GameUtils.runCommand(level, 0, 0, 0, "execute at @p as @e[tag=TANSHUGETREES-tree_generator" + custom + "] at @s run TANSHUGETREES dev tree_generator loop_tick");
+                            GameUtils.command.run(level, 0, 0, 0, "execute at @p as @e[tag=TANSHUGETREES-tree_generator" + custom + "] at @s run TANSHUGETREES dev tree_generator loop_tick");
 
                         }
 
@@ -84,7 +84,7 @@ public class Loop {
                     // From Converter
                     {
 
-                        GameUtils.runCommand(level, 0, 0, 0, "execute at @p in tanshugetrees:dimension positioned 0 0 0 as @e[tag=TANSHUGETREES-tree_generator,limit=1,sort=nearest] at @s run TANSHUGETREES dev tree_generator loop_tick");
+                        GameUtils.command.run(level, 0, 0, 0, "execute at @p in tanshugetrees:dimension positioned 0 0 0 as @e[tag=TANSHUGETREES-tree_generator,limit=1,sort=nearest] at @s run TANSHUGETREES dev tree_generator loop_tick");
 
                     }
 
@@ -108,11 +108,11 @@ public class Loop {
 
                         living_tree_mechanics_tick = 0;
 
-                        if (Math.random() < (double) GameUtils.scoreGet(level, "tree_location") / (double) ConfigMain.living_tree_mechanics_simulation) {
+                        if (Math.random() < (double) GameUtils.score.get(level, "tree_location") / (double) ConfigMain.living_tree_mechanics_simulation) {
 
-                            if (GameUtils.commandResult(level, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_location]") == true) {
+                            if (GameUtils.command.result(level, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_location]") == true) {
 
-                                GameUtils.runCommand(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_location,limit=1,sort=random] at @s run TANSHUGETREES dev living_tree_mechanics loop_tick");
+                                GameUtils.command.run(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_location,limit=1,sort=random] at @s run TANSHUGETREES dev living_tree_mechanics loop_tick");
 
                             }
 
@@ -127,9 +127,9 @@ public class Loop {
             // Leaf Drop
             {
 
-                if (GameUtils.commandResult(level, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_drop]") == true) {
+                if (GameUtils.command.result(level, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_drop]") == true) {
 
-                    GameUtils.runCommand(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-leaf_drop] at @s run TANSHUGETREES dev living_tree_mechanics leaf_drop_loop_tick");
+                    GameUtils.command.run(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-leaf_drop] at @s run TANSHUGETREES dev living_tree_mechanics leaf_drop_loop_tick");
 
                 }
 
@@ -138,9 +138,9 @@ public class Loop {
             // Leaf Litter Remover
             {
 
-                if (GameUtils.commandResult(level, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_litter_remover]") == true) {
+                if (GameUtils.command.result(level, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_litter_remover]") == true) {
 
-                    GameUtils.runCommand(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-leaf_litter_remover] at @s run TANSHUGETREES dev living_tree_mechanics leaf_litter_remover_loop_tick");
+                    GameUtils.command.run(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-leaf_litter_remover] at @s run TANSHUGETREES dev living_tree_mechanics leaf_litter_remover_loop_tick");
 
                 }
 
@@ -157,7 +157,7 @@ public class Loop {
 
             if (ConfigMain.developer_mode == true) {
 
-                GameUtils.runCommand(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
+                GameUtils.command.run(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
 
             }
 
@@ -168,7 +168,7 @@ public class Loop {
 
             if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
 
-                if (GameUtils.commandResult(level, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 0 0 unless entity @e[tag=THT-random_tree,distance=..1000]") == true) {
+                if (GameUtils.command.result(level, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 0 0 unless entity @e[tag=THT-random_tree,distance=..1000]") == true) {
 
                     AutoGenLoopTickProcedure.execute(level, 0, 0, 0);
 
@@ -181,21 +181,21 @@ public class Loop {
         // Living Tree Mechanics
         {
 
-            GameUtils.scoreSet(level, "tree_location", 0);
-            GameUtils.scoreSet(level, "leaf_drop", 0);
-            GameUtils.scoreSet(level, "leaf_litter_remover", 0);
+            GameUtils.score.set(level, "tree_location", 0);
+            GameUtils.score.set(level, "leaf_drop", 0);
+            GameUtils.score.set(level, "leaf_litter_remover", 0);
 
             if (Handcode.version_1192 == false) {
 
-                GameUtils.runCommand(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] if loaded ~ ~ ~ run scoreboard players add tree_location TANSHUGETREES 1");
-                GameUtils.runCommand(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_drop] if loaded ~ ~ ~ run scoreboard players add leaf_drop TANSHUGETREES 1");
-                GameUtils.runCommand(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_litter_remover] if loaded ~ ~ ~ run scoreboard players add leaf_litter_remover TANSHUGETREES 1");
+                GameUtils.command.run(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] if loaded ~ ~ ~ run scoreboard players add tree_location TANSHUGETREES 1");
+                GameUtils.command.run(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_drop] if loaded ~ ~ ~ run scoreboard players add leaf_drop TANSHUGETREES 1");
+                GameUtils.command.run(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_litter_remover] if loaded ~ ~ ~ run scoreboard players add leaf_litter_remover TANSHUGETREES 1");
 
             } else {
 
-                GameUtils.runCommand(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] run scoreboard players add tree_location TANSHUGETREES 1");
-                GameUtils.runCommand(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_drop] run scoreboard players add leaf_drop TANSHUGETREES 1");
-                GameUtils.runCommand(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_litter_remover] run scoreboard players add leaf_litter_remover TANSHUGETREES 1");
+                GameUtils.command.run(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] run scoreboard players add tree_location TANSHUGETREES 1");
+                GameUtils.command.run(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_drop] run scoreboard players add leaf_drop TANSHUGETREES 1");
+                GameUtils.command.run(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_litter_remover] run scoreboard players add leaf_litter_remover TANSHUGETREES 1");
 
 
             }

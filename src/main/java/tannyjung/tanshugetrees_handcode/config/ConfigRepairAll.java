@@ -20,7 +20,7 @@ public class ConfigRepairAll {
 
 		if (send_chat == true) {
 
-			GameUtils.sendChatMessage(level, "@a", "gray", "THT : Repaired The Config");
+			GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Repaired The Config");
 
 		}
 

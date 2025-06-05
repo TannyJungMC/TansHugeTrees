@@ -394,7 +394,7 @@ public class ConfigMain {
 
 		}
 
-		GameUtils.sendChatMessage(level, "@a", "gray", "THT : Applied The Config");
+		GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Applied The Config");
 
 	}
 	

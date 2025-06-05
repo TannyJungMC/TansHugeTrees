@@ -33,7 +33,7 @@ public class PackMessage {
 
             }
 
-            GameUtils.runCommand(level, 0, 0, 0, message.toString());
+            GameUtils.command.run(level, 0, 0, 0, message.toString());
 
         }
 

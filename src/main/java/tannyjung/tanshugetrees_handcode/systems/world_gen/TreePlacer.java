@@ -248,7 +248,7 @@ public class TreePlacer {
                             // Ground Block
                             {
 
-                                if (GameUtils.isBlockTaggedAs(chunk.getBlockState(new BlockPos(center_posX, originalY, center_posZ)), "tanshugetrees:passable_blocks") == true && testGroundBlock(chunk.getBlockState(new BlockPos(center_posX, originalY - 1, center_posZ)), ground_block) == false) {
+                                if (GameUtils.block.isTaggedAs(chunk.getBlockState(new BlockPos(center_posX, originalY, center_posZ)), "tanshugetrees:passable_blocks") == true && testGroundBlock(chunk.getBlockState(new BlockPos(center_posX, originalY - 1, center_posZ)), ground_block) == false) {
 
                                     pass = false;
                                     break test;
@@ -415,7 +415,7 @@ public class TreePlacer {
 
                         } else {
 
-                            if (GameUtils.isBlockTaggedAs(ground_block, split_get) == false) {
+                            if (GameUtils.block.isTaggedAs(ground_block, split_get) == false) {
 
                                 return_logic = false;
 
@@ -685,7 +685,7 @@ public class TreePlacer {
             int testY = 0;
             int testZ = 0;
 
-            boolean in_snowy_biome = GameUtils.isBiomeTaggedAs(level.getBiome(new BlockPos(center_posX, center_posY, center_posZ)), "forge:is_snowy");
+            boolean in_snowy_biome = GameUtils.biome.isTaggedAs(level.getBiome(new BlockPos(center_posX, center_posY, center_posZ)), "forge:is_snowy");
             boolean can_run_function = false;
             BlockState block = Blocks.AIR.defaultBlockState();
             BlockPos pos = null;
@@ -856,7 +856,7 @@ public class TreePlacer {
 
                                         get = get.replace(" keep", "");
 
-                                        if (GameUtils.isBlockTaggedAs(level.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level.isWaterAt(pos) == true) {
+                                        if (GameUtils.block.isTaggedAs(level.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level.isWaterAt(pos) == true) {
 
                                             continue;
 
@@ -871,14 +871,14 @@ public class TreePlacer {
                                     // Place Block
                                     {
 
-                                        block = GameUtils.textToBlock(get);
+                                        block = GameUtils.block.fromText(get);
 
                                         if (block != Blocks.AIR.defaultBlockState()) {
 
                                             // Leaves
                                             {
 
-                                                if (get_short.startsWith("le") == true && GameUtils.isBlockTaggedAs(block, "minecraft:leaves") == true) {
+                                                if (get_short.startsWith("le") == true && GameUtils.block.isTaggedAs(block, "minecraft:leaves") == true) {
 
                                                     // Pre Leaves Drop
                                                     {
@@ -944,7 +944,7 @@ public class TreePlacer {
 
                                                 if (level.isWaterAt(pos) == true) {
 
-                                                    block = GameUtils.blockPropertyBooleanSet(block, "waterlogged", true);
+                                                    block = GameUtils.block.propertyBooleanSet(block, "waterlogged", true);
 
                                                 }
 
@@ -971,7 +971,7 @@ public class TreePlacer {
                                                     if (read_all.equals("+b0^0^0tro") == true) {
 
                                                         marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
-                                                        GameUtils.runCommand(world, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.summonEntity("marker", "tree_location", id, marker_data));
+                                                        GameUtils.command.run(world, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.misc.summonEntity("marker", "tree_location", id, marker_data));
 
                                                     }
 

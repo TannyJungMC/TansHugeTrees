@@ -22,7 +22,7 @@ public class SeasonDetector {
 
         if (season_detector_tick == 1 || season_detector_tick == 3 || season_detector_tick == 5 || season_detector_tick == 7 || season_detector_tick == 9) {
 
-            GameUtils.runCommand(level, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
+            GameUtils.command.run(level, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
 
             if (season_detector_tick == 9) {
 
@@ -60,8 +60,8 @@ public class SeasonDetector {
 
             if (season.equals("") == false) {
 
-                GameUtils.runCommand(level, posX, posY, posZ, "setblock ~ ~ ~ command_block[facing=up]{Command:\"TANSHUGETREES command season set " + season + "\"}");
-                GameUtils.runCommand(level, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
+                GameUtils.command.run(level, posX, posY, posZ, "setblock ~ ~ ~ command_block[facing=up]{command:\"TANSHUGETREES command season set " + season + "\"}");
+                GameUtils.command.run(level, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
 
             }
 
