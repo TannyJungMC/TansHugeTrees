@@ -29,6 +29,8 @@ import net.minecraft.world.scores.Objective;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 
+import java.util.Arrays;
+
 public class GameUtils {
 
 	public static class misc {
@@ -386,9 +388,33 @@ public class GameUtils {
 
 			}
 
-			public static ListTag getListNumber (net.minecraft.world.entity.Entity entity, String name) {
+			public static double[] getListNumber (net.minecraft.world.entity.Entity entity, String name) {
 
-				return entity.getPersistentData().getList(name, Tag.TAG_DOUBLE);
+				ListTag list = entity.getPersistentData().getList(name, Tag.TAG_DOUBLE);
+				double[] convert = new double[list.size()];
+
+				for (int count = 0; count <= list.size() - 1; count++) {
+
+					convert[count] = list.getDouble(count);
+
+				}
+
+				return convert;
+
+			}
+
+			public static double[] getListNumberFloat (net.minecraft.world.entity.Entity entity, String name) {
+
+				ListTag list = entity.getPersistentData().getList(name, Tag.TAG_FLOAT);
+				double[] convert = new double[list.size()];
+
+				for (int count = 0; count <= list.size() - 1; count++) {
+
+					convert[count] = list.getFloat(count);
+
+				}
+
+				return convert;
 
 			}
 

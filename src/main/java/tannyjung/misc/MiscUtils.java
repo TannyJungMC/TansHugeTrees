@@ -4,7 +4,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
-public class OutsideUtils {
+public class MiscUtils {
 
 	public static boolean isConnectedToInternet () {
 
