@@ -11,7 +11,7 @@ For MCreator
 
 # Terms of Use
 
-- You can use my mods in your modpacks and in videos. You can also put credit to mod page and supporting by donate, as appropriate.
+- You can use my mods in your modpacks, videos, and custom maps. You can also put credit to mod page and supporting me by donate, as appropriate.
 - Suggestions and requests is not open for all my mods, except contents in the custom packs that's half open.
 - Source code is open publicly. You can read, study, and edit my codes privately. But do not suggest about your edit, and publish your own edit.
 
