@@ -1,6 +1,6 @@
 package tannyjung.tanshugetrees.procedures;
 
-import tannyjung.tanshugetrees_handcode.systems.tree_generator.TreeGeneratorLoopTick;
+import tannyjung.tanshugetrees_handcode.systems.tree_generator.TreeGenerator;
 
 import tannyjung.tanshugetrees.TanshugetreesMod;
 
@@ -22,6 +22,6 @@ public class COMMANDTreeGeneratorLoopTickProcedure {
 				_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(), "");
 			TanshugetreesMod.LOGGER.info(entity);
 		}
-		TreeGeneratorLoopTick.start(world, entity);
+		TreeGenerator.start(world, entity);
 	}
 }

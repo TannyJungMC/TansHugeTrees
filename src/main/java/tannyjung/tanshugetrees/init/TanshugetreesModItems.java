@@ -57,16 +57,22 @@ public class TanshugetreesModItems {
 	public static final RegistryObject<Item> BLOCK_PLACER_TWIG_CORE = block(TanshugetreesModBlocks.BLOCK_PLACER_TWIG_CORE);
 	public static final RegistryObject<Item> BLOCK_PLACER_TWIG_INNER = block(TanshugetreesModBlocks.BLOCK_PLACER_TWIG_INNER);
 	public static final RegistryObject<Item> BLOCK_PLACER_TWIG_OUTER = block(TanshugetreesModBlocks.BLOCK_PLACER_TWIG_OUTER);
-	public static final RegistryObject<Item> BLOCK_PLACER_LEAVES = block(TanshugetreesModBlocks.BLOCK_PLACER_LEAVES);
 	public static final RegistryObject<Item> BLOCK_PLACER_LEAVES_2 = block(TanshugetreesModBlocks.BLOCK_PLACER_LEAVES_2);
-	public static final RegistryObject<Item> BLOCK_PLACER_LEAVES_TWIG_CORE = block(TanshugetreesModBlocks.BLOCK_PLACER_LEAVES_TWIG_CORE);
-	public static final RegistryObject<Item> BLOCK_PLACER_LEAVES_TWIG_INNER = block(TanshugetreesModBlocks.BLOCK_PLACER_LEAVES_TWIG_INNER);
-	public static final RegistryObject<Item> BLOCK_PLACER_LEAVES_TWIG_OUTER = block(TanshugetreesModBlocks.BLOCK_PLACER_LEAVES_TWIG_OUTER);
 	public static final RegistryObject<Item> PRESET_FIXER = REGISTRY.register("preset_fixer", () -> new PresetFixerItem());
 	public static final RegistryObject<Item> AGATHOS = block(TanshugetreesModBlocks.AGATHOS);
 	public static final RegistryObject<Item> REDWOOD = block(TanshugetreesModBlocks.REDWOOD);
 	public static final RegistryObject<Item> BAOBAB = block(TanshugetreesModBlocks.BAOBAB);
 	public static final RegistryObject<Item> GIANT_PUMPKIN = block(TanshugetreesModBlocks.GIANT_PUMPKIN);
+	public static final RegistryObject<Item> BLOCK_PLACER_LEAVES_1 = block(TanshugetreesModBlocks.BLOCK_PLACER_LEAVES_1);
+	public static final RegistryObject<Item> BLOCK_PLACER_SPRIG_CORE = block(TanshugetreesModBlocks.BLOCK_PLACER_SPRIG_CORE);
+	public static final RegistryObject<Item> BLOCK_PLACER_SPRIG_INNER = block(TanshugetreesModBlocks.BLOCK_PLACER_SPRIG_INNER);
+	public static final RegistryObject<Item> BLOCK_PLACER_SPRIG_OUTER = block(TanshugetreesModBlocks.BLOCK_PLACER_SPRIG_OUTER);
+	public static final RegistryObject<Item> BLOCK_PLACER_BOUGH_CORE = block(TanshugetreesModBlocks.BLOCK_PLACER_BOUGH_CORE);
+	public static final RegistryObject<Item> BLOCK_PLACER_BOUGH_INNER = block(TanshugetreesModBlocks.BLOCK_PLACER_BOUGH_INNER);
+	public static final RegistryObject<Item> BLOCK_PLACER_BOUGH_OUTER = block(TanshugetreesModBlocks.BLOCK_PLACER_BOUGH_OUTER);
+	public static final RegistryObject<Item> BLOCK_PLACER_LIMB_CORE = block(TanshugetreesModBlocks.BLOCK_PLACER_LIMB_CORE);
+	public static final RegistryObject<Item> BLOCK_PLACER_LIMB_INNER = block(TanshugetreesModBlocks.BLOCK_PLACER_LIMB_INNER);
+	public static final RegistryObject<Item> BLOCK_PLACER_LIMB_OUTER = block(TanshugetreesModBlocks.BLOCK_PLACER_LIMB_OUTER);
 
 	// Start of user code block custom items
 	// End of user code block custom items
