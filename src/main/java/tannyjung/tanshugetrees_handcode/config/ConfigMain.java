@@ -202,7 +202,7 @@ public class ConfigMain {
 					| Default is [ 100 ]
 					
 					leaf_drop_animation_chance = 1.0
-					| Chance of animation that will appear at leaf drop block on the trees
+					| Chance of animation that will appear at leaf drop block on the trees. Other than this chance will be use fast drop without animation.
 					| Default is [ 1.0 ]
 					
 					leaf_drop_animation_count_limit = 500
@@ -263,7 +263,7 @@ public class ConfigMain {
 					
 					global_speed_repeat = 1000
 					| This make generator repeats it process in one time of it speed. Increase this will make it generate faster but also cause lag. Set to 0 for one time generation that can freeze the game.
-					| Default is [ 10 ]
+					| Default is [ 1000 ]
 					
 					global_speed_tp = 0
 					| This option change how many block the parts generator will teleport in a time. Increase this can cause lag because it teleports too fast. Set to 0 for no limit.

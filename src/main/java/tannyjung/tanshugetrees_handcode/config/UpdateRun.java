@@ -15,7 +15,7 @@ import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 ;
 import tannyjung.misc.GameUtils;
-import tannyjung.misc.OutsideUtils;
+import tannyjung.misc.MiscUtils;
 
 public class UpdateRun {
 
@@ -23,7 +23,7 @@ public class UpdateRun {
 
     public static void start (LevelAccessor level) {
 
-		if (OutsideUtils.isConnectedToInternet() == false) {
+		if (MiscUtils.isConnectedToInternet() == false) {
 
 			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Can't update right now, as no internet connection.");
 

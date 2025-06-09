@@ -13,13 +13,13 @@ import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 ;
 import tannyjung.misc.GameUtils;
-import tannyjung.misc.OutsideUtils;
+import tannyjung.misc.MiscUtils;
 
 public class CheckUpdateRun {
 
     public static void start (LevelAccessor level) {
 
-		if (OutsideUtils.isConnectedToInternet() == false) {
+		if (MiscUtils.isConnectedToInternet() == false) {
 
 			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Can't check for update right now, as no internet connection.");
 
