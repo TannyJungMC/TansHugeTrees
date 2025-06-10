@@ -543,6 +543,7 @@ public class TreeGenerator {
                         double percent = GameUtils.NBT.entity.getNumber(entity, type + "_length") / GameUtils.NBT.entity.getNumber(entity, type + "_length_save");
                         double thickness = GameUtils.NBT.entity.getNumber(entity, type + "_thickness_max") - GameUtils.NBT.entity.getNumber(entity, type + "_thickness_min");
                         thickness = (GameUtils.NBT.entity.getNumber(entity, type + "_thickness_min") - 1) + (thickness * percent);
+                        thickness = Math.round(thickness);
                         GameUtils.NBT.entity.setNumber(entity, type + "_thickness", Double.parseDouble(String.format("%.2f", thickness)));
                         GameUtils.command.run(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ^ ^ ^1");
 
