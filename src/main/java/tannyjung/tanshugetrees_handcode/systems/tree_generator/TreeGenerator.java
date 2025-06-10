@@ -623,9 +623,6 @@ public class TreeGenerator {
                 if (GameUtils.NBT.entity.getLogic(entity, "still_building") == false) {
 
                     GameUtils.NBT.entity.setLogic(entity, "still_building", true);
-                    GameUtils.NBT.entity.setNumber(entity, "build_saveX", -(half_thickness));
-                    GameUtils.NBT.entity.setNumber(entity, "build_saveY", -(half_thickness));
-                    GameUtils.NBT.entity.setNumber(entity, "build_saveZ", -(half_thickness));
 
                     // Get Center Pos
                     {
@@ -638,60 +635,69 @@ public class TreeGenerator {
 
                     }
 
-                    if (generator_type.equals("sphere_zone") == true) {
+                    // Sphere Zone
+                    {
 
-                        GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.builder_yaw_pitch set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_sprig,limit=1] Rotation");
-                        double[] yaw_pitch = GameUtils.NBT.entity.getListNumberFloat(entity, "builder_yaw_pitch");
-                        double yaw = Math.toRadians(((yaw_pitch[0] + 180) + 90) % 360);
-                        double pitch = yaw_pitch[1];
+                        if (generator_type.equals("sphere_zone") == true) {
 
-                        // Min Pitch
-                        {
+                            GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.builder_yaw_pitch set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_sprig,limit=1] Rotation");
+                            double[] yaw_pitch = GameUtils.NBT.entity.getListNumberFloat(entity, "builder_yaw_pitch");
+                            double yaw = Math.toRadians(((yaw_pitch[0] + 180) + 90) % 360);
+                            double pitch = yaw_pitch[1];
 
-                            int pitch_min = (int) GameUtils.NBT.entity.getNumber(entity, type + "_sphere_zone_pitch_min");
+                            // Min Pitch
+                            {
 
-                            if (pitch > pitch_min) {
+                                int pitch_min = (int) GameUtils.NBT.entity.getNumber(entity, type + "_sphere_zone_pitch_min");
 
-                                pitch = pitch_min;
+                                if (pitch > pitch_min) {
 
-                            }
+                                    pitch = pitch_min;
 
-                        }
-
-                        pitch = Math.toRadians(pitch);
-                        double distance = half_thickness;
-                        int size = (int) GameUtils.NBT.entity.getNumber(entity, type + "_sphere_zone_size");
-
-                        GameUtils.NBT.entity.setNumber(entity, "sphere_zone_posX", distance * Math.cos(pitch) * Math.cos(yaw));
-                        GameUtils.NBT.entity.setNumber(entity, "sphere_zone_posY", distance * Math.sin(pitch));
-                        GameUtils.NBT.entity.setNumber(entity, "sphere_zone_posZ", distance * Math.cos(pitch) * Math.sin(yaw));
-
-                        // Change Build Center
-                        {
-
-                            distance = distance - size;
-                            GameUtils.NBT.entity.addNumber(entity, "build_centerX", distance * Math.cos(pitch) * Math.cos(yaw));
-                            GameUtils.NBT.entity.addNumber(entity, "build_centerY", distance * Math.sin(pitch));
-                            GameUtils.NBT.entity.addNumber(entity, "build_centerZ", distance * Math.cos(pitch) * Math.sin(yaw));
-
-                        }
-
-                        // Get Area
-                        {
-
-                            double sphere_zone_area = thickness - size;
-
-                            if (sphere_zone_area < 0) {
-
-                                sphere_zone_area = 0;
+                                }
 
                             }
 
-                            GameUtils.NBT.entity.setNumber(entity, "sphere_zone_area", sphere_zone_area * sphere_zone_area);
+                            pitch = Math.toRadians(pitch);
+                            double distance = half_thickness;
+                            int size = (int) GameUtils.NBT.entity.getNumber(entity, type + "_sphere_zone_size");
+
+                            GameUtils.NBT.entity.setNumber(entity, "sphere_zone_posX", distance * Math.cos(pitch) * Math.cos(yaw));
+                            GameUtils.NBT.entity.setNumber(entity, "sphere_zone_posY", distance * Math.sin(pitch));
+                            GameUtils.NBT.entity.setNumber(entity, "sphere_zone_posZ", distance * Math.cos(pitch) * Math.sin(yaw));
+
+                            // Change Build Center
+                            {
+
+                                distance = distance - size;
+                                GameUtils.NBT.entity.addNumber(entity, "build_centerX", distance * Math.cos(pitch) * Math.cos(yaw));
+                                GameUtils.NBT.entity.addNumber(entity, "build_centerY", distance * Math.sin(pitch));
+                                GameUtils.NBT.entity.addNumber(entity, "build_centerZ", distance * Math.cos(pitch) * Math.sin(yaw));
+
+                            }
+
+                            // Get Area
+                            {
+
+                                double sphere_zone_area = thickness - size;
+
+                                if (sphere_zone_area < 0) {
+
+                                    sphere_zone_area = 0;
+
+                                }
+
+                                GameUtils.NBT.entity.setNumber(entity, "sphere_zone_area", sphere_zone_area * sphere_zone_area);
+
+                            }
 
                         }
 
                     }
+
+                    GameUtils.NBT.entity.setNumber(entity, "build_saveX", -(half_thickness));
+                    GameUtils.NBT.entity.setNumber(entity, "build_saveY", -(half_thickness));
+                    GameUtils.NBT.entity.setNumber(entity, "build_saveZ", -(half_thickness));
 
                 }
 
@@ -703,104 +709,66 @@ public class TreeGenerator {
             double sphere_zone_area = 0.0;
             double[] sphere_zone_pos = new double[0];
 
-            if (generator_type.equals("sphere_zone") == true) {
+            // Get Some Saved Data
+            {
 
-                sphere_zone_area = GameUtils.NBT.entity.getNumber(entity, "sphere_zone_area");
-                sphere_zone_pos = new double[]{GameUtils.NBT.entity.getNumber(entity, "sphere_zone_posX"), GameUtils.NBT.entity.getNumber(entity, "sphere_zone_posY"), GameUtils.NBT.entity.getNumber(entity, "sphere_zone_posZ")};
+                if (generator_type.equals("sphere_zone") == true) {
+
+                    sphere_zone_area = GameUtils.NBT.entity.getNumber(entity, "sphere_zone_area");
+                    sphere_zone_pos = new double[]{GameUtils.NBT.entity.getNumber(entity, "sphere_zone_posX"), GameUtils.NBT.entity.getNumber(entity, "sphere_zone_posY"), GameUtils.NBT.entity.getNumber(entity, "sphere_zone_posZ")};
+
+                }
 
             }
 
             while (true) {
 
+                // Building
                 {
 
-                double build_saveX = GameUtils.NBT.entity.getNumber(entity, "build_saveX");
-                double build_saveY = GameUtils.NBT.entity.getNumber(entity, "build_saveY");
-                double build_saveZ = GameUtils.NBT.entity.getNumber(entity, "build_saveZ");
+                    double build_saveX = GameUtils.NBT.entity.getNumber(entity, "build_saveX");
+                    double build_saveY = GameUtils.NBT.entity.getNumber(entity, "build_saveY");
+                    double build_saveZ = GameUtils.NBT.entity.getNumber(entity, "build_saveZ");
 
-                if (build_saveY <= half_thickness) {
+                    if (build_saveY <= half_thickness) {
 
-                    if (build_saveX <= half_thickness) {
+                        if (build_saveX <= half_thickness) {
 
-                        if (build_saveZ <= half_thickness) {
+                            if (build_saveZ <= half_thickness) {
 
-                            GameUtils.NBT.entity.addNumber(entity, "build_saveZ", 1);
+                                GameUtils.NBT.entity.addNumber(entity, "build_saveZ", 1);
 
-                            // Place Block
-                            {
-
-                                double build_area = 0.0;
-
-                                // Shaping
+                                // Place Block
                                 {
 
-                                    if (generator_type.startsWith("sphere") == true) {
+                                    double build_area = 0.0;
 
-                                        {
+                                    // Shaping
+                                    {
 
-                                            build_area = (build_saveX * build_saveX) + (build_saveY * build_saveY) + (build_saveZ * build_saveZ);
+                                        if (generator_type.startsWith("sphere") == true) {
 
-                                            if ((thickness > 1) && (build_area > sphere_area)) {
+                                            {
 
-                                                continue;
+                                                build_area = (build_saveX * build_saveX) + (build_saveY * build_saveY) + (build_saveZ * build_saveZ);
 
-                                            }
+                                                if ((thickness > 1) && (build_area > sphere_area)) {
 
-                                        }
+                                                    continue;
 
-                                    }
-
-                                    if (generator_type.equals("sphere_zone") == true) {
-
-                                        {
-
-                                            if (Math.pow(sphere_zone_pos[0] - build_saveX, 2) + Math.pow(sphere_zone_pos[1] - build_saveY, 2) + Math.pow(sphere_zone_pos[2] - build_saveZ, 2) < sphere_zone_area) {
-
-                                                continue;
+                                                }
 
                                             }
 
                                         }
 
-                                    }
+                                        if (generator_type.equals("sphere_zone") == true) {
 
-                                }
+                                            {
 
-                                BlockPos pos = new BlockPos((int) (center_pos[0] + build_saveX), (int) (center_pos[1] + build_saveY), (int) (center_pos[2] + build_saveZ));
-                                String block = "";
+                                                if (Math.pow(sphere_zone_pos[0] - build_saveX, 2) + Math.pow(sphere_zone_pos[1] - build_saveY, 2) + Math.pow(sphere_zone_pos[2] - build_saveZ, 2) < sphere_zone_area) {
 
-                                // Get Block
-                                {
-
-                                    if (type.equals("leaves") == false) {
-
-                                        {
-
-                                            if (generator_type.equals("sphere") == true) {
-
-                                                block = buildOuterInnerCore(level, entity, type, half_thickness, pos, build_area);
-
-                                            } else {
-
-                                                block = "outer";
-
-                                            }
-
-                                        }
-
-                                    } else {
-
-                                        {
-
-                                            if (Math.random() < GameUtils.NBT.entity.getNumber(entity, "leaves_density") * 0.01) {
-
-                                                if (Math.random() < GameUtils.NBT.entity.getNumber(entity, "leaves2_chance")) {
-
-                                                    block = "leaves_2";
-
-                                                } else {
-
-                                                    block = "leaves_1";
+                                                    continue;
 
                                                 }
 
@@ -810,36 +778,110 @@ public class TreeGenerator {
 
                                     }
 
+                                    BlockPos pos = new BlockPos((int) (center_pos[0] + build_saveX), (int) (center_pos[1] + build_saveY), (int) (center_pos[2] + build_saveZ));
+                                    String block = "";
+
+                                    if (type.equals("leaves") == false) {
+
+                                        // General
+                                        {
+
+                                            // Get Block
+                                            {
+
+                                                if (generator_type.equals("sphere") == true) {
+
+                                                    block = buildOuterInnerCore(level, entity, type, half_thickness, pos, build_area);
+
+                                                } else {
+
+                                                    block = "outer";
+
+                                                }
+
+                                            }
+
+                                            if (block.equals("") == false && buildTestKeep(level, pos, replace) == true) {
+
+                                                buildPlaceBlock(level, entity, type, pos, block);
+                                                return;
+
+                                            }
+
+                                        }
+
+                                    } else {
+
+                                        // Leaves
+                                        {
+
+                                            if (Math.random() < GameUtils.NBT.entity.getNumber(entity, "leaves_density") * 0.01) {
+
+                                                BlockPos pos_leaves = null;
+                                                int deep = 1;
+
+                                                if (Math.random() < GameUtils.NBT.entity.getNumber(entity, "leaves_straighten_chance")) {
+
+                                                    deep = Mth.nextInt(RandomSource.create(), (int) GameUtils.NBT.entity.getNumber(entity, "leaves_straighten_min"), (int) GameUtils.NBT.entity.getNumber(entity, "leaves_straighten_max"));
+
+                                                }
+
+                                                for (int deep_test = 0; deep_test < deep; deep_test++) {
+
+                                                    // Get Block
+                                                    {
+
+                                                        if (Math.random() < GameUtils.NBT.entity.getNumber(entity, "leaves2_chance")) {
+
+                                                            block = "leaves_2";
+
+                                                        } else {
+
+                                                            block = "leaves_1";
+
+                                                        }
+
+                                                    }
+
+                                                    pos_leaves = new BlockPos(pos.getX(), pos.getY() - deep_test, pos.getZ());
+
+                                                    if (block.equals("") == false && buildTestKeep(level, pos_leaves, replace) == true) {
+
+                                                        buildPlaceBlock(level, entity, type, pos_leaves, block);
+
+                                                    }
+
+                                                }
+
+                                                return;
+
+                                            }
+
+                                        }
+
+                                    }
+
                                 }
 
-                                if (block.equals("") == false && buildTestKeep(level, pos, replace) == true) {
+                            } else {
 
-                                    buildPlaceBlock(level, entity, type, pos, block);
-                                    return;
-
-                                }
+                                GameUtils.NBT.entity.setNumber(entity, "build_saveZ", -(half_thickness));
+                                GameUtils.NBT.entity.addNumber(entity, "build_saveX", 1);
 
                             }
 
                         } else {
 
-                            GameUtils.NBT.entity.setNumber(entity, "build_saveZ", -(half_thickness));
-                            GameUtils.NBT.entity.addNumber(entity, "build_saveX", 1);
+                            GameUtils.NBT.entity.setNumber(entity, "build_saveX", -(half_thickness));
+                            GameUtils.NBT.entity.addNumber(entity, "build_saveY", 1);
 
                         }
 
                     } else {
 
-                        GameUtils.NBT.entity.setNumber(entity, "build_saveX", -(half_thickness));
-                        GameUtils.NBT.entity.addNumber(entity, "build_saveY", 1);
+                        break;
 
                     }
-
-                } else {
-
-                    break;
-
-                }
 
                 }
 
