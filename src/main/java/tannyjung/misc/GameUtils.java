@@ -27,7 +27,6 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Objective;
 import net.minecraftforge.server.ServerLifecycleHooks;
-import tannyjung.tanshugetrees.TanshugetreesMod;
 
 import java.util.Arrays;
 
@@ -67,22 +66,18 @@ public class GameUtils {
 
 			return_text.append("summon ")
 					.append(id)
-					.append(" ~ ~ ~ {Tags:[\"")
-					.append(TanshugetreesMod.MODID.toUpperCase())
+					.append(" ~ ~ ~ {")
 			;
 
 			if (tag.equals("") == false) {
 
 				return_text
-						.append("\",\"")
-						.append(TanshugetreesMod.MODID.toUpperCase())
-						.append("-")
-						.append(tag.replace(" / ", "\",\"" + TanshugetreesMod.MODID.toUpperCase() + "-"))
+						.append("Tags:[\"")
+						.append(tag.replace(" / ", "\",\""))
+						.append("\"]")
 				;
 
 			}
-
-			return_text.append("\"]");
 
 			if (name.equals("") == false) {
 
@@ -245,31 +240,31 @@ public class GameUtils {
 
 	public static class score {
 
-		public static int get (LevelAccessor level, String player) {
+		public static int get (LevelAccessor level, String objective, String player) {
 
 			ServerScoreboard score = level.getServer().getScoreboard();
-			Objective objective = score.getObjective(TanshugetreesMod.MODID.toUpperCase());
+			Objective objective_get = score.getObjective(objective);
 
-			return score.getOrCreatePlayerScore(player, objective).getScore();
+			return score.getOrCreatePlayerScore(player, objective_get).getScore();
 
 		}
 
-		public static void set (LevelAccessor level, String player, int value) {
+		public static void set (LevelAccessor level, String objective, String player, int value) {
 
 			ServerScoreboard score = level.getServer().getScoreboard();
-			Objective objective = score.getObjective(TanshugetreesMod.MODID.toUpperCase());
+			Objective objective_get = score.getObjective(objective);
 
-			score.getOrCreatePlayerScore(player, objective).setScore(value);
+			score.getOrCreatePlayerScore(player, objective_get).setScore(value);
 
 		}
 
-		public static void add (LevelAccessor level, String player, int value) {
+		public static void add (LevelAccessor level, String objective, String player, int value) {
 
 			ServerScoreboard score = level.getServer().getScoreboard();
-			Objective objective = score.getObjective(TanshugetreesMod.MODID.toUpperCase());
-			int old_value = get(level, player);
+			Objective objective_get = score.getObjective(objective);
+			int old_value = get(level, objective, player);
 
-			score.getOrCreatePlayerScore(player, objective).setScore(old_value + value);
+			score.getOrCreatePlayerScore(player, objective_get).setScore(old_value + value);
 
 		}
 
