@@ -11,6 +11,8 @@ import tannyjung.misc.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 
+import java.util.Calendar;
+
 public class TreeGenerator {
 
     public static void start (LevelAccessor level, Entity entity) {
@@ -49,6 +51,15 @@ public class TreeGenerator {
 
         GameUtils.NBT.entity.setText(entity, "id", entity.getUUID().toString());
         GameUtils.command.runEntity(entity, "tag @s add TANSHUGETREES-" + GameUtils.NBT.entity.getText(entity, "id"));
+
+        if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
+
+            String name = GameUtils.NBT.entity.getText(entity, "name").toLowerCase();
+            String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss").format(Calendar.getInstance().getTime());
+            GameUtils.NBT.entity.setText(entity, "export_file_name", name + "-" + time);
+
+        }
+
         GameUtils.NBT.entity.setText(entity, "type", "taproot");
         GameUtils.NBT.entity.setText(entity, "step", "summon");
         GameUtils.NBT.entity.setNumber(entity, "taproot_count", Mth.nextInt(RandomSource.create(), (int) GameUtils.NBT.entity.getNumber(entity, "taproot_count_min"), (int) GameUtils.NBT.entity.getNumber(entity, "taproot_count_max")));
@@ -106,7 +117,7 @@ public class TreeGenerator {
         }
 
         // Summon Status Display
-        GameUtils.command.runEntity(entity, "execute positioned ~ ~1 ~ run " + GameUtils.misc.summonEntity("text_display", GameUtils.NBT.entity.getText(entity, "id") + " / tree_generator_status", "Tree Generator Status", "see_through:1b,alignment:\"left\",brightness:{block:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"In Progress...\",\"color\":\"white\"}'"));
+        GameUtils.command.runEntity(entity, "execute positioned ~ ~1 ~ run " + GameUtils.misc.summonEntity("text_display",  "TANSHUGETREES-" + GameUtils.NBT.entity.getText(entity, "id") + " / TANSHUGETREES-tree_generator_status", "Tree Generator Status", "see_through:1b,alignment:\"left\",brightness:{block:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"In Progress...\",\"color\":\"white\"}'"));
 
     }
 
@@ -427,7 +438,7 @@ public class TreeGenerator {
 
                 }
 
-                GameUtils.command.run(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-" + at_part + "] at @s " + positioned + " run " + GameUtils.misc.summonEntity("marker", id + " / generator_" + type, "Tree Generator - Part", ""));
+                GameUtils.command.run(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-" + at_part + "] at @s " + positioned + " run " + GameUtils.misc.summonEntity("marker", "TANSHUGETREES-" + id + " / TANSHUGETREES-generator_" + type, "Tree Generator - Part", ""));
                 GameUtils.command.run(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-" + at_part + "] at @s " + positioned + " run particle minecraft:firework ~ ~ ~ 0 0 0 0.1 20 force");
 
                 if (taproot_trunk == true) {
@@ -1047,13 +1058,22 @@ public class TreeGenerator {
             } else {
 
                 block_placer = block;
-                block = block_placer.replace("_", "");
+                block = block.replace("_", "");
 
             }
 
             level.setBlock(pos, GameUtils.block.fromText("tanshugetrees:block_placer_" + block_placer), 2);
-            GameUtils.NBT.block.setText(level, pos, "block", GameUtils.NBT.entity.getText(entity, block));
             GameUtils.command.run(level, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
+            GameUtils.NBT.block.setText(level, pos, "block", GameUtils.NBT.entity.getText(entity, block));
+            GameUtils.NBT.block.setText(level, pos, "function", "XXX");
+
+            if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
+
+                GameUtils.NBT.block.setText(level, pos, "export_file_name", GameUtils.NBT.entity.getText(entity, "export_file_name"));
+                GameUtils.NBT.block.setText(level, pos, "type", type);
+                GameUtils.NBT.block.setText(level, pos, "block_original", block);
+
+            }
 
         }
 
