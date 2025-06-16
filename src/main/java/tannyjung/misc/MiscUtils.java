@@ -28,4 +28,32 @@ public class MiscUtils {
 
 	}
 
+	public static String quardtreeChunkToNode (int chunkX, int chunkZ) {
+
+		StringBuilder return_text = new StringBuilder();
+
+		{
+
+			int localX = chunkX & 31;
+			int localZ = chunkZ & 31;
+
+			for (int level = 0; level < 2; level++) {
+
+				int size = 32 >> (level + 1);
+				int posX = (localX / size) % 2;
+				int posZ = (localZ / size) % 2;
+
+				if (posX == 0 && posZ == 0) return_text.append("-NW");
+				else if (posX == 1 && posZ == 0) return_text.append("-NE");
+				else if (posX == 0 && posZ == 1) return_text.append("-SW");
+				else return_text.append("-SE");
+
+			}
+
+		}
+
+		return return_text.substring(1);
+
+	}
+
 }

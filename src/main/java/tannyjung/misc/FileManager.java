@@ -1,39 +1,8 @@
 package tannyjung.misc;
 
-import tannyjung.tanshugetrees.TanshugetreesMod;
-import tannyjung.tanshugetrees_handcode.Handcode;
-
 import java.io.*;
 
 public class FileManager {
-
-	public static String quardtreeChunkToNode (int chunkX, int chunkZ) {
-
-		StringBuilder return_text = new StringBuilder();
-
-		{
-
-			int localX = chunkX & 31;
-			int localZ = chunkZ & 31;
-
-			for (int level = 0; level < Handcode.quadtree_level; level++) {
-
-				int size = 32 >> (level + 1);
-				int posX = (localX / size) % 2;
-				int posZ = (localZ / size) % 2;
-
-				if (posX == 0 && posZ == 0) return_text.append("-NW");
-				else if (posX == 1 && posZ == 0) return_text.append("-NE");
-				else if (posX == 0 && posZ == 1) return_text.append("-SW");
-				else return_text.append("-SE");
-
-			}
-
-		}
-
-		return return_text.substring(1);
-
-	}
 
 	public static int[] textPosConverter (String pos, int rotation, boolean mirrored) {
 
@@ -114,9 +83,7 @@ public class FileManager {
 
 					file.createNewFile();
 
-				} catch (Exception e) {
-
-					TanshugetreesMod.LOGGER.error(e.getMessage());
+				} catch (Exception ignored) {
 
 				}
 
@@ -134,9 +101,7 @@ public class FileManager {
 			buffered_writer.close();
 			writer.close();
 
-		} catch (Exception e) {
-
-			TanshugetreesMod.LOGGER.error(e.getMessage());
+		} catch (Exception ignored) {
 
 		}
 
@@ -155,9 +120,7 @@ public class FileManager {
 
 					file.createNewFile();
 
-				} catch (Exception e) {
-
-					TanshugetreesMod.LOGGER.error(e.getMessage());
+				} catch (Exception ignored) {
 
 				}
 
@@ -199,7 +162,7 @@ public class FileManager {
 
 									}
 
-								} buffered_reader2.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+								} buffered_reader2.close(); } catch (Exception ignored) { }
 
 							}
 
@@ -216,7 +179,7 @@ public class FileManager {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+				} buffered_reader.close(); } catch (Exception ignored) { }
 
 			}
 
@@ -263,31 +226,24 @@ public class FileManager {
 
 				{
 
-					try {
-						BufferedReader buffered_reader = new BufferedReader(new FileReader(file));
-						String read_all = "";
-						while ((read_all = buffered_reader.readLine()) != null) {
+					try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-							{
+						{
 
-								if (read_all.startsWith("|") == false) {
+							if (read_all.startsWith("|") == false) {
 
-									if (read_all.startsWith(name) == true) {
+								if (read_all.startsWith(name) == true) {
 
-										return_text = read_all.replace(name, "");
-										break;
-
-									}
+									return_text = read_all.replace(name, "");
+									break;
 
 								}
 
 							}
 
 						}
-						buffered_reader.close();
-					} catch (Exception e) {
-						TanshugetreesMod.LOGGER.error(e.getMessage());
-					}
+
+					} buffered_reader.close(); } catch (Exception ignored) { }
 
 				}
 
