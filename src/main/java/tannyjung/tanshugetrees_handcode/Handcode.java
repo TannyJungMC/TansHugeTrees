@@ -41,15 +41,11 @@ public class Handcode {
 	public static String directory_world_data = directory_game + "/saves/tanshugetrees-error";
 	public static String tanny_pack_version_name = ""; // Make this because version can swap to "WIP" by config
 
-	public static int quadtree_level = 2; // 1 = 16x16 / 2 = 8x8 / 3 = 4x4 / ...
-
 	public Handcode () {}
 
 	public static void startGame () {
 
-		new Handcode();
-
-		// Registry Feature
+		// // Basic Registries
 		{
 
 			IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -67,10 +63,8 @@ public class Handcode {
 	@SubscribeEvent
 	public static void startWorld (ServerLifecycleEvent event) {
 
-		ServerLevel world = event.getServer().overworld();
-
 		directory_world_data = event.getServer().getWorldPath(new LevelResource(".")) + "/data/tanshugetrees";
-		TanshugetreesModVariables.MapVariables.get(world).version_1192 = version_1192;
+		TanshugetreesModVariables.MapVariables.get(event.getServer().overworld()).version_1192 = version_1192;
 
 	}
 
