@@ -9,6 +9,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.*;
 import tannyjung.misc.FileManager;
+import tannyjung.misc.MiscUtils;
 import tannyjung.misc.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
@@ -493,7 +494,7 @@ public class TreeLocation {
             test:
             {
 
-                int size = 32 >> Handcode.quadtree_level;
+                int size = 32 >> 2;
 
                 int center_chunk_posX = center_posX >> 4;
                 int center_chunk_posZ = center_posZ >> 4;
@@ -520,7 +521,7 @@ public class TreeLocation {
 
                         {
 
-                            File file = file = new File(Handcode.directory_world_data + "/tree_locations/" + dimension + "/" + (chunk_posX >> 5) + "," + (chunk_posZ >> 5) + "/" + FileManager.quardtreeChunkToNode(chunk_posX, chunk_posZ) + ".txt");
+                            File file = file = new File(Handcode.directory_world_data + "/tree_locations/" + dimension + "/" + (chunk_posX >> 5) + "," + (chunk_posZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(chunk_posX, chunk_posZ) + ".txt");
                             String[] get = null;
                             String[] pos = null;
                             int posX = 0;
@@ -996,7 +997,7 @@ public class TreeLocation {
         }
 
         String folder = Handcode.directory_world_data + "/tree_locations/" + dimension + "/" + (center_posX >> 9) + "," + (center_posZ >> 9);
-        FileManager.writeTXT(folder + "/" + FileManager.quardtreeChunkToNode((center_posX >> 4), (center_posZ >> 4)) + ".txt", write.toString(), true);
+        FileManager.writeTXT(folder + "/" + MiscUtils.quardtreeChunkToNode((center_posX >> 4), (center_posZ >> 4)) + ".txt", write.toString(), true);
 
     }
 
@@ -1034,7 +1035,7 @@ public class TreeLocation {
 
         }
 
-        int size = 32 >> Handcode.quadtree_level;
+        int size = 32 >> 2;
         int to_chunkX_test = ((int) Math.ceil(to_chunkX / (double) size) * size) + size;
         int to_chunkZ_test = ((int) Math.ceil(to_chunkZ / (double) size) * size) + size;
 
@@ -1042,7 +1043,7 @@ public class TreeLocation {
 
             for (int scanZ = from_chunkZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
 
-                FileManager.writeTXT(Handcode.directory_world_data + "/place/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + FileManager.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
+                FileManager.writeTXT(Handcode.directory_world_data + "/place/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
 
             }
 

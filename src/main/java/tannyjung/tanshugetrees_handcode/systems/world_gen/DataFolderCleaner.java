@@ -1,9 +1,10 @@
 package tannyjung.tanshugetrees_handcode.systems.world_gen;
 
 import net.minecraft.world.level.ChunkPos;
+import tannyjung.misc.FileManager;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.misc.FileManager;
+import tannyjung.misc.MiscUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +15,7 @@ public class DataFolderCleaner {
     public static void start (String dimension, ChunkPos chunk_pos) {
 
         String region = (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5);
-        String node = FileManager.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z);
+        String node = MiscUtils.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z);
         String file_path = dimension + "/" + region + "/" + node + ".txt";
 
         boolean full_node = false;
@@ -28,7 +29,7 @@ public class DataFolderCleaner {
 
                 {
 
-                    if (read_all.length() >= Math.pow(32 >> Handcode.quadtree_level, 2)) {
+                    if (read_all.length() >= Math.pow(32 >> 2, 2)) {
 
                         full_node = true;
 

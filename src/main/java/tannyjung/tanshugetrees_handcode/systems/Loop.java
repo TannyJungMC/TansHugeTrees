@@ -108,7 +108,7 @@ public class Loop {
 
                         living_tree_mechanics_tick = 0;
 
-                        if (Math.random() < (double) GameUtils.score.get(level, "tree_location") / (double) ConfigMain.living_tree_mechanics_simulation) {
+                        if (Math.random() < (double) GameUtils.score.get(level, "TANSHUGETREES", "tree_location") / (double) ConfigMain.living_tree_mechanics_simulation) {
 
                             if (GameUtils.command.result(level, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_location]") == true) {
 
@@ -168,7 +168,7 @@ public class Loop {
 
             if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
 
-                if (GameUtils.command.result(level, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 0 0 unless entity @e[tag=THT-random_tree,distance=..1000]") == true) {
+                if (GameUtils.command.result(level, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 0 0 unless entity @e[tag=TANSHUGETREES-tree_generator,distance=..1000]") == true) {
 
                     AutoGenLoopTickProcedure.execute(level, 0, 0, 0);
 
@@ -181,9 +181,9 @@ public class Loop {
         // Living Tree Mechanics
         {
 
-            GameUtils.score.set(level, "tree_location", 0);
-            GameUtils.score.set(level, "leaf_drop", 0);
-            GameUtils.score.set(level, "leaf_litter_remover", 0);
+            GameUtils.score.set(level, "TANSHUGETREES", "tree_location", 0);
+            GameUtils.score.set(level, "TANSHUGETREES", "leaf_drop", 0);
+            GameUtils.score.set(level, "TANSHUGETREES", "leaf_litter_remover", 0);
 
             if (Handcode.version_1192 == false) {
 

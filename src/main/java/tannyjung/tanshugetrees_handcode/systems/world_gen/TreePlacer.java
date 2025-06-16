@@ -16,6 +16,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraftforge.registries.ForgeRegistries;
 import tannyjung.misc.FileManager;
+import tannyjung.misc.MiscUtils;
 import tannyjung.misc.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
@@ -36,7 +37,7 @@ public class TreePlacer {
         // Read To Get Tree(s)
         {
 
-            File file = new File(Handcode.directory_world_data + "/place/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + "/" + FileManager.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z) + ".txt");
+            File file = new File(Handcode.directory_world_data + "/place/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + "/" + MiscUtils.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z) + ".txt");
 
             if (file.exists() == true) {
 
@@ -138,7 +139,7 @@ public class TreePlacer {
         // Already Tested
         {
 
-            File file = new File(Handcode.directory_world_data + "/detailed_detection/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + "/" + FileManager.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z) + ".txt");
+            File file = new File(Handcode.directory_world_data + "/detailed_detection/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + "/" + MiscUtils.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z) + ".txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -245,22 +246,22 @@ public class TreePlacer {
 
                         if (chunk.getStatus().isOrAfter(ChunkStatus.CARVERS) == true) {
 
+                            // Get Y Level
+                            {
+
+                                center_posY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, center_posX, center_posZ) + 1;
+
+                            }
+
                             // Ground Block
                             {
 
-                                if (GameUtils.block.isTaggedAs(chunk.getBlockState(new BlockPos(center_posX, originalY, center_posZ)), "tanshugetrees:passable_blocks") == true && testGroundBlock(chunk.getBlockState(new BlockPos(center_posX, originalY - 1, center_posZ)), ground_block) == false) {
+                                if (testGroundBlock(chunk.getBlockState(new BlockPos(center_posX, center_posY - 1, center_posZ)), ground_block) == false) {
 
                                     pass = false;
                                     break test;
 
                                 }
-
-                            }
-
-                            // Get Y Level
-                            {
-
-                                center_posY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, center_posX, center_posZ);
 
                             }
 
@@ -270,7 +271,7 @@ public class TreePlacer {
 
                     center_posY = center_posY + start_height;
 
-                    // World Height
+                    // World Height Limit
                     {
 
                         if (center_posY + sizeY > level.getMaxBuildHeight()) {
@@ -361,7 +362,7 @@ public class TreePlacer {
 
                     }
 
-                    int size = 32 >> Handcode.quadtree_level;
+                    int size = 32 >> 2;
                     int to_chunkX_test = ((int) Math.ceil(to_chunkX / (double) size) * size) + size;
                     int to_chunkZ_test = ((int) Math.ceil(to_chunkZ / (double) size) * size) + size;
 
@@ -369,7 +370,7 @@ public class TreePlacer {
 
                         for (int scanZ = from_chunkZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
 
-                            FileManager.writeTXT(Handcode.directory_world_data + "/detailed_detection/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + FileManager.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
+                            FileManager.writeTXT(Handcode.directory_world_data + "/detailed_detection/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
 
                         }
 
@@ -971,7 +972,7 @@ public class TreePlacer {
                                                     if (read_all.equals("+b0^0^0tro") == true) {
 
                                                         marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
-                                                        GameUtils.command.run(world, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.misc.summonEntity("marker", "tree_location", id, marker_data));
+                                                        GameUtils.command.run(world, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.misc.summonEntity("marker", "TANSHUGETREES-tree_location", id, marker_data));
 
                                                     }
 
