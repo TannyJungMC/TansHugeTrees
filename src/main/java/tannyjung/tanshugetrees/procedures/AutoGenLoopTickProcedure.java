@@ -115,7 +115,7 @@ public class AutoGenLoopTickProcedure {
 						TanshugetreesModVariables.MapVariables.get(world).syncData(world);
 						if (world instanceof ServerLevel _level)
 							_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-									"execute as @e[tag=THT-random_tree] at @s if dimension tanshugetrees:dimension run kill @s");
+									"execute as @e[tag=TANSHUGETREES-tree_generator] at @s if dimension tanshugetrees:dimension run kill @s");
 						if (world instanceof ServerLevel _level)
 							_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
 									"tellraw @a [\"\",{\"text\":\"THT : Auto gen now turned OFF\",\"color\":\"gray\"}]");
@@ -187,11 +187,12 @@ public class AutoGenLoopTickProcedure {
 								if (world instanceof ServerLevel _level)
 									_level.getServer().getCommands().performPrefixedCommand(
 											new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-											("execute in tanshugetrees:dimension positioned 0 " + posY + " 0 run summon marker ~0.5 ~0.5 ~0.5 {Tags:[\"THT-random_tree\"],CustomName:'{\"text\":\"THT-random_tree\"}'," + merge_text));
+											("execute in tanshugetrees:dimension positioned 0 " + posY + " 0 run summon marker ~0.5 ~0.5 ~0.5 {Tags:[\"TANSHUGETREES\",\"TANSHUGETREES-tree_generator\"],CustomName:'{\"text\":\"Tree Generator\"}',"
+													+ merge_text));
 								if (world instanceof ServerLevel _level)
 									_level.getServer().getCommands().performPrefixedCommand(
 											new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-											("execute in tanshugetrees:dimension positioned 0 0 0 as @e[name=THT-random_tree,distance=..10000] at @s run data merge entity @s {ForgeData:{"
+											("execute in tanshugetrees:dimension positioned 0 0 0 as @e[name=TANSHUGETREES-tree_generator,distance=..10000] at @s run data merge entity @s {ForgeData:{"
 													+ ("debug_mode:false" + ",global_generate_speed:false" + (",generate_speed:" + generate_speed) + (",generate_speed_repeat:" + generate_speed_repeat) + (",generate_speed_tp:" + generate_speed_tp))
 													+ "}}"));
 								break;

@@ -113,7 +113,7 @@ public class RandomTreeTickSummonProcedure {
 		if ((entity.getPersistentData().getString("type")).equals("taproot") || (entity.getPersistentData().getString("type")).equals("trunk")) {
 			if (world instanceof ServerLevel _level)
 				_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-						("summon marker ~ ~ ~ {Tags:[\"THT\",\"THT-random_tree\",\"THT-tree_" + "" + entity.getPersistentData().getString("tree_id") + "\"],CustomName:'{\"text\":\"THT-tree_"
+						("summon marker ~ ~ ~ {Tags:[\"THT\",\"TANSHUGETREES-tree_generator\",\"THT-tree_" + "" + entity.getPersistentData().getString("tree_id") + "\"],CustomName:'{\"text\":\"THT-tree_"
 								+ (entity.getPersistentData().getString("type") + "_" + entity.getPersistentData().getString("tree_id")) + "\"}'}"));
 			if (world instanceof ServerLevel _level)
 				_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
@@ -170,7 +170,7 @@ public class RandomTreeTickSummonProcedure {
 								new CommandSourceStack(CommandSource.NULL, _ent.position(), _ent.getRotationVector(), _ent.level() instanceof ServerLevel ? (ServerLevel) _ent.level() : null, 4, _ent.getName().getString(), _ent.getDisplayName(),
 										_ent.level().getServer(), _ent),
 								("execute at @e[name=THT-tree_" + (type_pre + "_" + entity.getPersistentData().getString("tree_id")) + "] positioned ^" + center_direction_horizontal + " ^" + center_direction_vertical + " ^" + center_direction_forward
-										+ " positioned ~ ~" + center_direction_height + " ~ run summon marker ~ ~ ~ {Tags:[\"THT\",\"THT-random_tree\",\"THT-tree_" + entity.getPersistentData().getString("tree_id")
+										+ " positioned ~ ~" + center_direction_height + " ~ run summon marker ~ ~ ~ {Tags:[\"THT\",\"TANSHUGETREES-tree_generator\",\"THT-tree_" + entity.getPersistentData().getString("tree_id")
 										+ "\"],CustomName:'{\"text\":\"THT-tree_" + (entity.getPersistentData().getString("type") + "_" + entity.getPersistentData().getString("tree_id")) + "\"}'}"));
 					}
 				}

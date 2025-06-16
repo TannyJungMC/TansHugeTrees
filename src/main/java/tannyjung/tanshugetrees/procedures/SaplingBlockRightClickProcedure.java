@@ -98,7 +98,7 @@ public class SaplingBlockRightClickProcedure {
 				if (!(cancel).equals("")) {
 					if (world instanceof ServerLevel _level)
 						_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-								("execute positioned ~0.5 ~0.75 ~0.5 unless entity @e[tag=THT-tree_countdown,distance=..1] run summon armor_stand ~ ~ ~ {NoGravity:1b,Invisible:1b,Marker:1b,Small:1b,Tags:[\"THT-random_tree\",\"THT-tree_countdown\"],CustomNameVisible:1b,CustomName:'{\"text\":\""
+								("execute positioned ~0.5 ~0.75 ~0.5 unless entity @e[tag=THT-tree_countdown,distance=..1] run summon armor_stand ~ ~ ~ {NoGravity:1b,Invisible:1b,Marker:1b,Small:1b,Tags:[\"TANSHUGETREES-tree_generator\",\"THT-tree_countdown\"],CustomNameVisible:1b,CustomName:'{\"text\":\""
 										+ "" + cancel + "\",\"color\":\"gold\"}'}"));
 					TanshugetreesMod.queueServerWork(100, () -> {
 						if (world instanceof ServerLevel _level)
@@ -216,7 +216,7 @@ public class SaplingBlockRightClickProcedure {
 				}.getValue(world, BlockPos.containing(x, y, z), "sapling_start")) == true) {
 					if (world instanceof ServerLevel _level)
 						_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-								"execute positioned ~0.5 ~0.75 ~0.5 unless entity @e[tag=THT-tree_countdown,distance=..1] run summon armor_stand ~ ~ ~ {NoGravity:1b,Invisible:1b,Marker:1b,Tags:[\"THT-random_tree\",\"THT-tree_countdown\"],Small:1b,CustomNameVisible:1b,CustomName:'{\"text\":\"\"}'}");
+								"execute positioned ~0.5 ~0.75 ~0.5 unless entity @e[tag=THT-tree_countdown,distance=..1] run summon armor_stand ~ ~ ~ {NoGravity:1b,Invisible:1b,Marker:1b,Tags:[\"TANSHUGETREES-tree_generator\",\"THT-tree_countdown\"],Small:1b,CustomNameVisible:1b,CustomName:'{\"text\":\"\"}'}");
 				}
 			}
 		}

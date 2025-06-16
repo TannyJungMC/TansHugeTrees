@@ -120,8 +120,22 @@ public class AutoGenWhenTreeStartProcedure {
 										}
 										if (true) {
 											if (loop == loop_next) {
+												type = "bough";
+												type_short = "bo";
+											}
+											loop_next = loop_next + 1;
+										}
+										if (true) {
+											if (loop == loop_next) {
 												type = "branch";
 												type_short = "br";
+											}
+											loop_next = loop_next + 1;
+										}
+										if (true) {
+											if (loop == loop_next) {
+												type = "limb";
+												type_short = "li";
 											}
 											loop_next = loop_next + 1;
 										}
@@ -134,8 +148,8 @@ public class AutoGenWhenTreeStartProcedure {
 										}
 										if (true) {
 											if (loop == loop_next) {
-												type = "leaves_twig";
-												type_short = "lt";
+												type = "sprig";
+												type_short = "sp";
 											}
 											loop_next = loop_next + 1;
 										}
