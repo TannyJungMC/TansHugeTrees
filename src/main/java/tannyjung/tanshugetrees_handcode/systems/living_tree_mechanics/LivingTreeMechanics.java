@@ -352,11 +352,11 @@ public class LivingTreeMechanics {
 
 			if (Math.random() < ConfigMain.leaf_litter_remover_chance) {
 
-				if (GameUtils.score.get(level, "leaf_litter_remover") < ConfigMain.leaf_drop_animation_count_limit) {
+				if (GameUtils.score.get(level, "TANSHUGETREES", "leaf_litter_remover") < ConfigMain.leaf_drop_animation_count_limit) {
 
-					GameUtils.score.add(level, "leaf_litter_remover", 1);
+					GameUtils.score.add(level, "TANSHUGETREES", "leaf_litter_remover", 1);
 
-					GameUtils.command.run(level, pos.getX(), pos.getY(), pos.getZ(), GameUtils.misc.summonEntity("marker", "leaf_litter_remover", "Leaf Litter Remover", "ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}"));
+					GameUtils.command.run(level, pos.getX(), pos.getY(), pos.getZ(), GameUtils.misc.summonEntity("marker", "TANSHUGETREES-leaf_litter_remover", "Leaf Litter Remover", "ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}"));
 
 				}
 
@@ -444,15 +444,15 @@ public class LivingTreeMechanics {
 						// Animation
 						{
 
-							if (GameUtils.score.get(level, "leaf_drop") < ConfigMain.leaf_drop_animation_count_limit) {
+							if (GameUtils.score.get(level, "TANSHUGETREES", "leaf_drop") < ConfigMain.leaf_drop_animation_count_limit) {
 
 								// Don't create animation, if there's a block below.
 								if (GameUtils.block.isTaggedAs(level.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())), "tanshugetrees:passable_blocks") == true) {
 
-									GameUtils.score.add(level, "leaf_drop", 1);
+									GameUtils.score.add(level, "TANSHUGETREES", "leaf_drop", 1);
 
 									String command = "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.block.toTextID(block) + "\"},ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}";
-									command = GameUtils.misc.summonEntity("block_display", "leaf_drop", "Falling Leaf", command);
+									command = GameUtils.misc.summonEntity("block_display", "TANSHUGETREES-leaf_drop", "Falling Leaf", command);
 									GameUtils.command.run(level, pos.getX(), pos.getY(), pos.getZ(), command);
 
 								}
