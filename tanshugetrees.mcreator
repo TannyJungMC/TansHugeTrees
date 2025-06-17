@@ -2427,6 +2427,19 @@
         ]
       },
       "path": "~/Tree Generator/Block Placer"
+    },
+    {
+      "name": "COMMANDShapeFileConverter",
+      "type": "command",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "command_shape_file_converter",
+      "metadata": {
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/command/COMMANDShapeFileConverterCommand.java"
+        ]
+      },
+      "path": "~/Auto Gen"
     }
   ],
   "variable_elements": [

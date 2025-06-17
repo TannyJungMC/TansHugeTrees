@@ -165,39 +165,40 @@ public class AutoGenLoopTickProcedure {
 							});
 						});
 					} else {
-						TanshugetreesModVariables.MapVariables.get(world).auto_gen_count = TanshugetreesModVariables.MapVariables.get(world).auto_gen_count - 1;
-						TanshugetreesModVariables.MapVariables.get(world).syncData(world);
-						merge_text = "unnamed";
-						if (world instanceof ServerLevel _level)
-							_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-									"execute in tanshugetrees:dimension run fill 75 3 75 -75 3 -75 air");
-						try {
-							BufferedReader fileReader = new BufferedReader(new FileReader(file));
-							String stringiterator = "";
-							while ((stringiterator = fileReader.readLine()) != null) {
-								merge_text = merge_text + "" + stringiterator;
+						if (true) {
+							TanshugetreesModVariables.MapVariables.get(world).auto_gen_count = TanshugetreesModVariables.MapVariables.get(world).auto_gen_count - 1;
+							TanshugetreesModVariables.MapVariables.get(world).syncData(world);
+							merge_text = "unnamed";
+							if (world instanceof ServerLevel _level)
+								_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
+										"execute in tanshugetrees:dimension run fill 75 3 75 -75 3 -75 air");
+							try {
+								BufferedReader fileReader = new BufferedReader(new FileReader(file));
+								String stringiterator = "";
+								while ((stringiterator = fileReader.readLine()) != null) {
+									merge_text = merge_text + "" + stringiterator;
+								}
+								fileReader.close();
+							} catch (IOException e) {
+								e.printStackTrace();
 							}
-							fileReader.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						for (int index0 = 0; index0 < (merge_text).length(); index0++) {
-							if ((merge_text.substring(0, (int) merge_text_pos)).contains("BlockEntityTag:{") == true) {
-								merge_text = merge_text.substring((int) merge_text_pos, (int) ((merge_text).length() - 1));
-								if (world instanceof ServerLevel _level)
-									_level.getServer().getCommands().performPrefixedCommand(
-											new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-											("execute in tanshugetrees:dimension positioned 0 " + posY + " 0 run summon marker ~0.5 ~0.5 ~0.5 {Tags:[\"TANSHUGETREES\",\"TANSHUGETREES-tree_generator\"],CustomName:'{\"text\":\"Tree Generator\"}',"
-													+ merge_text));
-								if (world instanceof ServerLevel _level)
-									_level.getServer().getCommands().performPrefixedCommand(
-											new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
-											("execute in tanshugetrees:dimension positioned 0 0 0 as @e[name=TANSHUGETREES-tree_generator,distance=..10000] at @s run data merge entity @s {ForgeData:{"
-													+ ("debug_mode:false" + ",global_generate_speed:false" + (",generate_speed:" + generate_speed) + (",generate_speed_repeat:" + generate_speed_repeat) + (",generate_speed_tp:" + generate_speed_tp))
-													+ "}}"));
-								break;
-							} else {
-								merge_text_pos = merge_text_pos + 1;
+							for (int index0 = 0; index0 < (merge_text).length(); index0++) {
+								if ((merge_text.substring(0, (int) merge_text_pos)).contains("BlockEntityTag:{") == true) {
+									merge_text = merge_text.substring((int) merge_text_pos, (int) ((merge_text).length() - 1));
+									if (world instanceof ServerLevel _level)
+										_level.getServer().getCommands().performPrefixedCommand(
+												new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
+												("execute in tanshugetrees:dimension positioned 0 " + posY + " 0 run summon marker ~0.5 ~0.5 ~0.5 {Tags:[\"TANSHUGETREES\",\"TANSHUGETREES-tree_generator\"],CustomName:'{\"text\":\"Tree Generator\"}',"
+														+ merge_text));
+									if (world instanceof ServerLevel _level)
+										_level.getServer().getCommands().performPrefixedCommand(
+												new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
+												("execute in tanshugetrees:dimension positioned 0 0 0 as @e[name=TANSHUGETREES-tree_generator,distance=..10000] at @s run data merge entity @s {ForgeData:{" + ("debug_mode:false"
+														+ ",global_generate_speed:false" + (",generate_speed:" + generate_speed) + (",generate_speed_repeat:" + generate_speed_repeat) + (",generate_speed_tp:" + generate_speed_tp)) + "}}"));
+									break;
+								} else {
+									merge_text_pos = merge_text_pos + 1;
+								}
 							}
 						}
 					}
