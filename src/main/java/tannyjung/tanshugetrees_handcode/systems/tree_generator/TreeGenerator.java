@@ -28,7 +28,7 @@ public class TreeGenerator {
 
             GameUtils.NBT.entity.setNumber(entity, "generate_speed_test", GameUtils.NBT.entity.getNumber(entity, "generate_speed_test") + 1);
 
-            if (GameUtils.NBT.entity.getNumber(entity, "generate_speed_test") > GameUtils.NBT.entity.getNumber(entity, "generate_speed")) {
+            if (GameUtils.NBT.entity.getNumber(entity, "generate_speed_test") > GameUtils.NBT.entity.getNumber(entity, "generate_speed_tick")) {
 
                 GameUtils.NBT.entity.setNumber(entity, "generate_speed_test", 0);
                 runSystem(level, entity);
@@ -51,15 +51,6 @@ public class TreeGenerator {
 
         GameUtils.NBT.entity.setText(entity, "id", entity.getUUID().toString());
         GameUtils.command.runEntity(entity, "tag @s add TANSHUGETREES-" + GameUtils.NBT.entity.getText(entity, "id"));
-
-        if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
-
-            String name = GameUtils.NBT.entity.getText(entity, "name").toLowerCase();
-            String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss").format(Calendar.getInstance().getTime());
-            GameUtils.NBT.entity.setText(entity, "export_file_name", name + "-" + time);
-
-        }
-
         GameUtils.NBT.entity.setText(entity, "type", "taproot");
         GameUtils.NBT.entity.setText(entity, "step", "summon");
         GameUtils.NBT.entity.setNumber(entity, "taproot_count", Mth.nextInt(RandomSource.create(), (int) GameUtils.NBT.entity.getNumber(entity, "taproot_count_min"), (int) GameUtils.NBT.entity.getNumber(entity, "taproot_count_max")));
@@ -117,7 +108,16 @@ public class TreeGenerator {
         }
 
         // Summon Status Display
-        GameUtils.command.runEntity(entity, "execute positioned ~ ~1 ~ run " + GameUtils.misc.summonEntity("text_display",  "TANSHUGETREES-" + GameUtils.NBT.entity.getText(entity, "id") + " / TANSHUGETREES-tree_generator_status", "Tree Generator Status", "see_through:1b,alignment:\"left\",brightness:{block:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"In Progress...\",\"color\":\"white\"}'"));
+        GameUtils.command.runEntity(entity, "execute positioned ~ ~1 ~ run " + GameUtils.misc.summonEntity("text_display",  "TANSHUGETREES / TANSHUGETREES-" + GameUtils.NBT.entity.getText(entity, "id") + " / TANSHUGETREES-tree_generator_status", "Tree Generator Status", "see_through:1b,alignment:\"left\",brightness:{block:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"In Progress...\",\"color\":\"white\"}'"));
+
+        if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
+
+            String name = GameUtils.NBT.entity.getText(entity, "name").toLowerCase();
+            String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss").format(Calendar.getInstance().getTime());
+            GameUtils.NBT.entity.setText(entity, "export_file_name", name + "-" + time);
+            ShapeFileConverter.start(level);
+
+        }
 
     }
 
@@ -154,7 +154,7 @@ public class TreeGenerator {
 
         if (ConfigMain.global_speed_enable == true && GameUtils.NBT.entity.getLogic(entity, "global_generate_speed") == true) {
 
-            GameUtils.NBT.entity.setNumber(entity, "generate_speed", ConfigMain.global_speed);
+            GameUtils.NBT.entity.setNumber(entity, "generate_speed_tick", ConfigMain.global_speed);
             GameUtils.NBT.entity.setNumber(entity, "generate_speed_repeat", ConfigMain.global_speed_repeat);
             GameUtils.NBT.entity.setNumber(entity, "generate_speed_tp", ConfigMain.global_speed_tp);
 
@@ -185,6 +185,8 @@ public class TreeGenerator {
 
             }
 
+            GameUtils.NBT.entity.addNumber(entity, "total_processes", 1);
+
             // Break Out
             {
 
@@ -214,7 +216,6 @@ public class TreeGenerator {
     private static boolean processBreak (Entity entity) {
 
         boolean return_logic = false;
-        GameUtils.NBT.entity.addNumber(entity, "total_processes", 1);
 
         if (GameUtils.NBT.entity.getNumber(entity, "generate_speed_repeat") != 0) {
 
@@ -438,7 +439,7 @@ public class TreeGenerator {
 
                 }
 
-                GameUtils.command.run(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-" + at_part + "] at @s " + positioned + " run " + GameUtils.misc.summonEntity("marker", "TANSHUGETREES-" + id + " / TANSHUGETREES-generator_" + type, "Tree Generator - Part", ""));
+                GameUtils.command.run(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-" + at_part + "] at @s " + positioned + " run " + GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-" + id + " / TANSHUGETREES-generator_" + type, "Tree Generator - Part", ""));
                 GameUtils.command.run(level, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-" + at_part + "] at @s " + positioned + " run particle minecraft:firework ~ ~ ~ 0 0 0 0.1 20 force");
 
                 if (taproot_trunk == true) {
