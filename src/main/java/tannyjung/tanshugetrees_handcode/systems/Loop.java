@@ -8,6 +8,7 @@ import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.misc.GameUtils;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.config.UpdateRun;
+import tannyjung.tanshugetrees_handcode.systems.tree_generator.ShapeFileConverter;
 
 public class Loop {
 
@@ -163,16 +164,12 @@ public class Loop {
 
         }
 
-        // Auto Gen
+        // Shape File Converter
         {
 
             if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
 
-                if (GameUtils.command.result(level, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 0 0 unless entity @e[tag=TANSHUGETREES-tree_generator,distance=..1000]") == true) {
-
-                    AutoGenLoopTickProcedure.execute(level, 0, 0, 0);
-
-                }
+                ShapeFileConverter.start(level);
 
             }
 

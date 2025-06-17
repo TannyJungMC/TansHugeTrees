@@ -356,7 +356,7 @@ public class LivingTreeMechanics {
 
 					GameUtils.score.add(level, "TANSHUGETREES", "leaf_litter_remover", 1);
 
-					GameUtils.command.run(level, pos.getX(), pos.getY(), pos.getZ(), GameUtils.misc.summonEntity("marker", "TANSHUGETREES-leaf_litter_remover", "Leaf Litter Remover", "ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}"));
+					GameUtils.command.run(level, pos.getX(), pos.getY(), pos.getZ(), GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-leaf_litter_remover", "Leaf Litter Remover", "ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}"));
 
 				}
 
@@ -452,7 +452,7 @@ public class LivingTreeMechanics {
 									GameUtils.score.add(level, "TANSHUGETREES", "leaf_drop", 1);
 
 									String command = "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.block.toTextID(block) + "\"},ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}";
-									command = GameUtils.misc.summonEntity("block_display", "TANSHUGETREES-leaf_drop", "Falling Leaf", command);
+									command = GameUtils.misc.summonEntity("block_display", "TANSHUGETREES / TANSHUGETREES-leaf_drop", "Falling Leaf", command);
 									GameUtils.command.run(level, pos.getX(), pos.getY(), pos.getZ(), command);
 
 								}

@@ -20,7 +20,7 @@ public class ConfigAutoGen {
 					
 					file_location = TannyJung-Tree-Pack/presets/folder/file.txt
 					
-					generate_speed = 1
+					generate_speed_tick = 1
 					generate_speed_repeat = 10000
 					generate_speed_tp = 0
 					
@@ -34,7 +34,7 @@ public class ConfigAutoGen {
 
 		}
 
-		FileManager.writeConfigTXT(Handcode.directory_config + "/generated/.auto_gen.txt", write.toString());
+		FileManager.writeConfigTXT(Handcode.directory_config + "/generated/.shape_file_converter.txt", write.toString());
 
 	}
 
