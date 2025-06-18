@@ -3,12 +3,10 @@ package tannyjung.tanshugetrees_handcode.systems;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
-import tannyjung.tanshugetrees.procedures.AutoGenLoopTickProcedure;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.misc.GameUtils;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.config.UpdateRun;
-import tannyjung.tanshugetrees_handcode.systems.tree_generator.ShapeFileConverter;
 
 public class Loop {
 
@@ -159,17 +157,6 @@ public class Loop {
             if (ConfigMain.developer_mode == true) {
 
                 GameUtils.command.run(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
-
-            }
-
-        }
-
-        // Shape File Converter
-        {
-
-            if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
-
-                ShapeFileConverter.start(level);
 
             }
 
