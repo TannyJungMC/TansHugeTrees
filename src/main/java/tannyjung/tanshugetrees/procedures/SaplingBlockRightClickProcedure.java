@@ -78,7 +78,7 @@ public class SaplingBlockRightClickProcedure {
 								return blockEntity.getPersistentData().getDouble(tag);
 							return -1;
 						}
-					}.getValue(world, BlockPos.containing(x, y, z), "generate_speed") == 0) {
+					}.getValue(world, BlockPos.containing(x, y, z), "generate_speed_tick") == 0) {
 						cancel = "No preset in this custom sapling";
 					}
 				} else {
