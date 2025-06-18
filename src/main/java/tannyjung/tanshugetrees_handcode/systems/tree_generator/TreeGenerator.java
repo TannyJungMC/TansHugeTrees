@@ -112,10 +112,7 @@ public class TreeGenerator {
 
         if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
 
-            String name = GameUtils.NBT.entity.getText(entity, "name").toLowerCase();
-            String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss").format(Calendar.getInstance().getTime());
-            GameUtils.NBT.entity.setText(entity, "export_file_name", name + "-" + time);
-            ShapeFileConverter.start(level);
+            ShapeFileConverter.whenTreeStart(level, entity);
 
         }
 
@@ -1073,6 +1070,9 @@ public class TreeGenerator {
                 GameUtils.NBT.block.setText(level, pos, "export_file_name", GameUtils.NBT.entity.getText(entity, "export_file_name"));
                 GameUtils.NBT.block.setText(level, pos, "type", type);
                 GameUtils.NBT.block.setText(level, pos, "block_original", block);
+                GameUtils.NBT.block.setNumber(level, pos, "center_posX", entity.getBlockX());
+                GameUtils.NBT.block.setNumber(level, pos, "center_posY", entity.getBlockY());
+                GameUtils.NBT.block.setNumber(level, pos, "center_posZ", entity.getBlockZ());
 
             }
 
@@ -1084,6 +1084,13 @@ public class TreeGenerator {
             GameUtils.command.runEntity(entity, "summon firework_rocket ~20 ~10 ~-20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
             GameUtils.command.runEntity(entity, "summon firework_rocket ~-20 ~10 ~20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
             GameUtils.command.runEntity(entity, "summon firework_rocket ~-20 ~10 ~-20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
+
+            if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
+
+                ShapeFileConverter.whenTreeEnd(level, entity);
+
+            }
+
             GameUtils.command.run(level, 0, 0, 0, "kill @e[tag=TANSHUGETREES-" + id + "]");
 
         }

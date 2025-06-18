@@ -37,9 +37,9 @@ public class BlockPlacer {
 
                 }
 
-                String write = "+b" + pos.getX() + "/" + pos.getY() + "/" + pos.getZ() + type_short;
-                String file_name = GameUtils.NBT.block.getText(level, pos, "export_file_name") + " (generating)" + ".txt";
-                FileManager.writeTXT(Handcode.directory_config + "/generated/" + file_name, write + "\n", true);
+                BlockPos pos_center = new BlockPos((int) GameUtils.NBT.block.getNumber(level, pos, "center_posX"), (int) GameUtils.NBT.block.getNumber(level, pos, "center_posY"), (int) GameUtils.NBT.block.getNumber(level, pos, "center_posZ"));
+                String write = "+b" + (pos_center.getX() - pos.getX()) + "/" + (pos_center.getY() - pos.getY()) + "/" + (pos_center.getZ() - pos.getZ()) + type_short;
+                FileManager.writeTXT(Handcode.directory_config + "/generated/" + GameUtils.NBT.block.getText(level, pos, "export_file_name"), write + "\n", true);
                 level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 
             }
