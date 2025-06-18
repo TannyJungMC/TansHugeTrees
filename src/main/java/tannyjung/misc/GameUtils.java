@@ -28,8 +28,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Objective;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
-import java.util.Arrays;
-
 public class GameUtils {
 
 	public static class misc {
@@ -463,6 +461,28 @@ public class GameUtils {
 
 			}
 
+			public static double getNumber (LevelAccessor level, BlockPos pos, String name) {
+
+				return new Object() {
+
+					public double getValue (LevelAccessor level, BlockPos pos, String name) {
+
+						BlockEntity blockEntity = level.getBlockEntity(pos);
+
+						if (blockEntity != null) {
+
+							return blockEntity.getPersistentData().getDouble(name);
+
+						}
+
+						return 0.0;
+
+					}
+
+				}.getValue(level, pos, name);
+
+			}
+
 			public static void setText (LevelAccessor level, BlockPos pos, String name, String value) {
 
 				BlockEntity block_entity = level.getBlockEntity(pos);
@@ -470,6 +490,25 @@ public class GameUtils {
 				if (block_entity != null) {
 
 					block_entity.getPersistentData().putString(name, value);
+
+					if (level instanceof Level level_fix) {
+
+						BlockState block = level.getBlockState(pos);
+						level_fix.sendBlockUpdated(pos, block, block, 2);
+
+					}
+
+				}
+
+			}
+
+			public static void setNumber (LevelAccessor level, BlockPos pos, String name, double value) {
+
+				BlockEntity block_entity = level.getBlockEntity(pos);
+
+				if (block_entity != null) {
+
+					block_entity.getPersistentData().putDouble(name, value);
 
 					if (level instanceof Level level_fix) {
 
