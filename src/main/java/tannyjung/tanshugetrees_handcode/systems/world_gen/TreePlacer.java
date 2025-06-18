@@ -969,7 +969,7 @@ public class TreePlacer {
 
                                                 if (ConfigMain.tree_location == true && ConfigMain.living_tree_mechanics == true && living_tree_mechanics == true) {
 
-                                                    if (read_all.equals("+b0^0^0tro") == true) {
+                                                    if (read_all.equals("+b0/0/0tro") == true) {
 
                                                         marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
                                                         GameUtils.command.run(world, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
