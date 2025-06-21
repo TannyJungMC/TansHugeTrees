@@ -83,7 +83,9 @@ public class FileManager {
 
 					file.createNewFile();
 
-				} catch (Exception ignored) {
+				} catch (Exception exception) {
+
+					MiscUtils.exception(exception);
 
 				}
 
@@ -101,7 +103,9 @@ public class FileManager {
 			buffered_writer.close();
 			writer.close();
 
-		} catch (Exception ignored) {
+		} catch (Exception exception) {
+
+			MiscUtils.exception(exception);
 
 		}
 
@@ -162,7 +166,7 @@ public class FileManager {
 
 									}
 
-								} buffered_reader2.close(); } catch (Exception ignored) { }
+								} buffered_reader2.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
 							}
 
@@ -179,7 +183,7 @@ public class FileManager {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception ignored) { }
+				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
 			}
 
@@ -243,7 +247,7 @@ public class FileManager {
 
 						}
 
-					} buffered_reader.close(); } catch (Exception ignored) { }
+					} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
 				}
 

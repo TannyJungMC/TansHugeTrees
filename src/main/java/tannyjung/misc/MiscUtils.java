@@ -1,5 +1,7 @@
 package tannyjung.misc;
 
+import tannyjung.tanshugetrees.TanshugetreesMod;
+
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -10,15 +12,16 @@ public class MiscUtils {
 
 		try {
 
-			URL test = new URI("https://www.google.com/").toURL();
+			URL test = new URI("https://www.google.com").toURL();
 			HttpURLConnection connection = (HttpURLConnection) test.openConnection();
 			connection.setRequestMethod("HEAD");
 			connection.setConnectTimeout(3000);
 			connection.setReadTimeout(3000);
-			int responseCode = connection.getResponseCode();
+
+			// int responseCode = connection.getResponseCode();
 			// return (200 <= responseCode && responseCode < 400);
 
-		} catch (Exception e) {
+		} catch (Exception exception) {
 
 			return false;
 
@@ -54,6 +57,18 @@ public class MiscUtils {
 
 		return return_text.substring(1);
 
+	}
+	
+	public static void exception (Exception exception) {
+		
+		StackTraceElement[] list = exception.getStackTrace();
+		
+		for (StackTraceElement get : list) {
+
+			TanshugetreesMod.LOGGER.error(get);
+			
+		}
+		
 	}
 
 }

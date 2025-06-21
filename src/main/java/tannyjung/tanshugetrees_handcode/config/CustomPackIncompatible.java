@@ -2,6 +2,7 @@ package tannyjung.tanshugetrees_handcode.config;
 
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
+import tannyjung.misc.MiscUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.misc.GameUtils;
@@ -50,9 +51,9 @@ public class CustomPackIncompatible {
 
                         });
 
-                    } catch (Exception e) {
+                    } catch (Exception exception) {
 
-                        TanshugetreesMod.LOGGER.error(e.getMessage());
+                        MiscUtils.exception(exception);
 
                     }
 
@@ -92,7 +93,7 @@ public class CustomPackIncompatible {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
             }
 
@@ -128,7 +129,7 @@ public class CustomPackIncompatible {
 
                 }
 
-            } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+            } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
         }
 
@@ -163,7 +164,7 @@ public class CustomPackIncompatible {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
             }
 

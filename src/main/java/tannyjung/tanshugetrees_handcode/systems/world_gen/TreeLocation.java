@@ -61,9 +61,9 @@ public class TreeLocation {
 
                             Thread.sleep(1000);
 
-                        } catch (InterruptedException e) {
+                        } catch (InterruptedException exception) {
 
-                            TanshugetreesMod.LOGGER.error(e.getMessage());
+                            MiscUtils.exception(exception);
 
                         }
 
@@ -411,7 +411,7 @@ public class TreeLocation {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
             }
 
@@ -553,7 +553,7 @@ public class TreeLocation {
 
                                         }
 
-                                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
                                 }
 
@@ -674,7 +674,7 @@ public class TreeLocation {
             dead_tree_chance = Double.parseDouble(get[5]);
             dead_tree_levels = get[6].split(" / ");
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
             return;
 
@@ -712,7 +712,7 @@ public class TreeLocation {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
                 }
 
@@ -795,7 +795,7 @@ public class TreeLocation {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
             }
 
@@ -922,7 +922,7 @@ public class TreeLocation {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
                     }
 

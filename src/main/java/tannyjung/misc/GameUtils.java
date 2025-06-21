@@ -283,7 +283,9 @@ public class GameUtils {
 
 				return biome.is(TagKey.create(Registries.BIOME, new ResourceLocation(tag)));
 
-			} catch (Exception ignored) {
+			} catch (Exception exception) {
+
+				MiscUtils.exception(exception);
 
 			}
 
@@ -301,7 +303,9 @@ public class GameUtils {
 
 				return block.is(BlockTags.create(new ResourceLocation(tag)));
 
-			} catch (Exception ignored) {
+			} catch (Exception exception) {
+
+				MiscUtils.exception(exception);
 
 			}
 
@@ -315,7 +319,9 @@ public class GameUtils {
 
 				return BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), id, true).blockState();
 
-			} catch (Exception ignored) {
+			} catch (Exception exception) {
+
+				MiscUtils.exception(exception);
 
 			}
 

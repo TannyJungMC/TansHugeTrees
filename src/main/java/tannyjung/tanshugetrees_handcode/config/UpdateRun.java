@@ -118,9 +118,9 @@ public class UpdateRun {
 				}
 				buffered_reader.close();
 
-			} catch (Exception e) {
+			} catch (Exception exception) {
 
-				TanshugetreesMod.LOGGER.error(e.getMessage());
+				MiscUtils.exception(exception);
 
 			}
 
@@ -135,6 +135,12 @@ public class UpdateRun {
 
 			return_logic = false;
 			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : You're currently using mod version that does not support to new tree pack version, try update the mod and do it again.");
+
+		}
+
+		if (return_logic == false) {
+
+			TanshugetreesMod.LOGGER.info("Your mod data structure version is " + Handcode.data_structure_version_pack + " but the pack is " + data_structure_version_url);
 
 		}
 
@@ -309,11 +315,11 @@ public class UpdateRun {
 
                         Files.delete(path);
 
-					} catch (Exception ignored) {
+					} catch (Exception exception) {
 
-						return;
+						MiscUtils.exception(exception);
 
-					}
+                    }
 
                 });
 

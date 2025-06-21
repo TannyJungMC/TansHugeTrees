@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.config;
 
+import tannyjung.misc.MiscUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.misc.FileManager;
@@ -37,17 +38,17 @@ public class ConfigPlacement {
 
                     Files.copy(source, copy, StandardCopyOption.REPLACE_EXISTING);
 
-                } catch (Exception e) {
+                } catch (Exception exception) {
 
-                    TanshugetreesMod.LOGGER.error(e.getMessage());
+                    MiscUtils.exception(exception);
 
                 }
 
             });
 
-        } catch (Exception e) {
+        } catch (Exception exception) {
 
-            TanshugetreesMod.LOGGER.error(e.getMessage());
+            MiscUtils.exception(exception);
 
         }
 
@@ -119,9 +120,9 @@ public class ConfigPlacement {
 
                         });
 
-                    } catch (Exception e) {
+                    } catch (Exception exception) {
 
-                        TanshugetreesMod.LOGGER.error(e.getMessage());
+                        MiscUtils.exception(exception);
 
                     }
 
@@ -210,7 +211,7 @@ public class ConfigPlacement {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
                 }
 
@@ -320,7 +321,7 @@ public class ConfigPlacement {
 
                                                         }
 
-                                                    } buffered_reader2.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                                                    } buffered_reader2.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
                                                 }
 
@@ -336,7 +337,7 @@ public class ConfigPlacement {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
                     }
 
@@ -360,9 +361,9 @@ public class ConfigPlacement {
 
                 Files.delete(file.toPath());
 
-            } catch (Exception e) {
+            } catch (Exception exception) {
 
-                TanshugetreesMod.LOGGER.error(e.getMessage());
+                MiscUtils.exception(exception);
 
             }
 

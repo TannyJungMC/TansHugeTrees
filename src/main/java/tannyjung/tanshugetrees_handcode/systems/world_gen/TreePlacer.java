@@ -119,7 +119,7 @@ public class TreePlacer {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
                 }
 
@@ -162,7 +162,7 @@ public class TreePlacer {
                                     center_posY = Integer.parseInt(get[3]);
                                     dead_tree_level = Integer.parseInt(get[4]);
 
-                                } catch (Exception e) {
+                                } catch (Exception ignored) {
 
                                     return;
 
@@ -174,7 +174,7 @@ public class TreePlacer {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
                 }
 
@@ -201,7 +201,7 @@ public class TreePlacer {
                     dead_tree_chance = Double.parseDouble(other_data[4]);
                     dead_tree_level = Integer.parseInt(other_data[5]);
 
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                     return;
 
@@ -488,7 +488,7 @@ public class TreePlacer {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
                 }
 
@@ -601,7 +601,7 @@ public class TreePlacer {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
                 }
 
@@ -654,7 +654,7 @@ public class TreePlacer {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
                     }
 
@@ -729,7 +729,7 @@ public class TreePlacer {
 
                                     }
 
-                                } catch (Exception e) {
+                                } catch (Exception exception) {
 
                                     continue;
 
@@ -1006,7 +1006,7 @@ public class TreePlacer {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
             }
 

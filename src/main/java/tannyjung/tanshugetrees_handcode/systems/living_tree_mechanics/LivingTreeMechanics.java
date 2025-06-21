@@ -7,6 +7,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+import tannyjung.misc.MiscUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
@@ -113,7 +114,7 @@ public class LivingTreeMechanics {
 
 						}
 
-					} buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+					} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
 				}
 
@@ -275,7 +276,7 @@ public class LivingTreeMechanics {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
 			}
 

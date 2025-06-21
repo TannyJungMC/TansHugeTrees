@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import tannyjung.misc.MiscUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.misc.GameUtils;
@@ -182,7 +183,7 @@ public class LeafLitter {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
                 }
 

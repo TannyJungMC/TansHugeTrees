@@ -72,7 +72,7 @@ public class CheckUpdateRun {
 
 							}
 
-						} buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+						} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
 					}
 
@@ -95,7 +95,7 @@ public class CheckUpdateRun {
 
 							}
 
-						} buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+						} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
 					}
 
@@ -125,12 +125,13 @@ public class CheckUpdateRun {
 						} else {
 
 							GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to available.");
+							TanshugetreesMod.LOGGER.info("Your mod data structure version is " + Handcode.data_structure_version_pack + " but the pack is " + url_data_structure_version);
 
 						}
 
 					}
 
-				} catch (Exception e) {
+				} catch (Exception exception) {
 
 					GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Can't check the update right now, try again later.");
 

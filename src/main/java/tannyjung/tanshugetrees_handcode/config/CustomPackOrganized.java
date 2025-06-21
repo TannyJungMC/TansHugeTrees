@@ -1,6 +1,7 @@
 package tannyjung.tanshugetrees_handcode.config;
 
 import net.minecraft.world.level.LevelAccessor;
+import tannyjung.misc.MiscUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
@@ -36,9 +37,9 @@ public class CustomPackOrganized {
 
                         Files.delete(source);
 
-                    } catch (Exception e) {
+                    } catch (Exception exception) {
 
-                        TanshugetreesMod.LOGGER.error(e.getMessage());
+                        MiscUtils.exception(exception);
 
                     }
 
@@ -46,9 +47,9 @@ public class CustomPackOrganized {
 
             });
 
-        } catch (Exception e) {
+        } catch (Exception exception) {
 
-            TanshugetreesMod.LOGGER.error(e.getMessage());
+            MiscUtils.exception(exception);
 
         }
 
@@ -139,9 +140,9 @@ public class CustomPackOrganized {
                                                 Files.createDirectories(to.getParent());
                                                 Files.copy(source, to, StandardCopyOption.REPLACE_EXISTING);
 
-                                            } catch (Exception e) {
+                                            } catch (Exception exception) {
 
-                                                TanshugetreesMod.LOGGER.error(e.getMessage());
+                                                MiscUtils.exception(exception);
 
                                             }
 
@@ -151,9 +152,9 @@ public class CustomPackOrganized {
 
                                 });
 
-                            } catch (Exception e) {
+                            } catch (Exception exception) {
 
-                                TanshugetreesMod.LOGGER.error(e.getMessage());
+                                MiscUtils.exception(exception);
 
                             }
 
@@ -199,9 +200,9 @@ public class CustomPackOrganized {
                                             Files.createDirectories(copy.getParent());
                                             Files.copy(source, copy, StandardCopyOption.REPLACE_EXISTING);
 
-                                        } catch (Exception e) {
+                                        } catch (Exception exception) {
 
-                                            TanshugetreesMod.LOGGER.error(e.getMessage());
+                                            MiscUtils.exception(exception);
 
                                         }
 
@@ -209,9 +210,9 @@ public class CustomPackOrganized {
 
                                 });
 
-                            } catch (Exception e) {
+                            } catch (Exception exception) {
 
-                                TanshugetreesMod.LOGGER.error(e.getMessage());
+                                MiscUtils.exception(exception);
 
                             }
 
