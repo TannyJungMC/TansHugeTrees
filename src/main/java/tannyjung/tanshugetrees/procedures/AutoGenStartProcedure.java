@@ -47,7 +47,7 @@ public class AutoGenStartProcedure {
 									double convert(String s) {
 										try {
 											return Double.parseDouble(s.trim());
-										} catch (Exception e) {
+										} catch (Exception exception) {
 										}
 										return 0;
 									}

@@ -212,8 +212,8 @@ public class RandomTreeTickProcedure {
 								}
 								filebw.close();
 								filewriter.close();
-							} catch (IOException exception) {
-								exception.printStackTrace();
+							} catch (IOException e) {
+								e.printStackTrace();
 							}
 						}
 					}

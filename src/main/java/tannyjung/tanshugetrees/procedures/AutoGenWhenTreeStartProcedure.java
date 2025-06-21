@@ -44,8 +44,8 @@ public class AutoGenWhenTreeStartProcedure {
 				try {
 					file.getParentFile().mkdirs();
 					file.createNewFile();
-				} catch (IOException exception) {
-					exception.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 			if (true) {
@@ -280,8 +280,8 @@ public class AutoGenWhenTreeStartProcedure {
 					}
 					filebw.close();
 					filewriter.close();
-				} catch (IOException exception) {
-					exception.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -291,8 +291,8 @@ public class AutoGenWhenTreeStartProcedure {
 				try {
 					file.getParentFile().mkdirs();
 					file.createNewFile();
-				} catch (IOException exception) {
-					exception.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 			if (true) {
@@ -356,8 +356,8 @@ public class AutoGenWhenTreeStartProcedure {
 					}
 					filebw.close();
 					filewriter.close();
-				} catch (IOException exception) {
-					exception.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		}

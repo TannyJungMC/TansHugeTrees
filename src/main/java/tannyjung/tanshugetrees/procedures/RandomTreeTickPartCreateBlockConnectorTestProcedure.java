@@ -49,7 +49,7 @@ public class RandomTreeTickPartCreateBlockConnectorTestProcedure {
 						}
 					}
 				}.getZ();
-			} catch (Exception e) {
+			} catch (Exception exception) {
 				return;
 			}
 		}
