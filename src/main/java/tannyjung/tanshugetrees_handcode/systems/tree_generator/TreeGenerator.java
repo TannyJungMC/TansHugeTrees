@@ -90,18 +90,24 @@ public class TreeGenerator {
                 GameUtils.NBT.entity.setText(entity, "trunk_outer", "red_concrete");
                 GameUtils.NBT.entity.setText(entity, "trunk_inner", "red_terracotta");
                 GameUtils.NBT.entity.setText(entity, "trunk_core", "red_stained_glass");
-                GameUtils.NBT.entity.setText(entity, "branch_outer", "orange_concrete");
-                GameUtils.NBT.entity.setText(entity, "branch_inner", "orange_terracotta");
-                GameUtils.NBT.entity.setText(entity, "branch_core", "orange_stained_glass");
-                GameUtils.NBT.entity.setText(entity, "twig_outer", "yellow_concrete");
-                GameUtils.NBT.entity.setText(entity, "twig_inner", "yellow_terracotta");
-                GameUtils.NBT.entity.setText(entity, "twig_core", "yellow_stained_glass");
-                GameUtils.NBT.entity.setText(entity, "sprig_outer", "lime_concrete");
-                GameUtils.NBT.entity.setText(entity, "sprig_inner", "lime_terracotta");
-                GameUtils.NBT.entity.setText(entity, "sprig_core", "lime_stained_glass");
+                GameUtils.NBT.entity.setText(entity, "bough_outer", "orange_concrete");
+                GameUtils.NBT.entity.setText(entity, "bough_inner", "orange_terracotta");
+                GameUtils.NBT.entity.setText(entity, "bough_core", "orange_stained_glass");
+                GameUtils.NBT.entity.setText(entity, "branch_outer", "yellow_concrete");
+                GameUtils.NBT.entity.setText(entity, "branch_inner", "yellow_terracotta");
+                GameUtils.NBT.entity.setText(entity, "branch_core", "yellow_stained_glass");
+                GameUtils.NBT.entity.setText(entity, "limb_outer", "lime_concrete");
+                GameUtils.NBT.entity.setText(entity, "limb_inner", "lime_terracotta");
+                GameUtils.NBT.entity.setText(entity, "limb_core", "lime_stained_glass");
+                GameUtils.NBT.entity.setText(entity, "twig_outer", "green_concrete");
+                GameUtils.NBT.entity.setText(entity, "twig_inner", "green_terracotta");
+                GameUtils.NBT.entity.setText(entity, "twig_core", "green_stained_glass");
+                GameUtils.NBT.entity.setText(entity, "sprig_outer", "white_concrete");
+                GameUtils.NBT.entity.setText(entity, "sprig_inner", "white_terracotta");
+                GameUtils.NBT.entity.setText(entity, "sprig_core", "white_stained_glass");
 
-                GameUtils.NBT.entity.setText(entity, "leaves1", "lime_stained_glass");
-                GameUtils.NBT.entity.setText(entity, "leaves2", "green_stained_glass");
+                GameUtils.NBT.entity.setText(entity, "leaves1", "white_stained_glass");
+                GameUtils.NBT.entity.setText(entity, "leaves2", "black_stained_glass");
 
             }
 
@@ -330,10 +336,28 @@ public class TreeGenerator {
                         GameUtils.NBT.entity.setNumber(entity, type + "_length", Mth.nextInt(RandomSource.create(), (int) GameUtils.NBT.entity.getNumber(entity, type + "_length_min"), (int) GameUtils.NBT.entity.getNumber(entity, type + "_length_max")));
                         GameUtils.NBT.entity.setNumber(entity, type + "_thickness", GameUtils.NBT.entity.getNumber(entity, type + "_thickness_max") - 1);
 
-                        // stepSummonReduceFrom...
+                        ////////////////////////////////////// stepSummonReduceFrom...
 
                         GameUtils.NBT.entity.setNumber(entity, type_pre_next[1] + "_count_save", GameUtils.NBT.entity.getNumber(entity, type_pre_next[1] + "_count"));
                         GameUtils.NBT.entity.setNumber(entity, type + "_length_save", GameUtils.NBT.entity.getNumber(entity, type + "_length"));
+
+                        // Auto Distance
+                        {
+
+                            int auto_distance = 0;
+
+                            if (GameUtils.NBT.entity.getLogic(entity, type_pre_next[1] + "_random_auto") == true) {
+
+                                auto_distance = (int) Math.ceil(GameUtils.NBT.entity.getNumber(entity, type + "_length_save") * (GameUtils.NBT.entity.getNumber(entity, type_pre_next[1] + "_random_percent") * 0.01));
+                                auto_distance = (int) Math.ceil(auto_distance / GameUtils.NBT.entity.getNumber(entity, type_pre_next[1] + "_count_save"));
+
+                            }
+
+                            GameUtils.NBT.entity.setNumber(entity, type_pre_next[1] + "_random_auto_distance", auto_distance);
+
+                        }
+
+                        GameUtils.NBT.entity.setNumber(entity, type_pre_next[1] + "_random_distance_left", 0);
 
                     }
 
@@ -507,7 +531,48 @@ public class TreeGenerator {
 
         private static void calculation (LevelAccessor level, Entity entity, String id, String type, String[] type_pre_next) {
 
-            if (GameUtils.NBT.entity.getNumber(entity, type + "_length") > 0) {
+            boolean go_next = false;
+
+            // Test
+            {
+
+                if (GameUtils.NBT.entity.getNumber(entity, type + "_length") > 0) {
+
+                    if (GameUtils.NBT.entity.getNumber(entity, type_pre_next[1] + "_count") > 1) {
+
+                        if (GameUtils.NBT.entity.getNumber(entity, type_pre_next[1] + "_random_distance_left") > 0) {
+
+                            GameUtils.NBT.entity.addNumber(entity, type_pre_next[1] + "_random_distance_left", -1);
+
+                        } else {
+
+                            // Length Range
+                            if (GameUtils.NBT.entity.getNumber(entity, type + "_length") < GameUtils.NBT.entity.getNumber(entity, type + "_length_save") * (1 - (GameUtils.NBT.entity.getNumber(entity, type_pre_next[1] + "_random_percent") * 0.01))) {
+
+                                GameUtils.NBT.entity.setNumber(entity, type_pre_next[1] + "_random_distance_left", GameUtils.NBT.entity.getNumber(entity, type_pre_next[1] + "_random_auto_distance"));
+
+                                // Chance
+                                if (Math.random() < GameUtils.NBT.entity.getNumber(entity, type_pre_next[1] + "_random_chance")) {
+
+                                    go_next = true;
+
+                                }
+
+                            }
+                            
+                        }
+
+                    }
+
+                } else {
+
+                    go_next = true;
+
+                }
+
+            }
+
+            if (go_next == false) {
 
                 // Continue
                 {
