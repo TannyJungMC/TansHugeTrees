@@ -10,6 +10,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkStatus;
+import tannyjung.misc.MiscUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.misc.GameUtils;
@@ -74,7 +75,7 @@ public class TreeFunction {
 										block = GameUtils.block.fromText(get[3]);
 										keep = get[4].equals("true");
 
-									} catch (Exception e) {
+									} catch (Exception ignored) {
 
 										return;
 
@@ -122,7 +123,7 @@ public class TreeFunction {
 											endY = Math.max(0, Mth.nextInt(RandomSource.create(), minY, maxY));
 											endZ = Math.max(0, Mth.nextInt(RandomSource.create(), minZ, maxZ));
 
-										} catch (Exception e) {
+										} catch (Exception ignored) {
 
 											return;
 
@@ -181,7 +182,7 @@ public class TreeFunction {
 										offset_posZ = Integer.parseInt(offset_pos[2]);
 										feature = get[2];
 
-									} catch (Exception e) {
+									} catch (Exception ignored) {
 
 										return;
 
@@ -206,7 +207,7 @@ public class TreeFunction {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception e) { TanshugetreesMod.LOGGER.error(e.getMessage()); }
+				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
 			}
 
