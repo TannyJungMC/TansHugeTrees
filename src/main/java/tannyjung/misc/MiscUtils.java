@@ -60,7 +60,8 @@ public class MiscUtils {
 	}
 	
 	public static void exception (Exception exception) {
-		
+
+		TanshugetreesMod.LOGGER.error("--------------------------------------------------");
 		StackTraceElement[] list = exception.getStackTrace();
 		
 		for (StackTraceElement get : list) {
