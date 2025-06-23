@@ -23,22 +23,10 @@ public class BlockPlacer {
             // Shape File Converter
             {
 
-                String type = GameUtils.NBT.block.getText(level, pos, "type");
-                String block_original = GameUtils.NBT.block.getText(level, pos, "block_original");
-                String type_short = "";
-
-                if (type.equals("leaves") == false) {
-
-                    type_short = block_original.substring(0, 2);
-
-                } else {
-
-                    type_short = "le" + block_original.substring(6);
-
-                }
-
                 BlockPos pos_center = new BlockPos((int) GameUtils.NBT.block.getNumber(level, pos, "center_posX"), (int) GameUtils.NBT.block.getNumber(level, pos, "center_posY"), (int) GameUtils.NBT.block.getNumber(level, pos, "center_posZ"));
-                String write = "+b" + (pos_center.getX() - pos.getX()) + "/" + (pos_center.getY() - pos.getY()) + "/" + (pos_center.getZ() - pos.getZ()) + type_short;
+                String type_short = GameUtils.NBT.block.getText(level, pos, "type_short");
+
+                String write = "+b" + (pos.getX() - pos_center.getX()) + "/" + (pos.getY() - pos_center.getY()) + "/" + (pos.getZ() - pos_center.getZ()) + type_short;
                 FileManager.writeTXT(Handcode.directory_config + "/generated/" + GameUtils.NBT.block.getText(level, pos, "export_file_name"), write + "\n", true);
                 level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 
