@@ -99,7 +99,7 @@ public class AutoGenWhenTreeFinishProcedure {
 										double convert(String s) {
 											try {
 												return Double.parseDouble(s.trim());
-											} catch (Exception exception) {
+											} catch (Exception e) {
 											}
 											return 0;
 										}
@@ -108,7 +108,7 @@ public class AutoGenWhenTreeFinishProcedure {
 										double convert(String s) {
 											try {
 												return Double.parseDouble(s.trim());
-											} catch (Exception exception) {
+											} catch (Exception e) {
 											}
 											return 0;
 										}
@@ -117,7 +117,7 @@ public class AutoGenWhenTreeFinishProcedure {
 										double convert(String s) {
 											try {
 												return Double.parseDouble(s.trim());
-											} catch (Exception exception) {
+											} catch (Exception e) {
 											}
 											return 0;
 										}
@@ -210,8 +210,8 @@ public class AutoGenWhenTreeFinishProcedure {
 						}
 						file2bw.close();
 						file2writer.close();
-					} catch (IOException e) {
-						e.printStackTrace();
+					} catch (IOException exception) {
+						exception.printStackTrace();
 					}
 					file.delete();
 				}

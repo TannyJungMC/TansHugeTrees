@@ -153,7 +153,7 @@ public class SaplingBlockRightClickProcedure {
 														double convert(String s) {
 															try {
 																return Double.parseDouble(s.trim());
-															} catch (Exception exception) {
+															} catch (Exception e) {
 															}
 															return 0;
 														}
