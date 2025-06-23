@@ -616,10 +616,10 @@ public class TreePlacer {
             int trunk_count = 0;
             boolean hollowed = false;
 
-            // Dead Tree Level 4 - 7
+            // Dead Tree Level 6 - 9
             {
 
-                if (dead_tree_level >= 4) {
+                if (dead_tree_level >= 6) {
 
                     boolean skip = false;
 
@@ -658,7 +658,7 @@ public class TreePlacer {
 
                     }
 
-                    if (dead_tree_level >= 6) {
+                    if (dead_tree_level >= 8) {
 
                         trunk_count = (int) (Mth.nextDouble(RandomSource.create(center_posX + center_posY + center_posZ), 0.1, 0.5) * trunk_count);
 
@@ -668,7 +668,7 @@ public class TreePlacer {
 
                     }
 
-                    if (dead_tree_level == 5 || dead_tree_level == 7) {
+                    if (dead_tree_level == 7 || dead_tree_level == 9) {
 
                         hollowed = true;
 
@@ -769,7 +769,7 @@ public class TreePlacer {
 
                                     if (dead_tree_level >= 2) {
 
-                                        if (get_short.startsWith("lt") == true) {
+                                        if (get_short.startsWith("sp") == true) {
 
                                             continue;
 
@@ -789,7 +789,27 @@ public class TreePlacer {
 
                                     if (dead_tree_level >= 4) {
 
+                                        if (get_short.startsWith("li") == true) {
+
+                                            continue;
+
+                                        }
+
+                                    }
+
+                                    if (dead_tree_level >= 5) {
+
                                         if (get_short.startsWith("br") == true) {
+
+                                            continue;
+
+                                        }
+
+                                    }
+
+                                    if (dead_tree_level >= 6) {
+
+                                        if (get_short.startsWith("bo") == true) {
 
                                             continue;
 
