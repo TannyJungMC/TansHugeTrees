@@ -26,7 +26,7 @@ public class TreeGenerator {
 
         } else {
 
-            GameUtils.NBT.entity.setNumber(entity, "generate_speed_test", GameUtils.NBT.entity.getNumber(entity, "generate_speed_test") + 1);
+            GameUtils.NBT.entity.addNumber(entity, "generate_speed_test", 1);
 
             if (GameUtils.NBT.entity.getNumber(entity, "generate_speed_test") > GameUtils.NBT.entity.getNumber(entity, "generate_speed_tick")) {
 
@@ -853,7 +853,7 @@ public class TreeGenerator {
                                     }
 
                                     BlockPos pos = new BlockPos((int) (center_pos[0] + build_saveX), (int) (center_pos[1] + build_saveY), (int) (center_pos[2] + build_saveZ));
-                                    String block = "";
+                                    String block_type = "";
 
                                     if (type.equals("leaves") == false) {
 
@@ -865,19 +865,19 @@ public class TreeGenerator {
 
                                                 if (generator_type.equals("sphere") == true) {
 
-                                                    block = buildOuterInnerCore(level, entity, type, half_thickness, pos, build_area);
+                                                    block_type = buildOuterInnerCore(level, entity, type, half_thickness, pos, build_area);
 
                                                 } else {
 
-                                                    block = "outer";
+                                                    block_type = "outer";
 
                                                 }
 
                                             }
 
-                                            if (block.equals("") == false && buildTestKeep(level, pos, replace) == true) {
+                                            if (block_type.equals("") == false && buildTestKeep(level, pos, replace) == true) {
 
-                                                buildPlaceBlock(level, entity, type, pos, block);
+                                                buildPlaceBlock(level, entity, type, pos, block_type);
                                                 return;
 
                                             }
@@ -907,11 +907,11 @@ public class TreeGenerator {
 
                                                         if (Math.random() < GameUtils.NBT.entity.getNumber(entity, "leaves2_chance")) {
 
-                                                            block = "leaves_2";
+                                                            block_type = "2";
 
                                                         } else {
 
-                                                            block = "leaves_1";
+                                                            block_type = "1";
 
                                                         }
 
@@ -919,9 +919,9 @@ public class TreeGenerator {
 
                                                     pos_leaves = new BlockPos(pos.getX(), pos.getY() - deep_test, pos.getZ());
 
-                                                    if (block.equals("") == false && buildTestKeep(level, pos_leaves, replace) == true) {
+                                                    if (block_type.equals("") == false && buildTestKeep(level, pos_leaves, replace) == true) {
 
-                                                        buildPlaceBlock(level, entity, type, pos_leaves, block);
+                                                        buildPlaceBlock(level, entity, type, pos_leaves, block_type);
 
                                                     }
 
@@ -1109,19 +1109,23 @@ public class TreeGenerator {
 
         }
 
-        private static void buildPlaceBlock (LevelAccessor level, Entity entity, String type, BlockPos pos, String block) {
+        private static void buildPlaceBlock (LevelAccessor level, Entity entity, String type, BlockPos pos, String block_type) {
 
+            String type_short = type.substring(0, 2);
             String block_placer = "";
+            String block = "";
 
             if (type.equals("leaves") == false) {
 
-                block_placer = type + "_" + block;
+                type_short = type_short + block_type.substring(0, 1);
+                block_placer = type + "_" + block_type;
                 block = block_placer;
 
             } else {
 
-                block_placer = block;
-                block = block.replace("_", "");
+                type_short = type_short + block_type;
+                block_placer = "leaves_" + block_type;
+                block = "leaves" + block_type;
 
             }
 
@@ -1133,11 +1137,10 @@ public class TreeGenerator {
             if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
 
                 GameUtils.NBT.block.setText(level, pos, "export_file_name", GameUtils.NBT.entity.getText(entity, "export_file_name"));
-                GameUtils.NBT.block.setText(level, pos, "type", type);
-                GameUtils.NBT.block.setText(level, pos, "block_original", block);
                 GameUtils.NBT.block.setNumber(level, pos, "center_posX", entity.getBlockX());
                 GameUtils.NBT.block.setNumber(level, pos, "center_posY", entity.getBlockY());
                 GameUtils.NBT.block.setNumber(level, pos, "center_posZ", entity.getBlockZ());
+                GameUtils.NBT.block.setText(level, pos, "type_short", type_short);
 
             }
 

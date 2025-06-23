@@ -190,41 +190,17 @@ public class ShapeFileConverter {
                 // Blocks
                 {
 
-                    write
-                            .append("Block tao = ").append(GameUtils.NBT.entity.getText(entity, "taproot" + "_outer")).append("\n")
-                            .append("Block tai = ").append(GameUtils.NBT.entity.getText(entity, "taproot" + "_inner")).append("\n")
-                            .append("Block tac = ").append(GameUtils.NBT.entity.getText(entity, "taproot" + "_core")).append("\n")
-                            .append("Block seo = ").append(GameUtils.NBT.entity.getText(entity, "secondary_root" + "_outer")).append("\n")
-                            .append("Block sei = ").append(GameUtils.NBT.entity.getText(entity, "secondary_root" + "_inner")).append("\n")
-                            .append("Block sec = ").append(GameUtils.NBT.entity.getText(entity, "secondary_root" + "_core")).append("\n")
-                            .append("Block teo = ").append(GameUtils.NBT.entity.getText(entity, "tertiary_root" + "_outer")).append("\n")
-                            .append("Block tei = ").append(GameUtils.NBT.entity.getText(entity, "tertiary_root" + "_inner")).append("\n")
-                            .append("Block tec = ").append(GameUtils.NBT.entity.getText(entity, "tertiary_root" + "_core")).append("\n")
-                            .append("Block fio = ").append(GameUtils.NBT.entity.getText(entity, "fine_root" + "_outer")).append("\n")
-                            .append("Block fii = ").append(GameUtils.NBT.entity.getText(entity, "fine_root" + "_inner")).append("\n")
-                            .append("Block fic = ").append(GameUtils.NBT.entity.getText(entity, "fine_root" + "_core")).append("\n")
-                            .append("Block tro = ").append(GameUtils.NBT.entity.getText(entity, "trunk" + "_outer")).append("\n")
-                            .append("Block tri = ").append(GameUtils.NBT.entity.getText(entity, "trunk" + "_inner")).append("\n")
-                            .append("Block trc = ").append(GameUtils.NBT.entity.getText(entity, "trunk" + "_core")).append("\n")
-                            .append("Block boo = ").append(GameUtils.NBT.entity.getText(entity, "bough" + "_outer")).append("\n")
-                            .append("Block boi = ").append(GameUtils.NBT.entity.getText(entity, "bough" + "_inner")).append("\n")
-                            .append("Block boc = ").append(GameUtils.NBT.entity.getText(entity, "bough" + "_core")).append("\n")
-                            .append("Block bro = ").append(GameUtils.NBT.entity.getText(entity, "branch" + "_outer")).append("\n")
-                            .append("Block bri = ").append(GameUtils.NBT.entity.getText(entity, "branch" + "_inner")).append("\n")
-                            .append("Block brc = ").append(GameUtils.NBT.entity.getText(entity, "branch" + "_core")).append("\n")
-                            .append("Block lio = ").append(GameUtils.NBT.entity.getText(entity, "limb" + "_outer")).append("\n")
-                            .append("Block lii = ").append(GameUtils.NBT.entity.getText(entity, "limb" + "_inner")).append("\n")
-                            .append("Block lic = ").append(GameUtils.NBT.entity.getText(entity, "limb" + "_core")).append("\n")
-                            .append("Block two = ").append(GameUtils.NBT.entity.getText(entity, "twig" + "_outer")).append("\n")
-                            .append("Block twi = ").append(GameUtils.NBT.entity.getText(entity, "twig" + "_inner")).append("\n")
-                            .append("Block twc = ").append(GameUtils.NBT.entity.getText(entity, "twig" + "_core")).append("\n")
-                            .append("Block spo = ").append(GameUtils.NBT.entity.getText(entity, "sprig" + "_outer")).append("\n")
-                            .append("Block spi = ").append(GameUtils.NBT.entity.getText(entity, "sprig" + "_inner")).append("\n")
-                            .append("Block spc = ").append(GameUtils.NBT.entity.getText(entity, "sprig" + "_core")).append("\n")
-
-                            .append("Block le1 = ").append(GameUtils.NBT.entity.getText(entity, "leaves1")).append("\n")
-                            .append("Block le2 = ").append(GameUtils.NBT.entity.getText(entity, "leaves2")).append("\n")
-                    ;
+                    write.append(settingsWriteBlock(entity, "taproot"));
+                    write.append(settingsWriteBlock(entity, "secondary_root"));
+                    write.append(settingsWriteBlock(entity, "tertiary_root"));
+                    write.append(settingsWriteBlock(entity, "fine_root"));
+                    write.append(settingsWriteBlock(entity, "trunk"));
+                    write.append(settingsWriteBlock(entity, "bough"));
+                    write.append(settingsWriteBlock(entity, "branch"));
+                    write.append(settingsWriteBlock(entity, "limb"));
+                    write.append(settingsWriteBlock(entity, "twig"));
+                    write.append(settingsWriteBlock(entity, "sprig"));
+                    write.append(settingsWriteBlock(entity, "leaves"));
 
                 }
 
@@ -280,31 +256,286 @@ public class ShapeFileConverter {
 
     }
 
+    private static String settingsWriteBlock (Entity entity, String type) {
+
+        String retuen_text = "";
+        String keep = "";
+
+        if (GameUtils.NBT.entity.getLogic(entity, type + "_replace") == false) {
+
+            keep = " keep";
+
+        }
+
+        if (type.equals("leaves") == false) {
+
+            // General Blocks
+            {
+
+                String type_short = type.substring(0, 2);
+                String outer = GameUtils.NBT.entity.getText(entity, type + "_outer") + keep;
+                String inner = GameUtils.NBT.entity.getText(entity, type + "_inner") + keep;
+                String core = GameUtils.NBT.entity.getText(entity, type + "_core") + keep;
+
+                if (outer.equals(keep) == true) {
+
+                    outer = "";
+
+                }
+
+                if (inner.equals(keep) == true) {
+
+                    inner = "";
+
+                }
+
+                if (core.equals(keep) == true) {
+
+                    core = "";
+
+                }
+
+                retuen_text = "Block " + type_short + "o = " + outer + "\n" + "Block " + type_short + "i = " + inner + "\n" + "Block " + type_short + "c = " + core + "\n";
+
+            }
+
+        } else {
+
+            // Leaves
+            {
+
+                String leaves1 = GameUtils.NBT.entity.getText(entity, "leaves1") + keep;
+                String leaves2 = GameUtils.NBT.entity.getText(entity, "leaves2") + keep;
+
+                if (leaves1.equals(keep) == true) {
+
+                    leaves1 = "";
+
+                }
+
+                if (leaves2.equals(keep) == true) {
+
+                    leaves2 = "";
+
+                }
+
+                retuen_text = "Block le1 = " + leaves1 + "\n" + "Block le2 = " + leaves2 + "\n";
+
+            }
+
+        }
+
+        return retuen_text;
+
+    }
+
     public static void whenTreeEnd (LevelAccessor level, Entity entity) {
+
+        String complete_date = new java.text.SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + " at " + new java.text.SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
 
         TanshugetreesMod.queueServerWork(220, () -> {
 
             // Update Generated File
             {
 
+                File file = new File(Handcode.directory_config + "/generated/" + GameUtils.NBT.entity.getText(entity, "export_file_name"));
+                int trunk_block_count = 0;
+                int min_sizeX = 0;
+                int min_sizeY = 0;
+                int min_sizeZ = 0;
+                int max_sizeX = 0;
+                int max_sizeY = 0;
+                int max_sizeZ = 0;
+                int sizeX = 0;
+                int sizeY = 0;
+                int sizeZ = 0;
+                int center_sizeX = 0;
+                int center_sizeY = 0;
+                int center_sizeZ = 0;
 
+                // Scanning
+                {
 
+                    boolean start = false;
+                    String type_short = "";
+                    String[] pos = new String[0];
+                    int posX = 0;
+                    int posY = 0;
+                    int posZ = 0;
 
+                    {
 
-                // LEFT TO DO
+                        try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
+                            {
 
+                                if (start == false) {
 
+                                    if (read_all.equals("--------------------------------------------------") == true) {
 
+                                        start = true;
 
-            }
+                                    }
 
-            // Rename Generated File
-            {
+                                } else {
 
-                String folder = Handcode.directory_config + "/generated/";
-                String file = GameUtils.NBT.entity.getText(entity, "export_file_name");
-                new File(folder + "/" + file).renameTo(new File(folder + "/" + file.replace(" (generating)", "")));
+                                    if (read_all.startsWith("+b") == true) {
+
+                                        // Trunk Block Count
+                                        {
+
+                                            type_short = read_all.substring(read_all.length() - 3);
+
+                                            if (type_short.startsWith("tr") == true) {
+
+                                                trunk_block_count = trunk_block_count + 1;
+
+                                            }
+
+                                        }
+
+                                        // Size
+                                        {
+
+                                            pos = read_all.substring(2, read_all.length() - 3).split("/");
+                                            posX = Integer.parseInt(pos[0]);
+                                            posY = Integer.parseInt(pos[1]);
+                                            posZ = Integer.parseInt(pos[2]);
+
+                                            // Get Min and Max
+                                            {
+
+                                                if (min_sizeX > posX) {
+
+                                                    min_sizeX = posX;
+
+                                                }
+
+                                                if (min_sizeY > posY) {
+
+                                                    min_sizeY = posY;
+
+                                                }
+
+                                                if (min_sizeZ > posZ) {
+
+                                                    min_sizeZ = posZ;
+
+                                                }
+
+                                                if (max_sizeX < posX) {
+
+                                                    max_sizeX = posX;
+
+                                                }
+
+                                                if (max_sizeY < posY) {
+
+                                                    max_sizeY = posY;
+
+                                                }
+
+                                                if (max_sizeZ < posZ) {
+
+                                                    max_sizeZ = posZ;
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+
+                    }
+
+                }
+
+                // Size Calculation
+                {
+
+                    sizeX = max_sizeX - min_sizeX;
+                    sizeY = max_sizeY - min_sizeY;
+                    sizeZ = max_sizeZ - min_sizeZ;
+                    center_sizeX = -(min_sizeX);
+                    center_sizeY = -(min_sizeY);
+                    center_sizeZ = -(min_sizeZ);
+
+                }
+
+                String file_new = file.getParentFile().getPath() + "/" + file.getName().replace("(generating)", "(updating)");
+
+                // Updating
+                {
+
+                    boolean skip = false;
+
+                    {
+
+                        try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+
+                            {
+
+                                if (skip == false) {
+
+                                    if (read_all.equals("--------------------------------------------------") == true) {
+
+                                        skip = true;
+
+                                    } else {
+
+                                        if (read_all.startsWith("Complete Date : ") == true) {
+
+                                            read_all = read_all.replace("###", complete_date);
+
+                                        } else if (read_all.startsWith("sizeX = ") == true) {
+
+                                            read_all = read_all.replace("###", "" + sizeX);
+
+                                        } else if (read_all.startsWith("sizeY = ") == true) {
+
+                                            read_all = read_all.replace("###", "" + sizeY);
+
+                                        } else if (read_all.startsWith("sizeZ = ") == true) {
+
+                                            read_all = read_all.replace("###", "" + sizeZ);
+
+                                        } else if (read_all.startsWith("center_sizeX = ") == true) {
+
+                                            read_all = read_all.replace("###", "" + center_sizeX);
+
+                                        } else if (read_all.startsWith("center_sizeY = ") == true) {
+
+                                            read_all = read_all.replace("###", "" + center_sizeY);
+
+                                        } else if (read_all.startsWith("center_sizeZ = ") == true) {
+
+                                            read_all = read_all.replace("###", "" + center_sizeZ);
+
+                                        }
+
+                                    }
+
+                                }
+
+                                FileManager.writeTXT(file_new, read_all + "\n", true);
+
+                            }
+
+                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+
+                    }
+
+                }
+
+                file.delete();
+                new File(file_new).renameTo(new File(file.getParentFile().getPath() + "/" + file.getName().replace("(generating)", "")));
 
             }
 
