@@ -10,7 +10,7 @@ public class FileManager {
 
 		{
 
-			String[] get = pos.split("\\^");
+			String[] get = pos.split("/");
 			int posX = Integer.parseInt(get[0]);
 			int posY = Integer.parseInt(get[1]);
 			int posZ = Integer.parseInt(get[2]);
