@@ -6,12 +6,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import tannyjung.misc.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
-
-import java.util.Calendar;
 
 public class TreeGenerator {
 
@@ -878,6 +875,82 @@ public class TreeGenerator {
                                             if (block_type.equals("") == false && buildTestKeep(level, pos, replace) == true) {
 
                                                 buildPlaceBlock(level, entity, type, pos, block_type);
+
+                                                // Block Connector
+                                                {
+
+                                                    if (thickness < 1) {
+
+                                                        double block_connector_posX = GameUtils.NBT.entity.getNumber(entity, "block_connector_posX");
+                                                        double block_connector_posY = GameUtils.NBT.entity.getNumber(entity, "block_connector_posY");
+                                                        double block_connector_posZ = GameUtils.NBT.entity.getNumber(entity, "block_connector_posZ");
+                                                        GameUtils.NBT.entity.setNumber(entity, "block_connector_posX", center_pos[0]);
+                                                        GameUtils.NBT.entity.setNumber(entity, "block_connector_posY", center_pos[1]);
+                                                        GameUtils.NBT.entity.setNumber(entity, "block_connector_posZ", center_pos[2]);
+                                                        int testX = (int) center_pos[0] - (int) block_connector_posX;
+                                                        int testY = (int) center_pos[1] - (int) block_connector_posY;
+                                                        int testZ = (int) center_pos[2] - (int) block_connector_posZ;
+
+                                                        if (Math.abs(testX) == 1 || Math.abs(testY) == 1 || Math.abs(testZ) == 1) {
+
+                                                            if (Math.abs(testX) == 1 && Math.abs(testZ) == 1) {
+
+                                                                // For X and Z
+                                                                {
+
+                                                                    if (center_pos[0] - block_connector_posX > center_pos[2] - block_connector_posZ) {
+
+                                                                        pos = new BlockPos(pos.getX() - testX, pos.getY(), pos.getZ());
+
+                                                                    } else {
+
+                                                                        pos = new BlockPos(pos.getX(), pos.getY(), pos.getZ() - testZ);
+
+                                                                    }
+
+                                                                    // Place Block
+                                                                    {
+
+                                                                        if (buildTestKeep(level, pos, replace) == true) {
+
+                                                                            buildPlaceBlock(level, entity, type, pos, block_type);
+
+                                                                        }
+
+                                                                    }
+
+                                                                }
+
+                                                            }
+
+                                                            if ((Math.abs(testX) == 1 || Math.abs(testZ) == 1) && Math.abs(testY) == 1) {
+
+                                                                // For Y
+                                                                {
+
+                                                                    pos = new BlockPos(pos.getX(), pos.getY() - testY, pos.getZ());
+
+                                                                    // Place Block
+                                                                    {
+
+                                                                        if (buildTestKeep(level, pos, replace) == true) {
+
+                                                                            buildPlaceBlock(level, entity, type, pos, block_type);
+
+                                                                        }
+
+                                                                    }
+
+                                                                }
+
+                                                            }
+
+                                                        }
+
+                                                    }
+
+                                                }
+
                                                 return;
 
                                             }
