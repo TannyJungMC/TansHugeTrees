@@ -44,8 +44,11 @@ public class LivingTreeMechanics {
 
 		StringBuilder leaves_block = new StringBuilder();
 		int[] leaves_type = new int[2];
+		boolean can_leaves_decay = false;
+		boolean can_leaves_drop = false;
+		boolean can_leaves_regrow = false;
 
-		// Get Block Settings
+		// Read Settings
 		{
 
 			File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + GameUtils.NBT.entity.getText(entity, "settings"));
@@ -60,7 +63,19 @@ public class LivingTreeMechanics {
 
 						{
 
-							if (read_all.startsWith("Block ") == true) {
+							if (read_all.startsWith("can_leaves_decay = ") == true) {
+
+								can_leaves_decay = Boolean.parseBoolean(read_all.replace("can_leaves_decay = ", ""));
+
+							} else if (read_all.startsWith("can_leaves_drop = ") == true) {
+
+								can_leaves_drop = Boolean.parseBoolean(read_all.replace("can_leaves_drop = ", ""));
+
+							} else if (read_all.startsWith("can_leaves_regrow = ") == true) {
+
+								can_leaves_regrow = Boolean.parseBoolean(read_all.replace("can_leaves_regrow = ", ""));
+
+							} else if (read_all.startsWith("Block ") == true) {
 
 								id = read_all.substring(("Block ").length(), ("Block ###").length());
 								get = read_all.substring(("Block ### = ").length());
@@ -252,17 +267,25 @@ public class LivingTreeMechanics {
 
 								if (level.getBlockState(pre_pos).getBlock() == pre_block.getBlock()) {
 
-									run(level, entity, pos, block, leaves_block.toString(), leaves_type[Integer.parseInt(id.substring(2)) - 1], biome_type, current_season);
+									if (can_leaves_drop == true || can_leaves_regrow == true) {
+
+										run(level, entity, pos, block, leaves_block.toString(), leaves_type[Integer.parseInt(id.substring(2)) - 1], biome_type, current_season, can_leaves_drop, can_leaves_regrow);
+
+									}
 
 								} else {
 
 									// Missing Twig
 									{
 
-										if (level.getBlockState(pos).equals(block) == true) {
+										if (can_leaves_decay == true) {
 
-											block = GameUtils.block.propertyBooleanSet(block, "persistent", false);
-											level.setBlock(pos, block, 2);
+											if (level.getBlockState(pos).equals(block) == true) {
+
+												block = GameUtils.block.propertyBooleanSet(block, "persistent", false);
+												level.setBlock(pos, block, 2);
+
+											}
 
 										}
 
@@ -314,7 +337,7 @@ public class LivingTreeMechanics {
 
 	}
 
-	private static void run (LevelAccessor level, Entity entity, BlockPos pos, BlockState block, String leaves_block, int leaves_type, int biome_type, String current_season) {
+	private static void run (LevelAccessor level, Entity entity, BlockPos pos, BlockState block, String leaves_block, int leaves_type, int biome_type, String current_season, boolean can_leaves_drop, boolean can_leaves_regrow) {
 
 		boolean straighten = false;
 		boolean can_pos_photosynthesis = false;
@@ -370,107 +393,111 @@ public class LivingTreeMechanics {
 			// Leaf Drop
 			{
 
-				double chance = 0.0;
+				if (can_leaves_drop == true) {
 
-				if (straighten == true) {
+					double chance = 0.0;
 
-					BlockState test_block = level.getBlockState(new BlockPos(pos.getX(), (int) GameUtils.NBT.entity.getNumber(entity, "straighten_highestY"), pos.getZ()));
+					if (straighten == true) {
 
-					if (leaves_block.contains("|" + GameUtils.block.toTextID(test_block) + "|") == false) {
+						BlockState test_block = level.getBlockState(new BlockPos(pos.getX(), (int) GameUtils.NBT.entity.getNumber(entity, "straighten_highestY"), pos.getZ()));
 
-						chance = 1.0;
+						if (leaves_block.contains("|" + GameUtils.block.toTextID(test_block) + "|") == false) {
 
-					}
+							chance = 1.0;
 
-				} else if (can_pos_photosynthesis == false) {
+						}
 
-					chance = ConfigMain.leaf_light_level_detection_drop_chance;
+					} else if (can_pos_photosynthesis == false) {
 
-				} else {
+						chance = ConfigMain.leaf_light_level_detection_drop_chance;
 
-					if (leaves_type == 1) {
+					} else {
 
-						if (biome_type == 0) {
+						if (leaves_type == 1) {
 
-							// By Seasons
-							{
+							if (biome_type == 0) {
 
-								chance = switch (current_season) {
-									case "Spring" -> ConfigMain.leaf_drop_chance_spring;
-									case "Summer" -> ConfigMain.leaf_drop_chance_summer;
-									case "Autumn" -> ConfigMain.leaf_drop_chance_autumn;
-									case "Winter" -> ConfigMain.leaf_drop_chance_winter;
-									default -> chance;
-								};
+								// By Seasons
+								{
+
+									chance = switch (current_season) {
+										case "Spring" -> ConfigMain.leaf_drop_chance_spring;
+										case "Summer" -> ConfigMain.leaf_drop_chance_summer;
+										case "Autumn" -> ConfigMain.leaf_drop_chance_autumn;
+										case "Winter" -> ConfigMain.leaf_drop_chance_winter;
+										default -> chance;
+									};
+
+								}
+
+							} else if (biome_type == 1) {
+
+								chance = ConfigMain.leaf_drop_chance_winter;
+
+							} else if (biome_type == 2) {
+
+								chance = ConfigMain.leaf_drop_chance_summer;
 
 							}
 
-						} else if (biome_type == 1) {
+						} else if (leaves_type == 2) {
 
-							chance = ConfigMain.leaf_drop_chance_winter;
+							// Only drop coniferous leaves in summer
+							{
 
-						} else if (biome_type == 2) {
+								if (current_season.equals("Summer")) {
+
+									chance = ConfigMain.leaf_drop_chance_coniferous;
+
+								}
+
+							}
+
+						} else {
 
 							chance = ConfigMain.leaf_drop_chance_summer;
 
 						}
 
-					} else if (leaves_type == 2) {
-
-						// Only drop coniferous leaves in summer
-						{
-
-							if (current_season.equals("Summer")) {
-
-								chance = ConfigMain.leaf_drop_chance_coniferous;
-
-							}
-
-						}
-
-					} else {
-
-						chance = ConfigMain.leaf_drop_chance_summer;
-
 					}
 
-				}
+					if (Math.random() < chance) {
 
-				if (Math.random() < chance) {
+						level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 
-					level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+						if (ConfigMain.leaf_drop_animation_chance > 0 && Math.random() < ConfigMain.leaf_drop_animation_chance) {
 
-					if (ConfigMain.leaf_drop_animation_chance > 0 && Math.random() < ConfigMain.leaf_drop_animation_chance) {
+							// Animation
+							{
 
-						// Animation
-						{
+								if (GameUtils.score.get(level, "TANSHUGETREES", "leaf_drop") < ConfigMain.leaf_drop_animation_count_limit) {
 
-							if (GameUtils.score.get(level, "TANSHUGETREES", "leaf_drop") < ConfigMain.leaf_drop_animation_count_limit) {
+									// Don't create animation, if there's a block below.
+									if (GameUtils.block.isTaggedAs(level.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())), "tanshugetrees:passable_blocks") == true) {
 
-								// Don't create animation, if there's a block below.
-								if (GameUtils.block.isTaggedAs(level.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())), "tanshugetrees:passable_blocks") == true) {
+										GameUtils.score.add(level, "TANSHUGETREES", "leaf_drop", 1);
 
-									GameUtils.score.add(level, "TANSHUGETREES", "leaf_drop", 1);
+										String command = "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.block.toTextID(block) + "\"},ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}";
+										command = GameUtils.misc.summonEntity("block_display", "TANSHUGETREES / TANSHUGETREES-leaf_drop", "Falling Leaf", command);
+										GameUtils.command.run(level, pos.getX(), pos.getY(), pos.getZ(), command);
 
-									String command = "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.block.toTextID(block) + "\"},ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}";
-									command = GameUtils.misc.summonEntity("block_display", "TANSHUGETREES / TANSHUGETREES-leaf_drop", "Falling Leaf", command);
-									GameUtils.command.run(level, pos.getX(), pos.getY(), pos.getZ(), command);
-
+									}
 								}
+
 							}
 
-						}
+						} else {
 
-					} else {
+							// No Animation
+							{
 
-						// No Animation
-						{
+								int height_motion = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
 
-							int height_motion = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
+								if (height_motion < pos.getY()) {
 
-							if (height_motion < pos.getY()) {
+									LeafLitter.start(level, pos.getX(), height_motion, pos.getZ(), block, false);
 
-								LeafLitter.start(level, pos.getX(), height_motion, pos.getZ(), block, false);
+								}
 
 							}
 
@@ -487,71 +514,75 @@ public class LivingTreeMechanics {
 			// Leaf Regrowth
 			{
 
-				double chance = 0.0;
+				if (can_leaves_regrow == true) {
 
-				if (straighten == true) {
+					double chance = 0.0;
 
-					// Cancel By Straighten (if no block above)
-					{
+					if (straighten == true) {
 
-						BlockState test_block = level.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ()));
+						// Cancel By Straighten (if no block above)
+						{
 
-						if (leaves_block.contains("|" + GameUtils.block.toTextID(test_block) + "|") == true) {
+							BlockState test_block = level.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ()));
 
-							chance = 1.0;
+							if (leaves_block.contains("|" + GameUtils.block.toTextID(test_block) + "|") == true) {
 
-						} else {
+								chance = 1.0;
 
-							return;
+							} else {
 
-						}
-
-					}
-
-				} else if (can_pos_photosynthesis == true) {
-
-					if (leaves_type == 1) {
-
-						if (biome_type == 0) {
-
-							// By Seasons
-							{
-
-								chance = switch (current_season) {
-									case "Spring" -> ConfigMain.leaf_regrowth_chance_spring;
-									case "Summer" -> ConfigMain.leaf_regrowth_chance_summer;
-									case "Autumn" -> ConfigMain.leaf_regrowth_chance_autumn;
-									case "Winter" -> ConfigMain.leaf_regrowth_chance_winter;
-									default -> chance;
-								};
+								return;
 
 							}
 
-						} else if (biome_type == 1) {
+						}
 
-							chance = ConfigMain.leaf_regrowth_chance_winter;
+					} else if (can_pos_photosynthesis == true) {
 
-						} else if (biome_type == 2) {
+						if (leaves_type == 1) {
+
+							if (biome_type == 0) {
+
+								// By Seasons
+								{
+
+									chance = switch (current_season) {
+										case "Spring" -> ConfigMain.leaf_regrowth_chance_spring;
+										case "Summer" -> ConfigMain.leaf_regrowth_chance_summer;
+										case "Autumn" -> ConfigMain.leaf_regrowth_chance_autumn;
+										case "Winter" -> ConfigMain.leaf_regrowth_chance_winter;
+										default -> chance;
+									};
+
+								}
+
+							} else if (biome_type == 1) {
+
+								chance = ConfigMain.leaf_regrowth_chance_winter;
+
+							} else if (biome_type == 2) {
+
+								chance = ConfigMain.leaf_regrowth_chance_summer;
+
+							}
+
+						} else if (leaves_type == 2) {
+
+							chance = ConfigMain.leaf_regrowth_chance_coniferous;
+
+						} else {
 
 							chance = ConfigMain.leaf_regrowth_chance_summer;
 
 						}
 
-					} else if (leaves_type == 2) {
-
-						chance = ConfigMain.leaf_regrowth_chance_coniferous;
-
-					} else {
-
-						chance = ConfigMain.leaf_regrowth_chance_summer;
-
 					}
 
-				}
+					if (Math.random() < chance) {
 
-				if (Math.random() < chance) {
+						level.setBlock(pos, block, 2);
 
-					level.setBlock(pos, block, 2);
+					}
 
 				}
 

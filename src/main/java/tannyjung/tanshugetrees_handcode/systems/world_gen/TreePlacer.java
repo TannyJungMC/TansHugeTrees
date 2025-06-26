@@ -496,88 +496,112 @@ public class TreePlacer {
 
         }
 
-        Map<String, String> map_block = new HashMap<>();
-        boolean living_tree_mechanics = false;
-        boolean can_disable_roots = false;
-        int leaves1_type = 0;
-        int leaves2_type = 0;
+        File file_chosen = new File(Handcode.directory_config + "/custom_packs/" + storage_directory + "/" + chosen);
 
-        // Scan "Tree Settings" File
-        {
+        if (file_chosen.exists() == true && file_chosen.isDirectory() == false) {
 
-            File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
+            Map<String, String> map_block = new HashMap<>();
+            boolean can_disable_roots = false;
+            boolean can_leaves_decay = false;
+            boolean can_leaves_drop = false;
+            boolean can_leaves_regrow = false;
+            int leaves1_type = 0;
+            int leaves2_type = 0;
 
-            if (file.exists() == true && file.isDirectory() == false) {
+            // Scan "Tree Settings" File
+            {
 
-                String get_short = "";
-                String get = "";
-                int leaves_type_test = 0;
+                File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
 
-                // Scan
-                {
+                if (file.exists() == true && file.isDirectory() == false) {
 
-                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                    String get_short = "";
+                    String get = "";
+                    int leaves_type_test = 0;
 
-                        {
+                    // Scan
+                    {
 
-                            if (read_all.startsWith("living_tree_mechanics = ") == true) {
+                        try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-                                {
+                            {
 
-                                    living_tree_mechanics = Boolean.parseBoolean(read_all.replace("living_tree_mechanics = ", ""));
+                                if (read_all.startsWith("can_leaves_decay = ") == true) {
 
-                                }
-
-                            } else if (read_all.startsWith("can_disable_roots") == true) {
-
-                                {
-
-                                    can_disable_roots = Boolean.parseBoolean(read_all.replace("can_disable_roots = ", ""));
-
-                                }
-
-                            } else if (read_all.startsWith("Block ") == true) {
-
-                                {
-
-                                    get_short = read_all.substring("Block ".length(), "Block ###".length());
-                                    get = read_all.substring("Block ### = ".length());
-                                    map_block.put(get_short, get);
-
-                                    // Test Leaves Type
                                     {
 
-                                        if (get_short.startsWith("le") == true) {
+                                        can_leaves_decay = Boolean.parseBoolean(read_all.replace("can_leaves_decay = ", ""));
 
-                                            if (get.endsWith(" keep") == true) {
+                                    }
 
-                                                get = get.substring(0, get.length() - (" keep").length());
+                                } else if (read_all.startsWith("can_leaves_drop = ") == true) {
 
-                                            }
+                                    {
 
-                                            if (get.endsWith("]") == true) {
+                                        can_leaves_drop = Boolean.parseBoolean(read_all.replace("can_leaves_drop = ", ""));
 
-                                                get = get.substring(0, get.indexOf("["));
+                                    }
 
-                                            }
+                                } else if (read_all.startsWith("can_leaves_regrow = ") == true) {
 
-                                            if (ConfigMain.deciduous_leaves_list.contains(get) == true) {
+                                    {
 
-                                                leaves_type_test = 1;
+                                        can_leaves_regrow = Boolean.parseBoolean(read_all.replace("can_leaves_regrow = ", ""));
 
-                                            } else if (ConfigMain.coniferous_leaves_list.contains(get) == true) {
+                                    }
 
-                                                leaves_type_test = 2;
+                                } else if (read_all.startsWith("can_disable_roots") == true) {
 
-                                            }
+                                    {
 
-                                            if (get_short.endsWith("1") == true) {
+                                        can_disable_roots = Boolean.parseBoolean(read_all.replace("can_disable_roots = ", ""));
 
-                                                leaves1_type = leaves_type_test;
+                                    }
 
-                                            } else if (get_short.endsWith("2") == true) {
+                                } else if (read_all.startsWith("Block ") == true) {
 
-                                                leaves2_type = leaves_type_test;
+                                    {
+
+                                        get_short = read_all.substring("Block ".length(), "Block ###".length());
+                                        get = read_all.substring("Block ### = ".length());
+                                        map_block.put(get_short, get);
+
+                                        // Test Leaves Type
+                                        {
+
+                                            if (get_short.startsWith("le") == true) {
+
+                                                if (get.endsWith(" keep") == true) {
+
+                                                    get = get.substring(0, get.length() - (" keep").length());
+
+                                                }
+
+                                                if (get.endsWith("]") == true) {
+
+                                                    get = get.substring(0, get.indexOf("["));
+
+                                                }
+
+                                                if (ConfigMain.deciduous_leaves_list.contains(get) == true) {
+
+                                                    leaves_type_test = 1;
+
+                                                } else if (ConfigMain.coniferous_leaves_list.contains(get) == true) {
+
+                                                    leaves_type_test = 2;
+
+                                                }
+
+                                                if (get_short.endsWith("1") == true) {
+
+                                                    leaves1_type = leaves_type_test;
+
+                                                } else if (get_short.endsWith("2") == true) {
+
+                                                    leaves2_type = leaves_type_test;
+
+                                                }
 
                                             }
 
@@ -585,38 +609,32 @@ public class TreePlacer {
 
                                     }
 
-                                }
+                                } else if (read_all.startsWith("Function ") == true) {
 
-                            } else if (read_all.startsWith("Function ") == true) {
+                                    {
 
-                                {
+                                        get_short = read_all.substring("Function ".length(), "Function ##".length());
+                                        get = read_all.substring("Function ## = ".length());
+                                        map_block.put(get_short, get);
 
-                                    get_short = read_all.substring("Function ".length(), "Function ##".length());
-                                    get = read_all.substring("Function ## = ".length());
-                                    map_block.put(get_short, get);
+                                    }
 
                                 }
 
                             }
 
-                        }
+                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
 
-                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                    }
 
                 }
 
             }
 
-        }
-
-        File file = new File(Handcode.directory_config + "/custom_packs/" + storage_directory + "/" + chosen);
-
-        if (file.exists() == true && file.isDirectory() == false) {
-
             int trunk_count = 0;
             boolean hollowed = false;
 
-            // Dead Tree Level 6 - 9
+            // Dead Tree Only Trunk
             {
 
                 if (dead_tree_level >= 6) {
@@ -626,27 +644,19 @@ public class TreePlacer {
                     // Get Trunk Count
                     {
 
-                        try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                        try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file_chosen)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
                             {
 
-                                if (skip == false) {
+                                if (read_all.equals("--------------------------------------------------") == true) {
 
-                                    if (read_all.equals("--------------------------------------------------")) {
-
-                                        skip = true;
-
-                                    }
+                                    break;
 
                                 } else {
 
-                                    if (read_all.startsWith("+b")) {
+                                    if (read_all.startsWith("trunk_block_count = ")) {
 
-                                        if (read_all.substring(read_all.length() - 3, read_all.length() - 1).equals("tr") == true) {
-
-                                            trunk_count = trunk_count + 1;
-
-                                        }
+                                        trunk_count = Integer.parseInt(read_all.replace("trunk_block_count = ", ""));
 
                                     }
 
@@ -698,7 +708,7 @@ public class TreePlacer {
             // Read File
             {
 
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file_chosen)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
                     {
 
@@ -985,16 +995,12 @@ public class TreePlacer {
 
                                             summon_marker = true;
 
-                                            if (dead_tree_level == 0) {
+                                            if (ConfigMain.tree_location == true && dead_tree_level == 0) {
 
-                                                if (ConfigMain.tree_location == true && ConfigMain.living_tree_mechanics == true && living_tree_mechanics == true) {
+                                                if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
 
-                                                    if (read_all.equals("+b0/0/0tro") == true) {
-
-                                                        marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
-                                                        GameUtils.command.run(world, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
-
-                                                    }
+                                                    marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
+                                                    GameUtils.command.run(world, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
 
                                                 }
 

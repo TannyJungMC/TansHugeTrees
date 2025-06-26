@@ -179,8 +179,10 @@ public class ShapeFileConverter {
                     write
                             .append("tree_type = ").append(GameUtils.NBT.entity.getText(entity, "tree_type")).append("\n")
                             .append("start_height = ").append((int) GameUtils.NBT.entity.getNumber(entity, "start_height")).append("\n")
-                            .append("living_tree_mechanics = ").append(GameUtils.NBT.entity.getLogic(entity, "living_tree_mechanics")).append("\n")
                             .append("can_disable_roots = ").append(GameUtils.NBT.entity.getLogic(entity, "can_disable_roots")).append("\n")
+                            .append("can_leaves_decay = ").append(GameUtils.NBT.entity.getLogic(entity, "can_leaves_decay")).append("\n")
+                            .append("can_leaves_drop = ").append(GameUtils.NBT.entity.getLogic(entity, "can_leaves_drop")).append("\n")
+                            .append("can_leaves_regrow = ").append(GameUtils.NBT.entity.getLogic(entity, "can_leaves_regrow")).append("\n")
                     ;
 
                 }
@@ -242,6 +244,8 @@ public class ShapeFileConverter {
                         .append("center_sizeX = ###").append("\n")
                         .append("center_sizeY = ###").append("\n")
                         .append("center_sizeZ = ###").append("\n")
+                        .append("\n")
+                        .append("trunk_block_count = ###").append("\n")
                         .append("\n")
                         .append("--------------------------------------------------").append("\n")
                         .append("\n")
@@ -517,6 +521,10 @@ public class ShapeFileConverter {
                                         } else if (read_all.startsWith("center_sizeZ = ") == true) {
 
                                             read_all = read_all.replace("###", "" + center_sizeZ);
+
+                                        } else if (read_all.startsWith("trunk_block_count = ") == true) {
+
+                                            read_all = read_all.replace("###", "" + trunk_block_count);
 
                                         }
 
