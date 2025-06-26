@@ -124,9 +124,6 @@ public class RandomTreeTickStartProcedure {
 			}
 			entity.getPersistentData().putString("step", "summon");
 		}
-		if (TanshugetreesModVariables.MapVariables.get(world).auto_gen == true) {
-			AutoGenWhenTreeStartProcedure.execute(world, entity);
-		}
 		if (entity.getPersistentData().getDouble("function_start_chance") > Math.random()) {
 			if (TanshugetreesModVariables.MapVariables.get(world).auto_gen == false) {
 				{

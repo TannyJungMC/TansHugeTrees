@@ -85,7 +85,7 @@ public class SaplingBlockRightClickProcedure {
 					file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/TannyJung-Tree-Pack"), File.separator + "version.txt");
 					if (file.exists() == false) {
 						cancel = "Needed TannyJung Tree Pack";
-						COMMANDPackCkeckUpdateProcedure.execute(world, x, y, z);
+						COMMANDPackCheckUpdateProcedure.execute(world, x, y, z);
 					} else {
 						sapling = (world.getBlockState(BlockPos.containing(x, y, z)));
 						file_name = (ForgeRegistries.BLOCKS.getKey(sapling.getBlock()).toString()).replace("tanshugetrees:", "");

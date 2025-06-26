@@ -8,12 +8,9 @@ import tannyjung.tanshugetrees.procedures.COMMANDSeasonSetSpringProcedure;
 import tannyjung.tanshugetrees.procedures.COMMANDSeasonSetAutumnProcedure;
 import tannyjung.tanshugetrees.procedures.COMMANDSeasonGetProcedure;
 import tannyjung.tanshugetrees.procedures.COMMANDPackUpdateProcedure;
-import tannyjung.tanshugetrees.procedures.COMMANDPackCkeckUpdateProcedure;
+import tannyjung.tanshugetrees.procedures.COMMANDPackCheckUpdateProcedure;
 import tannyjung.tanshugetrees.procedures.COMMANDConfigRepairProcedure;
 import tannyjung.tanshugetrees.procedures.COMMANDConfigApplyProcedure;
-import tannyjung.tanshugetrees.procedures.AutoGenStopProcedure;
-import tannyjung.tanshugetrees.procedures.AutoGenStartCountProcedure;
-import tannyjung.tanshugetrees.procedures.AutoGenStartCount1Procedure;
 
 import org.checkerframework.checker.units.qual.s;
 
@@ -30,7 +27,6 @@ import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.commands.Commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.arguments.DoubleArgumentType;
 
 @Mod.EventBusSubscriber
 public class COMMANDCommand {
@@ -48,7 +44,7 @@ public class COMMANDCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			COMMANDPackCkeckUpdateProcedure.execute(world, x, y, z);
+			COMMANDPackCheckUpdateProcedure.execute(world, x, y, z);
 			return 0;
 		})).then(Commands.literal("update").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
@@ -176,48 +172,6 @@ public class COMMANDCommand {
 
 			COMMANDSeasonSetWinterProcedure.execute(world);
 			return 0;
-		})))).then(Commands.literal("auto_gen").then(Commands.literal("start").executes(arguments -> {
-			Level world = arguments.getSource().getUnsidedLevel();
-			double x = arguments.getSource().getPosition().x();
-			double y = arguments.getSource().getPosition().y();
-			double z = arguments.getSource().getPosition().z();
-			Entity entity = arguments.getSource().getEntity();
-			if (entity == null && world instanceof ServerLevel _servLevel)
-				entity = FakePlayerFactory.getMinecraft(_servLevel);
-			Direction direction = Direction.DOWN;
-			if (entity != null)
-				direction = entity.getDirection();
-
-			AutoGenStartCount1Procedure.execute(world, x, y, z, entity);
-			return 0;
-		}).then(Commands.argument("loop", DoubleArgumentType.doubleArg(1)).executes(arguments -> {
-			Level world = arguments.getSource().getUnsidedLevel();
-			double x = arguments.getSource().getPosition().x();
-			double y = arguments.getSource().getPosition().y();
-			double z = arguments.getSource().getPosition().z();
-			Entity entity = arguments.getSource().getEntity();
-			if (entity == null && world instanceof ServerLevel _servLevel)
-				entity = FakePlayerFactory.getMinecraft(_servLevel);
-			Direction direction = Direction.DOWN;
-			if (entity != null)
-				direction = entity.getDirection();
-
-			AutoGenStartCountProcedure.execute(world, x, y, z, arguments, entity);
-			return 0;
-		}))).then(Commands.literal("stop").executes(arguments -> {
-			Level world = arguments.getSource().getUnsidedLevel();
-			double x = arguments.getSource().getPosition().x();
-			double y = arguments.getSource().getPosition().y();
-			double z = arguments.getSource().getPosition().z();
-			Entity entity = arguments.getSource().getEntity();
-			if (entity == null && world instanceof ServerLevel _servLevel)
-				entity = FakePlayerFactory.getMinecraft(_servLevel);
-			Direction direction = Direction.DOWN;
-			if (entity != null)
-				direction = entity.getDirection();
-
-			AutoGenStopProcedure.execute(world, x, y, z);
-			return 0;
-		})))));
+		}))))));
 	}
 }

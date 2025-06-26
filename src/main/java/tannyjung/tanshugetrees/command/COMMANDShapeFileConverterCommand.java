@@ -23,8 +23,8 @@ import com.mojang.brigadier.arguments.DoubleArgumentType;
 public class COMMANDShapeFileConverterCommand {
 	@SubscribeEvent
 	public static void registerCommand(RegisterCommandsEvent event) {
-		event.getDispatcher()
-				.register(Commands.literal("TANSHUGETREES").requires(s -> s.hasPermission(2)).then(Commands.literal("test").then(Commands.literal("start").then(Commands.argument("count", DoubleArgumentType.doubleArg(1)).executes(arguments -> {
+		event.getDispatcher().register(Commands.literal("TANSHUGETREES").requires(s -> s.hasPermission(2))
+				.then(Commands.literal("command").then(Commands.literal("shape_file_converter").then(Commands.literal("start").then(Commands.argument("count", DoubleArgumentType.doubleArg(1)).executes(arguments -> {
 					Level world = arguments.getSource().getUnsidedLevel();
 					double x = arguments.getSource().getPosition().x();
 					double y = arguments.getSource().getPosition().y();
@@ -52,6 +52,6 @@ public class COMMANDShapeFileConverterCommand {
 
 					COMMANDShapeFileConverterStopProcedure.execute(world, x, y, z, entity);
 					return 0;
-				}))));
+				})))));
 	}
 }

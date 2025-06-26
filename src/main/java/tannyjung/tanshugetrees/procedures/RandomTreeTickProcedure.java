@@ -219,9 +219,6 @@ public class RandomTreeTickProcedure {
 					}
 				}
 				if (TanshugetreesModVariables.MapVariables.get(world).auto_gen == true) {
-					AutoGenWhenTreeFinishProcedure.execute(world, x, y, z, entity);
-				}
-				if (TanshugetreesModVariables.MapVariables.get(world).auto_gen == true) {
 					if (world instanceof ServerLevel _level)
 						_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
 								"execute if entity @p[distance=..200] run summon firework_rocket ~20 ~10 ~20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");

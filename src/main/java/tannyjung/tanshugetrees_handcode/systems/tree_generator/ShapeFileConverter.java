@@ -46,19 +46,31 @@ public class ShapeFileConverter {
 
     public static void stop (LevelAccessor level) {
 
-        TanshugetreesModVariables.MapVariables.get(level).auto_gen_count = 0;
+        if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
 
-        if (GameUtils.command.result(level, 0, 0, 0, "execute in tanshugetrees:dimension if entity @e[tag=TANSHUGETREES-tree_generator]") == true) {
+            TanshugetreesModVariables.MapVariables.get(level).auto_gen_count = 0;
 
-            GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Will turn OFF after this one");
+            if (GameUtils.command.result(level, 0, 0, 0, "execute in tanshugetrees:dimension if entity @e[tag=TANSHUGETREES-tree_generator]") == true) {
+
+                GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Will turn OFF after this one");
+
+            } else {
+
+                TanshugetreesModVariables.MapVariables.get(level).auto_gen = false;
+                GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Turned OFF");
+                GameUtils.command.run(level, 0, 0, 0, "execute in tanshugetrees:dimension run forceload remove all");
+
+                TanshugetreesMod.queueServerWork(20, () -> {
+
+                    GameUtils.command.run(level, 0, 0, 0, "execute as @a at @s if dimension tanshugetrees:dimension in minecraft:overworld run tp @s " + TanshugetreesModVariables.MapVariables.get(level).auto_gen_teleport_player_back);
+
+                });
+
+            }
 
         } else {
 
-            TanshugetreesModVariables.MapVariables.get(level).auto_gen = false;
-            GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Turned OFF");
-
-            GameUtils.command.run(level, 0, 0, 0, "execute in tanshugetrees:dimension run forceload remove all");
-            GameUtils.command.run(level, 0, 0, 0, "execute as @a at @s if dimension tanshugetrees:dimension in minecraft:overworld run tp @s " + TanshugetreesModVariables.MapVariables.get(level).auto_gen_teleport_player_back);
+            GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Already Turned OFF");
 
         }
 
