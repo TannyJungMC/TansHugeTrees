@@ -849,7 +849,7 @@ public class TreeGenerator {
 
                                     }
 
-                                    BlockPos pos = new BlockPos((int) (center_pos[0] + build_saveX), (int) (center_pos[1] + build_saveY), (int) (center_pos[2] + build_saveZ));
+                                    BlockPos pos = new BlockPos((int) Math.floor(center_pos[0] + build_saveX), (int) Math.floor(center_pos[1] + build_saveY), (int) Math.floor(center_pos[2] + build_saveZ));
                                     String block_type = "";
 
                                     if (type.equals("leaves") == false) {
