@@ -62,20 +62,19 @@ public class GameUtils {
 
 			StringBuilder return_text = new StringBuilder();
 
-			return_text.append("summon ")
+			return_text
+					.append("summon ")
 					.append(id)
-					.append(" ~ ~ ~ {")
+					.append(" ~ ~ ~ {Tags:[\"")
 			;
 
 			if (tag.equals("") == false) {
 
-				return_text
-						.append("Tags:[\"")
-						.append(tag.replace(" / ", "\",\""))
-						.append("\"]")
-				;
+				return_text.append(tag.replace(" / ", "\",\""));
 
 			}
+
+			return_text.append("\"]");
 
 			if (name.equals("") == false) {
 
