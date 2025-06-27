@@ -874,9 +874,14 @@ public class TreeGenerator {
 
                                             if (block_type.equals("") == false) {
 
-                                                if (buildTestKeep(level, pos, replace) == true) {
+                                                if (thickness <= 1) {
 
                                                     buildBlockConnector(level, entity, center_pos, pos, type, block_type, thickness, replace);
+
+                                                }
+
+                                                if (buildTestKeep(level, pos, replace) == true) {
+
                                                     buildPlaceBlock(level, entity, type, pos, block_type);
                                                     return;
 
@@ -971,44 +976,40 @@ public class TreeGenerator {
 
         private static void buildBlockConnector (LevelAccessor level, Entity entity, double[] center_pos, BlockPos pos, String type, String block_type, double thickness, boolean replace) {
 
-            if (thickness <= 1) {
+            double block_connector_posX = GameUtils.NBT.entity.getNumber(entity, "block_connector_posX");
+            double block_connector_posY = GameUtils.NBT.entity.getNumber(entity, "block_connector_posY");
+            double block_connector_posZ = GameUtils.NBT.entity.getNumber(entity, "block_connector_posZ");
+            GameUtils.NBT.entity.setNumber(entity, "block_connector_posX", center_pos[0]);
+            GameUtils.NBT.entity.setNumber(entity, "block_connector_posY", center_pos[1]);
+            GameUtils.NBT.entity.setNumber(entity, "block_connector_posZ", center_pos[2]);
+            int testX = (int) center_pos[0] - (int) block_connector_posX;
+            int testY = (int) center_pos[1] - (int) block_connector_posY;
+            int testZ = (int) center_pos[2] - (int) block_connector_posZ;
+            BlockPos pos_connect = pos;
 
-                double block_connector_posX = GameUtils.NBT.entity.getNumber(entity, "block_connector_posX");
-                double block_connector_posY = GameUtils.NBT.entity.getNumber(entity, "block_connector_posY");
-                double block_connector_posZ = GameUtils.NBT.entity.getNumber(entity, "block_connector_posZ");
-                GameUtils.NBT.entity.setNumber(entity, "block_connector_posX", center_pos[0]);
-                GameUtils.NBT.entity.setNumber(entity, "block_connector_posY", center_pos[1]);
-                GameUtils.NBT.entity.setNumber(entity, "block_connector_posZ", center_pos[2]);
-                int testX = (int) center_pos[0] - (int) block_connector_posX;
-                int testY = (int) center_pos[1] - (int) block_connector_posY;
-                int testZ = (int) center_pos[2] - (int) block_connector_posZ;
-                BlockPos pos_connect = pos;
+            if (Math.abs(testX) == 1 || Math.abs(testY) == 1 || Math.abs(testZ) == 1) {
 
-                if (Math.abs(testX) == 1 || Math.abs(testY) == 1 || Math.abs(testZ) == 1) {
+                if (Math.abs(testX) == 1 && Math.abs(testZ) == 1) {
 
-                    if (Math.abs(testX) == 1 && Math.abs(testZ) == 1) {
+                    // For X and Z
+                    {
 
-                        // For X and Z
+                        if (center_pos[0] - block_connector_posX > center_pos[2] - block_connector_posZ) {
+
+                            pos_connect = new BlockPos(pos_connect.getX() - testX, pos_connect.getY(), pos_connect.getZ());
+
+                        } else {
+
+                            pos_connect = new BlockPos(pos_connect.getX(), pos_connect.getY(), pos_connect.getZ() - testZ);
+
+                        }
+
+                        // Place Block
                         {
 
-                            if (center_pos[0] - block_connector_posX > center_pos[2] - block_connector_posZ) {
+                            if (buildTestKeep(level, pos_connect, replace) == true) {
 
-                                pos_connect = new BlockPos(pos_connect.getX() - testX, pos_connect.getY(), pos_connect.getZ());
-
-                            } else {
-
-                                pos_connect = new BlockPos(pos_connect.getX(), pos_connect.getY(), pos_connect.getZ() - testZ);
-
-                            }
-
-                            // Place Block
-                            {
-
-                                if (buildTestKeep(level, pos_connect, replace) == true) {
-
-                                    buildPlaceBlock(level, entity, type, pos_connect, block_type);
-
-                                }
+                                buildPlaceBlock(level, entity, type, pos_connect, block_type);
 
                             }
 
@@ -1016,21 +1017,21 @@ public class TreeGenerator {
 
                     }
 
-                    if ((Math.abs(testX) == 1 || Math.abs(testZ) == 1) && Math.abs(testY) == 1) {
+                }
 
-                        // For Y
+                if ((Math.abs(testX) == 1 || Math.abs(testZ) == 1) && Math.abs(testY) == 1) {
+
+                    // For Y
+                    {
+
+                        pos_connect = new BlockPos(pos_connect.getX(), pos_connect.getY() - testY, pos_connect.getZ());
+
+                        // Place Block
                         {
 
-                            pos_connect = new BlockPos(pos_connect.getX(), pos_connect.getY() - testY, pos_connect.getZ());
+                            if (buildTestKeep(level, pos_connect, replace) == true) {
 
-                            // Place Block
-                            {
-
-                                if (buildTestKeep(level, pos_connect, replace) == true) {
-
-                                    buildPlaceBlock(level, entity, type, pos_connect, block_type);
-
-                                }
+                                buildPlaceBlock(level, entity, type, pos_connect, block_type);
 
                             }
 
