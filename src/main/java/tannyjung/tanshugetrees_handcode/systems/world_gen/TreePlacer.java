@@ -703,7 +703,6 @@ public class TreePlacer {
             double pre_leaf_litter_chance = 0.0;
             int height_motion_block = 0;
             boolean summon_marker = false;
-            String marker_data = "";
 
             // Read File
             {
@@ -995,12 +994,16 @@ public class TreePlacer {
 
                                             summon_marker = true;
 
-                                            if (ConfigMain.tree_location == true && dead_tree_level == 0) {
+                                            if (read_all.equals("+b0/0/0tro") == true) {
 
-                                                if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
+                                                if (ConfigMain.tree_location == true && dead_tree_level == 0) {
 
-                                                    marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
-                                                    GameUtils.command.run(world, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
+                                                    if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
+
+                                                        String marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
+                                                        GameUtils.command.run(world, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
+
+                                                    }
 
                                                 }
 
