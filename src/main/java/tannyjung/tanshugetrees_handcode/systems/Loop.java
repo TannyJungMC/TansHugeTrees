@@ -156,7 +156,7 @@ public class Loop {
 
             if (ConfigMain.developer_mode == true) {
 
-                GameUtils.command.run(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
+                GameUtils.command.run(level, 0, 0, 0, "execute at @e[tag=TANSHUGETREES] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
 
             }
 
