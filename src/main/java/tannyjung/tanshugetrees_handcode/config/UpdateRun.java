@@ -162,7 +162,7 @@ public class UpdateRun {
 
 			} catch (Exception ignored) {
 
-				GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+				GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 				return false;
 
 			}
@@ -185,7 +185,7 @@ public class UpdateRun {
 
 		} catch (Exception ignored) {
 
-			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 			return false;
 
 		}
@@ -220,7 +220,7 @@ public class UpdateRun {
 
 		} catch (Exception ignored) {
 
-			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 			return false;
 
 		}
@@ -250,7 +250,7 @@ public class UpdateRun {
 
 						if (!newFile.isDirectory() && !newFile.mkdirs()) {
 
-							GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+							GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 							return false;
 
 						}
@@ -263,7 +263,7 @@ public class UpdateRun {
 
 						if (!parent.isDirectory() && !parent.mkdirs()) {
 
-							GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+							GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 							return false;
 
 						}
@@ -292,7 +292,7 @@ public class UpdateRun {
 
 		} catch (Exception ignored) {
 
-			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 			return false;
 
 		}
@@ -325,7 +325,7 @@ public class UpdateRun {
 
 			} catch (Exception ignored) {
 
-				GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+				GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 				return false;
 
 			}
@@ -343,7 +343,7 @@ public class UpdateRun {
 
 		if (rename_from.renameTo(rename_to) == false) {
 
-			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try closing open files that related to the pack, then try again.");
+			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 			return false;
 
 		}
