@@ -16,7 +16,7 @@ import java.util.Calendar;
 
 public class ShapeFileConverter {
 
-    public static void start (LevelAccessor level, Entity entity, int count) {
+    public static void start (LevelAccessor level, Entity entity) {
 
         if (Handcode.version_1192 == true) {
 
@@ -24,7 +24,6 @@ public class ShapeFileConverter {
 
         } else {
 
-            TanshugetreesModVariables.MapVariables.get(level).auto_gen_count = count;
             GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level).auto_gen_count);
 
             if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == false) {
@@ -48,10 +47,9 @@ public class ShapeFileConverter {
 
         if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
 
-            TanshugetreesModVariables.MapVariables.get(level).auto_gen_count = 0;
+            if (TanshugetreesModVariables.MapVariables.get(level).auto_gen_count >= 0) {
 
-            if (GameUtils.command.result(level, 0, 0, 0, "execute in tanshugetrees:dimension if entity @e[tag=TANSHUGETREES-tree_generator]") == true) {
-
+                TanshugetreesModVariables.MapVariables.get(level).auto_gen_count = 0;
                 GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Will turn OFF after this one");
 
             } else {
