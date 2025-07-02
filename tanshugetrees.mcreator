@@ -1377,20 +1377,10 @@
       "locked_code": false,
       "registry_name": "random_tree_get_pre_next",
       "metadata": {
-        "return_type": "string",
         "files": [
           "src/main/java/tannyjung/tanshugetrees/procedures/RandomTreeGetPreNextProcedure.java"
         ],
-        "dependencies": [
-          {
-            "name": "entity",
-            "type": "entity"
-          },
-          {
-            "name": "get",
-            "type": "string"
-          }
-        ]
+        "dependencies": []
       },
       "path": "~/Tree Generator"
     },
@@ -2248,14 +2238,34 @@
       "Blocks.VOID_AIR",
       "Blocks.CAVE_AIR"
     ],
-    "BIOMES:mod:tropical_biome": [
-      "#forge:is_hot",
-      "#forge:is_wet"
+    "BLOCKS:mod:block_placer_blacklist_leaves": [
+      "CUSTOM:BlockPlacerTrunkCore",
+      "CUSTOM:BlockPlacerTrunkInner",
+      "CUSTOM:BlockPlacerTrunkOuter",
+      "CUSTOM:BlockPlacerBoughCore",
+      "CUSTOM:BlockPlacerBoughInner",
+      "CUSTOM:BlockPlacerBoughOuter",
+      "CUSTOM:BlockPlacerBranchCore",
+      "CUSTOM:BlockPlacerBranchInner",
+      "CUSTOM:BlockPlacerBranchOuter",
+      "CUSTOM:BlockPlacerLimbCore",
+      "CUSTOM:BlockPlacerLimbInner",
+      "CUSTOM:BlockPlacerLimbOuter",
+      "CUSTOM:BlockPlacerTwigCore",
+      "CUSTOM:BlockPlacerTwigInner",
+      "CUSTOM:BlockPlacerTwigOuter",
+      "CUSTOM:BlockPlacerSprigCore",
+      "CUSTOM:BlockPlacerSprigInner",
+      "CUSTOM:BlockPlacerSprigOuter"
     ],
     "BLOCKS:mod:block_placer_blacklist_secondary_root": [
       "CUSTOM:BlockPlacerTaprootCore",
       "CUSTOM:BlockPlacerTaprootInner",
       "CUSTOM:BlockPlacerTaprootOuter"
+    ],
+    "BIOMES:mod:tropical_biomes": [
+      "#forge:is_hot",
+      "#forge:is_wet"
     ],
     "BLOCKS:mod:passable_blocks": [
       "TAG:minecraft:replaceable_by_trees",
