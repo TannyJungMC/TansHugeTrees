@@ -6,7 +6,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import tannyjung.misc.GameUtils;
+import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 
@@ -333,7 +333,14 @@ public class TreeGenerator {
                         GameUtils.NBT.entity.setNumber(entity, type + "_length", Mth.nextInt(RandomSource.create(), (int) GameUtils.NBT.entity.getNumber(entity, type + "_length_min"), (int) GameUtils.NBT.entity.getNumber(entity, type + "_length_max")));
                         GameUtils.NBT.entity.setNumber(entity, type + "_thickness", GameUtils.NBT.entity.getNumber(entity, type + "_thickness_max") - 1);
 
-                        ////////////////////////////////////// stepSummonReduceFrom...
+                        // Reduce From - To
+                        {
+
+                            summonReduceFrom(entity, "count", type, type_pre_next[1]);
+                            summonReduceFrom(entity, "length", type, type_pre_next[1]);
+                            summonReduceFrom(entity, "thickness", type, type_pre_next[1]);
+
+                        }
 
                         GameUtils.NBT.entity.setNumber(entity, type_pre_next[1] + "_count_save", GameUtils.NBT.entity.getNumber(entity, type_pre_next[1] + "_count"));
                         GameUtils.NBT.entity.setNumber(entity, type + "_length_save", GameUtils.NBT.entity.getNumber(entity, type + "_length"));
@@ -493,32 +500,76 @@ public class TreeGenerator {
 
         }
 
-        private static void summonReduceFrom (Entity entity, String type, String step, String type_next) {
+        private static void summonReduceFrom (Entity entity, String step, String type, String type_next) {
 
-            String type_test = "";
-
-            if (step.equals("count") == true) {
-
-                type_test = type_next;
-
-            } else {
-
-                type_test = type;
-
-            }
-
-            String reduce_from = GameUtils.NBT.entity.getText(entity, type_test + "_" + step + "_reduce_from");
-            int length_save = (int) GameUtils.NBT.entity.getNumber(entity, reduce_from + "_length_save");
-
-            if (length_save > 0) {
+            // Cancellation
+            {
 
                 if (step.equals("count") == true) {
 
                     if (type.equals("taproot") == false && type.equals("fine_root") == false && type.equals("trunk") == false && type.equals("sprig") == false) {
 
+                        return;
 
                     }
 
+                }
+
+            }
+
+            String reduce_from = "";
+
+            // Reduce From
+            {
+
+                if (step.equals("count") == true) {
+
+                    reduce_from = type_next;
+
+                } else {
+
+                    reduce_from = type;
+
+                }
+
+                reduce_from = GameUtils.NBT.entity.getText(entity, reduce_from + "_" + step + "_reduce_from");
+
+            }
+
+            if (reduce_from.equals("") == false) {
+
+                int length = (int) GameUtils.NBT.entity.getNumber(entity, reduce_from + "_length");
+                int length_save = (int) GameUtils.NBT.entity.getNumber(entity, reduce_from + "_length_save");
+
+                if (length_save > 0 && length != length_save) {
+
+                    double center = GameUtils.NBT.entity.getNumber(entity, type + "_" + step + "_reduce_center") * 0.01;
+                    int length_below = (int) (length_save * center);
+                    int length_above = length_save - length_below;
+                    double percent = 0.0;
+
+                    if (center < (1.0 - (double) (length / length_save))) {
+
+                        // Above
+                        {
+
+                            percent = (double) (length - length_below) / (double) length_above;
+
+                        }
+
+                    } else {
+
+                        // Below
+                        {
+
+                            percent = (double) (length_below - length) / length_below;
+
+                        }
+
+                    }
+
+                    double value = GameUtils.NBT.entity.getNumber(entity, type + "_" + step) * (1.0 - (GameUtils.NBT.entity.getNumber(entity, type + "_" + step + "_reduce_below") * 0.01));
+                    GameUtils.NBT.entity.setNumber(entity, type + "_" + step, value * percent);
 
                 }
 
@@ -544,7 +595,7 @@ public class TreeGenerator {
                         } else {
 
                             // Length Range
-                            if (GameUtils.NBT.entity.getNumber(entity, type + "_length") < GameUtils.NBT.entity.getNumber(entity, type + "_length_save") * (1 - (GameUtils.NBT.entity.getNumber(entity, type_pre_next[1] + "_random_percent") * 0.01))) {
+                            if (GameUtils.NBT.entity.getNumber(entity, type + "_length") / GameUtils.NBT.entity.getNumber(entity, type + "_length_save") <= GameUtils.NBT.entity.getNumber(entity, type_pre_next[1] + "_random_percent") * 0.01) {
 
                                 GameUtils.NBT.entity.setNumber(entity, type_pre_next[1] + "_random_distance_left", GameUtils.NBT.entity.getNumber(entity, type_pre_next[1] + "_random_auto_distance"));
 
