@@ -2228,35 +2228,20 @@
       "CUSTOM:BlockPlacerTrunkCore",
       "CUSTOM:BlockPlacerTrunkInner",
       "CUSTOM:BlockPlacerTrunkOuter",
+      "CUSTOM:BlockPlacerBoughCore",
+      "CUSTOM:BlockPlacerBoughInner",
+      "CUSTOM:BlockPlacerBoughOuter",
       "CUSTOM:BlockPlacerBranchCore",
       "CUSTOM:BlockPlacerBranchInner",
-      "CUSTOM:BlockPlacerBranchOuter"
+      "CUSTOM:BlockPlacerBranchOuter",
+      "CUSTOM:BlockPlacerLimbCore",
+      "CUSTOM:BlockPlacerLimbInner",
+      "CUSTOM:BlockPlacerLimbOuter"
     ],
-    "BLOCKS:mod:block_placer_blacklist_secondary_root": [
-      "CUSTOM:BlockPlacerTaprootCore",
-      "CUSTOM:BlockPlacerTaprootInner",
-      "CUSTOM:BlockPlacerTaprootOuter"
-    ],
-    "BLOCKS:mod:passable_blocks": [
-      "TAG:minecraft:replaceable_by_trees",
-      "TAG:minecraft:replaceable",
-      "CUSTOM:BlockPlacerLeaves",
-      "CUSTOM:BlockPlacerLeaves2",
-      "TAG:mod:air_blocks",
-      "TAG:minecraft:flowers"
-    ],
-    "BLOCKS:mod:block_placer_blacklist_branch": [
+    "BLOCKS:mod:block_placer_blacklist_bough": [
       "CUSTOM:BlockPlacerTrunkCore",
       "CUSTOM:BlockPlacerTrunkInner",
       "CUSTOM:BlockPlacerTrunkOuter"
-    ],
-    "BLOCKS:mod:block_placer_blacklist_tertiary_root": [
-      "CUSTOM:BlockPlacerTaprootOuter",
-      "CUSTOM:BlockPlacerTaprootInner",
-      "CUSTOM:BlockPlacerTaprootCore",
-      "CUSTOM:BlockPlacerSecondaryRootCore",
-      "CUSTOM:BlockPlacerSecondaryRootInner",
-      "CUSTOM:BlockPlacerSecondaryRootOuter"
     ],
     "BLOCKS:mod:air_blocks": [
       "Blocks.AIR",
@@ -2267,16 +2252,34 @@
       "#forge:is_hot",
       "#forge:is_wet"
     ],
-    "BLOCKS:mod:block_placer_blacklist_leaves_twig": [
+    "BLOCKS:mod:block_placer_blacklist_secondary_root": [
+      "CUSTOM:BlockPlacerTaprootCore",
+      "CUSTOM:BlockPlacerTaprootInner",
+      "CUSTOM:BlockPlacerTaprootOuter"
+    ],
+    "BLOCKS:mod:passable_blocks": [
+      "TAG:minecraft:replaceable_by_trees",
+      "TAG:minecraft:replaceable",
+      "TAG:mod:air_blocks",
+      "TAG:minecraft:flowers",
+      "CUSTOM:BlockPlacerLeaves1",
+      "CUSTOM:BlockPlacerLeaves2"
+    ],
+    "BLOCKS:mod:block_placer_blacklist_branch": [
       "CUSTOM:BlockPlacerTrunkCore",
       "CUSTOM:BlockPlacerTrunkInner",
       "CUSTOM:BlockPlacerTrunkOuter",
-      "CUSTOM:BlockPlacerBranchCore",
-      "CUSTOM:BlockPlacerBranchInner",
-      "CUSTOM:BlockPlacerBranchOuter",
-      "CUSTOM:BlockPlacerTwigCore",
-      "CUSTOM:BlockPlacerTwigInner",
-      "CUSTOM:BlockPlacerTwigOuter"
+      "CUSTOM:BlockPlacerBoughCore",
+      "CUSTOM:BlockPlacerBoughInner",
+      "CUSTOM:BlockPlacerBoughOuter"
+    ],
+    "BLOCKS:mod:block_placer_blacklist_tertiary_root": [
+      "CUSTOM:BlockPlacerTaprootOuter",
+      "CUSTOM:BlockPlacerTaprootInner",
+      "CUSTOM:BlockPlacerTaprootCore",
+      "CUSTOM:BlockPlacerSecondaryRootCore",
+      "CUSTOM:BlockPlacerSecondaryRootInner",
+      "CUSTOM:BlockPlacerSecondaryRootOuter"
     ],
     "BLOCKS:mod:block_placer_blacklist_fine_root": [
       "CUSTOM:BlockPlacerTaprootOuter",
@@ -2288,6 +2291,34 @@
       "CUSTOM:BlockPlacerTertiaryRootCore",
       "CUSTOM:BlockPlacerTertiaryRootInner",
       "CUSTOM:BlockPlacerTertiaryRootOuter"
+    ],
+    "BLOCKS:mod:block_placer_blacklist_limb": [
+      "CUSTOM:BlockPlacerTrunkCore",
+      "CUSTOM:BlockPlacerTrunkInner",
+      "CUSTOM:BlockPlacerTrunkOuter",
+      "CUSTOM:BlockPlacerBoughCore",
+      "CUSTOM:BlockPlacerBoughInner",
+      "CUSTOM:BlockPlacerBoughOuter",
+      "CUSTOM:BlockPlacerBranchCore",
+      "CUSTOM:BlockPlacerBranchInner",
+      "CUSTOM:BlockPlacerBranchOuter"
+    ],
+    "BLOCKS:mod:block_placer_blacklist_sprig": [
+      "CUSTOM:BlockPlacerTrunkCore",
+      "CUSTOM:BlockPlacerTrunkInner",
+      "CUSTOM:BlockPlacerTrunkOuter",
+      "CUSTOM:BlockPlacerBoughCore",
+      "CUSTOM:BlockPlacerBoughInner",
+      "CUSTOM:BlockPlacerBoughOuter",
+      "CUSTOM:BlockPlacerBranchCore",
+      "CUSTOM:BlockPlacerBranchInner",
+      "CUSTOM:BlockPlacerBranchOuter",
+      "CUSTOM:BlockPlacerLimbCore",
+      "CUSTOM:BlockPlacerLimbInner",
+      "CUSTOM:BlockPlacerLimbOuter",
+      "CUSTOM:BlockPlacerTwigCore",
+      "CUSTOM:BlockPlacerTwigInner",
+      "CUSTOM:BlockPlacerTwigOuter"
     ]
   },
   "tab_element_order": {

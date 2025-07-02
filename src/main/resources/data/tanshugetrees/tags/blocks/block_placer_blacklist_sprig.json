@@ -12,6 +12,9 @@
     "tanshugetrees:block_placer_branch_outer",
     "tanshugetrees:block_placer_limb_core",
     "tanshugetrees:block_placer_limb_inner",
-    "tanshugetrees:block_placer_limb_outer"
+    "tanshugetrees:block_placer_limb_outer",
+    "tanshugetrees:block_placer_twig_core",
+    "tanshugetrees:block_placer_twig_inner",
+    "tanshugetrees:block_placer_twig_outer"
   ]
 }

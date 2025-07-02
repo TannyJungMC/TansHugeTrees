@@ -4,11 +4,11 @@
     "tanshugetrees:block_placer_trunk_core",
     "tanshugetrees:block_placer_trunk_inner",
     "tanshugetrees:block_placer_trunk_outer",
+    "tanshugetrees:block_placer_bough_core",
+    "tanshugetrees:block_placer_bough_inner",
+    "tanshugetrees:block_placer_bough_outer",
     "tanshugetrees:block_placer_branch_core",
     "tanshugetrees:block_placer_branch_inner",
-    "tanshugetrees:block_placer_branch_outer",
-    "tanshugetrees:block_placer_twig_core",
-    "tanshugetrees:block_placer_twig_inner",
-    "tanshugetrees:block_placer_twig_outer"
+    "tanshugetrees:block_placer_branch_outer"
   ]
 }
