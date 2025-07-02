@@ -2,7 +2,7 @@ package tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics;
 
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
-import tannyjung.misc.GameUtils;
+import tannyjung.core.GameUtils;
 
 public class SeasonDetector {
 

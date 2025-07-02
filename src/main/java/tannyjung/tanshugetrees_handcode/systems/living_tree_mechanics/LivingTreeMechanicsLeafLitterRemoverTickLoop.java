@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import tannyjung.misc.GameUtils;
+import tannyjung.core.GameUtils;
 
 public class LivingTreeMechanicsLeafLitterRemoverTickLoop {
 

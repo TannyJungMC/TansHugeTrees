@@ -1,10 +1,9 @@
 package tannyjung.tanshugetrees_handcode.systems.world_gen;
 
 import net.minecraft.world.level.ChunkPos;
-import tannyjung.misc.FileManager;
-import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.core.FileManager;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.misc.MiscUtils;
+import tannyjung.core.MiscUtils;
 
 import java.io.BufferedReader;
 import java.io.File;

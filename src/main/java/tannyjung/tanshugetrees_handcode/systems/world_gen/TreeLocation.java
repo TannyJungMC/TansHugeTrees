@@ -8,9 +8,9 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.*;
-import tannyjung.misc.FileManager;
-import tannyjung.misc.MiscUtils;
-import tannyjung.misc.GameUtils;
+import tannyjung.core.FileManager;
+import tannyjung.core.MiscUtils;
+import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
@@ -202,7 +202,7 @@ public class TreeLocation {
 
                                                 biome = read_all.replace("biome = ", "");
 
-                                                if (testBiome(biome_center, biome) == false) {
+                                                if (MiscUtils.configTestBiome(biome_center, biome) == false) {
 
                                                     skip = true;
 
@@ -366,7 +366,7 @@ public class TreeLocation {
 
                                                                 biome_center = level.getBiome(new BlockPos(center_posX, level.getMaxBuildHeight(), center_posZ));
 
-                                                                if (testBiome(biome_center, biome) == false) {
+                                                                if (MiscUtils.configTestBiome(biome_center, biome) == false) {
 
                                                                     continue;
 
@@ -416,72 +416,6 @@ public class TreeLocation {
             }
 
         }
-
-    }
-
-    private static boolean testBiome (Holder<Biome> biome_center, String config_value) {
-
-        boolean return_logic = false;
-
-        {
-
-            String biome_centerID = GameUtils.biome.toID(biome_center);
-
-            for (String split : config_value.split(" / ")) {
-
-                return_logic = true;
-
-                for (String split2 : split.split(", ")) {
-
-                    String split_get = split2.replaceAll("[#!]", "");
-
-                    {
-
-                        if (split2.contains("#") == false) {
-
-                            if (biome_centerID.equals(split_get) == false) {
-
-                                return_logic = false;
-
-                            }
-
-                        } else {
-
-                            if (GameUtils.biome.isTaggedAs(biome_center, split_get) == false) {
-
-                                return_logic = false;
-
-                            }
-
-                        }
-
-                        if (split2.contains("!") == true) {
-
-                            return_logic = !return_logic;
-
-                        }
-
-                    }
-
-                    if (return_logic == false) {
-
-                        break;
-
-                    }
-
-                }
-
-                if (return_logic == true) {
-
-                    break;
-
-                }
-
-            }
-
-        }
-
-        return return_logic;
 
     }
 

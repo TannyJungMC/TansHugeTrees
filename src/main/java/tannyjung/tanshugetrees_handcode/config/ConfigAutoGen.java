@@ -1,7 +1,7 @@
 package tannyjung.tanshugetrees_handcode.config;
 
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.misc.FileManager;
+import tannyjung.core.FileManager;
 
 public class ConfigAutoGen {
 

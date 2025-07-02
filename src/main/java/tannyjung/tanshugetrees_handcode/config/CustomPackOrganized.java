@@ -1,8 +1,7 @@
 package tannyjung.tanshugetrees_handcode.config;
 
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.misc.MiscUtils;
-import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.core.MiscUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.File;

@@ -14,8 +14,8 @@ import java.util.zip.ZipOutputStream;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 ;
-import tannyjung.misc.GameUtils;
-import tannyjung.misc.MiscUtils;
+import tannyjung.core.GameUtils;
+import tannyjung.core.MiscUtils;
 
 public class UpdateRun {
 

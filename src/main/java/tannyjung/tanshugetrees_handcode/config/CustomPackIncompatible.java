@@ -2,10 +2,10 @@ package tannyjung.tanshugetrees_handcode.config;
 
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
-import tannyjung.misc.MiscUtils;
+import tannyjung.core.MiscUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.misc.GameUtils;
+import tannyjung.core.GameUtils;
 
 import java.io.BufferedReader;
 import java.io.File;

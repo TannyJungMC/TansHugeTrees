@@ -14,11 +14,9 @@ import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraftforge.registries.ForgeRegistries;
-import tannyjung.misc.FileManager;
-import tannyjung.misc.MiscUtils;
-import tannyjung.misc.GameUtils;
-import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.core.FileManager;
+import tannyjung.core.MiscUtils;
+import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LeafLitter;
@@ -256,7 +254,7 @@ public class TreePlacer {
                             // Ground Block
                             {
 
-                                if (testGroundBlock(chunk.getBlockState(new BlockPos(center_posX, center_posY - 1, center_posZ)), ground_block) == false) {
+                                if (MiscUtils.configTestBlock(chunk.getBlockState(new BlockPos(center_posX, center_posY - 1, center_posZ)), ground_block) == false) {
 
                                     pass = false;
                                     break test;
@@ -387,70 +385,6 @@ public class TreePlacer {
             getData(level, world, chunk_pos, id, chosen, center_posX, center_posY, center_posZ, rotation, mirrored, dead_tree_level);
 
         }
-
-    }
-
-    private static boolean testGroundBlock (BlockState ground_block, String config_value) {
-
-        boolean return_logic = false;
-
-        {
-
-            for (String split : config_value.split(" / ")) {
-
-                return_logic = true;
-
-                for (String split2 : split.split(", ")) {
-
-                    String split_get = split2.replaceAll("[#!]", "");
-
-                    {
-
-                        if (split2.contains("#") == false) {
-
-                            if (ForgeRegistries.BLOCKS.getKey(ground_block.getBlock()).toString().equals(split_get) == false) {
-
-                                return_logic = false;
-
-                            }
-
-                        } else {
-
-                            if (GameUtils.block.isTaggedAs(ground_block, split_get) == false) {
-
-                                return_logic = false;
-
-                            }
-
-                        }
-
-                        if (split2.contains("!") == true) {
-
-                            return_logic = !return_logic;
-
-                        }
-
-                    }
-
-                    if (return_logic == false) {
-
-                        break;
-
-                    }
-
-                }
-
-                if (return_logic == true) {
-
-                    break;
-
-                }
-
-            }
-
-        }
-
-        return return_logic;
 
     }
 

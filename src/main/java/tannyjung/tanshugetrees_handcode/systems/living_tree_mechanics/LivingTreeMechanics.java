@@ -7,12 +7,11 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import tannyjung.misc.MiscUtils;
-import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.core.MiscUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.misc.FileManager;
-import tannyjung.misc.GameUtils;
+import tannyjung.core.FileManager;
+import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 
 import java.io.BufferedReader;

@@ -1,7 +1,6 @@
 package tannyjung.tanshugetrees_handcode;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.LevelResource;
@@ -16,7 +15,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
-import tannyjung.misc.GameUtils;
+import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees_handcode.systems.Loop;
 import tannyjung.tanshugetrees_handcode.config.CheckUpdateRun;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
@@ -65,6 +64,8 @@ public class Handcode {
 
 		directory_world_data = event.getServer().getWorldPath(new LevelResource(".")) + "/data/tanshugetrees";
 		TanshugetreesModVariables.MapVariables.get(event.getServer().overworld()).version_1192 = version_1192;
+		ConfigRepairAll.start(null, false);
+		ConfigMain.apply(null);
 
 	}
 
@@ -75,21 +76,22 @@ public class Handcode {
 
 		if (GameUtils.misc.playerCount(level) == 1) {
 
-			// One time running, only when start the world and first player joined.
+			Loop.start(level);
+			GameUtils.command.run(level, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
+
+			// Season Detector
 			{
 
-				// Season Detector
-				{
+				if (ConfigMain.serene_seasons_compatibility == true && ModList.get().isLoaded("sereneseasons") == true) {
 
-					if (ConfigMain.serene_seasons_compatibility == true && ModList.get().isLoaded("sereneseasons") == true) {
-
-						SeasonDetector.start(level);
-
-					}
+					SeasonDetector.start(level);
 
 				}
 
-				GameUtils.command.run(level, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
+			}
+
+			// Shape File Converter
+			{
 
 				if (Handcode.version_1192 == false && TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
 
@@ -97,21 +99,17 @@ public class Handcode {
 
 				}
 
-				TanshugetreesMod.queueServerWork(100, () -> {
-
-					Loop.start(level);
-
-					if (ConfigMain.auto_check_update == true) {
-
-						ConfigRepairAll.start(level, false);
-						ConfigMain.apply(null);
-						CheckUpdateRun.start(level);
-
-					}
-
-				});
-
 			}
+
+			TanshugetreesMod.queueServerWork(100, () -> {
+
+				if (ConfigMain.auto_check_update == true) {
+
+					CheckUpdateRun.start(level);
+
+				}
+
+			});
 
 		}
 

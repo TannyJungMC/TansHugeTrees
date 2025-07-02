@@ -1,9 +1,8 @@
 package tannyjung.tanshugetrees_handcode.config;
 
-import tannyjung.misc.MiscUtils;
-import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.core.MiscUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.misc.FileManager;
+import tannyjung.core.FileManager;
 
 import java.io.BufferedReader;
 import java.io.File;
