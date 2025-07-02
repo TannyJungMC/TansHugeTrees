@@ -333,12 +333,16 @@ public class TreeGenerator {
                         GameUtils.NBT.entity.setNumber(entity, type + "_length", Mth.nextInt(RandomSource.create(), (int) GameUtils.NBT.entity.getNumber(entity, type + "_length_min"), (int) GameUtils.NBT.entity.getNumber(entity, type + "_length_max")));
                         GameUtils.NBT.entity.setNumber(entity, type + "_thickness", GameUtils.NBT.entity.getNumber(entity, type + "_thickness_max") - 1);
 
-                        // Reduce From - To
-                        {
+                        if (GameUtils.NBT.entity.getNumber(entity, type + "_length") > 0) {
 
-                            summonReduceFrom(entity, "count", type, type_pre_next[1]);
-                            summonReduceFrom(entity, "length", type, type_pre_next[1]);
-                            summonReduceFrom(entity, "thickness", type, type_pre_next[1]);
+                            // Reduce From - To
+                            {
+
+                                summonReduction(entity, "count", type, type_pre_next[1]);
+                                summonReduction(entity, "length", type, type_pre_next[1]);
+                                summonReduction(entity, "thickness", type, type_pre_next[1]);
+
+                            }
 
                         }
 
@@ -500,9 +504,9 @@ public class TreeGenerator {
 
         }
 
-        private static void summonReduceFrom (Entity entity, String step, String type, String type_next) {
+        private static void summonReduction (Entity entity, String step, String type, String type_next) {
 
-            // Cancellation
+            // No Reduction
             {
 
                 if (step.equals("count") == true) {
@@ -540,38 +544,33 @@ public class TreeGenerator {
 
                 int length = (int) GameUtils.NBT.entity.getNumber(entity, reduce_from + "_length");
                 int length_save = (int) GameUtils.NBT.entity.getNumber(entity, reduce_from + "_length_save");
+                double center = GameUtils.NBT.entity.getNumber(entity, type + "_" + step + "_reduce_center") * 0.01;
+                int length_below = (int) (length_save * center);
+                int length_above = length_save - length_below;
+                double percent = 0.0;
 
-                if (length_save > 0 && length != length_save) {
+                if ((1.0 - center) < ((double) length / (double) length_save)) {
 
-                    double center = GameUtils.NBT.entity.getNumber(entity, type + "_" + step + "_reduce_center") * 0.01;
-                    int length_below = (int) (length_save * center);
-                    int length_above = length_save - length_below;
-                    double percent = 0.0;
+                    // Below
+                    {
 
-                    if (center < (1.0 - (double) (length / length_save))) {
-
-                        // Above
-                        {
-
-                            percent = (double) (length - length_below) / (double) length_above;
-
-                        }
-
-                    } else {
-
-                        // Below
-                        {
-
-                            percent = (double) (length_below - length) / length_below;
-
-                        }
+                        percent = 1.0 - ((double) (length - length_above) / (double) length_below);
 
                     }
 
-                    double value = GameUtils.NBT.entity.getNumber(entity, type + "_" + step) * (1.0 - (GameUtils.NBT.entity.getNumber(entity, type + "_" + step + "_reduce_below") * 0.01));
-                    GameUtils.NBT.entity.setNumber(entity, type + "_" + step, value * percent);
+                } else {
+
+                    // Above
+                    {
+
+                        percent = (double) length / (double) length_above;
+
+                    }
 
                 }
+
+                double value = GameUtils.NBT.entity.getNumber(entity, type + "_" + step) * (1.0 - (GameUtils.NBT.entity.getNumber(entity, type + "_" + step + "_reduce_below") * 0.01));
+                GameUtils.NBT.entity.setNumber(entity, type + "_" + step, value * percent);
 
             }
 
@@ -927,7 +926,7 @@ public class TreeGenerator {
 
                                                 if (thickness <= 1) {
 
-                                                    buildBlockConnector(level, entity, center_pos, pos, type, block_type, thickness, replace);
+                                                    buildBlockConnector(level, entity, center_pos, pos, type, block_type, replace);
 
                                                 }
 
@@ -977,9 +976,13 @@ public class TreeGenerator {
 
                                                     pos_leaves = new BlockPos(pos.getX(), pos.getY() - deep_test, pos.getZ());
 
-                                                    if (block_type.equals("") == false && buildTestKeep(level, pos_leaves, replace) == true) {
+                                                    if (GameUtils.block.isTaggedAs(level.getBlockState(pos_leaves), "tanshugetrees:block_placer_blacklist_leaves") == false) {
 
-                                                        buildPlaceBlock(level, entity, type, pos_leaves, block_type);
+                                                        if (block_type.equals("") == false && buildTestKeep(level, pos_leaves, replace) == true) {
+
+                                                            buildPlaceBlock(level, entity, type, pos_leaves, block_type);
+
+                                                        }
 
                                                     }
 
@@ -1025,7 +1028,7 @@ public class TreeGenerator {
 
         }
 
-        private static void buildBlockConnector (LevelAccessor level, Entity entity, double[] center_pos, BlockPos pos, String type, String block_type, double thickness, boolean replace) {
+        private static void buildBlockConnector (LevelAccessor level, Entity entity, double[] center_pos, BlockPos pos, String type, String block_type, boolean replace) {
 
             double block_connector_posX = GameUtils.NBT.entity.getNumber(entity, "block_connector_posX");
             double block_connector_posY = GameUtils.NBT.entity.getNumber(entity, "block_connector_posY");
