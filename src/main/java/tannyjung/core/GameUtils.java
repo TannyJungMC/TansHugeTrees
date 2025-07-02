@@ -1,4 +1,4 @@
-package tannyjung.misc;
+package tannyjung.core;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSource;
@@ -8,8 +8,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ServerScoreboard;
@@ -23,10 +25,14 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Objective;
 import net.minecraftforge.server.ServerLifecycleHooks;
+
+import java.util.Comparator;
+import java.util.List;
 
 public class GameUtils {
 
@@ -102,6 +108,13 @@ public class GameUtils {
 		public static String getCurrentDimensionID (ServerLevel world) {
 
 			return world.dimension().location().toString();
+
+		}
+
+		public static List<Entity> getEntitiesAt (LevelAccessor level, int posX, int posY, int posZ) {
+
+			Vec3 center = new Vec3((posX + 0.5), (posY + 0.5), (posZ + 0.5));
+			return level.getEntitiesOfClass(Entity.class, new AABB(center, center).inflate(3 / 2d), e -> true).stream().sorted(Comparator.comparingDouble(_entcnd -> _entcnd.distanceToSqr(center))).toList();
 
 		}
 
@@ -348,6 +361,14 @@ public class GameUtils {
 
 		}
 
+		public static String textFromItemText (String text) {
+
+			String id = text.substring(0, text.indexOf("{"));
+			String convert = text.substring(text.indexOf("ForgeData"), text.length() - 1);
+			return id + "{" + convert;
+
+		}
+
 		public static boolean propertyBooleanGet (BlockState block, String property) {
 
 			return block.getBlock().getStateDefinition().getProperty(property) instanceof BooleanProperty get && block.getValue(get);
@@ -368,25 +389,25 @@ public class GameUtils {
 
 		public static class entity {
 
-			public static String getText (net.minecraft.world.entity.Entity entity, String name) {
+			public static String getText (Entity entity, String name) {
 
 				return entity.getPersistentData().getString(name);
 
 			}
 
-			public static Boolean getLogic (net.minecraft.world.entity.Entity entity, String name) {
+			public static Boolean getLogic (Entity entity, String name) {
 
 				return entity.getPersistentData().getBoolean(name);
 
 			}
 
-			public static double getNumber (net.minecraft.world.entity.Entity entity, String name) {
+			public static double getNumber (Entity entity, String name) {
 
 				return entity.getPersistentData().getDouble(name);
 
 			}
 
-			public static double[] getListNumber (net.minecraft.world.entity.Entity entity, String name) {
+			public static double[] getListNumber (Entity entity, String name) {
 
 				ListTag list = entity.getPersistentData().getList(name, Tag.TAG_DOUBLE);
 				double[] convert = new double[list.size()];
@@ -401,7 +422,7 @@ public class GameUtils {
 
 			}
 
-			public static double[] getListNumberFloat (net.minecraft.world.entity.Entity entity, String name) {
+			public static double[] getListNumberFloat (Entity entity, String name) {
 
 				ListTag list = entity.getPersistentData().getList(name, Tag.TAG_FLOAT);
 				double[] convert = new double[list.size()];
@@ -416,25 +437,25 @@ public class GameUtils {
 
 			}
 
-			public static void setText (net.minecraft.world.entity.Entity entity, String name, String value) {
+			public static void setText (Entity entity, String name, String value) {
 
 				entity.getPersistentData().putString(name, value);
 
 			}
 
-			public static void setLogic (net.minecraft.world.entity.Entity entity, String name, boolean value) {
+			public static void setLogic (Entity entity, String name, boolean value) {
 
 				entity.getPersistentData().putBoolean(name, value);
 
 			}
 
-			public static void setNumber (net.minecraft.world.entity.Entity entity, String name, double value) {
+			public static void setNumber (Entity entity, String name, double value) {
 
 				entity.getPersistentData().putDouble(name, value);
 
 			}
 
-			public static void addNumber (net.minecraft.world.entity.Entity entity, String name, double value) {
+			public static void addNumber (Entity entity, String name, double value) {
 
 				entity.getPersistentData().putDouble(name, entity.getPersistentData().getDouble(name) + value);
 
@@ -523,6 +544,28 @@ public class GameUtils {
 					}
 
 				}
+
+			}
+
+			public static CompoundTag textToCompoundTag (String id) {
+
+				CompoundTag return_NBT = new CompoundTag();
+
+				{
+
+					try {
+
+						return_NBT = TagParser.parseTag(id.substring(id.indexOf("{")));
+
+					} catch (Exception ignored) {
+
+
+
+					}
+
+				}
+
+				return return_NBT;
 
 			}
 

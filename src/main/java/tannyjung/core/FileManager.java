@@ -1,4 +1,4 @@
-package tannyjung.misc;
+package tannyjung.core;
 
 import java.io.*;
 
