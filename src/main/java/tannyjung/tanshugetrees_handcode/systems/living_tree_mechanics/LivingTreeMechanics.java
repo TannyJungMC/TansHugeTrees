@@ -226,7 +226,7 @@ public class LivingTreeMechanics {
 								// Get Leave Data
 								{
 
-									get = FileManager.textPosConverter(read_all.substring(2, read_all.length() - 3), rotation, mirrored);
+									get = MiscUtils.textPosConverter(read_all.substring(2, read_all.length() - 3), rotation, mirrored);
 									posX = entity.getBlockX() + get[0];
 									posY = entity.getBlockY() + get[1];
 									posZ = entity.getBlockZ() + get[2];
@@ -248,7 +248,7 @@ public class LivingTreeMechanics {
 
 									pre_block_data = GameUtils.NBT.entity.getText(entity, "pre_block");
 
-									get = FileManager.textPosConverter(pre_block_data.substring(2, pre_block_data.length() - 3), rotation, mirrored);
+									get = MiscUtils.textPosConverter(pre_block_data.substring(2, pre_block_data.length() - 3), rotation, mirrored);
 									posX = entity.getBlockX() + get[0];
 									posY = entity.getBlockY() + get[1];
 									posZ = entity.getBlockZ() + get[2];

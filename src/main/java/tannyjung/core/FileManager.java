@@ -4,58 +4,6 @@ import java.io.*;
 
 public class FileManager {
 
-	public static int[] textPosConverter (String pos, int rotation, boolean mirrored) {
-
-		int[] return_number = new int[3];
-
-		{
-
-			String[] get = pos.split("/");
-			int posX = Integer.parseInt(get[0]);
-			int posY = Integer.parseInt(get[1]);
-			int posZ = Integer.parseInt(get[2]);
-
-			// Rotation & Mirrored
-			{
-
-				if (mirrored == true) {
-
-					posX = posX * (-1);
-
-				}
-
-				if (rotation == 2) {
-
-					int posX_save = posX;
-					posX = posZ;
-					posZ = posX_save * (-1);
-
-				} else if (rotation == 3) {
-
-					posX = posX * (-1);
-					posZ = posZ * (-1);
-
-				} else if (rotation == 4) {
-
-					int posX_save = posX;
-					int posZ_save = posZ;
-					posX = posZ_save * (-1);
-					posZ = posX_save;
-
-				}
-
-			}
-
-			return_number[0] = posX;
-			return_number[1] = posY;
-			return_number[2] = posZ;
-
-		}
-
-		return return_number;
-
-	}
-
 	public static void createFolder (String path) {
 
 		File folder = new File(path);

@@ -799,7 +799,7 @@ public class TreePlacer {
 
                                 }
 
-                                get_pos_array = FileManager.textPosConverter(get_pos, rotation, mirrored);
+                                get_pos_array = MiscUtils.textPosConverter(get_pos, rotation, mirrored);
 
                                 // Apply Block Pos With Real Pos
                                 testX = center_posX + get_pos_array[0];
