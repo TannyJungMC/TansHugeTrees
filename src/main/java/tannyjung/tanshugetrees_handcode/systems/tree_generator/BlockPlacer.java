@@ -4,8 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import tannyjung.misc.FileManager;
-import tannyjung.misc.GameUtils;
+import tannyjung.core.FileManager;
+import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
 

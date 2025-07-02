@@ -10,10 +10,9 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkStatus;
-import tannyjung.misc.MiscUtils;
-import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.core.MiscUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.misc.GameUtils;
+import tannyjung.core.GameUtils;
 ;
 
 import java.io.BufferedReader;

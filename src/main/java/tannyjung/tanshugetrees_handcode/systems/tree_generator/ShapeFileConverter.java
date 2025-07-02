@@ -2,9 +2,9 @@ package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.misc.FileManager;
-import tannyjung.misc.GameUtils;
-import tannyjung.misc.MiscUtils;
+import tannyjung.core.FileManager;
+import tannyjung.core.GameUtils;
+import tannyjung.core.MiscUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
@@ -47,7 +47,7 @@ public class ShapeFileConverter {
 
         if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
 
-            if (TanshugetreesModVariables.MapVariables.get(level).auto_gen_count >= 0) {
+            if (TanshugetreesModVariables.MapVariables.get(level).auto_gen_count > 0) {
 
                 TanshugetreesModVariables.MapVariables.get(level).auto_gen_count = 0;
                 GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Will turn OFF after this one");
