@@ -3,7 +3,7 @@ package tannyjung.tanshugetrees_handcode.config;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.FileManager;
 
-public class ConfigAutoGen {
+public class ConfigShapeFileConverter {
 
 	public static void repair () {
 

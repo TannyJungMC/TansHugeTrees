@@ -14,7 +14,7 @@ public class ConfigRepairAll {
 		FileManager.createFolder(Handcode.directory_config + "/generated");
 
 		ConfigMain.repair();
-		ConfigAutoGen.repair();
+		ConfigShapeFileConverter.repair();
 		CustomPackOrganized.start(level);
 		ConfigPlacement.start();
 
