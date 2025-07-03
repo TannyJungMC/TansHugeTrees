@@ -100,7 +100,7 @@ public class FileManager {
 							// Read Old
 							{
 
-								try { BufferedReader buffered_reader2 = new BufferedReader(new FileReader(file)); String read_old = ""; while ((read_old = buffered_reader2.readLine()) != null) {
+								try { BufferedReader buffered_reader2 = new BufferedReader(new FileReader(file), 65536); String read_old = ""; while ((read_old = buffered_reader2.readLine()) != null) {
 
 									{
 
@@ -178,7 +178,7 @@ public class FileManager {
 
 				{
 
-					try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+					try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
 						{
 
