@@ -25,10 +25,14 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Objective;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.Comparator;
@@ -293,7 +297,7 @@ public class GameUtils {
 
 			try {
 
-				return biome.is(TagKey.create(Registries.BIOME, new ResourceLocation(tag)));
+				return biome.is(TagKey.create(Registries.BIOME, ResourceLocation.parse(tag)));
 
 			} catch (Exception exception) {
 
@@ -313,7 +317,7 @@ public class GameUtils {
 
 			try {
 
-				return block.is(BlockTags.create(new ResourceLocation(tag)));
+				return block.is(BlockTags.create(ResourceLocation.parse(tag)));
 
 			} catch (Exception exception) {
 
@@ -325,19 +329,43 @@ public class GameUtils {
 
 		}
 
-		public static BlockState fromText (String id) {
+		public static BlockState fromText (String data) {
 
-			try {
+			BlockState block = Blocks.AIR.defaultBlockState();
 
-				return BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), id, true).blockState();
+			if (data.endsWith("]") == true) {
 
-			} catch (Exception exception) {
+				block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(data.substring(0, data.indexOf("[")))).defaultBlockState();
+				String[] properties = data.substring(data.indexOf("[") + 1, data.length() - 1).split(",");
 
-				MiscUtils.exception(exception);
+				for (String property_data : properties) {
+
+					String[] get = property_data.split("=");
+					Property<?> property = block.getBlock().getStateDefinition().getProperty(get[0]);
+
+					if (property instanceof BooleanProperty) {
+
+						block = propertyBooleanSet(block, get[0], Boolean.parseBoolean(get[1]));
+
+					} else if (property instanceof IntegerProperty) {
+
+						block = propertyIntegerSet(block, get[0], Integer.parseInt(get[1]));
+
+					} else if (property instanceof EnumProperty<?>) {
+
+						block = propertyEnumSet(block, get[0], get[1]);
+
+					}
+
+				}
+
+			} else {
+
+				block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(data)).defaultBlockState();
 
 			}
 
-			return Blocks.AIR.defaultBlockState();
+			return block;
 
 		}
 
@@ -369,19 +397,90 @@ public class GameUtils {
 
 		}
 
-		public static boolean propertyBooleanGet (BlockState block, String property) {
+		public static boolean propertyBooleanGet (BlockState block, String name) {
 
-			return block.getBlock().getStateDefinition().getProperty(property) instanceof BooleanProperty get && block.getValue(get);
+			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+
+			if (property instanceof BooleanProperty) {
+
+				return Boolean.parseBoolean(block.getValue(property).toString());
+
+			}
+
+			return false;
 
 		}
 
-		public static BlockState propertyBooleanSet (BlockState block, String property, boolean value) {
+		public static int propertyIntegerGet (BlockState block, String name) {
 
-			return block.getBlock().getStateDefinition().getProperty(property) instanceof BooleanProperty set
-					? block.setValue(set, value)
-					: block;
+			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+
+			if (property instanceof IntegerProperty) {
+
+				return Integer.parseInt(block.getValue(property).toString());
+
+			}
+
+			return 0;
 
 		}
+
+		public static String propertyEnumGet (BlockState block, String name) {
+
+			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+
+			if (property instanceof EnumProperty<?>) {
+
+				return block.getValue(property).toString();
+
+			}
+
+			return "";
+
+		}
+
+		public static BlockState propertyBooleanSet (BlockState block, String name, boolean value) {
+
+			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+
+			if (property instanceof BooleanProperty property_instance) {
+
+				block = block.setValue(property_instance, value);
+
+			}
+
+			return block;
+
+		}
+
+		public static BlockState propertyIntegerSet (BlockState block, String name, int value) {
+
+			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+
+			if (property instanceof IntegerProperty property_instance) {
+
+				block = block.setValue(property_instance, value);
+
+			}
+
+			return block;
+
+		}
+
+		public static BlockState propertyEnumSet (BlockState block, String name, String value) {
+
+			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+
+			if (property instanceof EnumProperty property_instance) {
+
+				block = block.setValue(property_instance, value);
+
+			}
+
+			return block;
+
+		}
+
 
 	}
 
