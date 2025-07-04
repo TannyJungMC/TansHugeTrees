@@ -55,17 +55,6 @@ public class TreeGenerator {
         GameUtils.NBT.entity.setNumber(entity, "leaves_count_min", 1);
         GameUtils.NBT.entity.setNumber(entity, "leaves_count_max", 1);
 
-        // No Roots
-        {
-
-            if (GameUtils.NBT.entity.getNumber(entity, "taproot_count") == 0) {
-
-                GameUtils.NBT.entity.setText(entity, "type", "trunk");
-
-            }
-
-        }
-
         // Debug Mode
         {
 
@@ -107,6 +96,41 @@ public class TreeGenerator {
                 GameUtils.NBT.entity.setText(entity, "leaves2", "black_stained_glass");
 
             }
+
+        }
+
+        // No Roots
+        {
+
+            if (GameUtils.NBT.entity.getNumber(entity, "taproot_count") == 0) {
+
+                GameUtils.NBT.entity.setText(entity, "type", "trunk");
+
+            }
+
+        }
+
+        // Way Functions
+        {
+
+            if (GameUtils.NBT.entity.getNumber(entity, "function_way1_max") == 0) {
+
+                GameUtils.NBT.entity.setNumber(entity, "function_way1_max", -1);
+
+            }
+
+            if (GameUtils.NBT.entity.getNumber(entity, "function_way2_max") == 0) {
+
+                GameUtils.NBT.entity.setNumber(entity, "function_way2_max", -1);
+
+            }
+
+            if (GameUtils.NBT.entity.getNumber(entity, "function_way3_max") == 0) {
+
+                GameUtils.NBT.entity.setNumber(entity, "function_way3_max", -1);
+
+            }
+
 
         }
 
@@ -381,24 +405,8 @@ public class TreeGenerator {
                     // Leaves
                     {
 
-                        GameUtils.NBT.entity.setNumber(entity, "leaves_thickness", Mth.nextDouble(RandomSource.create(), GameUtils.NBT.entity.getNumber(entity, "leaves_size_min"), GameUtils.NBT.entity.getNumber(entity, "leaves_size_max")));
-
-
-
-
-
-
-
-
-                        int reduce_from = (int) GameUtils.NBT.entity.getNumber(entity, GameUtils.NBT.entity.getText(entity, "leaves_size_reduce_from") + "_length");
-                        int reduce_from_save = (int) GameUtils.NBT.entity.getNumber(entity, GameUtils.NBT.entity.getText(entity, "leaves_size_reduce_from") + "_length_save");
-                        double reduce_center = 1 - (GameUtils.NBT.entity.getNumber(entity, "leaves_size_reduce_center") * 0.01);
-
-                        if (reduce_from > reduce_from_save * reduce_center) {
-
-
-
-                        }
+                        GameUtils.NBT.entity.setNumber(entity, "leaves_size", Mth.nextDouble(RandomSource.create(), GameUtils.NBT.entity.getNumber(entity, "leaves_size_min"), GameUtils.NBT.entity.getNumber(entity, "leaves_size_max")));
+                        summonReduction(entity, "size", type, type_pre_next[1]);
 
                     }
 
@@ -428,21 +436,20 @@ public class TreeGenerator {
 
                             {
 
-                                if (GameUtils.NBT.entity.getLogic(entity, type + "_center_direction") == false) {
+                                double vertical = 0.0;
+                                double horizontal = 0.0;
+                                double forward = 0.0;
+                                double height = 0.0;
+
+                                if (GameUtils.NBT.entity.getText(entity, type + "_center_direction_from").equals("") == true) {
 
                                     // Non Center Direction
                                     {
 
-                                        double vertical = Mth.nextDouble(RandomSource.create(), -(GameUtils.NBT.entity.getNumber(entity, type + "_start_vertical")), GameUtils.NBT.entity.getNumber(entity, type + "_start_vertical"));
-                                        double horizontal = Mth.nextDouble(RandomSource.create(), -(GameUtils.NBT.entity.getNumber(entity, type + "_start_horizontal")), GameUtils.NBT.entity.getNumber(entity, type + "_start_horizontal"));
-                                        double forward = Mth.nextDouble(RandomSource.create(), GameUtils.NBT.entity.getNumber(entity, type + "_start_forward_min"), GameUtils.NBT.entity.getNumber(entity, type + "_start_forward_max"));
-                                        double height = Mth.nextDouble(RandomSource.create(), GameUtils.NBT.entity.getNumber(entity, type + "_start_height_min"), GameUtils.NBT.entity.getNumber(entity, type + "_start_height_max"));
-                                        vertical = Double.parseDouble(String.format("%.2f", vertical));
-                                        horizontal = Double.parseDouble(String.format("%.2f", horizontal));
-                                        forward = Double.parseDouble(String.format("%.2f", forward));
-                                        height = Double.parseDouble(String.format("%.2f", height));
-
-                                        positioned = "positioned ^" + horizontal + " ^" + vertical + " ^" + forward + " positioned ~ ~" + height + " ~";
+                                        vertical = GameUtils.NBT.entity.getNumber(entity, type + "_start_vertical");
+                                        horizontal = GameUtils.NBT.entity.getNumber(entity, type + "_start_horizontal");
+                                        height = Mth.nextDouble(RandomSource.create(), GameUtils.NBT.entity.getNumber(entity, type + "_start_height_min"), GameUtils.NBT.entity.getNumber(entity, type + "_start_height_max"));
+                                        forward = Mth.nextDouble(RandomSource.create(), GameUtils.NBT.entity.getNumber(entity, type + "_start_forward_min"), GameUtils.NBT.entity.getNumber(entity, type + "_start_forward_max"));
 
                                     }
 
@@ -451,10 +458,42 @@ public class TreeGenerator {
                                     // Center Direction
                                     {
 
+                                        int length = (int) GameUtils.NBT.entity.getNumber(entity, type_pre_next[0] + "_length");
+                                        int length_save = (int) GameUtils.NBT.entity.getNumber(entity, type_pre_next[0] + "_length_save");
+                                        double center = GameUtils.NBT.entity.getNumber(entity, type + "_center_direction_center") * 0.01;
+                                        int length_below = (int) (length_save * center);
+                                        int length_above = length_save - length_below;
+                                        double percent = 0.0;
+                                        String above_or_below = "";
+
+                                        if ((1.0 - center) >= ((double) length / (double) length_save)) {
+
+                                            // Above
+                                            above_or_below = "above";
+                                            percent = 1.0 - ((double) length / (double) length_above);
+
+                                        } else {
+
+                                            // Below
+                                            above_or_below = "below";
+                                            percent = (double) (length - length_above) / (double) length_below;
+
+                                        }
+
+                                        vertical = 1.0 + ((GameUtils.NBT.entity.getNumber(entity, type + "_center_direction_vertical_" + above_or_below) - 1.0) * percent);
+                                        horizontal = 1.0 + ((GameUtils.NBT.entity.getNumber(entity, type + "_center_direction_horizontal_" + above_or_below) - 1.0) * percent);
+                                        height = GameUtils.NBT.entity.getNumber(entity, type + "_center_direction_height_" + above_or_below) * percent;
+                                        forward = GameUtils.NBT.entity.getNumber(entity, type + "_center_direction_forward_" + above_or_below) * percent;
 
                                     }
 
                                 }
+
+                                vertical = Double.parseDouble(String.format("%.2f", Mth.nextDouble(RandomSource.create(), -(vertical), vertical)));
+                                horizontal = Double.parseDouble(String.format("%.2f", Mth.nextDouble(RandomSource.create(), -(horizontal), horizontal)));
+                                height = Double.parseDouble(String.format("%.2f", height));
+                                forward = Double.parseDouble(String.format("%.2f", forward));
+                                positioned = "positioned ^" + horizontal + " ^" + vertical + " ^" + forward + " positioned ~ ~" + height + " ~";
 
                             }
 
@@ -549,23 +588,15 @@ public class TreeGenerator {
                 int length_above = length_save - length_below;
                 double percent = 0.0;
 
-                if ((1.0 - center) < ((double) length / (double) length_save)) {
+                if ((1.0 - center) >= ((double) length / (double) length_save)) {
 
-                    // Below
-                    {
-
-                        percent = 1.0 - ((double) (length - length_above) / (double) length_below);
-
-                    }
+                    // Above
+                    percent = (double) length / (double) length_above;
 
                 } else {
 
-                    // Above
-                    {
-
-                        percent = (double) length / (double) length_above;
-
-                    }
+                    // Below
+                    percent = 1.0 - ((double) (length - length_above) / (double) length_below);
 
                 }
 
@@ -734,7 +765,18 @@ public class TreeGenerator {
 
         private static void build (LevelAccessor level, Entity entity, String id, String type) {
 
-            double thickness = GameUtils.NBT.entity.getNumber(entity, type + "_thickness");
+            double thickness = 0.0;
+
+            if (type.equals("leaves") == false) {
+
+                thickness = GameUtils.NBT.entity.getNumber(entity, type + "_thickness");
+
+            } else {
+
+                thickness = GameUtils.NBT.entity.getNumber(entity, "leaves_size");
+
+            }
+
             double half_thickness = thickness * 0.5;
             String generator_type = GameUtils.NBT.entity.getText(entity, type + "_generator_type");
 
@@ -858,40 +900,20 @@ public class TreeGenerator {
                             if (build_saveZ <= half_thickness) {
 
                                 GameUtils.NBT.entity.addNumber(entity, "build_saveZ", 1);
+                                double build_area = 0.0;
 
-                                // Place Block
+                                // Shaping
                                 {
 
-                                    double build_area = 0.0;
+                                    if (generator_type.startsWith("sphere") == true) {
 
-                                    // Shaping
-                                    {
+                                        {
 
-                                        if (generator_type.startsWith("sphere") == true) {
+                                            build_area = (build_saveX * build_saveX) + (build_saveY * build_saveY) + (build_saveZ * build_saveZ);
 
-                                            {
+                                            if ((thickness > 1) && (build_area > sphere_area)) {
 
-                                                build_area = (build_saveX * build_saveX) + (build_saveY * build_saveY) + (build_saveZ * build_saveZ);
-
-                                                if ((thickness > 1) && (build_area > sphere_area)) {
-
-                                                    continue;
-
-                                                }
-
-                                            }
-
-                                        }
-
-                                        if (generator_type.equals("sphere_zone") == true) {
-
-                                            {
-
-                                                if (Math.pow(sphere_zone_pos[0] - build_saveX, 2) + Math.pow(sphere_zone_pos[1] - build_saveY, 2) + Math.pow(sphere_zone_pos[2] - build_saveZ, 2) < sphere_zone_area) {
-
-                                                    continue;
-
-                                                }
+                                                continue;
 
                                             }
 
@@ -899,13 +921,33 @@ public class TreeGenerator {
 
                                     }
 
-                                    BlockPos pos = new BlockPos((int) Math.floor(center_pos[0] + build_saveX), (int) Math.floor(center_pos[1] + build_saveY), (int) Math.floor(center_pos[2] + build_saveZ));
-                                    String block_type = "";
+                                    if (generator_type.equals("sphere_zone") == true) {
+
+                                        {
+
+                                            if (Math.pow(sphere_zone_pos[0] - build_saveX, 2) + Math.pow(sphere_zone_pos[1] - build_saveY, 2) + Math.pow(sphere_zone_pos[2] - build_saveZ, 2) < sphere_zone_area) {
+
+                                                continue;
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
+
+                                BlockPos pos = new BlockPos((int) Math.floor(center_pos[0] + build_saveX), (int) Math.floor(center_pos[1] + build_saveY), (int) Math.floor(center_pos[2] + build_saveZ));
+
+                                // Place Block
+                                {
 
                                     if (type.equals("leaves") == false) {
 
                                         // General
                                         {
+
+                                            String block_type = "";
 
                                             // Get Block
                                             {
@@ -949,6 +991,7 @@ public class TreeGenerator {
                                             if (Math.random() < GameUtils.NBT.entity.getNumber(entity, "leaves_density") * 0.01) {
 
                                                 BlockPos pos_leaves = null;
+                                                String block_type = "";
                                                 int deep = 1;
 
                                                 if (Math.random() < GameUtils.NBT.entity.getNumber(entity, "leaves_straighten_chance")) {
@@ -1264,7 +1307,7 @@ public class TreeGenerator {
             level.setBlock(pos, GameUtils.block.fromText("tanshugetrees:block_placer_" + block_placer), 2);
             GameUtils.command.run(level, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
             GameUtils.NBT.block.setText(level, pos, "block", GameUtils.NBT.entity.getText(entity, block));
-            GameUtils.NBT.block.setText(level, pos, "function", "XXX");
+            GameUtils.NBT.block.setText(level, pos, "function", buildGetWayFunction(entity, type));
 
             if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
 
@@ -1275,6 +1318,46 @@ public class TreeGenerator {
                 GameUtils.NBT.block.setText(level, pos, "type_short", type_short);
 
             }
+
+        }
+
+        private static String buildGetWayFunction (Entity entity, String type) {
+
+            String return_text = "";
+
+            for (int number = 1; number <= 3; number++) {
+
+                String function = "function_way" + number;
+                String function_path = GameUtils.NBT.entity.getText(entity, function);
+                String at_type = GameUtils.NBT.entity.getText(entity, function + "_type");
+
+                if (function_path.equals("") == false && at_type.equals(type)) {
+
+                    if (Math.random() < GameUtils.NBT.entity.getNumber(entity, function + "_chance")) {
+
+                        if (GameUtils.NBT.entity.getNumber(entity, function + "_max") < 0 || GameUtils.NBT.entity.getNumber(entity, function + "_max") > 0) {
+
+                            double length_percent = 1.0 - (GameUtils.NBT.entity.getNumber(entity, at_type + "_length") / GameUtils.NBT.entity.getNumber(entity, at_type + "_length_save"));
+                            double range_min = GameUtils.NBT.entity.getNumber(entity, function + "_range_min") * 0.01;
+                            double range_max = GameUtils.NBT.entity.getNumber(entity, function + "_range_max") * 0.01;
+
+                            if (range_min <= length_percent && length_percent <= range_max) {
+
+                                GameUtils.NBT.entity.addNumber(entity, function + "_max", -1);
+                                return_text = function_path;
+                                break;
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            return return_text;
 
         }
 
