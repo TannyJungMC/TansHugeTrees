@@ -13,13 +13,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
+import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
-import tannyjung.core.GameUtils;
-import tannyjung.tanshugetrees_handcode.systems.Loop;
 import tannyjung.tanshugetrees_handcode.config.CheckUpdateRun;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.config.ConfigRepairAll;
+import tannyjung.tanshugetrees_handcode.systems.Loop;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDetector;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFeature;
 
