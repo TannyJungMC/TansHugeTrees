@@ -148,7 +148,7 @@ public class TreeLocation {
 
                             if (start_test == false) {
 
-                                if (read_all.startsWith("---") == true) {
+                                if (read_all.equals("--------------------------------------------------") == true) {
 
                                     start_test = true;
 

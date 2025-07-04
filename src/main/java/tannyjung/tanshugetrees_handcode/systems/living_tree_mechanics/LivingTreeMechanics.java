@@ -10,7 +10,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import tannyjung.core.MiscUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.core.FileManager;
 import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 
