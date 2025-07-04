@@ -15,13 +15,14 @@ public class MiscUtils {
 
 	public static void exception (Exception exception) {
 
-		Logger LOGGER = LogManager.getLogger("TannyJung's Mods");
-		LOGGER.error("--------------------------------------------------");
-		StackTraceElement[] list = exception.getStackTrace();
+		StackTraceElement main_data = exception.getStackTrace()[0];
+		Logger logger = LogManager.getLogger("TannyJung");
+		logger.error("--------------------------------------------------");
+        logger.error("Error at {} -> {} -> {}", main_data.getClassName(), main_data.getMethodName(), main_data.getLineNumber());
 
-		for (StackTraceElement get : list) {
+		for (StackTraceElement get : exception.getStackTrace()) {
 
-			LOGGER.error(get);
+			logger.error(get);
 
 		}
 
