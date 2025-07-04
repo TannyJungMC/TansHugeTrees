@@ -21,7 +21,7 @@ import java.io.FileReader;
 
 public class TreeFunction {
 
-	public static void start (LevelAccessor level, String path, int posX, int posY, int posZ) {
+	public static void start (LevelAccessor level, int posX, int posY, int posZ, String path) {
 
 		File file = new File(Handcode.directory_config + "/custom_packs/.organized/functions/" + path);
 
@@ -46,15 +46,10 @@ public class TreeFunction {
 			int maxX = 0;
 			int maxY = 0;
 			int maxZ = 0;
-			int startX = 0;
-			int startY = 0;
-			int startZ = 0;
-			int endX = 0;
-			int endY = 0;
-			int endZ = 0;
 
 			String feature = "";
 
+			// Read File
 			{
 
 				try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
@@ -80,82 +75,62 @@ public class TreeFunction {
 
 									}
 
-									// Cancellation Conditions
-									{
+									if (Math.random() < chance && block != Blocks.AIR.defaultBlockState()) {
 
-										if (Math.random() >= chance) {
+										// Get Pos
+										{
 
-											continue;
+											try {
 
-										}
+												offset_pos = get[1].split("/");
+												offset_posX = Integer.parseInt(offset_pos[0]);
+												offset_posY = Integer.parseInt(offset_pos[1]);
+												offset_posZ = Integer.parseInt(offset_pos[2]);
 
-										if (block == Blocks.AIR.defaultBlockState()) {
+												min_max = get[2].split("/");
+												minX = Integer.parseInt(min_max[0]);
+												minY = Integer.parseInt(min_max[1]);
+												minZ = Integer.parseInt(min_max[2]);
+												maxX = Integer.parseInt(min_max[3]);
+												maxY = Integer.parseInt(min_max[4]);
+												maxZ = Integer.parseInt(min_max[5]);
 
-											continue;
+											} catch (Exception ignored) {
 
-										}
+												return;
 
-									}
-
-									// Get Pos
-									{
-
-										try {
-
-											offset_pos = get[1].split("/");
-											offset_posX = Integer.parseInt(offset_pos[0]);
-											offset_posY = Integer.parseInt(offset_pos[1]);
-											offset_posZ = Integer.parseInt(offset_pos[2]);
-
-											min_max = get[2].split("/");
-											minX = Integer.parseInt(min_max[0]);
-											minY = Integer.parseInt(min_max[1]);
-											minZ = Integer.parseInt(min_max[2]);
-											maxX = Integer.parseInt(min_max[3]);
-											maxY = Integer.parseInt(min_max[4]);
-											maxZ = Integer.parseInt(min_max[5]);
-
-											startX = Math.min(0, Mth.nextInt(RandomSource.create(), minX, maxX));
-											startY = Math.min(0, Mth.nextInt(RandomSource.create(), minY, maxY));
-											startZ = Math.min(0, Mth.nextInt(RandomSource.create(), minZ, maxZ));
-											endX = Math.max(0, Mth.nextInt(RandomSource.create(), minX, maxX));
-											endY = Math.max(0, Mth.nextInt(RandomSource.create(), minY, maxY));
-											endZ = Math.max(0, Mth.nextInt(RandomSource.create(), minZ, maxZ));
-
-										} catch (Exception ignored) {
-
-											return;
+											}
 
 										}
 
-									}
+										for (int testX = minX; testX <= maxX; testX++) {
 
-									for (int testX = startX; testX <= endX; testX++) {
+											for (int testY = minY; testY <= maxY; testY++) {
 
-										for (int testY = startY; testY <= endY; testY++) {
+												for (int testZ = minZ; testZ <= maxZ; testZ++) {
 
-											for (int testZ = startZ; testZ <= endZ; testZ++) {
+													pos = new BlockPos(posX + offset_posX + testX, posY + offset_posY + testY, posZ + offset_posZ + testZ);
 
-												pos = new BlockPos(posX + offset_posX + testX, posY + offset_posY + testY, posZ + offset_posZ + testZ);
+													if (level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4) == true) {
 
-												// Keep
-												{
+														// Keep
+														{
 
-													if (keep == true) {
+															if (keep == true) {
 
-														if (GameUtils.block.isTaggedAs(level.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level.isWaterAt(pos) == true) {
+																if (GameUtils.block.isTaggedAs(level.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level.isWaterAt(pos) == true) {
 
-															continue;
+																	continue;
+
+																}
+
+															}
 
 														}
 
+														level.setBlock(new BlockPos(pos), block, 2);
+
 													}
-
-												}
-
-												if (level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4) == true && level.getChunk(pos).getStatus().isOrAfter(ChunkStatus.FULL) == false) {
-
-													level.setBlock(new BlockPos(pos), block, 2);
 
 												}
 
