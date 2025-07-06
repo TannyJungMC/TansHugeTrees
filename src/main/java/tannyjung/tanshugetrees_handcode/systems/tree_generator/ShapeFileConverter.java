@@ -169,6 +169,7 @@ public class ShapeFileConverter {
         } else {
 
             GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Can't start shape file converter because the file location you wrote cannot be found");
+            stop(level);
 
         }
 
