@@ -29,9 +29,6 @@ public class TreeFunction {
 
 			String[] get = new String[0];
 			double chance = 0.0;
-			BlockState block = Blocks.AIR.defaultBlockState();
-			boolean keep = false;
-
 			String[] offset_pos = new String[0];
 			int offset_posX = 0;
 			int offset_posY = 0;
@@ -44,7 +41,10 @@ public class TreeFunction {
 			int maxY = 0;
 			int maxZ = 0;
 
+			BlockState block = Blocks.AIR.defaultBlockState();
+			boolean keep = false;
 			String feature = "";
+			String command = "";
 
 			// Read File
 			{
@@ -168,9 +168,29 @@ public class TreeFunction {
 
 								}
 
-							} else {
+							} else if (read_all.startsWith("command = ") == true) {
 
-								GameUtils.command.run(level, posX, posY, posZ, read_all);
+								{
+
+									try {
+
+										get = read_all.replace("command = ", "").split(" \\| ");
+										chance = Double.parseDouble(get[0]);
+										command = get[1];
+
+									} catch (Exception ignored) {
+
+										return;
+
+									}
+
+									if (Math.random() < chance) {
+
+										GameUtils.command.run(level, posX, posY, posZ, command);
+
+									}
+
+								}
 
 							}
 

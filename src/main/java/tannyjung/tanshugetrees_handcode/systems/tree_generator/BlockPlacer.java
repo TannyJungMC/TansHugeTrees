@@ -17,11 +17,9 @@ public class BlockPlacer {
             // Function
             {
 
-                String function = GameUtils.NBT.block.getText(level, pos, "function");
+                if (GameUtils.NBT.block.getText(level, pos, "function").equals("") == false) {
 
-                if (function.equals("") == false) {
-
-                    TreeFunction.start(level, pos.getX(), pos.getY(), pos.getZ(), function);
+                    TreeFunction.start(level, pos.getX(), pos.getY(), pos.getZ(), GameUtils.NBT.block.getText(level, pos, "function"));
 
                 }
 
@@ -34,14 +32,21 @@ public class BlockPlacer {
             // Shape File Converter
             {
 
+                String path = Handcode.directory_world_generated + "/" + GameUtils.NBT.block.getText(level, pos, "export_file_name");
                 BlockPos pos_center = new BlockPos((int) GameUtils.NBT.block.getNumber(level, pos, "center_posX"), (int) GameUtils.NBT.block.getNumber(level, pos, "center_posY"), (int) GameUtils.NBT.block.getNumber(level, pos, "center_posZ"));
-                String type_short = GameUtils.NBT.block.getText(level, pos, "type_short");
-
-                String write = "+b" + (pos.getX() - pos_center.getX()) + "/" + (pos.getY() - pos_center.getY()) + "/" + (pos.getZ() - pos_center.getZ()) + type_short;
-                FileManager.writeTXT(Handcode.directory_world_generated + "/" + GameUtils.NBT.block.getText(level, pos, "export_file_name"), write + "\n", true);
+                String write_pos = (pos.getX() - pos_center.getX()) + "/" + (pos.getY() - pos_center.getY()) + "/" + (pos.getZ() - pos_center.getZ());
+                FileManager.writeTXT(path, "+b" + write_pos + GameUtils.NBT.block.getText(level, pos, "type_short") + "\n", true);
 
                 // Function
+                {
 
+                    if (GameUtils.NBT.block.getText(level, pos, "function_short").equals("") == false) {
+
+                        FileManager.writeTXT(path, "+f" + write_pos + GameUtils.NBT.block.getText(level, pos, "function_short") + "\n", true);
+
+                    }
+
+                }
 
                 level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 
