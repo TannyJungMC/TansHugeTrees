@@ -95,17 +95,6 @@ public class Handcode {
 
 			}
 
-			// Shape File Converter
-			{
-
-				if (Handcode.version_1192 == false && TanshugetreesModVariables.MapVariables.get(level).auto_gen == true) {
-
-					GameUtils.command.run(level, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 0 0 run forceload add 16 16 -16 -16");
-
-				}
-
-			}
-
 			TanshugetreesMod.queueServerWork(100, () -> {
 
 				if (ConfigMain.auto_check_update == true) {
