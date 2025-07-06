@@ -44,7 +44,7 @@ public class TxtFunctionProcedure {
 						if (stringiterator.contains("merge_all : true")) {
 							merge_true = true;
 						}
-						if (stringiterator.contains("--------------------------------------------------")) {
+						if (stringiterator.contains("----------------------------------------------------------------------------------------------------")) {
 							start = true;
 						}
 					} else {

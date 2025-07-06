@@ -37,13 +37,13 @@
     "name": "Sky Island (Chain)",
     "specialInformation": {
       "fixedValue": [
-        "§8--------------------------------------------------",
+        "§8----------------------------------------------------------------------------------------------------",
         "§8This is random tree sapling, it may take long time to generate!",
         "",
         "§8Size : Medium",
         "§8Blocks : Stone / Moss Block / Oak Leaves",
         "§8Special : Can generate with moss patch on the islands",
-        "§8--------------------------------------------------"
+        "§8----------------------------------------------------------------------------------------------------"
       ]
     },
     "hardness": 0.0,

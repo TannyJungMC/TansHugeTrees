@@ -37,13 +37,13 @@
     "name": "Beekeeper",
     "specialInformation": {
       "fixedValue": [
-        "§8--------------------------------------------------",
+        "§8----------------------------------------------------------------------------------------------------",
         "§8This is random tree sapling, it may take long time to generate!",
         "",
         "§8Size : Realistic",
         "§8Blocks : Dark Oak Wood / Stripped Dark Oak Wood / Dark Oak Leaves",
         "§8Special : Generate with bee nest on twig and create area of flowers around the tree",
-        "§8--------------------------------------------------"
+        "§8----------------------------------------------------------------------------------------------------"
       ]
     },
     "hardness": 0.0,
