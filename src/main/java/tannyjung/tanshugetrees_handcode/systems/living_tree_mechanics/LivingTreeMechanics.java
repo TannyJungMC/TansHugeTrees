@@ -16,6 +16,7 @@ import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Arrays;
 
 public class LivingTreeMechanics {
 
@@ -40,7 +41,7 @@ public class LivingTreeMechanics {
 
 		}
 
-		StringBuilder leaves_block = new StringBuilder();
+		BlockState[] leaves_block = new BlockState[2];
 		int[] leaves_type = new int[2];
 		boolean can_leaves_decay = false;
 		boolean can_leaves_drop = false;
@@ -77,14 +78,13 @@ public class LivingTreeMechanics {
 
 								id = read_all.substring(("Block ").length(), ("Block ###").length());
 								get = read_all.substring(("Block ### = ").length());
-								GameUtils.NBT.entity.setText(entity, id, get);
 
 								// Test Leaves Type
 								{
 
 									if (id.startsWith("le") == true) {
 
-										int test = Integer.parseInt(id.substring(2)) - 1;
+										int number = Integer.parseInt(id.substring(2)) - 1;
 
 										// Get ID
 										{
@@ -101,21 +101,17 @@ public class LivingTreeMechanics {
 
 											}
 
-											leaves_block
-													.append("|")
-													.append(get)
-													.append("|")
-											;
+											leaves_block[number] = GameUtils.block.fromText(get);
 
 										}
 
 										if (ConfigMain.deciduous_leaves_list.contains(get) == true) {
 
-											leaves_type[test] = 1;
+											leaves_type[number] = 1;
 
 										} else if (ConfigMain.coniferous_leaves_list.contains(get) == true) {
 
-											leaves_type[test] = 2;
+											leaves_type[number] = 2;
 
 										}
 
@@ -127,7 +123,7 @@ public class LivingTreeMechanics {
 
 						}
 
-					} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+					} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
 				}
 
@@ -236,9 +232,9 @@ public class LivingTreeMechanics {
 
 									}
 
-									id = read_all.substring(read_all.length() - 3);
-									block = GameUtils.block.fromText(GameUtils.NBT.entity.getText(entity, id));
 									pos = new BlockPos(posX, posY, posZ);
+									id = read_all.substring(read_all.length() - 3);
+									block = leaves_block[Integer.parseInt(id.substring(2)) - 1];
 
 								}
 
@@ -267,7 +263,7 @@ public class LivingTreeMechanics {
 
 									if (can_leaves_drop == true || can_leaves_regrow == true) {
 
-										run(level, entity, pos, block, leaves_block.toString(), leaves_type[Integer.parseInt(id.substring(2)) - 1], biome_type, current_season, can_leaves_drop, can_leaves_regrow);
+										run(level, entity, pos, block, leaves_block, leaves_type[Integer.parseInt(id.substring(2)) - 1], biome_type, current_season, can_leaves_drop, can_leaves_regrow);
 
 									}
 
@@ -297,7 +293,7 @@ public class LivingTreeMechanics {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
 			}
 
@@ -335,7 +331,7 @@ public class LivingTreeMechanics {
 
 	}
 
-	private static void run (LevelAccessor level, Entity entity, BlockPos pos, BlockState block, String leaves_block, int leaves_type, int biome_type, String current_season, boolean can_leaves_drop, boolean can_leaves_regrow) {
+	private static void run (LevelAccessor level, Entity entity, BlockPos pos, BlockState block, BlockState[] leaves_block, int leaves_type, int biome_type, String current_season, boolean can_leaves_drop, boolean can_leaves_regrow) {
 
 		boolean straighten = false;
 		boolean can_pos_photosynthesis = false;
@@ -399,7 +395,7 @@ public class LivingTreeMechanics {
 
 						BlockState test_block = level.getBlockState(new BlockPos(pos.getX(), (int) GameUtils.NBT.entity.getNumber(entity, "straighten_highestY"), pos.getZ()));
 
-						if (leaves_block.contains("|" + GameUtils.block.toTextID(test_block) + "|") == false) {
+						if (Arrays.stream(leaves_block).toList().contains(test_block) == false) {
 
 							chance = 1.0;
 
@@ -523,7 +519,7 @@ public class LivingTreeMechanics {
 
 							BlockState test_block = level.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ()));
 
-							if (leaves_block.contains("|" + GameUtils.block.toTextID(test_block) + "|") == true) {
+							if (Arrays.stream(leaves_block).toList().contains(test_block) == true) {
 
 								chance = 1.0;
 
