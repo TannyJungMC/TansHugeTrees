@@ -33,7 +33,7 @@ public class FileManager {
 
 				} catch (Exception exception) {
 
-					MiscUtils.exception(exception);
+					MiscUtils.exception(new Exception(), exception);
 
 				}
 
@@ -53,7 +53,7 @@ public class FileManager {
 
 		} catch (Exception exception) {
 
-			MiscUtils.exception(exception);
+			MiscUtils.exception(new Exception(), exception);
 
 		}
 
@@ -62,23 +62,7 @@ public class FileManager {
 	public static void writeConfigTXT (String path, String write_get) {
 
 		File file = new File(path);
-
-		// Create a File
-		{
-
-			if (file.exists() == false) {
-
-				try {
-
-					file.createNewFile();
-
-				} catch (Exception ignored) {
-
-				}
-
-			}
-
-		}
+		createFolder(file.getParent());
 
 		// Test and Write
 		{
@@ -114,7 +98,7 @@ public class FileManager {
 
 									}
 
-								} buffered_reader2.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+								} buffered_reader2.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
 							}
 
@@ -131,7 +115,7 @@ public class FileManager {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
 			}
 
@@ -195,7 +179,7 @@ public class FileManager {
 
 						}
 
-					} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+					} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
 				}
 

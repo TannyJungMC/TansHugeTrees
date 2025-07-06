@@ -301,7 +301,7 @@ public class GameUtils {
 
 			} catch (Exception exception) {
 
-				MiscUtils.exception(exception);
+				MiscUtils.exception(new Exception(), exception);
 
 			}
 
@@ -321,7 +321,7 @@ public class GameUtils {
 
 			} catch (Exception exception) {
 
-				MiscUtils.exception(exception);
+				MiscUtils.exception(new Exception(), exception);
 
 			}
 
