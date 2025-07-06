@@ -63,7 +63,7 @@ public class TreeLocation {
 
                         } catch (InterruptedException exception) {
 
-                            MiscUtils.exception(exception);
+                            MiscUtils.exception(new Exception(), exception);
 
                         }
 
@@ -113,13 +113,12 @@ public class TreeLocation {
 
     private static void getData (LevelAccessor level, String dimension, int chunk_posX, int chunk_posZ) {
 
-        File file = new File(Handcode.directory_config + "/config_placement.txt");
+        File file = new File(Handcode.directory_config + "/config/world_gen.txt");
 
         if (file.exists() == true) {
 
             boolean start_test = false;
             boolean skip = true;
-
             int center_posX = 0;
             int center_posZ = 0;
             Holder<Biome> biome_center = null;
@@ -137,7 +136,9 @@ public class TreeLocation {
             String rotation = "";
             String mirrored = "";
 
-            // Read Placement Config
+            world_gen_overlay_details_tree = "No Matching";
+
+            // Read World Gen Config
             {
 
                 try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
@@ -148,7 +149,7 @@ public class TreeLocation {
 
                             if (start_test == false) {
 
-                                if (read_all.equals("--------------------------------------------------") == true) {
+                                if (read_all.startsWith("---") == true) {
 
                                     start_test = true;
 
@@ -174,7 +175,6 @@ public class TreeLocation {
                                             biome_center = level.getBiome(new BlockPos(center_posX, level.getMaxBuildHeight(), center_posZ));
 
                                             world_gen_overlay_details_biome = GameUtils.biome.toID(biome_center);
-                                            world_gen_overlay_details_tree = id;
 
                                         }
 
@@ -336,6 +336,8 @@ public class TreeLocation {
                                             // If it not skips that tree to the end of test, it will run this.
                                             if (skip == false) {
 
+                                                world_gen_overlay_details_tree = id;
+
                                                 // Waterside Detection
                                                 {
 
@@ -411,7 +413,7 @@ public class TreeLocation {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
             }
 
@@ -487,7 +489,7 @@ public class TreeLocation {
 
                                         }
 
-                                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                                 }
 
@@ -646,7 +648,7 @@ public class TreeLocation {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                 }
 
@@ -687,7 +689,7 @@ public class TreeLocation {
 
                         if (read_all.equals("") == false) {
 
-                            if (read_all.equals("--------------------------------------------------") == true) {
+                            if (read_all.startsWith("---") == true) {
 
                                 break;
 
@@ -729,7 +731,7 @@ public class TreeLocation {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
             }
 
@@ -856,7 +858,7 @@ public class TreeLocation {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                     }
 

@@ -38,7 +38,7 @@ public class BlockPlacer {
                 String type_short = GameUtils.NBT.block.getText(level, pos, "type_short");
 
                 String write = "+b" + (pos.getX() - pos_center.getX()) + "/" + (pos.getY() - pos_center.getY()) + "/" + (pos.getZ() - pos_center.getZ()) + type_short;
-                FileManager.writeTXT(Handcode.directory_config + "/generated/" + GameUtils.NBT.block.getText(level, pos, "export_file_name"), write + "\n", true);
+                FileManager.writeTXT(Handcode.directory_world_generated + "/" + GameUtils.NBT.block.getText(level, pos, "export_file_name"), write + "\n", true);
 
                 // Function
 

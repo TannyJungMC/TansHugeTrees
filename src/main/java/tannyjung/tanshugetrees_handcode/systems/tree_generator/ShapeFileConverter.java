@@ -80,7 +80,7 @@ public class ShapeFileConverter {
         // Get data
         {
 
-            File file = new File(Handcode.directory_config + "/generated/.shape_file_converter.txt");
+            File file = new File(Handcode.directory_world_generated + "/.shape_file_converter.txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -114,7 +114,7 @@ public class ShapeFileConverter {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                 }
 
@@ -144,7 +144,7 @@ public class ShapeFileConverter {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                 }
 
@@ -228,7 +228,7 @@ public class ShapeFileConverter {
 
             }
 
-            FileManager.writeTXT(Handcode.directory_config + "/generated/" + name + "_settings.txt", write.toString(), false);
+            FileManager.writeTXT(Handcode.directory_world_generated + "/" + name + "_settings.txt", write.toString(), false);
 
         }
 
@@ -252,14 +252,14 @@ public class ShapeFileConverter {
                         .append("\n")
                         .append("trunk_block_count = ###").append("\n")
                         .append("\n")
-                        .append("--------------------------------------------------").append("\n")
+                        .append("----------------------------------------------------------------------------------------------------").append("\n")
                         .append("\n")
                         .append("+b0/0/0tro").append("\n")
                 ;
 
             }
 
-            FileManager.writeTXT(Handcode.directory_config + "/generated/" + GameUtils.NBT.entity.getText(entity, "export_file_name"), write.toString(), false);
+            FileManager.writeTXT(Handcode.directory_world_generated + "/" + GameUtils.NBT.entity.getText(entity, "export_file_name"), write.toString(), false);
 
         }
 
@@ -347,7 +347,7 @@ public class ShapeFileConverter {
             // Update Generated File
             {
 
-                File file = new File(Handcode.directory_config + "/generated/" + GameUtils.NBT.entity.getText(entity, "export_file_name"));
+                File file = new File(Handcode.directory_world_generated + "/" + GameUtils.NBT.entity.getText(entity, "export_file_name"));
                 int trunk_block_count = 0;
                 int min_sizeX = 0;
                 int min_sizeY = 0;
@@ -380,7 +380,7 @@ public class ShapeFileConverter {
 
                                 if (start == false) {
 
-                                    if (read_all.equals("--------------------------------------------------") == true) {
+                                    if (read_all.startsWith("---") == true) {
 
                                         start = true;
 
@@ -460,7 +460,7 @@ public class ShapeFileConverter {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                     }
 
@@ -493,7 +493,7 @@ public class ShapeFileConverter {
 
                                 if (skip == false) {
 
-                                    if (read_all.equals("--------------------------------------------------") == true) {
+                                    if (read_all.startsWith("---") == true) {
 
                                         skip = true;
 
@@ -541,7 +541,7 @@ public class ShapeFileConverter {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                     }
 
