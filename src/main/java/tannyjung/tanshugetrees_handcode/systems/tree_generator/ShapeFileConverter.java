@@ -35,7 +35,12 @@ public class ShapeFileConverter {
                 GameUtils.command.runEntity(entity, "execute in tanshugetrees:dimension run tp @s 0 300 0");
                 GameUtils.command.runEntity(entity, "gamemode spectator");
                 GameUtils.command.runEntity(entity, "gamemode creative");
-                summon(level);
+
+                TanshugetreesMod.queueServerWork(220, () -> {
+
+                    summon(level);
+
+                });
 
             }
 
@@ -57,7 +62,12 @@ public class ShapeFileConverter {
                 TanshugetreesModVariables.MapVariables.get(level).auto_gen = false;
                 GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Turned OFF");
                 GameUtils.command.run(level, 0, 0, 0, "execute in tanshugetrees:dimension run forceload remove all");
-                GameUtils.command.run(level, 0, 0, 0, "execute as @a at @s if dimension tanshugetrees:dimension in minecraft:overworld run tp @s " + TanshugetreesModVariables.MapVariables.get(level).auto_gen_teleport_player_back);
+
+                TanshugetreesMod.queueServerWork(20, () -> {
+
+                    GameUtils.command.run(level, 0, 0, 0, "execute as @a at @s if dimension tanshugetrees:dimension in minecraft:overworld run tp @s " + TanshugetreesModVariables.MapVariables.get(level).auto_gen_teleport_player_back);
+
+                });
 
             }
 
