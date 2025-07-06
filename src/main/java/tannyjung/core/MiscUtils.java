@@ -38,8 +38,8 @@ public class MiscUtils {
 			connection.setConnectTimeout(3000);
 			connection.setReadTimeout(3000);
 
-			// int responseCode = connection.getResponseCode();
-			// return (200 <= responseCode && responseCode < 400);
+			int responseCode = connection.getResponseCode();
+			return (200 <= responseCode && responseCode < 400);
 
 		} catch (Exception exception) {
 
@@ -47,7 +47,7 @@ public class MiscUtils {
 
 		}
 
-		return true;
+		// return true;
 
 	}
 
