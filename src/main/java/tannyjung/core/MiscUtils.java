@@ -13,12 +13,15 @@ import java.net.URL;
 
 public class MiscUtils {
 
-	public static void exception (Exception exception) {
+	public static void exception (Exception from, Exception exception) {
 
-		StackTraceElement main_data = exception.getStackTrace()[0];
 		Logger logger = LogManager.getLogger("TannyJung");
-		logger.error("--------------------------------------------------");
-        logger.error("Error at {} -> {} -> {}", main_data.getClassName(), main_data.getMethodName(), main_data.getLineNumber());
+		logger.error("----------------------------------------------------------------------------------------------------");
+
+		StackTraceElement from_get = from.getStackTrace()[0];
+
+        logger.error("Found an error reported from {} -> {} -> {}", from_get.getClassName(), from_get.getMethodName(), from_get.getLineNumber());
+		logger.error(exception.getMessage());
 
 		for (StackTraceElement get : exception.getStackTrace()) {
 
