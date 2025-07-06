@@ -117,7 +117,7 @@ public class TreePlacer {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                 }
 
@@ -172,7 +172,7 @@ public class TreePlacer {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                 }
 
@@ -422,7 +422,7 @@ public class TreePlacer {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                 }
 
@@ -557,7 +557,7 @@ public class TreePlacer {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                     }
 
@@ -582,7 +582,7 @@ public class TreePlacer {
 
                             {
 
-                                if (read_all.equals("--------------------------------------------------") == true) {
+                                if (read_all.startsWith("---") == true) {
 
                                     break;
 
@@ -598,7 +598,7 @@ public class TreePlacer {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                     }
 
@@ -969,7 +969,7 @@ public class TreePlacer {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
             }
 

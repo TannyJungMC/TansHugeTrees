@@ -178,7 +178,7 @@ public class TreeFunction {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
 			}
 
