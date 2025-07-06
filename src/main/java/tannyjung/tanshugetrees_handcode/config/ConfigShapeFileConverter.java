@@ -34,7 +34,7 @@ public class ConfigShapeFileConverter {
 
 		}
 
-		FileManager.writeConfigTXT(Handcode.directory_config + "/generated/.shape_file_converter.txt", write.toString());
+		FileManager.writeConfigTXT(Handcode.directory_world_generated + "/.shape_file_converter.txt", write.toString());
 
 	}
 

@@ -38,7 +38,7 @@ public class CustomPackOrganized {
 
                     } catch (Exception exception) {
 
-                        MiscUtils.exception(exception);
+                        MiscUtils.exception(new Exception(), exception);
 
                     }
 
@@ -48,7 +48,7 @@ public class CustomPackOrganized {
 
         } catch (Exception exception) {
 
-            MiscUtils.exception(exception);
+            MiscUtils.exception(new Exception(), exception);
 
         }
 
@@ -141,7 +141,7 @@ public class CustomPackOrganized {
 
                                             } catch (Exception exception) {
 
-                                                MiscUtils.exception(exception);
+                                                MiscUtils.exception(new Exception(), exception);
 
                                             }
 
@@ -153,7 +153,7 @@ public class CustomPackOrganized {
 
                             } catch (Exception exception) {
 
-                                MiscUtils.exception(exception);
+                                MiscUtils.exception(new Exception(), exception);
 
                             }
 
@@ -201,7 +201,7 @@ public class CustomPackOrganized {
 
                                         } catch (Exception exception) {
 
-                                            MiscUtils.exception(exception);
+                                            MiscUtils.exception(new Exception(), exception);
 
                                         }
 
@@ -211,7 +211,7 @@ public class CustomPackOrganized {
 
                             } catch (Exception exception) {
 
-                                MiscUtils.exception(exception);
+                                MiscUtils.exception(new Exception(), exception);
 
                             }
 

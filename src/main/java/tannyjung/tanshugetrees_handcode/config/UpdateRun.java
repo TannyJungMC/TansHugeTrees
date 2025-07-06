@@ -120,7 +120,7 @@ public class UpdateRun {
 
 			} catch (Exception exception) {
 
-				MiscUtils.exception(exception);
+				MiscUtils.exception(new Exception(), exception);
 
 			}
 
@@ -317,7 +317,7 @@ public class UpdateRun {
 
 					} catch (Exception exception) {
 
-						MiscUtils.exception(exception);
+						MiscUtils.exception(new Exception(), exception);
 
                     }
 

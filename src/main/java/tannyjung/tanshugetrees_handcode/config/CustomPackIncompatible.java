@@ -53,7 +53,7 @@ public class CustomPackIncompatible {
 
                     } catch (Exception exception) {
 
-                        MiscUtils.exception(exception);
+                        MiscUtils.exception(new Exception(), exception);
 
                     }
 
@@ -93,7 +93,7 @@ public class CustomPackIncompatible {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
             }
 
@@ -129,7 +129,7 @@ public class CustomPackIncompatible {
 
                 }
 
-            } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+            } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
         }
 
@@ -164,7 +164,7 @@ public class CustomPackIncompatible {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
             }
 

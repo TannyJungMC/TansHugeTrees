@@ -52,7 +52,7 @@ public class FileCount {
 
                 } catch (Exception exception) {
 
-                    MiscUtils.exception(exception);
+                    MiscUtils.exception(new Exception(), exception);
 
                 }
 
@@ -84,7 +84,7 @@ public class FileCount {
 
                 } catch (Exception exception) {
 
-                    MiscUtils.exception(exception);
+                    MiscUtils.exception(new Exception(), exception);
 
                 }
 
@@ -116,7 +116,7 @@ public class FileCount {
 
                 } catch (Exception exception) {
 
-                    MiscUtils.exception(exception);
+                    MiscUtils.exception(new Exception(), exception);
 
                 }
 

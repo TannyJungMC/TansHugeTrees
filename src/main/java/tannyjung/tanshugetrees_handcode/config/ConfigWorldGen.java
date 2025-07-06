@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-public class ConfigPlacement {
+public class ConfigWorldGen {
 
     public static void start () {
 
@@ -24,8 +24,8 @@ public class ConfigPlacement {
 
     private static void createTemp () {
 
-        Path from = Paths.get(Handcode.directory_config + "/config_placement.txt");
-        Path to = Paths.get(Handcode.directory_config + "/config_placement_temp.txt");
+        Path from = Paths.get(Handcode.directory_config + "/config/world_gen.txt");
+        Path to = Paths.get(Handcode.directory_config + "/config/world_gen_temp.txt");
 
         try {
 
@@ -39,7 +39,7 @@ public class ConfigPlacement {
 
                 } catch (Exception exception) {
 
-                    MiscUtils.exception(exception);
+                    MiscUtils.exception(new Exception(), exception);
 
                 }
 
@@ -47,7 +47,7 @@ public class ConfigPlacement {
 
         } catch (Exception exception) {
 
-            MiscUtils.exception(exception);
+            MiscUtils.exception(new Exception(), exception);
 
         }
 
@@ -56,7 +56,7 @@ public class ConfigPlacement {
     private static void create () {
 
         File file_organized = new File(Handcode.directory_config + "/custom_packs/.organized/world_gen");
-        File file = new File(Handcode.directory_config + "/config_placement.txt");
+        File file = new File(Handcode.directory_config + "/config/world_gen.txt");
 
         // Re-Create The File
         {
@@ -81,7 +81,7 @@ public class ConfigPlacement {
                         - group_size : Use other placement system to spawn that tree in group style. To use this, set min and max count of trees per group, that upper than 1. For example, min 1 and max 5, will be "1 <> 5". Be careful to use this, as it can affect scan time a lot. This config also use other config in the system. Rarity will be how common of the group. Min distance is between trees, not groups. Waterside config will only detect once at the spawn location of that group.
                         - waterside_chance : Force that tree to only spawn near water. Be careful to use this, as it can affect scan time a lot.
                         - dead_tree_chance : Set how common of that tree to spawn as dead tree. Note that this config only for trees on surface, you may found some trees that become dead trees without this config, because that's by tree type inside tree settings. Land trees can't survive in water, etc.
-                        - dead_tree_level : Make that tree more variety when it's dead tree. This config will be random select a number from the list. Only supported number from 1 to 7. For 123 is no leaves, no leaves twig, and no twig. For 45 is only trunk with random length 50-100 percent, and hollowed. For 67 is only trunk with random length 10-50 percent, and hollowed.
+                        - dead_tree_level : Make that tree more variety when it's dead tree. This config will be random select a number from the list. Only supported number from 1 to 9. For 12345 is no leaves, no sprig, no twig, no limb, and no branch. For 67 is only trunk with random length 50-100 percent, and hollowed. For 89 is only trunk with random length 10-50 percent, and hollowed.
                         - start_height_offset : Set spawn height from the ground. To use this, set min and max height from the ground.
                         - rotation : Set rotation of that tree. For random direction, use "random". For specific direction, use "north", "west", "east", or "south". Only supported one direction.
                         - mirrored : Set mirror effect for that tree. For random value, use "random". For specific value, use "true" or "false".
@@ -121,7 +121,7 @@ public class ConfigPlacement {
 
                     } catch (Exception exception) {
 
-                        MiscUtils.exception(exception);
+                        MiscUtils.exception(new Exception(), exception);
 
                     }
 
@@ -178,7 +178,7 @@ public class ConfigPlacement {
         // Test Old File
         {
 
-            File file = new File(Handcode.directory_config + "/config_placement_temp.txt");
+            File file = new File(Handcode.directory_config + "/config/world_gen_temp.txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -210,7 +210,7 @@ public class ConfigPlacement {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                 }
 
@@ -218,7 +218,7 @@ public class ConfigPlacement {
 
         }
 
-        File file = new File(Handcode.directory_config + "/config_placement.txt");
+        File file = new File(Handcode.directory_config + "/config/world_gen.txt");
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -279,7 +279,7 @@ public class ConfigPlacement {
                                             // Get Old Value
                                             {
 
-                                                File file_temp = new File(Handcode.directory_config + "/config_placement_temp.txt");
+                                                File file_temp = new File(Handcode.directory_config + "/config/world_gen_temp.txt");
                                                 boolean thisID = false;
                                                 option = read_all.substring(0, read_all.indexOf(" = "));
 
@@ -320,7 +320,7 @@ public class ConfigPlacement {
 
                                                         }
 
-                                                    } buffered_reader2.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                                                    } buffered_reader2.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                                                 }
 
@@ -336,7 +336,7 @@ public class ConfigPlacement {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(exception); }
+                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                     }
 
@@ -352,7 +352,7 @@ public class ConfigPlacement {
 
     private static void deleteTemp () {
 
-        File file = new File(Handcode.directory_config + "/config_placement_temp.txt");
+        File file = new File(Handcode.directory_config + "/config/world_gen_temp.txt");
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -362,7 +362,7 @@ public class ConfigPlacement {
 
             } catch (Exception exception) {
 
-                MiscUtils.exception(exception);
+                MiscUtils.exception(new Exception(), exception);
 
             }
 

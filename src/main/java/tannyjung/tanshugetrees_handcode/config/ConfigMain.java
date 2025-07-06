@@ -9,7 +9,7 @@ import java.util.*;
 
 public class ConfigMain {
 
-	// --------------------------------------------------
+	// ----------------------------------------------------------------------------------------------------
 
 	public static boolean auto_check_update = false;
 	public static boolean auto_update = false;
@@ -74,7 +74,7 @@ public class ConfigMain {
 
 	public static boolean developer_mode = false;
 
-	// --------------------------------------------------
+	// ----------------------------------------------------------------------------------------------------
 	
 	public static void repair () {
 
@@ -305,13 +305,13 @@ public class ConfigMain {
 
 		}
 
-		FileManager.writeConfigTXT(Handcode.directory_config + "/config.txt", write.toString());
+		FileManager.writeConfigTXT(Handcode.directory_config + "/config/general.txt", write.toString());
 
 	}
 
 	public static void apply (LevelAccessor level) {
 
-		String path = Handcode.directory_config + "/config.txt";
+		String path = Handcode.directory_config + "/config/general.txt";
 
 		auto_check_update = FileManager.GetConfigValue.logic(path, "auto_check_update");
 		auto_update = FileManager.GetConfigValue.logic(path, "auto_update");

@@ -10,13 +10,26 @@ public class ConfigRepairAll {
 
 	public static void start (LevelAccessor level, boolean send_chat) {
 
-		FileManager.createFolder(Handcode.directory_config + "/custom_packs/.organized");
-		FileManager.createFolder(Handcode.directory_config + "/generated");
+		// Global
+		{
 
-		ConfigMain.repair();
-		ConfigShapeFileConverter.repair();
-		CustomPackOrganized.start(level);
-		ConfigPlacement.start();
+			FileManager.createFolder(Handcode.directory_config + "/custom_packs/.organized");
+			ConfigMain.repair();
+			ConfigWorldGen.start();
+			CustomPackOrganized.start(level);
+
+		}
+
+		// World
+		{
+
+			if (level != null) {
+
+				ConfigShapeFileConverter.repair();
+
+			}
+
+		}
 
 		if (send_chat == true) {
 

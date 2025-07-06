@@ -26,18 +26,19 @@ import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFeature;
 @Mod.EventBusSubscriber
 public class Handcode {
 
-	// --------------------------------------------------
+	// ----------------------------------------------------------------------------------------------------
 
 	public static double data_structure_version_pack = 1.3;
 	public static String tanny_pack_version = "Alpha";
 
 	public static boolean version_1192 = false;
 
-	// --------------------------------------------------
+	// ----------------------------------------------------------------------------------------------------
 
 	public static String directory_game = FMLPaths.GAMEDIR.get().toString();
 	public static String directory_config = directory_game + "/config/tanshugetrees";
-	public static String directory_world_data = directory_game + "/saves/tanshugetrees-error";
+	public static String directory_world_data = directory_game + "/saves/tanshugetrees-error/directory_world_data";
+	public static String directory_world_generated = directory_game + "/saves/tanshugetrees-error/directory_world_generated";
 	public static String tanny_pack_version_name = ""; // Make this because version can swap to "WIP" by config
 
 	public Handcode () {}
@@ -62,10 +63,14 @@ public class Handcode {
 	@SubscribeEvent
 	public static void startWorld (ServerLifecycleEvent event) {
 
-		directory_world_data = event.getServer().getWorldPath(new LevelResource(".")) + "/data/tanshugetrees";
 		TanshugetreesModVariables.MapVariables.get(event.getServer().overworld()).version_1192 = version_1192;
-		ConfigRepairAll.start(null, false);
-		ConfigMain.apply(null);
+
+		LevelAccessor level = event.getServer().overworld();
+		String world_path = String.valueOf(event.getServer().getWorldPath(new LevelResource(".")));
+		directory_world_data = world_path + "/data/tanshugetrees";
+		directory_world_generated = world_path + "/generated/tanshugetrees";
+		ConfigRepairAll.start(level, false);
+		ConfigMain.apply(level);
 
 	}
 
