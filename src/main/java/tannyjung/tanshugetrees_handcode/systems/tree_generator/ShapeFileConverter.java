@@ -263,6 +263,9 @@ public class ShapeFileConverter {
 
         }
 
+        // Start Function
+        FileManager.writeTXT(Handcode.directory_world_generated + "/" + GameUtils.NBT.entity.getText(entity, "export_file_name"), "+f0/0/0fs" + "\n", true);
+
     }
 
     private static String settingsWriteBlock (Entity entity, String type) {
@@ -343,6 +346,9 @@ public class ShapeFileConverter {
         String complete_date = new java.text.SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + " at " + new java.text.SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
 
         TanshugetreesMod.queueServerWork(220, () -> {
+
+            // End Function
+            FileManager.writeTXT(Handcode.directory_world_generated + "/" + GameUtils.NBT.entity.getText(entity, "export_file_name"), "+f0/0/0fe" + "\n", true);
 
             // Update Generated File
             {
