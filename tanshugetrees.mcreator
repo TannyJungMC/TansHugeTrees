@@ -1302,14 +1302,6 @@
           {
             "name": "entity",
             "type": "entity"
-          },
-          {
-            "name": "guistate",
-            "type": "map"
-          },
-          {
-            "name": "world",
-            "type": "world"
           }
         ]
       },
@@ -1380,7 +1372,17 @@
         "files": [
           "src/main/java/tannyjung/tanshugetrees/procedures/RandomTreeGetPreNextProcedure.java"
         ],
-        "dependencies": []
+        "dependencies": [
+          {
+            "name": "entity",
+            "type": "entity"
+          },
+          {
+            "name": "get",
+            "type": "string"
+          }
+        ],
+        "return_type": "string"
       },
       "path": "~/Tree Generator"
     },
@@ -2946,6 +2948,22 @@
       "block.tht.block_placer_trunk_outer": "Block Placer"
     }
   },
+  "metadata": {
+    "files": [
+      "src/main/resources/META-INF/accesstransformer.cfg",
+      "src/main/resources/META-INF/mods.toml",
+      "src/main/resources/pack.mcmeta",
+      "src/main/java/tannyjung/tanshugetrees/TanshugetreesMod.java",
+      "src/main/java/tannyjung/tanshugetrees/network/TanshugetreesModVariables.java",
+      "src/main/java/tannyjung/tanshugetrees/init/TanshugetreesModTabs.java",
+      "src/main/java/tannyjung/tanshugetrees/init/TanshugetreesModScreens.java",
+      "src/main/java/tannyjung/tanshugetrees/init/TanshugetreesModMenus.java",
+      "src/main/java/tannyjung/tanshugetrees/network/MenuStateUpdateMessage.java",
+      "src/main/java/tannyjung/tanshugetrees/init/TanshugetreesModBlocks.java",
+      "src/main/java/tannyjung/tanshugetrees/init/TanshugetreesModBlockEntities.java",
+      "src/main/java/tannyjung/tanshugetrees/init/TanshugetreesModItems.java"
+    ]
+  },
   "foldersRoot": {
     "name": "~",
     "children": [
@@ -3012,5 +3030,5 @@
     "credits": "Created with MCreator and IntelliJ",
     "modElementsPackage": "tannyjung.tanshugetrees"
   },
-  "mcreatorVersion": 202500113416
+  "mcreatorVersion": 202500227613
 }

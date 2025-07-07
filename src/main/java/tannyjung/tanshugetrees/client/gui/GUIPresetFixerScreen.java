@@ -2,7 +2,7 @@ package tannyjung.tanshugetrees.client.gui;
 
 import tannyjung.tanshugetrees.world.inventory.GUIPresetFixerMenu;
 import tannyjung.tanshugetrees.network.GUIPresetFixerButtonMessage;
-import tannyjung.tanshugetrees.init.TanshugetreesModScreens.WidgetScreen;
+import tannyjung.tanshugetrees.init.TanshugetreesModScreens;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 
 import net.minecraft.world.level.Level;
@@ -16,17 +16,14 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.Minecraft;
 
-import java.util.HashMap;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 
-public class GUIPresetFixerScreen extends AbstractContainerScreen<GUIPresetFixerMenu> implements WidgetScreen {
-	private final static HashMap<String, Object> guistate = GUIPresetFixerMenu.guistate;
+public class GUIPresetFixerScreen extends AbstractContainerScreen<GUIPresetFixerMenu> implements TanshugetreesModScreens.ScreenAccessor {
 	private final Level world;
 	private final int x, y, z;
 	private final Player entity;
-	private final static HashMap<String, String> textstate = new HashMap<>();
-	public static EditBox preset;
+	private boolean menuStateUpdateActive = false;
+	EditBox preset;
 	Button button_convert;
 
 	public GUIPresetFixerScreen(GUIPresetFixerMenu container, Inventory inventory, Component text) {
@@ -40,7 +37,13 @@ public class GUIPresetFixerScreen extends AbstractContainerScreen<GUIPresetFixer
 		this.imageHeight = 60;
 	}
 
-	private static final ResourceLocation texture = new ResourceLocation("tanshugetrees:textures/screens/gui_preset_fixer.png");
+	@Override
+	public void updateMenuState(int elementType, String name, Object elementState) {
+		menuStateUpdateActive = true;
+		menuStateUpdateActive = false;
+	}
+
+	private static final ResourceLocation texture = ResourceLocation.parse("tanshugetrees:textures/screens/gui_preset_fixer.png");
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
@@ -51,16 +54,12 @@ public class GUIPresetFixerScreen extends AbstractContainerScreen<GUIPresetFixer
 	}
 
 	@Override
-	protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int gx, int gy) {
+	protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		guiGraphics.blit(texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
 		RenderSystem.disableBlend();
-	}
-
-	public HashMap<String, Object> getWidgets() {
-		return guistate;
 	}
 
 	@Override
@@ -75,7 +74,7 @@ public class GUIPresetFixerScreen extends AbstractContainerScreen<GUIPresetFixer
 	}
 
 	@Override
-	public void containerTick() {
+	protected void containerTick() {
 		super.containerTick();
 		preset.tick();
 	}
@@ -94,37 +93,22 @@ public class GUIPresetFixerScreen extends AbstractContainerScreen<GUIPresetFixer
 	@Override
 	public void init() {
 		super.init();
-		preset = new EditBox(this.font, this.leftPos + 9, this.topPos + 7, 158, 18, Component.translatable("gui.tanshugetrees.gui_preset_fixer.preset")) {
-			@Override
-			public void insertText(String text) {
-				super.insertText(text);
-				if (getValue().isEmpty())
-					setSuggestion(Component.translatable("gui.tanshugetrees.gui_preset_fixer.preset").getString());
-				else
-					setSuggestion(null);
-			}
-
-			@Override
-			public void moveCursorTo(int pos) {
-				super.moveCursorTo(pos);
-				if (getValue().isEmpty())
-					setSuggestion(Component.translatable("gui.tanshugetrees.gui_preset_fixer.preset").getString());
-				else
-					setSuggestion(null);
-			}
-		};
-		preset.setSuggestion(Component.translatable("gui.tanshugetrees.gui_preset_fixer.preset").getString());
-		preset.setMaxLength(32767);
-		guistate.put("text:preset", preset);
+		preset = new EditBox(this.font, this.leftPos + 9, this.topPos + 7, 158, 18, Component.translatable("gui.tanshugetrees.gui_preset_fixer.preset"));
+		preset.setHint(Component.translatable("gui.tanshugetrees.gui_preset_fixer.preset"));
+		preset.setMaxLength(8192);
+		preset.setResponder(content -> {
+			if (!menuStateUpdateActive)
+				menu.sendMenuStateUpdate(entity, 0, "preset", content, false);
+		});
 		this.addWidget(this.preset);
 		button_convert = Button.builder(Component.translatable("gui.tanshugetrees.gui_preset_fixer.button_convert"), e -> {
+			int x = GUIPresetFixerScreen.this.x;
+			int y = GUIPresetFixerScreen.this.y;
 			if (true) {
-				textstate.put("textin:preset", preset.getValue());
-				TanshugetreesMod.PACKET_HANDLER.sendToServer(new GUIPresetFixerButtonMessage(0, x, y, z, textstate));
-				GUIPresetFixerButtonMessage.handleButtonAction(entity, 0, x, y, z, textstate);
+				TanshugetreesMod.PACKET_HANDLER.sendToServer(new GUIPresetFixerButtonMessage(0, x, y, z));
+				GUIPresetFixerButtonMessage.handleButtonAction(entity, 0, x, y, z);
 			}
 		}).bounds(this.leftPos + 72, this.topPos + 30, 32, 20).build();
-		guistate.put("button:button_convert", button_convert);
 		this.addRenderableWidget(button_convert);
 	}
 }

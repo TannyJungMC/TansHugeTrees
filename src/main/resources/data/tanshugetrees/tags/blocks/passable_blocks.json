@@ -1,11 +1,23 @@
 {
   "replace": false,
   "values": [
-    "#minecraft:replaceable_by_trees",
-    "#minecraft:replaceable",
-    "#tanshugetrees:air_blocks",
-    "#minecraft:flowers",
+    {
+      "id": "#minecraft:replaceable",
+      "required": false
+    },
+    {
+      "id": "#minecraft:flowers",
+      "required": false
+    },
+    "tanshugetrees:block_placer_leaves_2",
     "tanshugetrees:block_placer_leaves_1",
-    "tanshugetrees:block_placer_leaves_2"
+    {
+      "id": "#tanshugetrees:air_blocks",
+      "required": false
+    },
+    {
+      "id": "#minecraft:replaceable_by_trees",
+      "required": false
+    }
   ]
 }

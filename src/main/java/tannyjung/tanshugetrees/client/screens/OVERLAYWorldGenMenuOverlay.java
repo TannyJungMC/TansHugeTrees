@@ -1,4 +1,3 @@
-
 package tannyjung.tanshugetrees.client.screens;
 
 import tannyjung.tanshugetrees.procedures.OVERLAYWorldGenShowProcedure;
@@ -43,9 +42,9 @@ public class OVERLAYWorldGenMenuOverlay {
 			}
 			if (OVERLAYWorldGenShowProcedure.execute()) {
 
-				event.getGuiGraphics().blit(new ResourceLocation("tanshugetrees:textures/screens/overlay_region_gen.png"), 6, 8, Mth.clamp((int) OVERLAYWorldGenAnimationProcedure.execute() * 16, 0, 48), 0, 16, 16, 64, 16);
+				event.getGuiGraphics().blit(ResourceLocation.parse("tanshugetrees:textures/screens/overlay_region_gen.png"), 6, 8, Mth.clamp((int) OVERLAYWorldGenAnimationProcedure.execute() * 16, 0, 48), 0, 16, 16, 64, 16);
 
-				event.getGuiGraphics().blit(new ResourceLocation("tanshugetrees:textures/screens/overlay_region_gen_bar.png"), 22, 8, Mth.clamp((int) OVERLAYWorldGenBarProcedure.execute() * 1, 0, 16), 0, 1, 16, 17, 16);
+				event.getGuiGraphics().blit(ResourceLocation.parse("tanshugetrees:textures/screens/overlay_region_gen_bar.png"), 22, 8, Mth.clamp((int) OVERLAYWorldGenBarProcedure.execute() * 1, 0, 16), 0, 1, 16, 17, 16);
 
 				event.getGuiGraphics().drawString(Minecraft.getInstance().font,
 

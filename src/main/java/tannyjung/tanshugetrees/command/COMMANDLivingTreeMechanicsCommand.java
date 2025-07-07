@@ -1,4 +1,3 @@
-
 package tannyjung.tanshugetrees.command;
 
 import tannyjung.tanshugetrees.procedures.COMMANDLivingTreeMechanicsLoopTickProcedure;
@@ -66,4 +65,5 @@ public class COMMANDLivingTreeMechanicsCommand {
 			return 0;
 		})))));
 	}
+
 }

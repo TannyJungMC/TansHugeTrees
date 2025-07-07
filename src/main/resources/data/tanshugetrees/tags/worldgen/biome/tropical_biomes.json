@@ -1,7 +1,13 @@
 {
   "replace": false,
   "values": [
-    "#forge:is_hot",
-    "#forge:is_wet"
+    {
+      "id": "#forge:is_wet",
+      "required": false
+    },
+    {
+      "id": "#forge:is_hot",
+      "required": false
+    }
   ]
 }

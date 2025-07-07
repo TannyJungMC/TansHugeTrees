@@ -1,4 +1,3 @@
-
 package tannyjung.tanshugetrees.block;
 
 import tannyjung.tanshugetrees.procedures.WaypointFlowerPlaceProcedure;

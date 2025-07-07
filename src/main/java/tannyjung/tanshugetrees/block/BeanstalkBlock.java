@@ -1,4 +1,3 @@
-
 package tannyjung.tanshugetrees.block;
 
 import tannyjung.tanshugetrees.procedures.SaplingBlockTickProcedure;
@@ -36,7 +35,7 @@ import java.util.List;
 
 public class BeanstalkBlock extends Block implements EntityBlock {
 	public BeanstalkBlock() {
-		super(BlockBehaviour.Properties.of().instrument(NoteBlockInstrument.BASEDRUM).sound(SoundType.WOOL).strength(0f, 10f).noCollission().noOcclusion().isRedstoneConductor((bs, br, bp) -> false));
+		super(BlockBehaviour.Properties.of().sound(SoundType.WOOL).strength(0f, 10f).noCollission().noOcclusion().isRedstoneConductor((bs, br, bp) -> false).instrument(NoteBlockInstrument.BASEDRUM));
 	}
 
 	@Override

@@ -4,14 +4,11 @@ import tannyjung.tanshugetrees.init.TanshugetreesModMenus;
 
 import net.minecraftforge.fml.loading.FMLPaths;
 
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.CommandSource;
-
-import java.util.HashMap;
 
 import java.io.IOException;
 import java.io.FileReader;
@@ -19,8 +16,8 @@ import java.io.File;
 import java.io.BufferedReader;
 
 public class GUIPresetFixerConvertProcedure {
-	public static void execute(LevelAccessor world, Entity entity, HashMap guistate) {
-		if (entity == null || guistate == null)
+	public static void execute(Entity entity) {
+		if (entity == null)
 			return;
 		File file = new File("");
 		double pos = 0;
@@ -29,7 +26,7 @@ public class GUIPresetFixerConvertProcedure {
 		String fix = "";
 		String name = "";
 		boolean start = false;
-		all = guistate.containsKey("textin:preset") ? (String) guistate.get("textin:preset") : "";
+		all = (entity instanceof Player _entity && _entity.containerMenu instanceof TanshugetreesModMenus.MenuAccessor _menu0) ? _menu0.getMenuState(0, "preset", "") : "";
 		file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/TannyJung-Tree-Pack/dev"), File.separator + "preset_template.txt");
 		if (file.exists()) {
 			try {
@@ -56,7 +53,7 @@ public class GUIPresetFixerConvertProcedure {
 									_ent.getServer().getCommands().performPrefixedCommand(
 											new CommandSourceStack(CommandSource.NULL, _ent.position(), _ent.getRotationVector(), _ent.level() instanceof ServerLevel ? (ServerLevel) _ent.level() : null, 4, _ent.getName().getString(),
 													_ent.getDisplayName(), _ent.level().getServer(), _ent),
-											("execute if entity @e[type=player,distance=..0.01] run tellraw @a [\"\",{\"text\":\"THT : Repaired \",\"color\":\"yellow\"},{\"text\":\"" + "" + name.substring(1, (int) ((name).length() - 1))
+											("execute if entity @e[type=player,distance=..0.01] run tellraw @a [\"\",{\"text\":\"THT : Repaired \",\"color\":\"yellow\"},{\"text\":\"" + "" + name.substring(1, (name).length() - 1)
 													+ "\",\"color\":\"white\"}]"));
 								}
 							}
@@ -87,7 +84,7 @@ public class GUIPresetFixerConvertProcedure {
 				e.printStackTrace();
 			}
 		}
-		if (entity instanceof ServerPlayer _player && !world.isClientSide())
-			TanshugetreesModMenus.setText("preset", fix, _player);
+		if (entity instanceof Player _player && _player.containerMenu instanceof TanshugetreesModMenus.MenuAccessor _menu)
+			_menu.sendMenuStateUpdate(_player, 0, "preset", fix, true);
 	}
 }

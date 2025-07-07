@@ -116,7 +116,7 @@ public class SaplingBlockTickProcedure {
 							}
 							for (int index0 = 0; index0 < (merge_text).length(); index0++) {
 								if ((merge_text.substring(0, (int) merge_text_pos)).contains("BlockEntityTag:{") == true) {
-									merge_text = merge_text.substring((int) merge_text_pos, (int) ((merge_text).length() - 1));
+									merge_text = merge_text.substring((int) merge_text_pos, (merge_text).length() - 1);
 									if (world instanceof ServerLevel _level)
 										_level.getServer().getCommands().performPrefixedCommand(
 												new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
