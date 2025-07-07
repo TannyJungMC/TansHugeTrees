@@ -302,7 +302,7 @@ public class LivingTreeMechanics {
 
 				if (GameUtils.NBT.entity.getLogic(entity, "dead_tree") == true) {
 
-					GameUtils.command.resultEntity(entity, "kill @s");
+					GameUtils.command.runEntity(entity, "kill @s");
 
 				} else {
 
