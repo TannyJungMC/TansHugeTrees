@@ -3,6 +3,7 @@ package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.features.FeatureUtils;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
@@ -19,13 +20,13 @@ import java.io.FileReader;
 
 public class TreeFunction {
 
-	public static void start (LevelAccessor level, int posX, int posY, int posZ, String path) {
+	public static void start (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String path) {
 
 		File file = new File(Handcode.directory_config + "/custom_packs/.organized/functions/" + path);
 
 		if (file.exists() == true && file.isDirectory() == false) {
 
-			WorldGenLevel world_gen = (WorldGenLevel) level;
+			WorldGenLevel world_gen = (WorldGenLevel) level_accessor;
 			BlockPos pos = null;
 
 			String[] get = new String[0];
@@ -109,14 +110,14 @@ public class TreeFunction {
 
 													pos = new BlockPos(posX + offset_posX + testX, posY + offset_posY + testY, posZ + offset_posZ + testZ);
 
-													if (level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4) == true) {
+													if (level_accessor.hasChunk(pos.getX() >> 4, pos.getZ() >> 4) == true) {
 
 														// Keep
 														{
 
 															if (keep == true) {
 
-																if (GameUtils.block.isTaggedAs(level.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level.isWaterAt(pos) == true) {
+																if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
 
 																	continue;
 
@@ -126,7 +127,7 @@ public class TreeFunction {
 
 														}
 
-														level.setBlock(new BlockPos(pos), block, 2);
+														level_accessor.setBlock(new BlockPos(pos), block, 2);
 
 													}
 
@@ -189,11 +190,11 @@ public class TreeFunction {
 
 										String command_final = command;
 
-										level.getServer().execute(() -> {
+										level_server.getServer().execute(() -> {
 
 											TanshugetreesMod.queueServerWork(200, () -> {
 
-												GameUtils.command.run(level, posX, posY, posZ, command_final);
+												GameUtils.command.run(level_server, posX, posY, posZ, command_final);
 
 											});
 

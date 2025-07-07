@@ -1,6 +1,7 @@
 package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import tannyjung.core.FileManager;
@@ -10,45 +11,47 @@ import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class BlockPlacer {
 
-    public static void start (LevelAccessor level, BlockPos pos) {
+    public static void start (LevelAccessor level_accessor, BlockPos pos) {
 
-        if (TanshugetreesModVariables.MapVariables.get(level).auto_gen == false) {
+        ServerLevel level_server = (ServerLevel) level_accessor;
+
+        if (TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen == false) {
 
             // Function
             {
 
-                if (GameUtils.NBT.block.getText(level, pos, "function").equals("") == false) {
+                if (GameUtils.nbt.block.getText(level_accessor, pos, "function").equals("") == false) {
 
-                    TreeFunction.start(level, pos.getX(), pos.getY(), pos.getZ(), GameUtils.NBT.block.getText(level, pos, "function"));
+                    TreeFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.nbt.block.getText(level_accessor, pos, "function"));
 
                 }
 
             }
 
-            level.setBlock(pos, GameUtils.block.fromText(GameUtils.NBT.block.getText(level, pos, "block")), 2);
+            level_accessor.setBlock(pos, GameUtils.block.fromText(GameUtils.nbt.block.getText(level_accessor, pos, "block")), 2);
 
         } else {
 
             // Shape File Converter
             {
 
-                String path = Handcode.directory_world_generated + "/" + GameUtils.NBT.block.getText(level, pos, "export_file_name");
-                BlockPos pos_center = new BlockPos((int) GameUtils.NBT.block.getNumber(level, pos, "center_posX"), (int) GameUtils.NBT.block.getNumber(level, pos, "center_posY"), (int) GameUtils.NBT.block.getNumber(level, pos, "center_posZ"));
+                String path = Handcode.directory_world_generated + "/" + GameUtils.nbt.block.getText(level_accessor, pos, "export_file_name");
+                BlockPos pos_center = new BlockPos((int) GameUtils.nbt.block.getNumber(level_accessor, pos, "center_posX"), (int) GameUtils.nbt.block.getNumber(level_accessor, pos, "center_posY"), (int) GameUtils.nbt.block.getNumber(level_accessor, pos, "center_posZ"));
                 String write_pos = (pos.getX() - pos_center.getX()) + "/" + (pos.getY() - pos_center.getY()) + "/" + (pos.getZ() - pos_center.getZ());
-                FileManager.writeTXT(path, "+b" + write_pos + GameUtils.NBT.block.getText(level, pos, "type_short") + "\n", true);
+                FileManager.writeTXT(path, "+b" + write_pos + GameUtils.nbt.block.getText(level_accessor, pos, "type_short") + "\n", true);
 
                 // Function
                 {
 
-                    if (GameUtils.NBT.block.getText(level, pos, "function_short").equals("") == false) {
+                    if (GameUtils.nbt.block.getText(level_accessor, pos, "function_short").equals("") == false) {
 
-                        FileManager.writeTXT(path, "+f" + write_pos + GameUtils.NBT.block.getText(level, pos, "function_short") + "\n", true);
+                        FileManager.writeTXT(path, "+f" + write_pos + GameUtils.nbt.block.getText(level_accessor, pos, "function_short") + "\n", true);
 
                     }
 
                 }
 
-                level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+                level_accessor.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 
             }
 

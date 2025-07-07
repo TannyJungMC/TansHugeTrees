@@ -15,7 +15,7 @@ import java.io.FileReader;
 
 public class LeafLitter {
 
-    public static void start (LevelAccessor level, int posX, int posY, int posZ, BlockState block, boolean remove) {
+    public static void start (LevelAccessor level_accessor, int posX, int posY, int posZ, BlockState block, boolean remove) {
 
         File file = new File(Handcode.directory_config + "/custom_packs/.organized/leaf_litter/" + GameUtils.block.toTextID(block).replace(":", "-") + ".txt");
 
@@ -72,7 +72,7 @@ public class LeafLitter {
 
                                             }
 
-                                            block_from = level.getBlockState(pos_from);
+                                            block_from = level_accessor.getBlockState(pos_from);
 
                                         }
 
@@ -99,7 +99,7 @@ public class LeafLitter {
 
                                                     {
 
-                                                        if (GameUtils.block.isTaggedAs(level.getBlockState(new BlockPos(posX, posY, posZ)), "tanshugetrees:air_blocks") == true) {
+                                                        if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(new BlockPos(posX, posY, posZ)), "tanshugetrees:air_blocks") == true) {
 
                                                             if (GameUtils.block.isTaggedAs(block_from, "tanshugetrees:passable_blocks") == false) {
 
@@ -115,9 +115,9 @@ public class LeafLitter {
 
                                                     {
 
-                                                        if (GameUtils.block.isTaggedAs(level.getBlockState(new BlockPos(posX, posY, posZ)), "tanshugetrees:air_blocks") == true) {
+                                                        if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(new BlockPos(posX, posY, posZ)), "tanshugetrees:air_blocks") == true) {
 
-                                                            if (level.isWaterAt(pos_from) == true) {
+                                                            if (level_accessor.isWaterAt(pos_from) == true) {
 
                                                                 pass = true;
 
@@ -153,7 +153,7 @@ public class LeafLitter {
 
                                             if (pass == true) {
 
-                                                level.setBlock(pos_to, block_to, 2);
+                                                level_accessor.setBlock(pos_to, block_to, 2);
                                                 break;
 
                                             }
@@ -165,9 +165,9 @@ public class LeafLitter {
                                         // Remove
                                         {
 
-                                            if (level.getBlockState(pos_to).equals(block_to) == true) {
+                                            if (level_accessor.getBlockState(pos_to).equals(block_to) == true) {
 
-                                                level.setBlock(pos_to, Blocks.AIR.defaultBlockState(), 2);
+                                                level_accessor.setBlock(pos_to, Blocks.AIR.defaultBlockState(), 2);
                                                 break;
 
                                             }
@@ -202,17 +202,17 @@ public class LeafLitter {
                         // Place
                         {
 
-                            if (GameUtils.block.isTaggedAs(level.getBlockState(pos), "tanshugetrees:air_blocks") == true) {
+                            if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:air_blocks") == true) {
 
                                 // If Found Water
-                                if (level.isWaterAt(new BlockPos(posX, posY - 1, posZ)) == true) {
+                                if (level_accessor.isWaterAt(new BlockPos(posX, posY - 1, posZ)) == true) {
 
                                     block = GameUtils.block.propertyBooleanSet(block, "waterlogged", true);
                                     posY = posY - 1;
 
                                 }
 
-                                level.setBlock(new BlockPos(posX, posY, posZ), block, 2);
+                                level_accessor.setBlock(new BlockPos(posX, posY, posZ), block, 2);
 
                             }
 
@@ -223,15 +223,15 @@ public class LeafLitter {
                         // Remove
                         {
 
-                            if (level.getBlockState(pos).getBlock().equals(block.getBlock()) == true) {
+                            if (level_accessor.getBlockState(pos).getBlock().equals(block.getBlock()) == true) {
 
-                                if (GameUtils.block.propertyBooleanGet(level.getBlockState(pos), "waterlogged") == true) {
+                                if (GameUtils.block.propertyBooleanGet(level_accessor.getBlockState(pos), "waterlogged") == true) {
 
-                                    level.setBlock(pos, Blocks.WATER.defaultBlockState(), 2);
+                                    level_accessor.setBlock(pos, Blocks.WATER.defaultBlockState(), 2);
 
                                 } else {
 
-                                    level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+                                    level_accessor.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 
                                 }
 

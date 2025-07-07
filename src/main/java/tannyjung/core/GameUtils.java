@@ -1,12 +1,9 @@
 package tannyjung.core;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -19,8 +16,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -42,29 +44,15 @@ public class GameUtils {
 
 	public static class misc {
 
-		public static void sendChatMessage (LevelAccessor level, String target, String color, String text) {
+		public static void sendChatMessage (ServerLevel level_server, String target, String color, String text) {
 
-			if (level == null) {
-
-				return;
-
-			}
-
-			level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(0, 0, 0), Vec2.ZERO, level instanceof ServerLevel ? (ServerLevel) level : null, 4, "", Component.literal(""), level.getServer(), null).withSuppressedOutput(), "tellraw " + target + " [{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}]");
+			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(0, 0, 0), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), "tellraw " + target + " [{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}]");
 
 		}
 
-		public static int playerCount (LevelAccessor level) {
+		public static int playerCount (ServerLevel level_server) {
 
-			if (level.isClientSide() == true) {
-
-				return Minecraft.getInstance().getConnection().getOnlinePlayers().size();
-
-			} else {
-
-				return ServerLifecycleHooks.getCurrentServer().getPlayerCount();
-
-			}
+			return ServerLifecycleHooks.getCurrentServer().getPlayerCount();
 
 		}
 
@@ -109,13 +97,13 @@ public class GameUtils {
 
 		}
 
-		public static String getCurrentDimensionID (ServerLevel world) {
+		public static String getCurrentDimensionID (Level level) {
 
-			return world.dimension().location().toString();
+			return level.dimension().location().toString();
 
 		}
 
-		public static List<Entity> getEntitiesAt (LevelAccessor level, int posX, int posY, int posZ) {
+		public static List<Entity> getEntitiesAt (Level level, int posX, int posY, int posZ) {
 
 			Vec3 center = new Vec3((posX + 0.5), (posY + 0.5), (posZ + 0.5));
 			return level.getEntitiesOfClass(Entity.class, new AABB(center, center).inflate(3 / 2d), e -> true).stream().sorted(Comparator.comparingDouble(_entcnd -> _entcnd.distanceToSqr(center))).toList();
@@ -126,32 +114,23 @@ public class GameUtils {
 
 	public static class command {
 
-		public static void run (LevelAccessor level, double posX, double posY, double posZ, String command) {
+		public static void run (ServerLevel level_server, double posX, double posY, double posZ, String command) {
 
-			if (level instanceof ServerLevel world) {
-
-				world.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, world, 4, "", Component.literal(""), world.getServer(), null).withSuppressedOutput(), command);
-
-			} else {
-
-				ServerLevel world = level.getServer().overworld();
-				world.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, world, 4, "", Component.literal(""), world.getServer(), null).withSuppressedOutput(), command);
-
-			}
+			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
 
 		}
 
 		public static void runEntity (Entity entity, String command) {
 
-			if (entity.level() instanceof ServerLevel world) {
+			if (entity.level() instanceof ServerLevel level_server) {
 
-				entity.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, entity.position(), entity.getRotationVector(), world, 4, entity.getName().getString(), entity.getDisplayName(), entity.level().getServer(), entity), command);
+				level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, entity.position(), entity.getRotationVector(), level_server, 4, entity.getName().getString(), entity.getDisplayName(), level_server.getServer(), entity), command);
 
 			}
 
 		}
 
-		public static boolean result (LevelAccessor level, int posX, int posY, int posZ, String command) {
+		public static boolean result (ServerLevel level_server, int posX, int posY, int posZ, String command) {
 
 			StringBuilder result = new StringBuilder();
 
@@ -179,9 +158,7 @@ public class GameUtils {
 
 			};
 
-			if (level instanceof ServerLevel world)
-				world.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, new Vec3(posX, posY, posZ), Vec2.ZERO, world, 4, "", Component.literal(""), world.getServer(), null), command);
-
+			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null), command);
 			return result.toString().equals("pass");
 
 		}
@@ -214,12 +191,17 @@ public class GameUtils {
 
 			};
 
-			entity.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, entity.position(), entity.getRotationVector(), entity.level() instanceof ServerLevel ? (ServerLevel) entity.level() : null, 4, entity.getName().getString(), entity.getDisplayName(), entity.level().getServer(), entity), command);
+			if (entity.level() instanceof ServerLevel level_server) {
+
+				level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, entity.position(), entity.getRotationVector(), level_server, 4, entity.getName().getString(), entity.getDisplayName(), level_server.getServer(), entity), command);
+
+			}
+
 			return result.toString().equals("pass");
 
 		}
 
-		public static String resultCustom (LevelAccessor level, int posX, int posY, int posZ, String command) {
+		public static String resultCustom (ServerLevel level_server, int posX, int posY, int posZ, String command) {
 
 			StringBuilder result = new StringBuilder();
 
@@ -249,8 +231,7 @@ public class GameUtils {
 
 			};
 
-			if (level instanceof ServerLevel world)
-				world.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, new Vec3(posX, posY, posZ), Vec2.ZERO, world, 4, "", Component.literal(""), world.getServer(), null), command);
+			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null), command);
 			return result.toString();
 
 		}
@@ -259,29 +240,29 @@ public class GameUtils {
 
 	public static class score {
 
-		public static int get (LevelAccessor level, String objective, String player) {
+		public static int get (ServerLevel level_server, String objective, String player) {
 
-			ServerScoreboard score = level.getServer().getScoreboard();
+			ServerScoreboard score = level_server.getServer().getScoreboard();
 			Objective objective_get = score.getObjective(objective);
 
 			return score.getOrCreatePlayerScore(player, objective_get).getScore();
 
 		}
 
-		public static void set (LevelAccessor level, String objective, String player, int value) {
+		public static void set (ServerLevel level_server, String objective, String player, int value) {
 
-			ServerScoreboard score = level.getServer().getScoreboard();
+			ServerScoreboard score = level_server.getServer().getScoreboard();
 			Objective objective_get = score.getObjective(objective);
 
 			score.getOrCreatePlayerScore(player, objective_get).setScore(value);
 
 		}
 
-		public static void add (LevelAccessor level, String objective, String player, int value) {
+		public static void add (ServerLevel level_server, String objective, String player, int value) {
 
-			ServerScoreboard score = level.getServer().getScoreboard();
+			ServerScoreboard score = level_server.getServer().getScoreboard();
 			Objective objective_get = score.getObjective(objective);
-			int old_value = get(level, objective, player);
+			int old_value = get(level_server, objective, player);
 
 			score.getOrCreatePlayerScore(player, objective_get).setScore(old_value + value);
 
@@ -291,14 +272,16 @@ public class GameUtils {
 
 	public static class biome {
 
-		public static String toID(Holder<net.minecraft.world.level.biome.Biome> biome) {
+		public static String toID (Holder<Biome> biome) {
+
+			System.out.println(biome.get());
 
 			String return_text = biome.toString().replace("Reference{ResourceKey[minecraft:worldgen/biome / ", "");
 			return return_text.substring(0, return_text.indexOf("]"));
 
 		}
 
-		public static boolean isTaggedAs(Holder<net.minecraft.world.level.biome.Biome> biome, String tag) {
+		public static boolean isTaggedAs (Holder<Biome> biome, String tag) {
 
 			try {
 
@@ -382,15 +365,8 @@ public class GameUtils {
 
 		public static String toTextID (BlockState block) {
 
-			String return_text = toText(block);
-
-			if (return_text.endsWith("]") == true) {
-
-				return_text = return_text.substring(0, return_text.indexOf("["));
-
-			}
-
-			return return_text;
+			String return_text = block.getBlock().toString();
+			return return_text.substring("Block{".length(), return_text.length() - 1);
 
 		}
 
@@ -502,7 +478,57 @@ public class GameUtils {
 
 	}
 
-	public static class NBT {
+	public static class entity {
+
+		public static boolean isCreativeMode (Entity entity) {
+
+			if (entity instanceof Player player) {
+
+				return player.getAbilities().instabuild;
+
+			}
+
+			return false;
+
+		}
+
+		public static ItemStack itemGet (Entity entity, EquipmentSlot equipment_slot) {
+
+			if (entity instanceof LivingEntity living_entity) {
+
+				return living_entity.getItemBySlot(equipment_slot);
+
+			}
+
+			return ItemStack.EMPTY;
+
+		}
+
+		public static void itemCountSet (Entity entity, EquipmentSlot equipment_slot, int value) {
+
+			if (entity instanceof LivingEntity living_entity) {
+
+				ItemStack item = living_entity.getItemBySlot(equipment_slot);
+				item.setCount(value);
+
+			}
+
+		}
+
+		public static void itemCountAdd (Entity entity, EquipmentSlot equipment_slot, int value) {
+
+			if (entity instanceof LivingEntity living_entity) {
+
+				ItemStack item = living_entity.getItemBySlot(equipment_slot);
+				item.setCount(item.getCount() + value);
+
+			}
+
+		}
+
+	}
+
+	public static class nbt {
 
 		public static class entity {
 
@@ -582,13 +608,13 @@ public class GameUtils {
 
 		public static class block {
 
-			public static String getText (LevelAccessor level, BlockPos pos, String name) {
+			public static String getText (LevelAccessor level_accessor, BlockPos pos, String name) {
 
 				return new Object() {
 
-					public String getValue (LevelAccessor level, BlockPos pos, String name) {
+					public String getValue (LevelAccessor level_accessor, BlockPos pos, String name) {
 
-						BlockEntity blockEntity = level.getBlockEntity(pos);
+						BlockEntity blockEntity = level_accessor.getBlockEntity(pos);
 
 						if (blockEntity != null) {
 
@@ -600,17 +626,17 @@ public class GameUtils {
 
 					}
 
-				}.getValue(level, pos, name);
+				}.getValue(level_accessor, pos, name);
 
 			}
 
-			public static double getNumber (LevelAccessor level, BlockPos pos, String name) {
+			public static double getNumber (LevelAccessor level_accessor, BlockPos pos, String name) {
 
 				return new Object() {
 
-					public double getValue (LevelAccessor level, BlockPos pos, String name) {
+					public double getValue (LevelAccessor level_accessor, BlockPos pos, String name) {
 
-						BlockEntity blockEntity = level.getBlockEntity(pos);
+						BlockEntity blockEntity = level_accessor.getBlockEntity(pos);
 
 						if (blockEntity != null) {
 
@@ -622,43 +648,69 @@ public class GameUtils {
 
 					}
 
-				}.getValue(level, pos, name);
+				}.getValue(level_accessor, pos, name);
 
 			}
 
-			public static void setText (LevelAccessor level, BlockPos pos, String name, String value) {
+			public static boolean getLogic (LevelAccessor level_accessor, BlockPos pos, String name) {
 
-				BlockEntity block_entity = level.getBlockEntity(pos);
+				return new Object() {
+
+					public boolean getValue (LevelAccessor level_accessor, BlockPos pos, String name) {
+
+						BlockEntity blockEntity = level_accessor.getBlockEntity(pos);
+
+						if (blockEntity != null) {
+
+							return blockEntity.getPersistentData().getBoolean(name);
+
+						}
+
+						return false;
+
+					}
+
+				}.getValue(level_accessor, pos, name);
+
+			}
+
+			public static void setText (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String name, String value) {
+
+				BlockEntity block_entity = level_accessor.getBlockEntity(pos);
 
 				if (block_entity != null) {
 
 					block_entity.getPersistentData().putString(name, value);
-
-					if (level instanceof Level level_fix) {
-
-						BlockState block = level.getBlockState(pos);
-						level_fix.sendBlockUpdated(pos, block, block, 2);
-
-					}
+					BlockState block = level_accessor.getBlockState(pos);
+					level_server.sendBlockUpdated(pos, block, block, 2);
 
 				}
 
 			}
 
-			public static void setNumber (LevelAccessor level, BlockPos pos, String name, double value) {
+			public static void setNumber (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String name, double value) {
 
-				BlockEntity block_entity = level.getBlockEntity(pos);
+				BlockEntity block_entity = level_accessor.getBlockEntity(pos);
 
 				if (block_entity != null) {
 
 					block_entity.getPersistentData().putDouble(name, value);
+					BlockState block = level_accessor.getBlockState(pos);
+					level_server.sendBlockUpdated(pos, block, block, 2);
 
-					if (level instanceof Level level_fix) {
+				}
 
-						BlockState block = level.getBlockState(pos);
-						level_fix.sendBlockUpdated(pos, block, block, 2);
+			}
 
-					}
+			public static void setLogic (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String name, boolean value) {
+
+				BlockEntity block_entity = level_accessor.getBlockEntity(pos);
+
+				if (block_entity != null) {
+
+					block_entity.getPersistentData().putBoolean(name, value);
+					BlockState block = level_accessor.getBlockState(pos);
+					level_server.sendBlockUpdated(pos, block, block, 2);
 
 				}
 

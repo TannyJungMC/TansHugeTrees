@@ -1,6 +1,8 @@
 package tannyjung.tanshugetrees_handcode.config;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
+import org.apache.logging.log4j.core.jmx.Server;
 import tannyjung.core.MiscUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.GameUtils;
@@ -12,7 +14,7 @@ import java.io.FileReader;
 
 public class PackMessage {
 
-    public static void start (LevelAccessor level) {
+    public static void start (ServerLevel level_server) {
 
 		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack/message.txt");
 		StringBuilder message = new StringBuilder();
@@ -33,7 +35,7 @@ public class PackMessage {
 
             }
 
-            GameUtils.command.run(level, 0, 0, 0, message.toString());
+            GameUtils.command.run(level_server, 0, 0, 0, message.toString());
 
         }
 

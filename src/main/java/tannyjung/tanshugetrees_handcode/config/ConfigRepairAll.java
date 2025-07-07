@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.config;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_handcode.Handcode;
 ;
@@ -10,38 +11,34 @@ import java.util.concurrent.CompletableFuture;
 
 public class ConfigRepairAll {
 
-	public static void start (LevelAccessor level, boolean send_chat) {
+	public static void start (ServerLevel level_server, boolean send_chat) {
 
-		CompletableFuture.runAsync(() -> {
+		// Global
+		{
 
-			// Global
-			{
+			FileManager.createFolder(Handcode.directory_config + "/custom_packs/.organized");
+			ConfigMain.repair();
+			ConfigWorldGen.start();
+			CustomPackOrganized.start(level_server);
 
-				FileManager.createFolder(Handcode.directory_config + "/custom_packs/.organized");
-				ConfigMain.repair();
-				ConfigWorldGen.start();
-				CustomPackOrganized.start(level);
+		}
 
-			}
+		// World
+		{
 
-			// World
-			{
+			if (level_server != null) {
 
-				if (level != null) {
-
-					ConfigShapeFileConverter.repair();
-
-				}
+				ConfigShapeFileConverter.repair();
 
 			}
 
-			if (send_chat == true) {
+		}
 
-				GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Repaired The Config");
+		if (send_chat == true) {
 
-			}
+			GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Repaired The Config");
 
-		});
+		}
 
 	}
 

@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.config;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 
 import java.io.*;
@@ -22,32 +23,32 @@ public class UpdateRun {
 
 	public static boolean install_pause_systems = false;
 
-    public static void start (LevelAccessor level) {
+    public static void start (ServerLevel level_server) {
 
 		CompletableFuture.runAsync(() -> {
 
 			if (MiscUtils.isConnectedToInternet() == false) {
 
-				GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Can't update right now, as the mod can't connect to the internet.");
+				GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't update right now, as the mod can't connect to the internet.");
 
 			} else {
 
-				if (checkModVersion(level, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
+				if (checkModVersion(level_server, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
 
 					install_pause_systems = true;
 
 					TanshugetreesMod.queueServerWork(20, () -> {
 
-						GameUtils.misc.sendChatMessage(level, "@a", "white", "");
-						GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Started the installation, this may take a while.");
+						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+						GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
 
 						// Delete Old Folders
 						{
 
-							if (deleteOldPackFolder(level, Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack") == false) {
+							if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack") == false) {
 								return;
 							}
-							if (deleteOldPackFolder(level, Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Tree-Pack") == false) {
+							if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Tree-Pack") == false) {
 								return;
 							}
 
@@ -56,36 +57,36 @@ public class UpdateRun {
 						// Systems
 						{
 
-							if (createZIP(level) == false) {
+							if (createZIP(level_server) == false) {
 								return;
 							}
-							if (createZIP(level) == false) {
+							if (createZIP(level_server) == false) {
 								return;
 							}
-							if (download(level) == false) {
+							if (download(level_server) == false) {
 								return;
 							}
-							if (unzip(level) == false) {
+							if (unzip(level_server) == false) {
 								return;
 							}
-							if (deleteZIP(level) == false) {
+							if (deleteZIP(level_server) == false) {
 								return;
 							}
-							if (renameFolder(level) == false) {
+							if (renameFolder(level_server) == false) {
 								return;
 							}
 
 						}
 
-						GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Install Completed!");
+						GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Install Completed!");
 
-						ConfigRepairAll.start(level, true);
-						ConfigMain.apply(level);
+						ConfigRepairAll.start(level_server, true);
+						ConfigMain.apply(level_server);
 
-						GameUtils.misc.sendChatMessage(level, "@a", "white", "");
-						FileCount.start(level);
-						GameUtils.misc.sendChatMessage(level, "@a", "white", "");
-						PackMessage.start(level);
+						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+						FileCount.start(level_server);
+						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+						PackMessage.start(level_server);
 
 						install_pause_systems = false;
 
@@ -99,7 +100,7 @@ public class UpdateRun {
 
 	}
 
-	private static boolean checkModVersion (LevelAccessor level, String url) {
+	private static boolean checkModVersion (ServerLevel level_server, String url) {
 
 		boolean return_logic = true;
 		double data_structure_version_url = 0.0;
@@ -134,12 +135,12 @@ public class UpdateRun {
 		if (Handcode.data_structure_version_pack > data_structure_version_url) {
 
 			return_logic = false;
-			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to available.");
+			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to available.");
 
 		} else if (Handcode.data_structure_version_pack < data_structure_version_url) {
 
 			return_logic = false;
-			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : You're currently using mod version that does not support to new tree pack version, try update the mod and do it again.");
+			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : You're currently using mod version that does not support to new tree pack version, try update the mod and do it again.");
 
 		}
 
@@ -153,7 +154,7 @@ public class UpdateRun {
 
 	}
 
-	private static boolean deleteOldPackFolder (LevelAccessor level, String path) {
+	private static boolean deleteOldPackFolder (ServerLevel level_server, String path) {
 
 		if (new File(path).exists() == true) {
 
@@ -167,7 +168,7 @@ public class UpdateRun {
 
 			} catch (Exception ignored) {
 
-				GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+				GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 				return false;
 
 			}
@@ -178,7 +179,7 @@ public class UpdateRun {
 
 	}
 
-	private static boolean createZIP (LevelAccessor level) {
+	private static boolean createZIP (ServerLevel level_server) {
 
 		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip");
 		ZipOutputStream out = null;
@@ -190,7 +191,7 @@ public class UpdateRun {
 
 		} catch (Exception ignored) {
 
-			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 			return false;
 
 		}
@@ -199,7 +200,7 @@ public class UpdateRun {
 
 	}
 
-	private static boolean download (LevelAccessor level) {
+	private static boolean download (ServerLevel level_server) {
 
 		String download_from = "https://github.com/TannyJungMC/THT-tree_pack/archive/refs/heads/" + Handcode.tanny_pack_version_name.toLowerCase() + ".zip";
 		String download_to = Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip";
@@ -225,7 +226,7 @@ public class UpdateRun {
 
 		} catch (Exception ignored) {
 
-			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 			return false;
 
 		}
@@ -234,7 +235,7 @@ public class UpdateRun {
 
 	}
 
-	private static boolean unzip (LevelAccessor level) {
+	private static boolean unzip (ServerLevel level_server) {
 
 		File unzip = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip");
 		File unzip_to = new File(Handcode.directory_config + "/custom_packs");
@@ -255,7 +256,7 @@ public class UpdateRun {
 
 						if (!newFile.isDirectory() && !newFile.mkdirs()) {
 
-							GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+							GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 							return false;
 
 						}
@@ -268,7 +269,7 @@ public class UpdateRun {
 
 						if (!parent.isDirectory() && !parent.mkdirs()) {
 
-							GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+							GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 							return false;
 
 						}
@@ -297,7 +298,7 @@ public class UpdateRun {
 
 		} catch (Exception ignored) {
 
-			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 			return false;
 
 		}
@@ -306,7 +307,7 @@ public class UpdateRun {
 
 	}
 
-	private static boolean deleteZIP (LevelAccessor level) {
+	private static boolean deleteZIP (ServerLevel level_server) {
 
 		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip");
 
@@ -330,7 +331,7 @@ public class UpdateRun {
 
 			} catch (Exception ignored) {
 
-				GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+				GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 				return false;
 
 			}
@@ -341,14 +342,14 @@ public class UpdateRun {
 
 	}
 
-	private static boolean renameFolder (LevelAccessor level) {
+	private static boolean renameFolder (ServerLevel level_server) {
 
 		File rename_from = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-" + Handcode.tanny_pack_version_name.toLowerCase());
 		File rename_to = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack");
 
 		if (rename_from.renameTo(rename_to) == false) {
 
-			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 			return false;
 
 		}

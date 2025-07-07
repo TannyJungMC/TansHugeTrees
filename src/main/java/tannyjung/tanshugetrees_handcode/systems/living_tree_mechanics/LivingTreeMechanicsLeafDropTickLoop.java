@@ -1,6 +1,7 @@
 package tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,7 +12,8 @@ public class LivingTreeMechanicsLeafDropTickLoop {
 
     public static void start (Entity entity) {
 
-        LevelAccessor level = entity.level();
+        LevelAccessor level_accessor = entity.level();
+        ServerLevel level_server = (ServerLevel) entity.level();
         int posX = entity.getBlockX();
         int posY = entity.getBlockY();
         int posZ = entity.getBlockZ();
@@ -19,7 +21,7 @@ public class LivingTreeMechanicsLeafDropTickLoop {
         // If Area Loaded
         {
 
-            if (Handcode.version_1192 == false && GameUtils.command.result(level, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
+            if (Handcode.version_1192 == false && GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
 
                 return;
 
@@ -28,15 +30,15 @@ public class LivingTreeMechanicsLeafDropTickLoop {
         }
 
         BlockPos test_pos = new BlockPos(posX, posY, posZ);
-        BlockState test_block = level.getBlockState(test_pos);
+        BlockState test_block = level_accessor.getBlockState(test_pos);
 
-        if (GameUtils.block.isTaggedAs(test_block, "tanshugetrees:passable_blocks") == true && level.isWaterAt(test_pos) == false) {
+        if (GameUtils.block.isTaggedAs(test_block, "tanshugetrees:passable_blocks") == true && level_accessor.isWaterAt(test_pos) == false) {
 
             GameUtils.command.runEntity(entity, "tp ~ ~-0.1 ~");
 
         } else {
 
-            LeafLitter.start(level, posX, posY + 1, posZ, GameUtils.block.fromText(GameUtils.NBT.entity.getText(entity, "block")), false);
+            LeafLitter.start(level_server, posX, posY + 1, posZ, GameUtils.block.fromText(GameUtils.nbt.entity.getText(entity, "block")), false);
             GameUtils.command.runEntity(entity, "kill @s");
 
         }

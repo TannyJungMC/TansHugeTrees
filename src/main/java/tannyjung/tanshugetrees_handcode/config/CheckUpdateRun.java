@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.concurrent.CompletableFuture;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 
 import tannyjung.tanshugetrees.TanshugetreesMod;
@@ -18,13 +19,13 @@ import tannyjung.core.MiscUtils;
 
 public class CheckUpdateRun {
 
-    public static void start (LevelAccessor level) {
+    public static void start (ServerLevel level_server) {
 
 		CompletableFuture.runAsync(() -> {
 
 			if (MiscUtils.isConnectedToInternet() == false) {
 
-				GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Can't check for update right now, as the mod can't connect to the internet.");
+				GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't check for update right now, as the mod can't connect to the internet.");
 
 			} else {
 
@@ -118,7 +119,7 @@ public class CheckUpdateRun {
 
 						if (pack_version == url_pack_version) {
 
-							GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") is already up to date");
+							GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") is already up to date");
 
 						} else {
 
@@ -128,12 +129,12 @@ public class CheckUpdateRun {
 
 									if (ConfigMain.auto_update == true) {
 
-										GameUtils.misc.sendChatMessage(level, "@a", "gold", "THT : Detected new version for TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + "). Starting auto update...");
-										UpdateRun.start(level);
+										GameUtils.misc.sendChatMessage(level_server, "@a", "gold", "THT : Detected new version for TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + "). Starting auto update...");
+										UpdateRun.start(level_server);
 
 									} else {
 
-										GameUtils.command.run(level, 0, 0, 0, "tellraw @a [{\"text\":\"THT : Detected new version for TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + "). You can manual update by follow the guide in \",\"color\":\"gold\"},{\"text\":\"GitHub\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + github + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:air\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + github + "\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/TANSHUGETREES tanny_pack update\"}},{\"text\":\" to let the mod do it.\",\"color\":\"gold\"}]");
+										GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"THT : Detected new version for TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + "). You can manual update by follow the guide in \",\"color\":\"gold\"},{\"text\":\"GitHub\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + github + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:air\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + github + "\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/TANSHUGETREES tanny_pack update\"}},{\"text\":\" to let the mod do it.\",\"color\":\"gold\"}]");
 
 									}
 
@@ -141,7 +142,7 @@ public class CheckUpdateRun {
 
 							} else {
 
-								GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to available.");
+								GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to available.");
 								TanshugetreesMod.LOGGER.info("Your mod data structure version is " + Handcode.data_structure_version_pack + " but the pack is " + url_data_structure_version);
 
 							}
@@ -150,13 +151,13 @@ public class CheckUpdateRun {
 
 					} catch (Exception exception) {
 
-						GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Can't check the update right now, try again later.");
+						GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't check the update right now, try again later.");
 
 					}
 
 				} else {
 
-					GameUtils.command.run(level, 0, 0, 0, "tellraw @a [{\"text\":\"THT : Not detected TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") in the config folder. You can manual install by follow the guide in \",\"color\":\"gold\"},{\"text\":\"GitHub\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + github + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:air\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + github + "\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/TANSHUGETREES tanny_pack update\"}},{\"text\":\" to let the mod do it.\",\"color\":\"gold\"}]");
+					GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"THT : Not detected TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") in the config folder. You can manual install by follow the guide in \",\"color\":\"gold\"},{\"text\":\"GitHub\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + github + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:air\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + github + "\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/TANSHUGETREES tanny_pack update\"}},{\"text\":\" to let the mod do it.\",\"color\":\"gold\"}]");
 
 				}
 

@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.core.GameUtils;
@@ -8,21 +9,21 @@ public class SeasonDetector {
 
     private static int season_detector_tick = 0;
 
-    public static void start (LevelAccessor level) {
+    public static void start (ServerLevel level_server) {
 
         TanshugetreesMod.queueServerWork(20, () -> {
 
-           start(level);
+           start(level_server);
 
         });
 
-        int posX = level.getLevelData().getXSpawn();
-        int posZ = level.getLevelData().getZSpawn();
-        int posY = level.getMinBuildHeight() + 1;
+        int posX = level_server.getLevelData().getXSpawn();
+        int posZ = level_server.getLevelData().getZSpawn();
+        int posY = level_server.getMinBuildHeight() + 1;
 
         if (season_detector_tick == 1 || season_detector_tick == 3 || season_detector_tick == 5 || season_detector_tick == 7 || season_detector_tick == 9) {
 
-            GameUtils.command.run(level, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
+            GameUtils.command.run(level_server, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
 
             if (season_detector_tick == 9) {
 
@@ -60,8 +61,8 @@ public class SeasonDetector {
 
             if (season.equals("") == false) {
 
-                GameUtils.command.run(level, posX, posY, posZ, "setblock ~ ~ ~ command_block[facing=up]{command:\"TANSHUGETREES command season set " + season + "\"}");
-                GameUtils.command.run(level, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
+                GameUtils.command.run(level_server, posX, posY, posZ, "setblock ~ ~ ~ command_block[facing=up]{command:\"TANSHUGETREES command season set " + season + "\"}");
+                GameUtils.command.run(level_server, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
 
             }
 

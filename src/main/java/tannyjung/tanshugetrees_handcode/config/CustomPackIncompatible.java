@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.config;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import tannyjung.core.MiscUtils;
@@ -15,13 +16,13 @@ import java.nio.file.Path;
 
 public class CustomPackIncompatible {
 
-    public static void scanMain (LevelAccessor level) {
+    public static void scanMain (ServerLevel level_server) {
 
         for (File pack : new File(Handcode.directory_config + "/custom_packs").listFiles()) {
 
             if (pack.getName().equals(".organized") == false) {
 
-                testVersion(level, new File(pack.toPath() + "/version.txt"));
+                testVersion(level_server, new File(pack.toPath() + "/version.txt"));
 
             }
 
@@ -29,7 +30,7 @@ public class CustomPackIncompatible {
 
     }
 
-    public static void scanOrganized (LevelAccessor level) {
+    public static void scanOrganized (ServerLevel level_server) {
 
         File file = new File(Handcode.directory_config + "/custom_packs/.organized");
 
@@ -45,7 +46,7 @@ public class CustomPackIncompatible {
 
                             if (source.toFile().isDirectory() == false) {
 
-                                testTreeSettings(level, source);
+                                testTreeSettings(source);
 
                             }
 
@@ -65,7 +66,7 @@ public class CustomPackIncompatible {
 
     }
 
-    private static void testVersion (LevelAccessor level, File file) {
+    private static void testVersion (ServerLevel level_server, File file) {
 
         boolean incompatible = false;
 
@@ -82,7 +83,7 @@ public class CustomPackIncompatible {
                             if (Double.parseDouble(read_all.replace("data_structure_version = ", "")) != Handcode.data_structure_version_pack) {
 
                                 incompatible = true;
-                                GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Detected incompatible pack. Caused by unsupported mod version. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+                                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Detected incompatible pack. Caused by unsupported mod version. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
                                 break;
 
                             }
@@ -100,7 +101,7 @@ public class CustomPackIncompatible {
         } else {
 
             incompatible = true;
-            GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Detected incompatible pack. Caused by no version file. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+            GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Detected incompatible pack. Caused by no version file. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
 
         }
 
@@ -108,7 +109,7 @@ public class CustomPackIncompatible {
 
     }
 
-    private static void testTreeSettings (LevelAccessor level, Path source) {
+    private static void testTreeSettings (Path source) {
 
         boolean incompatible = false;
         String tree_settings = "";

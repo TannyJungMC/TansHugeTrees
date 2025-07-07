@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.config;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.FileManager;
@@ -310,7 +311,7 @@ public class ConfigMain {
 
 	}
 
-	public static void apply (LevelAccessor level) {
+	public static void apply (ServerLevel level_server) {
 
 		CompletableFuture.runAsync(() -> {
 
@@ -394,7 +395,7 @@ public class ConfigMain {
 
 			}
 
-			GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Applied The Config");
+			GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Applied The Config");
 
 		});
 

@@ -25,7 +25,7 @@ public class TreeLocation {
     public static String world_gen_overlay_details_biome = "";
     public static String world_gen_overlay_details_tree = "";
 
-    public static void start (LevelAccessor level, String dimension, ChunkPos chunk_pos) {
+    public static void start (LevelAccessor level_accessor, String dimension, ChunkPos chunk_pos) {
 
         int region_posX = chunk_pos.x >> 5;
         int region_posZ = chunk_pos.z >> 5;
@@ -90,9 +90,9 @@ public class TreeLocation {
                             chunk_posX = (region_posX * 32) + scanX;
                             chunk_posZ = (region_posZ * 32) + scanZ;
 
-                            if (level.hasChunk(chunk_posX, chunk_posZ) == false || (level.hasChunk(chunk_posX, chunk_posZ) == true && level.getChunk(chunk_posX, chunk_posZ).getStatus().isOrAfter(ChunkStatus.FULL)) == false) {
+                            if (level_accessor.hasChunk(chunk_posX, chunk_posZ) == false || (level_accessor.hasChunk(chunk_posX, chunk_posZ) == true && level_accessor.getChunk(chunk_posX, chunk_posZ).getStatus().isOrAfter(ChunkStatus.FULL)) == false) {
 
-                                getData(level, dimension, chunk_posX, chunk_posZ);
+                                getData(level_accessor, dimension, chunk_posX, chunk_posZ);
 
                             }
 
@@ -111,7 +111,7 @@ public class TreeLocation {
 
     }
 
-    private static void getData (LevelAccessor level, String dimension, int chunk_posX, int chunk_posZ) {
+    private static void getData (LevelAccessor level_accessor, String dimension, int chunk_posX, int chunk_posZ) {
 
         File file = new File(Handcode.directory_config + "/config/world_gen.txt");
 
@@ -172,7 +172,7 @@ public class TreeLocation {
                                             id = read_all.substring(read_all.indexOf("]") + 2).replace(" > ", "/");
                                             center_posX = (chunk_posX * 16) + (int) (Math.random() * 16);
                                             center_posZ = (chunk_posZ * 16) + (int) (Math.random() * 16);
-                                            biome_center = level.getBiome(new BlockPos(center_posX, level.getMaxBuildHeight(), center_posZ));
+                                            biome_center = level_accessor.getBiome(new BlockPos(center_posX, level_accessor.getMaxBuildHeight(), center_posZ));
 
                                             world_gen_overlay_details_biome = GameUtils.biome.toID(biome_center);
 
@@ -341,7 +341,7 @@ public class TreeLocation {
                                                 // Waterside Detection
                                                 {
 
-                                                    if (testWaterSide(level, center_posX, center_posZ, waterside_chance) == false) {
+                                                    if (testWaterSide(level_accessor, center_posX, center_posZ, waterside_chance) == false) {
 
                                                         return;
 
@@ -350,7 +350,7 @@ public class TreeLocation {
                                                 }
 
                                                 String tree_data = id + "|" + ground_block + "|" + start_height_offset + "|" + rotation + "|" + mirrored + "|" + dead_tree_chance + "|" + dead_tree_level;
-                                                readTreeFile(level, dimension, tree_data, center_posX, center_posZ);
+                                                readTreeFile(level_accessor, dimension, tree_data, center_posX, center_posZ);
 
                                                 // Group Spawning
                                                 {
@@ -366,7 +366,7 @@ public class TreeLocation {
                                                             // Biome
                                                             {
 
-                                                                biome_center = level.getBiome(new BlockPos(center_posX, level.getMaxBuildHeight(), center_posZ));
+                                                                biome_center = level_accessor.getBiome(new BlockPos(center_posX, level_accessor.getMaxBuildHeight(), center_posZ));
 
                                                                 if (MiscUtils.configTestBiome(biome_center, biome) == false) {
 
@@ -391,7 +391,7 @@ public class TreeLocation {
 
                                                             }
 
-                                                            readTreeFile(level, dimension, tree_data, center_posX, center_posZ);
+                                                            readTreeFile(level_accessor, dimension, tree_data, center_posX, center_posZ);
 
                                                         }
 
@@ -556,7 +556,7 @@ public class TreeLocation {
 
     }
 
-    private static boolean testWaterSide (LevelAccessor level, int center_posX, int center_posZ, double waterside_chance) {
+    private static boolean testWaterSide (LevelAccessor level_accessor, int center_posX, int center_posZ, double waterside_chance) {
 
         boolean return_logic = true;
 
@@ -567,10 +567,10 @@ public class TreeLocation {
                 if (Math.random() < waterside_chance) {
 
                     int size = ConfigMain.surrounding_area_detection_size;
-                    boolean waterside_test1 = GameUtils.biome.isTaggedAs(level.getBiome(new BlockPos(center_posX + size, level.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
-                    boolean waterside_test2 = GameUtils.biome.isTaggedAs(level.getBiome(new BlockPos(center_posX + size, level.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
-                    boolean waterside_test3 = GameUtils.biome.isTaggedAs(level.getBiome(new BlockPos(center_posX - size, level.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
-                    boolean waterside_test4 = GameUtils.biome.isTaggedAs(level.getBiome(new BlockPos(center_posX - size, level.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
+                    boolean waterside_test1 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX + size, level_accessor.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
+                    boolean waterside_test2 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX + size, level_accessor.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
+                    boolean waterside_test3 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX - size, level_accessor.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
+                    boolean waterside_test4 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX - size, level_accessor.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
 
                     if (waterside_test1 == false && waterside_test2 == false && waterside_test3 == false && waterside_test4 == false) {
 
@@ -588,7 +588,7 @@ public class TreeLocation {
 
     }
 
-    private static void readTreeFile (LevelAccessor level, String dimension, String tree_data, int center_posX, int center_posZ) {
+    private static void readTreeFile (LevelAccessor level_accessor, String dimension, String tree_data, int center_posX, int center_posZ) {
 
         String id = "";
         String ground_block = "";
@@ -892,7 +892,7 @@ public class TreeLocation {
 
                         for (int scanZ = from_chunkZ; scanZ <= to_chunkZ; scanZ++) {
 
-                            if (level.hasChunk(scanX, scanZ) == true && level.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.FEATURES) == true) {
+                            if (level_accessor.hasChunk(scanX, scanZ) == true && level_accessor.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.FEATURES) == true) {
 
                                 return;
 

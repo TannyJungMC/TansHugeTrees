@@ -1,6 +1,7 @@
 package tannyjung.tanshugetrees_handcode;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.LevelResource;
@@ -22,6 +23,8 @@ import tannyjung.tanshugetrees_handcode.config.ConfigRepairAll;
 import tannyjung.tanshugetrees_handcode.systems.Loop;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDetector;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFeature;
+
+import java.util.concurrent.CompletableFuture;
 
 @Mod.EventBusSubscriber
 public class Handcode {
@@ -55,42 +58,47 @@ public class Handcode {
 
 		}
 
-		ConfigRepairAll.start(null, false);
-		ConfigMain.apply(null);
+		CompletableFuture.runAsync(() -> {
+
+			ConfigRepairAll.start(null, false);
+			ConfigMain.apply(null);
+
+		});
 
 	}
 
 	@SubscribeEvent
 	public static void startWorld (ServerLifecycleEvent event) {
 
-		TanshugetreesModVariables.MapVariables.get(event.getServer().overworld()).version_1192 = version_1192;
-
-		LevelAccessor level = event.getServer().overworld();
+		ServerLevel level_server = event.getServer().overworld();
 		String world_path = String.valueOf(event.getServer().getWorldPath(new LevelResource(".")));
 		directory_world_data = world_path + "/data/tanshugetrees";
 		directory_world_generated = world_path + "/generated/tanshugetrees";
 
-		ConfigRepairAll.start(level, false);
-		ConfigMain.apply(level);
+		ConfigRepairAll.start(level_server, false);
+		ConfigMain.apply(level_server);
+
+		TanshugetreesModVariables.MapVariables.get(level_server).version_1192 = version_1192;
 
 	}
 
 	@SubscribeEvent
 	public static void playerJoin (PlayerEvent.PlayerLoggedInEvent event) {
 
-		LevelAccessor level = event.getEntity().level();
+		LevelAccessor level_accessor = event.getEntity().level();
+		ServerLevel level_server = (ServerLevel) event.getEntity().level();
 
-		if (GameUtils.misc.playerCount(level) == 1) {
+		if (GameUtils.misc.playerCount(level_server) == 1) {
 
-			Loop.start(level);
-			GameUtils.command.run(level, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
+			Loop.start(level_accessor, level_server);
+			GameUtils.command.run(level_server, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
 
 			// Season Detector
 			{
 
 				if (ConfigMain.serene_seasons_compatibility == true && ModList.get().isLoaded("sereneseasons") == true) {
 
-					SeasonDetector.start(level);
+					SeasonDetector.start(level_server);
 
 				}
 
@@ -100,7 +108,7 @@ public class Handcode {
 
 				if (ConfigMain.auto_check_update == true) {
 
-					CheckUpdateRun.start(level);
+					CheckUpdateRun.start(level_server);
 
 				}
 
