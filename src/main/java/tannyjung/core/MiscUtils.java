@@ -7,9 +7,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
 
 public class MiscUtils {
 
@@ -35,22 +34,17 @@ public class MiscUtils {
 
 		try {
 
-			URL test = new URI("https://www.google.com").toURL();
-			HttpURLConnection connection = (HttpURLConnection) test.openConnection();
-			connection.setRequestMethod("HEAD");
-			connection.setConnectTimeout(3000);
-			connection.setReadTimeout(3000);
-
-			int responseCode = connection.getResponseCode();
-			return (200 <= responseCode && responseCode < 400);
+			URL url = new URL("http://example.com");
+			URLConnection connection = url.openConnection();
+			connection.connect();
+			return true;
 
 		} catch (Exception exception) {
 
+			MiscUtils.exception(new Exception(), exception);
 			return false;
 
 		}
-
-		// return true;
 
 	}
 

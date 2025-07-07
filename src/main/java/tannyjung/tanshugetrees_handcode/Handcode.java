@@ -69,6 +69,7 @@ public class Handcode {
 		String world_path = String.valueOf(event.getServer().getWorldPath(new LevelResource(".")));
 		directory_world_data = world_path + "/data/tanshugetrees";
 		directory_world_generated = world_path + "/generated/tanshugetrees";
+
 		ConfigRepairAll.start(level, false);
 		ConfigMain.apply(level);
 
