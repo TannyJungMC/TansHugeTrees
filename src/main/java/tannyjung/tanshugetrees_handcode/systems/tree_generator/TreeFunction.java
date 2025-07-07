@@ -8,6 +8,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.core.MiscUtils;
+import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.GameUtils;
 ;
@@ -186,7 +187,17 @@ public class TreeFunction {
 
 									if (Math.random() < chance) {
 
-										GameUtils.command.run(level, posX, posY, posZ, command);
+										String command_final = command;
+
+										level.getServer().execute(() -> {
+
+											TanshugetreesMod.queueServerWork(200, () -> {
+
+												GameUtils.command.run(level, posX, posY, posZ, command_final);
+
+											});
+
+										});
 
 									}
 
