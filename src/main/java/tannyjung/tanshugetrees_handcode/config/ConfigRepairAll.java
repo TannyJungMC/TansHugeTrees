@@ -6,36 +6,42 @@ import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.FileManager;
 import tannyjung.core.GameUtils;
 
+import java.util.concurrent.CompletableFuture;
+
 public class ConfigRepairAll {
 
 	public static void start (LevelAccessor level, boolean send_chat) {
 
-		// Global
-		{
+		CompletableFuture.runAsync(() -> {
 
-			FileManager.createFolder(Handcode.directory_config + "/custom_packs/.organized");
-			ConfigMain.repair();
-			ConfigWorldGen.start();
-			CustomPackOrganized.start(level);
+			// Global
+			{
 
-		}
-
-		// World
-		{
-
-			if (level != null) {
-
-				ConfigShapeFileConverter.repair();
+				FileManager.createFolder(Handcode.directory_config + "/custom_packs/.organized");
+				ConfigMain.repair();
+				ConfigWorldGen.start();
+				CustomPackOrganized.start(level);
 
 			}
 
-		}
+			// World
+			{
 
-		if (send_chat == true) {
+				if (level != null) {
 
-			GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Repaired The Config");
+					ConfigShapeFileConverter.repair();
 
-		}
+				}
+
+			}
+
+			if (send_chat == true) {
+
+				GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Repaired The Config");
+
+			}
+
+		});
 
 	}
 

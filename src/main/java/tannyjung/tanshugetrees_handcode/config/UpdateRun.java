@@ -7,6 +7,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.concurrent.CompletableFuture;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -23,74 +24,78 @@ public class UpdateRun {
 
     public static void start (LevelAccessor level) {
 
-		if (MiscUtils.isConnectedToInternet() == false) {
+		CompletableFuture.runAsync(() -> {
 
-			GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Can't update right now, as no internet connection.");
+			if (MiscUtils.isConnectedToInternet() == false) {
 
-		} else {
+				GameUtils.misc.sendChatMessage(level, "@a", "red", "THT : Can't update right now, as the mod can't connect to the internet.");
 
-			if (checkModVersion(level, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
+			} else {
 
-				install_pause_systems = true;
+				if (checkModVersion(level, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
 
-				TanshugetreesMod.queueServerWork(20, () -> {
+					install_pause_systems = true;
 
-					GameUtils.misc.sendChatMessage(level, "@a", "white", "");
-					GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Started the installation, this may take a while.");
+					TanshugetreesMod.queueServerWork(20, () -> {
 
-					// Delete Old Folders
-					{
+						GameUtils.misc.sendChatMessage(level, "@a", "white", "");
+						GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Started the installation, this may take a while.");
 
-						if (deleteOldPackFolder(level, Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack") == false) {
-							return;
-						}
-						if (deleteOldPackFolder(level, Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Tree-Pack") == false) {
-							return;
-						}
+						// Delete Old Folders
+						{
 
-					}
+							if (deleteOldPackFolder(level, Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack") == false) {
+								return;
+							}
+							if (deleteOldPackFolder(level, Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Tree-Pack") == false) {
+								return;
+							}
 
-					// Systems
-					{
-
-						if (createZIP(level) == false) {
-							return;
-						}
-						if (createZIP(level) == false) {
-							return;
-						}
-						if (download(level) == false) {
-							return;
-						}
-						if (unzip(level) == false) {
-							return;
-						}
-						if (deleteZIP(level) == false) {
-							return;
-						}
-						if (renameFolder(level) == false) {
-							return;
 						}
 
-					}
+						// Systems
+						{
 
-					GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Install Completed!");
+							if (createZIP(level) == false) {
+								return;
+							}
+							if (createZIP(level) == false) {
+								return;
+							}
+							if (download(level) == false) {
+								return;
+							}
+							if (unzip(level) == false) {
+								return;
+							}
+							if (deleteZIP(level) == false) {
+								return;
+							}
+							if (renameFolder(level) == false) {
+								return;
+							}
 
-					ConfigRepairAll.start(level, true);
-					ConfigMain.apply(level);
+						}
 
-					GameUtils.misc.sendChatMessage(level, "@a", "white", "");
-					FileCount.start(level);
-					GameUtils.misc.sendChatMessage(level, "@a", "white", "");
-					PackMessage.start(level);
+						GameUtils.misc.sendChatMessage(level, "@a", "gray", "THT : Install Completed!");
 
-					install_pause_systems = false;
+						ConfigRepairAll.start(level, true);
+						ConfigMain.apply(level);
 
-				});
+						GameUtils.misc.sendChatMessage(level, "@a", "white", "");
+						FileCount.start(level);
+						GameUtils.misc.sendChatMessage(level, "@a", "white", "");
+						PackMessage.start(level);
+
+						install_pause_systems = false;
+
+					});
+
+				}
 
 			}
 
-		}
+		});
 
 	}
 
