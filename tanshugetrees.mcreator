@@ -135,41 +135,6 @@
       "path": "~/Tree Generator"
     },
     {
-      "name": "TxtFunction",
-      "type": "procedure",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "txt_function",
-      "metadata": {
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/procedures/TxtFunctionProcedure.java"
-        ],
-        "dependencies": [
-          {
-            "name": "arguments",
-            "type": "cmdcontext"
-          },
-          {
-            "name": "x",
-            "type": "number"
-          },
-          {
-            "name": "y",
-            "type": "number"
-          },
-          {
-            "name": "z",
-            "type": "number"
-          },
-          {
-            "name": "world",
-            "type": "world"
-          }
-        ]
-      },
-      "path": "~/. Other/Command"
-    },
-    {
       "name": "WaypointFlower",
       "type": "block",
       "compiles": true,

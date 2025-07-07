@@ -1,6 +1,5 @@
 package tannyjung.tanshugetrees.command;
 
-import tannyjung.tanshugetrees.procedures.TxtFunctionProcedure;
 import tannyjung.tanshugetrees.procedures.COMMANDSeasonSetWinterProcedure;
 import tannyjung.tanshugetrees.procedures.COMMANDSeasonSetSummerProcedure;
 import tannyjung.tanshugetrees.procedures.COMMANDSeasonSetSpringProcedure;
@@ -22,10 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.Direction;
-import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.commands.Commands;
-
-import com.mojang.brigadier.arguments.StringArgumentType;
 
 @Mod.EventBusSubscriber
 public class COMMANDCommand {
@@ -87,21 +83,7 @@ public class COMMANDCommand {
 
 			COMMANDConfigApplyProcedure.execute(world, x, y, z, entity);
 			return 0;
-		}))).then(Commands.literal("command").then(Commands.literal("txt_function").then(Commands.argument("file", StringArgumentType.word()).then(Commands.argument("folder", MessageArgument.message()).executes(arguments -> {
-			Level world = arguments.getSource().getUnsidedLevel();
-			double x = arguments.getSource().getPosition().x();
-			double y = arguments.getSource().getPosition().y();
-			double z = arguments.getSource().getPosition().z();
-			Entity entity = arguments.getSource().getEntity();
-			if (entity == null && world instanceof ServerLevel _servLevel)
-				entity = FakePlayerFactory.getMinecraft(_servLevel);
-			Direction direction = Direction.DOWN;
-			if (entity != null)
-				direction = entity.getDirection();
-
-			TxtFunctionProcedure.execute(world, x, y, z, arguments);
-			return 0;
-		})))).then(Commands.literal("season").then(Commands.literal("get").executes(arguments -> {
+		}))).then(Commands.literal("command").then(Commands.literal("season").then(Commands.literal("get").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
 			double x = arguments.getSource().getPosition().x();
 			double y = arguments.getSource().getPosition().y();
