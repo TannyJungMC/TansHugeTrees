@@ -14,11 +14,11 @@ import java.io.File;
 
 public class Sapling {
 
-    public static void click (ServerLevel level_server, Entity entity, double posX, double posY, double posZ) {
+    public static void click (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, double posX, double posY, double posZ) {
 
         BlockPos pos = new BlockPos((int) posX, (int) posY, (int) posZ);
 
-        if (GameUtils.nbt.block.getLogic(level_server, pos, "start") == false) {
+        if (GameUtils.nbt.block.getLogic(level_accessor, pos, "start") == false) {
 
             if (GameUtils.entity.itemGet(entity, EquipmentSlot.MAINHAND).is(Items.BONE_MEAL) == true) {
 
@@ -36,12 +36,12 @@ public class Sapling {
                 // Checking Preset Inside
                 {
 
-                    if (level_server.getBlockState(pos).getBlock() == TanshugetreesModBlocks.RANDOM_TREE_BLOCK.get()) {
+                    if (level_accessor.getBlockState(pos).getBlock() == TanshugetreesModBlocks.RANDOM_TREE_BLOCK.get()) {
 
                         // Custom Tree
                         {
 
-                            if (GameUtils.nbt.block.getNumber(level_server, pos, "generate_speed_tick") == 0) {
+                            if (GameUtils.nbt.block.getNumber(level_accessor, pos, "generate_speed_tick") == 0) {
 
                                 cancel();
 
@@ -54,9 +54,8 @@ public class Sapling {
                         // General
                         {
 
-                            File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/TannyJung-Tree-Pack/" + level_server.getBlockState(pos).getBlock() + ".txt");
-
-                            System.out.println(level_server.getBlockState(pos).getBlock());
+                            String blockID = GameUtils.block.toTextID(level_accessor.getBlockState(pos));
+                            File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/TannyJung-Tree-Pack/" + blockID.substring(blockID.indexOf(":") + 1) + ".txt");
 
                             if (file.exists() == false) {
 
