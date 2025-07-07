@@ -448,11 +448,15 @@ public class GameUtils {
 
 			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
 
-			if (property instanceof BooleanProperty property_instance) {
+            if (block.hasProperty(property) == true) {
 
-				block = block.setValue(property_instance, value);
+                if (property instanceof BooleanProperty property_instance) {
 
-			}
+                    block = block.setValue(property_instance, value);
+
+                }
+
+            }
 
 			return block;
 
@@ -462,11 +466,15 @@ public class GameUtils {
 
 			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
 
-			if (property instanceof IntegerProperty property_instance) {
+            if (block.hasProperty(property) == true) {
 
-				block = block.setValue(property_instance, value);
+                if (property instanceof IntegerProperty property_instance) {
 
-			}
+                    block = block.setValue(property_instance, value);
+
+                }
+
+            }
 
 			return block;
 
@@ -476,11 +484,16 @@ public class GameUtils {
 
 			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
 
-			if (property instanceof EnumProperty property_instance) {
+            if (block.hasProperty(property) == true) {
 
-				block = block.setValue(property_instance, value);
+                if (property instanceof EnumProperty property_instance) {
 
-			}
+
+                    block = block.setValue(property_instance, value);
+
+                }
+
+            }
 
 			return block;
 
