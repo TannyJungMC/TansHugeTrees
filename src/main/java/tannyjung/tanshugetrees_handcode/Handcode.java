@@ -88,7 +88,7 @@ public class Handcode {
 		LevelAccessor level_accessor = event.getEntity().level();
 		ServerLevel level_server = (ServerLevel) event.getEntity().level();
 
-		if (GameUtils.misc.playerCount(level_server) == 1) {
+		if (GameUtils.misc.playerCount() == 1) {
 
 			Loop.start(level_accessor, level_server);
 			GameUtils.command.run(level_server, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");

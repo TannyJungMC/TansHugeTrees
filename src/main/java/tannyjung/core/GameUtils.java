@@ -50,7 +50,7 @@ public class GameUtils {
 
 		}
 
-		public static int playerCount (ServerLevel level_server) {
+		public static int playerCount () {
 
 			return ServerLifecycleHooks.getCurrentServer().getPlayerCount();
 

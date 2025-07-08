@@ -17,7 +17,7 @@ public class Loop {
 
     public static void start (LevelAccessor level_accessor, ServerLevel level_server) {
 
-        if (GameUtils.misc.playerCount(level_server) > 0) {
+        if (GameUtils.misc.playerCount() > 0) {
 
             TanshugetreesMod.queueServerWork(1, () -> {
 
@@ -113,7 +113,7 @@ public class Loop {
 
                             if (GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_location]") == true) {
 
-                                GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_location,limit=1,sort=random] at @s run TANSHUGETREES dev living_tree_mechanics loop_tick");
+                                GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_location,limit=1,sort=random] at @s run TANSHUGETREES dev living_tree_mechanics main");
 
                             }
 
@@ -130,7 +130,7 @@ public class Loop {
 
                 if (GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_drop]") == true) {
 
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-leaf_drop] at @s run TANSHUGETREES dev living_tree_mechanics leaf_drop_loop_tick");
+                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-leaf_drop] at @s run TANSHUGETREES dev living_tree_mechanics leaf_drop");
 
                 }
 
@@ -141,7 +141,7 @@ public class Loop {
 
                 if (GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_litter_remover]") == true) {
 
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-leaf_litter_remover] at @s run TANSHUGETREES dev living_tree_mechanics leaf_litter_remover_loop_tick");
+                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-leaf_litter_remover] at @s run TANSHUGETREES dev living_tree_mechanics leaf_litter_remover");
 
                 }
 
