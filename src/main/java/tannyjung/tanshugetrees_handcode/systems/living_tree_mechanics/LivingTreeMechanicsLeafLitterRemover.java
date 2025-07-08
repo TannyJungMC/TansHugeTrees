@@ -5,10 +5,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import org.apache.logging.log4j.core.jmx.Server;
 import tannyjung.core.GameUtils;
 
-public class LivingTreeMechanicsLeafLitterRemoverTickLoop {
+public class LivingTreeMechanicsLeafLitterRemover {
 
     public static void start (Entity entity) {
 

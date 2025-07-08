@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.GameUtils;
 
-public class LivingTreeMechanicsLeafDropTickLoop {
+public class LivingTreeMechanicsLeafDrop {
 
     public static void start (Entity entity) {
 

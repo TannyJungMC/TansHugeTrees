@@ -1575,63 +1575,6 @@
       "path": "~/Living Tree Mechanics"
     },
     {
-      "name": "COMMANDLivingTreeMechanicsLoopTick",
-      "type": "procedure",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "command_living_tree_mechanics_loop_tick",
-      "metadata": {
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDLivingTreeMechanicsLoopTickProcedure.java"
-        ],
-        "dependencies": [
-          {
-            "name": "entity",
-            "type": "entity"
-          }
-        ]
-      },
-      "path": "~/Living Tree Mechanics"
-    },
-    {
-      "name": "COMMANDLivingTreeMechanicsLeafDropLoopTick",
-      "type": "procedure",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "command_living_tree_mechanics_leaf_drop_loop_tick",
-      "metadata": {
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDLivingTreeMechanicsLeafDropLoopTickProcedure.java"
-        ],
-        "dependencies": [
-          {
-            "name": "entity",
-            "type": "entity"
-          }
-        ]
-      },
-      "path": "~/Living Tree Mechanics"
-    },
-    {
-      "name": "COMMANDLivingTreeMechanicsLeafLitterRemoverLoopTick",
-      "type": "procedure",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "command_living_tree_mechanics_leaf_litter_remover_loop_tick",
-      "metadata": {
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDLivingTreeMechanicsLeafLitterRemoverLoopTickProcedure.java"
-        ],
-        "dependencies": [
-          {
-            "name": "entity",
-            "type": "entity"
-          }
-        ]
-      },
-      "path": "~/Living Tree Mechanics"
-    },
-    {
       "name": "COMMANDConfigApply",
       "type": "procedure",
       "compiles": true,
@@ -2127,6 +2070,63 @@
         ]
       },
       "path": "~/Shape File Converter"
+    },
+    {
+      "name": "COMMANDLivingTreeMechanicsLeafDrop",
+      "type": "procedure",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "command_living_tree_mechanics_leaf_drop",
+      "metadata": {
+        "dependencies": [
+          {
+            "name": "entity",
+            "type": "entity"
+          }
+        ],
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDLivingTreeMechanicsLeafDropProcedure.java"
+        ]
+      },
+      "path": "~/Living Tree Mechanics"
+    },
+    {
+      "name": "COMMANDLivingTreeMechanicsLeafLitterRemover",
+      "type": "procedure",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "command_living_tree_mechanics_leaf_litter_remover",
+      "metadata": {
+        "dependencies": [
+          {
+            "name": "entity",
+            "type": "entity"
+          }
+        ],
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDLivingTreeMechanicsLeafLitterRemoverProcedure.java"
+        ]
+      },
+      "path": "~/Living Tree Mechanics"
+    },
+    {
+      "name": "COMMANDLivingTreeMechanicsMain",
+      "type": "procedure",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "command_living_tree_mechanics_main",
+      "metadata": {
+        "dependencies": [
+          {
+            "name": "entity",
+            "type": "entity"
+          }
+        ],
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDLivingTreeMechanicsMainProcedure.java"
+        ]
+      },
+      "path": "~/Living Tree Mechanics"
     }
   ],
   "variable_elements": [

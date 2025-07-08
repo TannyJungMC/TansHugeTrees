@@ -1,8 +1,8 @@
 package tannyjung.tanshugetrees.command;
 
-import tannyjung.tanshugetrees.procedures.COMMANDLivingTreeMechanicsLoopTickProcedure;
-import tannyjung.tanshugetrees.procedures.COMMANDLivingTreeMechanicsLeafLitterRemoverLoopTickProcedure;
-import tannyjung.tanshugetrees.procedures.COMMANDLivingTreeMechanicsLeafDropLoopTickProcedure;
+import tannyjung.tanshugetrees.procedures.COMMANDLivingTreeMechanicsMainProcedure;
+import tannyjung.tanshugetrees.procedures.COMMANDLivingTreeMechanicsLeafLitterRemoverProcedure;
+import tannyjung.tanshugetrees.procedures.COMMANDLivingTreeMechanicsLeafDropProcedure;
 
 import org.checkerframework.checker.units.qual.s;
 
@@ -21,7 +21,7 @@ import net.minecraft.commands.Commands;
 public class COMMANDLivingTreeMechanicsCommand {
 	@SubscribeEvent
 	public static void registerCommand(RegisterCommandsEvent event) {
-		event.getDispatcher().register(Commands.literal("TANSHUGETREES").requires(s -> s.hasPermission(2)).then(Commands.literal("dev").then(Commands.literal("living_tree_mechanics").then(Commands.literal("loop_tick").executes(arguments -> {
+		event.getDispatcher().register(Commands.literal("TANSHUGETREES").requires(s -> s.hasPermission(2)).then(Commands.literal("dev").then(Commands.literal("living_tree_mechanics").then(Commands.literal("main").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
 			double x = arguments.getSource().getPosition().x();
 			double y = arguments.getSource().getPosition().y();
@@ -33,9 +33,9 @@ public class COMMANDLivingTreeMechanicsCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			COMMANDLivingTreeMechanicsLoopTickProcedure.execute(entity);
+			COMMANDLivingTreeMechanicsMainProcedure.execute(entity);
 			return 0;
-		})).then(Commands.literal("leaf_drop_loop_tick").executes(arguments -> {
+		})).then(Commands.literal("leaf_drop").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
 			double x = arguments.getSource().getPosition().x();
 			double y = arguments.getSource().getPosition().y();
@@ -47,9 +47,9 @@ public class COMMANDLivingTreeMechanicsCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			COMMANDLivingTreeMechanicsLeafDropLoopTickProcedure.execute(entity);
+			COMMANDLivingTreeMechanicsLeafDropProcedure.execute(entity);
 			return 0;
-		})).then(Commands.literal("leaf_litter_remover_loop_tick").executes(arguments -> {
+		})).then(Commands.literal("leaf_litter_remover").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
 			double x = arguments.getSource().getPosition().x();
 			double y = arguments.getSource().getPosition().y();
@@ -61,7 +61,7 @@ public class COMMANDLivingTreeMechanicsCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			COMMANDLivingTreeMechanicsLeafLitterRemoverLoopTickProcedure.execute(entity);
+			COMMANDLivingTreeMechanicsLeafLitterRemoverProcedure.execute(entity);
 			return 0;
 		})))));
 	}
