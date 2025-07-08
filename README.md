@@ -3,15 +3,15 @@ This is the backup of this mod. To open this, use IntelliJ (Recommended), or use
 # How To Use
 
 For IntelliJ
-- To run client or server. Go to "Gradle" tab at right side, select `Tasks / forgegradle runs / runClient or runServer`.
-- To export the mod to JAR format. Go to "Gradle" tab at right side, select `Tasks / build / build`. The exported file will be in project folder `build > libs`.
+- To run client or server. Go to "Gradle" tab at right side, select `Tasks > forgegradle runs > runClient or runServer`.
+- To export the mod to JAR format. Go to "Gradle" tab at right side, select `Tasks > build > build`. The exported file will be in project folder `build > libs`.
 
 For MCreator
 - Open this by using MCreator the same version as the branch name, with plugins I put in the folder. Then select open project, when on file selection screen, select "XXX.mcreator".
 
 # Terms of Use
 
-- You can use my mods in your modpacks, videos, and custom maps. You can also put credit to mod page and supporting me by donate, as appropriate.
+- You can use my mods in your modpacks, videos, and custom maps. Just put credit to the mod page or my name. You can also support me by donate, as appropriate.
 - Suggestions and requests is not open for all my mods, except contents in the custom packs that's half open.
 - Source code is open publicly. You can read, study, and edit my codes privately. But do not suggest about your edit, and publish your own edit.
 
