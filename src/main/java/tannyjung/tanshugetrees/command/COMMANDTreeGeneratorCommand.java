@@ -1,7 +1,6 @@
 package tannyjung.tanshugetrees.command;
 
-import tannyjung.tanshugetrees.procedures.RandomTreeTickPartCreateBlockConnectorTestProcedure;
-import tannyjung.tanshugetrees.procedures.COMMANDTreeGeneratorLoopTickProcedure;
+import tannyjung.tanshugetrees.procedures.COMMANDTreeGeneratorRunProcedure;
 
 import org.checkerframework.checker.units.qual.s;
 
@@ -14,14 +13,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.Direction;
-import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.Commands;
 
 @Mod.EventBusSubscriber
 public class COMMANDTreeGeneratorCommand {
 	@SubscribeEvent
 	public static void registerCommand(RegisterCommandsEvent event) {
-		event.getDispatcher().register(Commands.literal("TANSHUGETREES").requires(s -> s.hasPermission(2)).then(Commands.literal("dev").then(Commands.literal("tree_generator").then(Commands.literal("loop_tick").executes(arguments -> {
+		event.getDispatcher().register(Commands.literal("TANSHUGETREES").requires(s -> s.hasPermission(2)).then(Commands.literal("dev").then(Commands.literal("tree_generator").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();
 			double x = arguments.getSource().getPosition().x();
 			double y = arguments.getSource().getPosition().y();
@@ -33,23 +31,9 @@ public class COMMANDTreeGeneratorCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			COMMANDTreeGeneratorLoopTickProcedure.execute(world, x, y, z, entity);
+			COMMANDTreeGeneratorRunProcedure.execute(world, x, y, z, entity);
 			return 0;
-		})).then(Commands.literal("block_connector").then(Commands.argument("pos", BlockPosArgument.blockPos()).executes(arguments -> {
-			Level world = arguments.getSource().getUnsidedLevel();
-			double x = arguments.getSource().getPosition().x();
-			double y = arguments.getSource().getPosition().y();
-			double z = arguments.getSource().getPosition().z();
-			Entity entity = arguments.getSource().getEntity();
-			if (entity == null && world instanceof ServerLevel _servLevel)
-				entity = FakePlayerFactory.getMinecraft(_servLevel);
-			Direction direction = Direction.DOWN;
-			if (entity != null)
-				direction = entity.getDirection();
-
-			RandomTreeTickPartCreateBlockConnectorTestProcedure.execute(arguments, entity);
-			return 0;
-		}))))));
+		}))));
 	}
 
 }

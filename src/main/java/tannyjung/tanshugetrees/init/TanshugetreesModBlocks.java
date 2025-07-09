@@ -4,23 +4,9 @@
 package tannyjung.tanshugetrees.init;
 
 import tannyjung.tanshugetrees.block.YokaiBlock;
-import tannyjung.tanshugetrees.block.WhiteFairyBlock;
-import tannyjung.tanshugetrees.block.WendyBlock;
 import tannyjung.tanshugetrees.block.WaypointFlowerBlock;
-import tannyjung.tanshugetrees.block.TheAspirantBlock;
-import tannyjung.tanshugetrees.block.SnowlandBlock;
-import tannyjung.tanshugetrees.block.SnowWhiteBlock;
-import tannyjung.tanshugetrees.block.SkyIslandChainBlock;
-import tannyjung.tanshugetrees.block.RustBlock;
-import tannyjung.tanshugetrees.block.RedwoodBlock;
-import tannyjung.tanshugetrees.block.RandomTreeBlockBlock;
-import tannyjung.tanshugetrees.block.OldWitchBlock;
-import tannyjung.tanshugetrees.block.MalusDomesticaBlock;
-import tannyjung.tanshugetrees.block.LegionBlock;
+import tannyjung.tanshugetrees.block.RandomTreeBlock;
 import tannyjung.tanshugetrees.block.HalcyonBlock;
-import tannyjung.tanshugetrees.block.GiantPumpkinBlock;
-import tannyjung.tanshugetrees.block.FalconBlock;
-import tannyjung.tanshugetrees.block.ChristmasTreeBlock;
 import tannyjung.tanshugetrees.block.BlockPlacerTwigOuterBlock;
 import tannyjung.tanshugetrees.block.BlockPlacerTwigInnerBlock;
 import tannyjung.tanshugetrees.block.BlockPlacerTwigCoreBlock;
@@ -53,11 +39,6 @@ import tannyjung.tanshugetrees.block.BlockPlacerBranchCoreBlock;
 import tannyjung.tanshugetrees.block.BlockPlacerBoughOuterBlock;
 import tannyjung.tanshugetrees.block.BlockPlacerBoughInnerBlock;
 import tannyjung.tanshugetrees.block.BlockPlacerBoughCoreBlock;
-import tannyjung.tanshugetrees.block.BeekeeperBlock;
-import tannyjung.tanshugetrees.block.BeanstalkBlock;
-import tannyjung.tanshugetrees.block.BaobabBlock;
-import tannyjung.tanshugetrees.block.ArtOfVinesBlock;
-import tannyjung.tanshugetrees.block.AgathosBlock;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 
 import net.minecraftforge.registries.RegistryObject;
@@ -68,25 +49,8 @@ import net.minecraft.world.level.block.Block;
 
 public class TanshugetreesModBlocks {
 	public static final DeferredRegister<Block> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, TanshugetreesMod.MODID);
-	public static final RegistryObject<Block> RANDOM_TREE_BLOCK = REGISTRY.register("random_tree_block", () -> new RandomTreeBlockBlock());
 	public static final RegistryObject<Block> WAYPOINT_FLOWER = REGISTRY.register("waypoint_flower", () -> new WaypointFlowerBlock());
 	public static final RegistryObject<Block> YOKAI = REGISTRY.register("yokai", () -> new YokaiBlock());
-	public static final RegistryObject<Block> FALCON = REGISTRY.register("falcon", () -> new FalconBlock());
-	public static final RegistryObject<Block> WENDY = REGISTRY.register("wendy", () -> new WendyBlock());
-	public static final RegistryObject<Block> SNOWLAND = REGISTRY.register("snowland", () -> new SnowlandBlock());
-	public static final RegistryObject<Block> ART_OF_VINES = REGISTRY.register("art_of_vines", () -> new ArtOfVinesBlock());
-	public static final RegistryObject<Block> BEANSTALK = REGISTRY.register("beanstalk", () -> new BeanstalkBlock());
-	public static final RegistryObject<Block> BEEKEEPER = REGISTRY.register("beekeeper", () -> new BeekeeperBlock());
-	public static final RegistryObject<Block> CHRISTMAS_TREE = REGISTRY.register("christmas_tree", () -> new ChristmasTreeBlock());
-	public static final RegistryObject<Block> MALUS_DOMESTICA = REGISTRY.register("malus_domestica", () -> new MalusDomesticaBlock());
-	public static final RegistryObject<Block> RUST = REGISTRY.register("rust", () -> new RustBlock());
-	public static final RegistryObject<Block> THE_ASPIRANT = REGISTRY.register("the_aspirant", () -> new TheAspirantBlock());
-	public static final RegistryObject<Block> LEGION = REGISTRY.register("legion", () -> new LegionBlock());
-	public static final RegistryObject<Block> OLD_WITCH = REGISTRY.register("old_witch", () -> new OldWitchBlock());
-	public static final RegistryObject<Block> SNOW_WHITE = REGISTRY.register("snow_white", () -> new SnowWhiteBlock());
-	public static final RegistryObject<Block> SKY_ISLAND_CHAIN = REGISTRY.register("sky_island_chain", () -> new SkyIslandChainBlock());
-	public static final RegistryObject<Block> HALCYON = REGISTRY.register("halcyon", () -> new HalcyonBlock());
-	public static final RegistryObject<Block> WHITE_FAIRY = REGISTRY.register("white_fairy", () -> new WhiteFairyBlock());
 	public static final RegistryObject<Block> BLOCK_PLACER_TAPROOT_OUTER = REGISTRY.register("block_placer_taproot_outer", () -> new BlockPlacerTaprootOuterBlock());
 	public static final RegistryObject<Block> BLOCK_PLACER_TAPROOT_INNER = REGISTRY.register("block_placer_taproot_inner", () -> new BlockPlacerTaprootInnerBlock());
 	public static final RegistryObject<Block> BLOCK_PLACER_TAPROOT_CORE = REGISTRY.register("block_placer_taproot_core", () -> new BlockPlacerTaprootCoreBlock());
@@ -109,10 +73,6 @@ public class TanshugetreesModBlocks {
 	public static final RegistryObject<Block> BLOCK_PLACER_TWIG_INNER = REGISTRY.register("block_placer_twig_inner", () -> new BlockPlacerTwigInnerBlock());
 	public static final RegistryObject<Block> BLOCK_PLACER_TWIG_OUTER = REGISTRY.register("block_placer_twig_outer", () -> new BlockPlacerTwigOuterBlock());
 	public static final RegistryObject<Block> BLOCK_PLACER_LEAVES_2 = REGISTRY.register("block_placer_leaves_2", () -> new BlockPlacerLeaves2Block());
-	public static final RegistryObject<Block> AGATHOS = REGISTRY.register("agathos", () -> new AgathosBlock());
-	public static final RegistryObject<Block> REDWOOD = REGISTRY.register("redwood", () -> new RedwoodBlock());
-	public static final RegistryObject<Block> BAOBAB = REGISTRY.register("baobab", () -> new BaobabBlock());
-	public static final RegistryObject<Block> GIANT_PUMPKIN = REGISTRY.register("giant_pumpkin", () -> new GiantPumpkinBlock());
 	public static final RegistryObject<Block> BLOCK_PLACER_LEAVES_1 = REGISTRY.register("block_placer_leaves_1", () -> new BlockPlacerLeaves1Block());
 	public static final RegistryObject<Block> BLOCK_PLACER_SPRIG_CORE = REGISTRY.register("block_placer_sprig_core", () -> new BlockPlacerSprigCoreBlock());
 	public static final RegistryObject<Block> BLOCK_PLACER_SPRIG_INNER = REGISTRY.register("block_placer_sprig_inner", () -> new BlockPlacerSprigInnerBlock());
@@ -123,6 +83,8 @@ public class TanshugetreesModBlocks {
 	public static final RegistryObject<Block> BLOCK_PLACER_LIMB_CORE = REGISTRY.register("block_placer_limb_core", () -> new BlockPlacerLimbCoreBlock());
 	public static final RegistryObject<Block> BLOCK_PLACER_LIMB_INNER = REGISTRY.register("block_placer_limb_inner", () -> new BlockPlacerLimbInnerBlock());
 	public static final RegistryObject<Block> BLOCK_PLACER_LIMB_OUTER = REGISTRY.register("block_placer_limb_outer", () -> new BlockPlacerLimbOuterBlock());
+	public static final RegistryObject<Block> RANDOM_TREE = REGISTRY.register("random_tree", () -> new RandomTreeBlock());
+	public static final RegistryObject<Block> HALCYON = REGISTRY.register("halcyon", () -> new HalcyonBlock());
 	// Start of user code block custom blocks
 	// End of user code block custom blocks
 }

@@ -1,7 +1,7 @@
 package tannyjung.tanshugetrees.block;
 
-import tannyjung.tanshugetrees.procedures.SaplingBlockTickProcedure;
-import tannyjung.tanshugetrees.procedures.SaplingBlockRightClickProcedure;
+import tannyjung.tanshugetrees.procedures.SaplingTickProcedure;
+import tannyjung.tanshugetrees.procedures.SaplingRightClickProcedure;
 import tannyjung.tanshugetrees.block.entity.HalcyonBlockEntity;
 
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -82,7 +82,7 @@ public class HalcyonBlock extends Block implements EntityBlock {
 		int x = pos.getX();
 		int y = pos.getY();
 		int z = pos.getZ();
-		SaplingBlockTickProcedure.execute(world, x, y, z);
+		SaplingTickProcedure.execute(world, x, y, z);
 		world.scheduleTick(pos, this, 20);
 	}
 
@@ -96,7 +96,7 @@ public class HalcyonBlock extends Block implements EntityBlock {
 		double hitY = hit.getLocation().y;
 		double hitZ = hit.getLocation().z;
 		Direction direction = hit.getDirection();
-		SaplingBlockRightClickProcedure.execute(world, x, y, z, entity);
+		SaplingRightClickProcedure.execute(world, x, y, z, entity);
 		return InteractionResult.SUCCESS;
 	}
 

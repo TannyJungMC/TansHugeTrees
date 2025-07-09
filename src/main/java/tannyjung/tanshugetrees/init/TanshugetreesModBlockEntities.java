@@ -4,22 +4,8 @@
 package tannyjung.tanshugetrees.init;
 
 import tannyjung.tanshugetrees.block.entity.YokaiBlockEntity;
-import tannyjung.tanshugetrees.block.entity.WhiteFairyBlockEntity;
-import tannyjung.tanshugetrees.block.entity.WendyBlockEntity;
-import tannyjung.tanshugetrees.block.entity.TheAspirantBlockEntity;
-import tannyjung.tanshugetrees.block.entity.SnowlandBlockEntity;
-import tannyjung.tanshugetrees.block.entity.SnowWhiteBlockEntity;
-import tannyjung.tanshugetrees.block.entity.SkyIslandChainBlockEntity;
-import tannyjung.tanshugetrees.block.entity.RustBlockEntity;
-import tannyjung.tanshugetrees.block.entity.RedwoodBlockEntity;
-import tannyjung.tanshugetrees.block.entity.RandomTreeBlockBlockEntity;
-import tannyjung.tanshugetrees.block.entity.OldWitchBlockEntity;
-import tannyjung.tanshugetrees.block.entity.MalusDomesticaBlockEntity;
-import tannyjung.tanshugetrees.block.entity.LegionBlockEntity;
+import tannyjung.tanshugetrees.block.entity.RandomTreeBlockEntity;
 import tannyjung.tanshugetrees.block.entity.HalcyonBlockEntity;
-import tannyjung.tanshugetrees.block.entity.GiantPumpkinBlockEntity;
-import tannyjung.tanshugetrees.block.entity.FalconBlockEntity;
-import tannyjung.tanshugetrees.block.entity.ChristmasTreeBlockEntity;
 import tannyjung.tanshugetrees.block.entity.BlockPlacerTwigOuterBlockEntity;
 import tannyjung.tanshugetrees.block.entity.BlockPlacerTwigInnerBlockEntity;
 import tannyjung.tanshugetrees.block.entity.BlockPlacerTwigCoreBlockEntity;
@@ -52,11 +38,6 @@ import tannyjung.tanshugetrees.block.entity.BlockPlacerBranchCoreBlockEntity;
 import tannyjung.tanshugetrees.block.entity.BlockPlacerBoughOuterBlockEntity;
 import tannyjung.tanshugetrees.block.entity.BlockPlacerBoughInnerBlockEntity;
 import tannyjung.tanshugetrees.block.entity.BlockPlacerBoughCoreBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BeekeeperBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BeanstalkBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BaobabBlockEntity;
-import tannyjung.tanshugetrees.block.entity.ArtOfVinesBlockEntity;
-import tannyjung.tanshugetrees.block.entity.AgathosBlockEntity;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 
 import net.minecraftforge.registries.RegistryObject;
@@ -69,24 +50,7 @@ import net.minecraft.world.level.block.Block;
 
 public class TanshugetreesModBlockEntities {
 	public static final DeferredRegister<BlockEntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, TanshugetreesMod.MODID);
-	public static final RegistryObject<BlockEntityType<RandomTreeBlockBlockEntity>> RANDOM_TREE_BLOCK = register("random_tree_block", TanshugetreesModBlocks.RANDOM_TREE_BLOCK, RandomTreeBlockBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<YokaiBlockEntity>> YOKAI = register("yokai", TanshugetreesModBlocks.YOKAI, YokaiBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<FalconBlockEntity>> FALCON = register("falcon", TanshugetreesModBlocks.FALCON, FalconBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<WendyBlockEntity>> WENDY = register("wendy", TanshugetreesModBlocks.WENDY, WendyBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<SnowlandBlockEntity>> SNOWLAND = register("snowland", TanshugetreesModBlocks.SNOWLAND, SnowlandBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<ArtOfVinesBlockEntity>> ART_OF_VINES = register("art_of_vines", TanshugetreesModBlocks.ART_OF_VINES, ArtOfVinesBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<BeanstalkBlockEntity>> BEANSTALK = register("beanstalk", TanshugetreesModBlocks.BEANSTALK, BeanstalkBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<BeekeeperBlockEntity>> BEEKEEPER = register("beekeeper", TanshugetreesModBlocks.BEEKEEPER, BeekeeperBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<ChristmasTreeBlockEntity>> CHRISTMAS_TREE = register("christmas_tree", TanshugetreesModBlocks.CHRISTMAS_TREE, ChristmasTreeBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<MalusDomesticaBlockEntity>> MALUS_DOMESTICA = register("malus_domestica", TanshugetreesModBlocks.MALUS_DOMESTICA, MalusDomesticaBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<RustBlockEntity>> RUST = register("rust", TanshugetreesModBlocks.RUST, RustBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<TheAspirantBlockEntity>> THE_ASPIRANT = register("the_aspirant", TanshugetreesModBlocks.THE_ASPIRANT, TheAspirantBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<LegionBlockEntity>> LEGION = register("legion", TanshugetreesModBlocks.LEGION, LegionBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<OldWitchBlockEntity>> OLD_WITCH = register("old_witch", TanshugetreesModBlocks.OLD_WITCH, OldWitchBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<SnowWhiteBlockEntity>> SNOW_WHITE = register("snow_white", TanshugetreesModBlocks.SNOW_WHITE, SnowWhiteBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<SkyIslandChainBlockEntity>> SKY_ISLAND_CHAIN = register("sky_island_chain", TanshugetreesModBlocks.SKY_ISLAND_CHAIN, SkyIslandChainBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<HalcyonBlockEntity>> HALCYON = register("halcyon", TanshugetreesModBlocks.HALCYON, HalcyonBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<WhiteFairyBlockEntity>> WHITE_FAIRY = register("white_fairy", TanshugetreesModBlocks.WHITE_FAIRY, WhiteFairyBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<BlockPlacerTaprootOuterBlockEntity>> BLOCK_PLACER_TAPROOT_OUTER = register("block_placer_taproot_outer", TanshugetreesModBlocks.BLOCK_PLACER_TAPROOT_OUTER,
 			BlockPlacerTaprootOuterBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<BlockPlacerTaprootInnerBlockEntity>> BLOCK_PLACER_TAPROOT_INNER = register("block_placer_taproot_inner", TanshugetreesModBlocks.BLOCK_PLACER_TAPROOT_INNER,
@@ -120,10 +84,6 @@ public class TanshugetreesModBlockEntities {
 	public static final RegistryObject<BlockEntityType<BlockPlacerTwigInnerBlockEntity>> BLOCK_PLACER_TWIG_INNER = register("block_placer_twig_inner", TanshugetreesModBlocks.BLOCK_PLACER_TWIG_INNER, BlockPlacerTwigInnerBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<BlockPlacerTwigOuterBlockEntity>> BLOCK_PLACER_TWIG_OUTER = register("block_placer_twig_outer", TanshugetreesModBlocks.BLOCK_PLACER_TWIG_OUTER, BlockPlacerTwigOuterBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<BlockPlacerLeaves2BlockEntity>> BLOCK_PLACER_LEAVES_2 = register("block_placer_leaves_2", TanshugetreesModBlocks.BLOCK_PLACER_LEAVES_2, BlockPlacerLeaves2BlockEntity::new);
-	public static final RegistryObject<BlockEntityType<AgathosBlockEntity>> AGATHOS = register("agathos", TanshugetreesModBlocks.AGATHOS, AgathosBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<RedwoodBlockEntity>> REDWOOD = register("redwood", TanshugetreesModBlocks.REDWOOD, RedwoodBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<BaobabBlockEntity>> BAOBAB = register("baobab", TanshugetreesModBlocks.BAOBAB, BaobabBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<GiantPumpkinBlockEntity>> GIANT_PUMPKIN = register("giant_pumpkin", TanshugetreesModBlocks.GIANT_PUMPKIN, GiantPumpkinBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<BlockPlacerLeaves1BlockEntity>> BLOCK_PLACER_LEAVES_1 = register("block_placer_leaves_1", TanshugetreesModBlocks.BLOCK_PLACER_LEAVES_1, BlockPlacerLeaves1BlockEntity::new);
 	public static final RegistryObject<BlockEntityType<BlockPlacerSprigCoreBlockEntity>> BLOCK_PLACER_SPRIG_CORE = register("block_placer_sprig_core", TanshugetreesModBlocks.BLOCK_PLACER_SPRIG_CORE, BlockPlacerSprigCoreBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<BlockPlacerSprigInnerBlockEntity>> BLOCK_PLACER_SPRIG_INNER = register("block_placer_sprig_inner", TanshugetreesModBlocks.BLOCK_PLACER_SPRIG_INNER, BlockPlacerSprigInnerBlockEntity::new);
@@ -134,6 +94,8 @@ public class TanshugetreesModBlockEntities {
 	public static final RegistryObject<BlockEntityType<BlockPlacerLimbCoreBlockEntity>> BLOCK_PLACER_LIMB_CORE = register("block_placer_limb_core", TanshugetreesModBlocks.BLOCK_PLACER_LIMB_CORE, BlockPlacerLimbCoreBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<BlockPlacerLimbInnerBlockEntity>> BLOCK_PLACER_LIMB_INNER = register("block_placer_limb_inner", TanshugetreesModBlocks.BLOCK_PLACER_LIMB_INNER, BlockPlacerLimbInnerBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<BlockPlacerLimbOuterBlockEntity>> BLOCK_PLACER_LIMB_OUTER = register("block_placer_limb_outer", TanshugetreesModBlocks.BLOCK_PLACER_LIMB_OUTER, BlockPlacerLimbOuterBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<RandomTreeBlockEntity>> RANDOM_TREE = register("random_tree", TanshugetreesModBlocks.RANDOM_TREE, RandomTreeBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<HalcyonBlockEntity>> HALCYON = register("halcyon", TanshugetreesModBlocks.HALCYON, HalcyonBlockEntity::new);
 
 	// Start of user code block custom block entities
 	// End of user code block custom block entities
