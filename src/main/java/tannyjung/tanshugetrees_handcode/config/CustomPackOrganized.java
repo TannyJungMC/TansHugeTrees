@@ -13,13 +13,17 @@ import java.util.Comparator;
 
 public class CustomPackOrganized {
 
-    public static void start (ServerLevel level_server) {
+    public static void start (LevelAccessor level_accessor) {
 
-        clearFolder();
-        CustomPackIncompatible.scanMain(level_server);
-        organizing();
-        replace();
-        CustomPackIncompatible.scanOrganized(level_server);
+        if (level_accessor instanceof ServerLevel level_server) {
+
+            clearFolder();
+            CustomPackIncompatible.scanMain(level_server);
+            organizing();
+            replace();
+            CustomPackIncompatible.scanOrganized(level_server);
+
+        }
 
     }
 

@@ -1,7 +1,6 @@
 package tannyjung.tanshugetrees_handcode.config;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.LevelAccessor;
 
 import java.io.*;
 import java.net.URI;
@@ -13,90 +12,122 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 ;
 import tannyjung.core.GameUtils;
 import tannyjung.core.MiscUtils;
 
-public class UpdateRun {
+public class PackUpdate {
 
 	public static boolean install_pause_systems = false;
 
-    public static void start (ServerLevel level_server) {
+    public static void start (LevelAccessor level_accessor) {
 
-		CompletableFuture.runAsync(() -> {
+		if (level_accessor instanceof ServerLevel level_server) {
 
-			if (MiscUtils.isConnectedToInternet() == false) {
+			CompletableFuture.runAsync(() -> {
 
-				GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't update right now, as the mod can't connect to the internet.");
+				if (MiscUtils.isConnectedToInternet() == false) {
 
-			} else {
+					GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't update right now, as the mod can't connect to the internet.");
 
-				if (checkModVersion(level_server, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
+				} else {
 
-					install_pause_systems = true;
+					if (checkModVersion(level_server, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
 
-					TanshugetreesMod.queueServerWork(20, () -> {
+						install_pause_systems = true;
 
-						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
-						GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
+						TanshugetreesMod.queueServerWork(20, () -> {
 
-						// Delete Old Folders
-						{
+							GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+							GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
 
-							if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack") == false) {
-								return;
-							}
-							if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Tree-Pack") == false) {
-								return;
-							}
+							// Delete Old Folders
+							{
 
-						}
+								if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack") == false) {
+									return;
+								}
+								if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Tree-Pack") == false) {
+									return;
+								}
 
-						// Systems
-						{
-
-							if (createZIP(level_server) == false) {
-								return;
-							}
-							if (createZIP(level_server) == false) {
-								return;
-							}
-							if (download(level_server) == false) {
-								return;
-							}
-							if (unzip(level_server) == false) {
-								return;
-							}
-							if (deleteZIP(level_server) == false) {
-								return;
-							}
-							if (renameFolder(level_server) == false) {
-								return;
 							}
 
-						}
+							// Systems
+							{
 
-						GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Install Completed!");
+								if (createZIP(level_server) == false) {
+									return;
+								}
+								if (createZIP(level_server) == false) {
+									return;
+								}
+								if (download(level_server) == false) {
+									return;
+								}
+								if (unzip(level_server) == false) {
+									return;
+								}
+								if (deleteZIP(level_server) == false) {
+									return;
+								}
+								if (renameFolder(level_server) == false) {
+									return;
+								}
 
-						ConfigRepairAll.start(level_server, true);
-						ConfigMain.apply(level_server);
+							}
 
-						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
-						FileCount.start(level_server);
-						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
-						PackMessage.start(level_server);
+							GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Install Completed!");
 
-						install_pause_systems = false;
+							ConfigMain.repairAll(level_server, true);
+							ConfigMain.apply(level_server);
 
-					});
+							GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+							CustomPackFileCount.start(level_server);
+							GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+							message(level_server);
+
+							install_pause_systems = false;
+
+						});
+
+					}
 
 				}
 
+			});
+
+		}
+
+	}
+
+	public static void message (ServerLevel level_server) {
+
+		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack/message.txt");
+		StringBuilder message = new StringBuilder();
+
+		if (file.exists() == true && file.isDirectory() == false) {
+
+			{
+
+				try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+
+					{
+
+						message.append(read_all);
+
+					}
+
+				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+
 			}
 
-		});
+			GameUtils.command.run(level_server, 0, 0, 0, message.toString());
+
+		}
 
 	}
 

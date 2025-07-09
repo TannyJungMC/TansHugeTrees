@@ -81,7 +81,7 @@ public class COMMANDCommand {
 			if (entity != null)
 				direction = entity.getDirection();
 
-			COMMANDConfigApplyProcedure.execute(world, x, y, z, entity);
+			COMMANDConfigApplyProcedure.execute(world, x, y, z);
 			return 0;
 		}))).then(Commands.literal("command").then(Commands.literal("season").then(Commands.literal("get").executes(arguments -> {
 			Level world = arguments.getSource().getUnsidedLevel();

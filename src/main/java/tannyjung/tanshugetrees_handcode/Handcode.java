@@ -17,9 +17,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
-import tannyjung.tanshugetrees_handcode.config.CheckUpdateRun;
+import tannyjung.tanshugetrees_handcode.config.PackCheckUpdate;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
-import tannyjung.tanshugetrees_handcode.config.ConfigRepairAll;
 import tannyjung.tanshugetrees_handcode.systems.Loop;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDetector;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFeature;
@@ -60,7 +59,7 @@ public class Handcode {
 
 		CompletableFuture.runAsync(() -> {
 
-			ConfigRepairAll.start(null, false);
+			ConfigMain.repairAll(null, false);
 			ConfigMain.apply(null);
 
 		});
@@ -75,7 +74,7 @@ public class Handcode {
 		directory_world_data = world_path + "/data/tanshugetrees";
 		directory_world_generated = world_path + "/generated/tanshugetrees";
 
-		ConfigRepairAll.start(level_server, false);
+		ConfigMain.repairAll(level_server, false);
 		ConfigMain.apply(level_server);
 
 		TanshugetreesModVariables.MapVariables.get(level_server).version_1192 = version_1192;
@@ -108,7 +107,7 @@ public class Handcode {
 
 				if (ConfigMain.auto_check_update == true) {
 
-					CheckUpdateRun.start(level_server);
+					PackCheckUpdate.start(level_server);
 
 				}
 

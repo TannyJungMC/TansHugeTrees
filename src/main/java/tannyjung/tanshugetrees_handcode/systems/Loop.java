@@ -1,14 +1,13 @@
 package tannyjung.tanshugetrees_handcode.systems;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
-import tannyjung.tanshugetrees_handcode.config.UpdateRun;
+import tannyjung.tanshugetrees_handcode.config.PackUpdate;
 
 public class Loop {
 
@@ -25,7 +24,7 @@ public class Loop {
 
             });
 
-            if (UpdateRun.install_pause_systems == false) {
+            if (PackUpdate.install_pause_systems == false) {
 
                 tick(level_accessor, level_server);
 

@@ -9,25 +9,29 @@ import tannyjung.core.GameUtils;
 import java.io.File;
 import java.nio.file.Files;
 
-public class FileCount {
+public class CustomPackFileCount {
 
     private static double file_size = 0.0;
     private static int count_shape = 0;
     private static int count_variation = 0;
 
-    public static void start (ServerLevel level_server) {
+    public static void start (LevelAccessor level_accessor) {
 
-        file_size = 0.0;
-        count_shape = 0;
-        count_variation = 0;
+        if (level_accessor instanceof ServerLevel level_server) {
 
-        fileSize();
-        countShape();
-        countVariation();
+            file_size = 0.0;
+            count_shape = 0;
+            count_variation = 0;
 
-        file_size = Double.parseDouble(String.format("%.2f", file_size  / (1024.0 * 1024.0)));
+            fileSize();
+            countShape();
+            countVariation();
 
-        GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"There are now \",\"color\":\"white\"},{\"text\":\"" + count_variation + "\",\"color\":\"yellow\"},{\"text\":\" variation of species from all installed packs, and \",\"color\":\"white\"},{\"text\":\"" + count_shape + "\",\"color\":\"yellow\"},{\"text\":\" different shapes in total! Used about \",\"color\":\"white\"},{\"text\":\"" + String.format("%.1f", file_size) + " MB\",\"color\":\"yellow\"},{\"text\":\" of the space.\",\"color\":\"white\"}]");
+            file_size = Double.parseDouble(String.format("%.2f", file_size / (1024.0 * 1024.0)));
+
+            GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"There are now \",\"color\":\"white\"},{\"text\":\"" + count_variation + "\",\"color\":\"yellow\"},{\"text\":\" variation of species from all installed packs, and \",\"color\":\"white\"},{\"text\":\"" + count_shape + "\",\"color\":\"yellow\"},{\"text\":\" different shapes in total! Used about \",\"color\":\"white\"},{\"text\":\"" + String.format("%.1f", file_size) + " MB\",\"color\":\"yellow\"},{\"text\":\" of the space.\",\"color\":\"white\"}]");
+
+        }
 
     }
 
