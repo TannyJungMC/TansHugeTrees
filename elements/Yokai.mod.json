@@ -120,6 +120,9 @@
     "isBonemealable": false,
     "sensitiveToVibration": false,
     "vibrationalEvents": [],
+    "vibrationSensitivityRadius": {
+      "fixedValue": 7.0
+    },
     "hasInventory": true,
     "openGUIOnRightClick": false,
     "inventorySize": 9,
@@ -137,10 +140,10 @@
     "fluidCapacity": 8000,
     "fluidRestrictions": [],
     "onRightClicked": {
-      "name": "SaplingBlockRightClick"
+      "name": "SaplingRightClick"
     },
     "onTickUpdate": {
-      "name": "SaplingBlockTick"
+      "name": "SaplingTick"
     },
     "generateFeature": false,
     "restrictionBiomes": [],

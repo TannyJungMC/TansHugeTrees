@@ -2,7 +2,7 @@
   "_fv": 79,
   "_type": "block",
   "definition": {
-    "texture": "tree_rust",
+    "texture": "random_tree",
     "textureTop": "",
     "textureLeft": "",
     "textureFront": "",
@@ -15,7 +15,7 @@
     "emissiveRendering": false,
     "displayFluidOverlay": false,
     "animations": [],
-    "itemTexture": "tree_rust",
+    "itemTexture": "random_tree",
     "particleTexture": "",
     "blockSetType": "OAK",
     "tintType": "No tint",
@@ -36,15 +36,11 @@
       }
     ],
     "customProperties": [],
-    "name": "Rust",
+    "name": "Random Tree (Unset)",
     "specialInformation": {
       "fixedValue": [
         "§8----------------------------------------------------------------------------------------------------",
         "§8This is random tree sapling, it may take long time to generate!",
-        "",
-        "§8Size : Realistic",
-        "§8Blocks : Oak Wood / Stripped Oak Wood / Oak Leaves",
-        "§8Special : None",
         "§8----------------------------------------------------------------------------------------------------"
       ]
     },
@@ -65,7 +61,7 @@
     "customDrop": {
       "value": ""
     },
-    "dropAmount": 1,
+    "dropAmount": 0,
     "useLootTableForDrops": false,
     "requiresCorrectTool": false,
     "enchantPowerBonus": 0.0,
@@ -120,6 +116,9 @@
     "isBonemealable": false,
     "sensitiveToVibration": false,
     "vibrationalEvents": [],
+    "vibrationSensitivityRadius": {
+      "fixedValue": 7.0
+    },
     "hasInventory": true,
     "openGUIOnRightClick": false,
     "inventorySize": 9,
@@ -137,22 +136,31 @@
     "fluidCapacity": 8000,
     "fluidRestrictions": [],
     "onRightClicked": {
-      "name": "SaplingBlockRightClick"
+      "name": "SaplingRightClick"
     },
     "onTickUpdate": {
-      "name": "SaplingBlockTick"
+      "name": "SaplingTick"
     },
     "generateFeature": false,
     "restrictionBiomes": [],
     "blocksToReplace": [
       {
-        "value": "Blocks.GRASS"
+        "value": "Blocks.STONE#0"
+      },
+      {
+        "value": "Blocks.STONE#1"
+      },
+      {
+        "value": "Blocks.STONE#3"
+      },
+      {
+        "value": "Blocks.STONE#5"
       }
     ],
     "generationShape": "UNIFORM",
     "frequencyPerChunks": 10,
-    "frequencyOnChunk": 1,
+    "frequencyOnChunk": 16,
     "minGenerateHeight": 0,
-    "maxGenerateHeight": 100
+    "maxGenerateHeight": 64
   }
 }
