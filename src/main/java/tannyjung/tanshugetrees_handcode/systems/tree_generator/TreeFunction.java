@@ -8,6 +8,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import tannyjung.core.MiscUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
@@ -192,11 +193,19 @@ public class TreeFunction {
 
 										level_server.getServer().execute(() -> {
 
-											TanshugetreesMod.queueServerWork(200, () -> {
+											if (level_accessor.getChunk(new BlockPos(posX, posY, posZ)).getStatus().isOrAfter(ChunkStatus.FULL) == true) {
 
 												GameUtils.command.run(level_server, posX, posY, posZ, command_final);
 
-											});
+											} else {
+
+												TanshugetreesMod.queueServerWork(200, () -> {
+
+													GameUtils.command.run(level_server, posX, posY, posZ, command_final);
+
+												});
+
+											}
 
 										});
 
