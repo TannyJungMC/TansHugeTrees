@@ -146,28 +146,9 @@ public class ShapeFileConverter {
             // Summon
             {
 
-                StringBuilder merge = new StringBuilder();
-
-                // Get Preset
-                {
-
-                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
-
-                        {
-
-                            merge.append(read_all);
-
-                        }
-
-                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
-
-                }
-
-                String data = merge.toString();
-                data = data.substring(data.indexOf("ForgeData"), data.length() - 2);
-                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 " + posY + " 0 run " + GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", data));
+                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 " + posY + " 0 run " + GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", MiscUtils.getForgeDataFromGiveFile(file.getPath())));
                 String data_modify = "debug_mode:false,global_generate_speed:false,generate_speed_tick:" + generate_speed_tick + ",generate_speed_repeat:" + generate_speed_repeat + ",generate_speed_tp:" + generate_speed_tp;
-                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 " + posY + " 0 run data merge entity @e[tag=TANSHUGETREES-tree_generator,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
+                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 " + posY + " 0 run data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
 
             }
 
