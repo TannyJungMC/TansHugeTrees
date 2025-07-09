@@ -27,7 +27,7 @@ public class TreeGenerator {
 
             GameUtils.nbt.entity.addNumber(entity, "generate_speed_test", 1);
 
-            if (GameUtils.nbt.entity.getNumber(entity, "generate_speed_test") > GameUtils.nbt.entity.getNumber(entity, "generate_speed_tick")) {
+            if (GameUtils.nbt.entity.getNumber(entity, "generate_speed_test") >= GameUtils.nbt.entity.getNumber(entity, "generate_speed_tick")) {
 
                 GameUtils.nbt.entity.setNumber(entity, "generate_speed_test", 0);
                 runSystem(level_accessor, level_server, entity);
@@ -1294,17 +1294,17 @@ public class TreeGenerator {
             GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
 
             String[] function = buildGetWayFunction(entity, type);
-            GameUtils.nbt.block.setText(level_accessor, level_server, pos, "function", function[1]);
-            GameUtils.nbt.block.setText(level_accessor, level_server, pos, "block", GameUtils.nbt.entity.getText(entity, block));
+            GameUtils.nbt.block.setText(level_accessor, pos, "function", function[1]);
+            GameUtils.nbt.block.setText(level_accessor, pos, "block", GameUtils.nbt.entity.getText(entity, block));
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen == true) {
 
-                GameUtils.nbt.block.setText(level_accessor, level_server, pos, "export_file_name", GameUtils.nbt.entity.getText(entity, "export_file_name"));
-                GameUtils.nbt.block.setNumber(level_accessor, level_server, pos, "center_posX", entity.getBlockX());
-                GameUtils.nbt.block.setNumber(level_accessor, level_server, pos, "center_posY", entity.getBlockY());
-                GameUtils.nbt.block.setNumber(level_accessor, level_server, pos, "center_posZ", entity.getBlockZ());
-                GameUtils.nbt.block.setText(level_accessor, level_server, pos, "type_short", type_short);
-                GameUtils.nbt.block.setText(level_accessor, level_server, pos, "function_short", function[0]);
+                GameUtils.nbt.block.setText(level_accessor, pos, "export_file_name", GameUtils.nbt.entity.getText(entity, "export_file_name"));
+                GameUtils.nbt.block.setNumber(level_accessor, pos, "center_posX", entity.getBlockX());
+                GameUtils.nbt.block.setNumber(level_accessor, pos, "center_posY", entity.getBlockY());
+                GameUtils.nbt.block.setNumber(level_accessor, pos, "center_posZ", entity.getBlockZ());
+                GameUtils.nbt.block.setText(level_accessor, pos, "type_short", type_short);
+                GameUtils.nbt.block.setText(level_accessor, pos, "function_short", function[0]);
 
             }
 
