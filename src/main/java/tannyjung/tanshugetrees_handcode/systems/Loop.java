@@ -74,7 +74,7 @@ public class Loop {
 
                             }
 
-                            GameUtils.command.run(level_server, 0, 0, 0, "execute at @p as @e[tag=TANSHUGETREES-tree_generator" + custom + "] at @s run TANSHUGETREES dev tree_generator loop_tick");
+                            GameUtils.command.run(level_server, 0, 0, 0, "execute at @p as @e[tag=TANSHUGETREES-tree_generator" + custom + "] at @s run TANSHUGETREES dev tree_generator");
 
                         }
 
@@ -85,7 +85,7 @@ public class Loop {
                     // From Converter
                     {
 
-                        GameUtils.command.run(level_server, 0, 0, 0, "execute at @p in tanshugetrees:dimension positioned 0 0 0 as @e[tag=TANSHUGETREES-tree_generator,limit=1,sort=nearest] at @s run TANSHUGETREES dev tree_generator loop_tick");
+                        GameUtils.command.run(level_server, 0, 0, 0, "execute at @p in tanshugetrees:dimension positioned 0 0 0 as @e[tag=TANSHUGETREES-tree_generator,limit=1,sort=nearest] at @s run TANSHUGETREES dev tree_generator");
 
                     }
 
