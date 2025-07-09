@@ -7,6 +7,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -73,6 +76,58 @@ public class MiscUtils {
 		}
 
 		return return_text.substring(1);
+
+	}
+
+	public static int[] textPosConverter (String pos, int rotation, boolean mirrored) {
+
+		int[] return_number = new int[3];
+
+		{
+
+			String[] get = pos.split("/");
+			int posX = Integer.parseInt(get[0]);
+			int posY = Integer.parseInt(get[1]);
+			int posZ = Integer.parseInt(get[2]);
+
+			// Rotation & Mirrored
+			{
+
+				if (mirrored == true) {
+
+					posX = posX * (-1);
+
+				}
+
+				if (rotation == 2) {
+
+					int posX_save = posX;
+					posX = posZ;
+					posZ = posX_save * (-1);
+
+				} else if (rotation == 3) {
+
+					posX = posX * (-1);
+					posZ = posZ * (-1);
+
+				} else if (rotation == 4) {
+
+					int posX_save = posX;
+					int posZ_save = posZ;
+					posX = posZ_save * (-1);
+					posZ = posX_save;
+
+				}
+
+			}
+
+			return_number[0] = posX;
+			return_number[1] = posY;
+			return_number[2] = posZ;
+
+		}
+
+		return return_number;
 
 	}
 
@@ -206,55 +261,35 @@ public class MiscUtils {
 
 	}
 
-	public static int[] textPosConverter (String pos, int rotation, boolean mirrored) {
+	public static String getForgeDataFromGiveFile (String path) {
 
-		int[] return_number = new int[3];
+		String return_text = "";
+		File file = new File(path);
 
-		{
+		if (file.exists() == true && file.isDirectory() == false) {
 
-			String[] get = pos.split("/");
-			int posX = Integer.parseInt(get[0]);
-			int posY = Integer.parseInt(get[1]);
-			int posZ = Integer.parseInt(get[2]);
+			StringBuilder data = new StringBuilder();
 
-			// Rotation & Mirrored
+			// Read File
 			{
 
-				if (mirrored == true) {
+				try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-					posX = posX * (-1);
+					{
 
-				}
+						data.append(read_all);
 
-				if (rotation == 2) {
+					}
 
-					int posX_save = posX;
-					posX = posZ;
-					posZ = posX_save * (-1);
-
-				} else if (rotation == 3) {
-
-					posX = posX * (-1);
-					posZ = posZ * (-1);
-
-				} else if (rotation == 4) {
-
-					int posX_save = posX;
-					int posZ_save = posZ;
-					posX = posZ_save * (-1);
-					posZ = posX_save;
-
-				}
+				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
 			}
 
-			return_number[0] = posX;
-			return_number[1] = posY;
-			return_number[2] = posZ;
+			return_text = data.substring(data.indexOf("ForgeData"), data.length() - 2);
 
 		}
 
-		return return_number;
+		return return_text;
 
 	}
 
