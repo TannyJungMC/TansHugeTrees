@@ -674,7 +674,7 @@ public class GameUtils {
 
 			}
 
-			public static void setText (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String name, String value) {
+			public static void setText (LevelAccessor level_accessor, BlockPos pos, String name, String value) {
 
 				BlockEntity block_entity = level_accessor.getBlockEntity(pos);
 
@@ -682,13 +682,18 @@ public class GameUtils {
 
 					block_entity.getPersistentData().putString(name, value);
 					BlockState block = level_accessor.getBlockState(pos);
-					level_server.sendBlockUpdated(pos, block, block, 2);
+
+					if (level_accessor instanceof ServerLevel level_server) {
+
+						level_server.sendBlockUpdated(pos, block, block, 2);
+
+					}
 
 				}
 
 			}
 
-			public static void setNumber (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String name, double value) {
+			public static void setNumber (LevelAccessor level_accessor, BlockPos pos, String name, double value) {
 
 				BlockEntity block_entity = level_accessor.getBlockEntity(pos);
 
@@ -696,13 +701,18 @@ public class GameUtils {
 
 					block_entity.getPersistentData().putDouble(name, value);
 					BlockState block = level_accessor.getBlockState(pos);
-					level_server.sendBlockUpdated(pos, block, block, 2);
+
+					if (level_accessor instanceof ServerLevel level_server) {
+
+						level_server.sendBlockUpdated(pos, block, block, 2);
+
+					}
 
 				}
 
 			}
 
-			public static void setLogic (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String name, boolean value) {
+			public static void setLogic (LevelAccessor level_accessor, BlockPos pos, String name, boolean value) {
 
 				BlockEntity block_entity = level_accessor.getBlockEntity(pos);
 
@@ -710,7 +720,31 @@ public class GameUtils {
 
 					block_entity.getPersistentData().putBoolean(name, value);
 					BlockState block = level_accessor.getBlockState(pos);
-					level_server.sendBlockUpdated(pos, block, block, 2);
+
+					if (level_accessor instanceof ServerLevel level_server) {
+
+						level_server.sendBlockUpdated(pos, block, block, 2);
+
+					}
+
+				}
+
+			}
+
+			public static void addNumber (LevelAccessor level_accessor, BlockPos pos, String name, double value) {
+
+				BlockEntity block_entity = level_accessor.getBlockEntity(pos);
+
+				if (block_entity != null) {
+
+					block_entity.getPersistentData().putDouble(name, block_entity.getPersistentData().getDouble(name) + value);
+					BlockState block = level_accessor.getBlockState(pos);
+
+					if (level_accessor instanceof ServerLevel level_server) {
+
+						level_server.sendBlockUpdated(pos, block, block, 2);
+
+					}
 
 				}
 
