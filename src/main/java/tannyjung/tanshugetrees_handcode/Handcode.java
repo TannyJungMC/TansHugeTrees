@@ -77,8 +77,6 @@ public class Handcode {
 		ConfigMain.repairAll(level_server, false);
 		ConfigMain.apply(level_server);
 
-		TanshugetreesModVariables.MapVariables.get(level_server).version_1192 = version_1192;
-
 	}
 
 	@SubscribeEvent
