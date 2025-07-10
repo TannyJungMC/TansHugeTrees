@@ -429,5 +429,6 @@
   "block.tanshugetrees.halcyon.description_4": "§8Blocks : Oak / Stripped Oak Wood / Oak Leaves",
   "block.tanshugetrees.halcyon": "Halcyon",
   "block.tanshugetrees.halcyon.description_5": "§8Special : None",
-  "block.tanshugetrees.halcyon.description_6": "§8----------------------------------------------------------------------------------------------------"
+  "block.tanshugetrees.halcyon.description_6": "§8----------------------------------------------------------------------------------------------------",
+  "item_group.tanshugetrees.creative_tab_main": "Tan\u0027s Huge Trees"
 }
