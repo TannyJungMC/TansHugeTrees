@@ -87,14 +87,12 @@ public class TanshugetreesModVariables {
 
 	public static class MapVariables extends SavedData {
 		public static final String DATA_NAME = "tanshugetrees_mapvars";
-		public boolean auto_gen = false;
-		public boolean auto_gen_chat_messages = false;
-		public double auto_gen_cooldown = 0;
-		public double auto_gen_count = 0;
-		public String auto_gen_teleport_player_back = "";
-		public boolean detect_exist = false;
+		public boolean shape_file_converter = false;
+		public boolean shape_file_converter_chat_messages = false;
+		public double shape_file_converter_cooldown = 0;
+		public double shape_file_converter_count = 0;
+		public String shape_file_converter_back_position = "";
 		public String season = "Summer";
-		public boolean version_1192 = false;
 
 		public static MapVariables load(CompoundTag tag) {
 			MapVariables data = new MapVariables();
@@ -103,26 +101,22 @@ public class TanshugetreesModVariables {
 		}
 
 		public void read(CompoundTag nbt) {
-			auto_gen = nbt.getBoolean("auto_gen");
-			auto_gen_chat_messages = nbt.getBoolean("auto_gen_chat_messages");
-			auto_gen_cooldown = nbt.getDouble("auto_gen_cooldown");
-			auto_gen_count = nbt.getDouble("auto_gen_count");
-			auto_gen_teleport_player_back = nbt.getString("auto_gen_teleport_player_back");
-			detect_exist = nbt.getBoolean("detect_exist");
+			shape_file_converter = nbt.getBoolean("shape_file_converter");
+			shape_file_converter_chat_messages = nbt.getBoolean("shape_file_converter_chat_messages");
+			shape_file_converter_cooldown = nbt.getDouble("shape_file_converter_cooldown");
+			shape_file_converter_count = nbt.getDouble("shape_file_converter_count");
+			shape_file_converter_back_position = nbt.getString("shape_file_converter_back_position");
 			season = nbt.getString("season");
-			version_1192 = nbt.getBoolean("version_1192");
 		}
 
 		@Override
 		public CompoundTag save(CompoundTag nbt) {
-			nbt.putBoolean("auto_gen", auto_gen);
-			nbt.putBoolean("auto_gen_chat_messages", auto_gen_chat_messages);
-			nbt.putDouble("auto_gen_cooldown", auto_gen_cooldown);
-			nbt.putDouble("auto_gen_count", auto_gen_count);
-			nbt.putString("auto_gen_teleport_player_back", auto_gen_teleport_player_back);
-			nbt.putBoolean("detect_exist", detect_exist);
+			nbt.putBoolean("shape_file_converter", shape_file_converter);
+			nbt.putBoolean("shape_file_converter_chat_messages", shape_file_converter_chat_messages);
+			nbt.putDouble("shape_file_converter_cooldown", shape_file_converter_cooldown);
+			nbt.putDouble("shape_file_converter_count", shape_file_converter_count);
+			nbt.putString("shape_file_converter_back_position", shape_file_converter_back_position);
 			nbt.putString("season", season);
-			nbt.putBoolean("version_1192", version_1192);
 			return nbt;
 		}
 

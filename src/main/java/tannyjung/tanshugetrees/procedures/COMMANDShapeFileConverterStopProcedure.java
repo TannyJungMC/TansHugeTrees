@@ -23,7 +23,7 @@ public class COMMANDShapeFileConverterStopProcedure {
 				_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(), "");
 			TanshugetreesMod.LOGGER.info(entity);
 		}
-		TanshugetreesModVariables.MapVariables.get(world).auto_gen_count = 0;
+		TanshugetreesModVariables.MapVariables.get(world).shape_file_converter_count = 0;
 		TanshugetreesModVariables.MapVariables.get(world).syncData(world);
 		ShapeFileConverter.stop(world);
 	}
