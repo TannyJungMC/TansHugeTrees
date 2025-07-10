@@ -5,13 +5,14 @@
     "renderType": 0,
     "texture": "preset_fixer",
     "customModelName": "Normal",
+    "guiTexture": "",
     "customProperties": {},
     "states": [],
     "name": "Preset Fixer",
     "rarity": "COMMON",
     "creativeTabs": [
       {
-        "value": "CUSTOM:ThtTab"
+        "value": "CUSTOM:CreativeTabMain"
       }
     ],
     "stackSize": 64,

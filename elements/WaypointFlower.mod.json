@@ -54,7 +54,7 @@
     "immuneToFire": false,
     "creativeTabs": [
       {
-        "value": "CUSTOM:ThtTab"
+        "value": "CUSTOM:CreativeTabMain"
       }
     ],
     "destroyTool": "Not specified",
@@ -116,6 +116,9 @@
     "isBonemealable": false,
     "sensitiveToVibration": false,
     "vibrationalEvents": [],
+    "vibrationSensitivityRadius": {
+      "fixedValue": 7.0
+    },
     "hasInventory": false,
     "openGUIOnRightClick": false,
     "inventorySize": 9,

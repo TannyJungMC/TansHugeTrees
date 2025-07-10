@@ -58,7 +58,7 @@
     "immuneToFire": false,
     "creativeTabs": [
       {
-        "value": "CUSTOM:ThtTab"
+        "value": "CUSTOM:CreativeTabMain"
       }
     ],
     "destroyTool": "Not specified",

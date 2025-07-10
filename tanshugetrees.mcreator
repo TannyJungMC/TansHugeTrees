@@ -1,17 +1,6 @@
 {
   "mod_elements": [
     {
-      "name": "ThtTab",
-      "type": "tab",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "tht_tab",
-      "metadata": {
-        "files": []
-      },
-      "path": "~/. Other"
-    },
-    {
       "name": "WaypointFlower",
       "type": "block",
       "compiles": true,
@@ -26,7 +15,7 @@
           "src/main/java/tannyjung/tanshugetrees/block/WaypointFlowerBlock.java"
         ]
       },
-      "path": "~/. Other"
+      "path": "~/.Misc"
     },
     {
       "name": "WaypointFlowerPlace",
@@ -57,7 +46,7 @@
           }
         ]
       },
-      "path": "~/. Other"
+      "path": "~/.Misc"
     },
     {
       "name": "WaypointFlowerRecipe",
@@ -70,7 +59,7 @@
           "src/main/resources/data/tanshugetrees/recipes/waypoint_flower_recipe.json"
         ]
       },
-      "path": "~/. Other"
+      "path": "~/.Misc"
     },
     {
       "name": "Yokai",
@@ -618,20 +607,7 @@
           }
         ]
       },
-      "path": "~/. Other"
-    },
-    {
-      "name": "COMMAND",
-      "type": "command",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "command",
-      "metadata": {
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/command/COMMANDCommand.java"
-        ]
-      },
-      "path": "~/. Other/Command"
+      "path": "~/.Misc"
     },
     {
       "name": "COMMANDConfigRepair",
@@ -662,7 +638,7 @@
           }
         ]
       },
-      "path": "~/. Other/Command"
+      "path": "~/Config"
     },
     {
       "name": "COMMANDSeasonGet",
@@ -693,7 +669,7 @@
           }
         ]
       },
-      "path": "~/. Other/Command"
+      "path": "~/Living Tree Mechanics/Seasons"
     },
     {
       "name": "COMMANDSeasonSetSpring",
@@ -712,7 +688,7 @@
           }
         ]
       },
-      "path": "~/. Other/Command"
+      "path": "~/Living Tree Mechanics/Seasons"
     },
     {
       "name": "COMMANDSeasonSetAutumn",
@@ -731,7 +707,7 @@
           }
         ]
       },
-      "path": "~/. Other/Command"
+      "path": "~/Living Tree Mechanics/Seasons"
     },
     {
       "name": "COMMANDSeasonSetSummer",
@@ -750,7 +726,7 @@
           }
         ]
       },
-      "path": "~/. Other/Command"
+      "path": "~/Living Tree Mechanics/Seasons"
     },
     {
       "name": "COMMANDSeasonSetWinter",
@@ -769,53 +745,7 @@
           }
         ]
       },
-      "path": "~/. Other/Command"
-    },
-    {
-      "name": "COMMANDPackUpdate",
-      "type": "procedure",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "command_pack_update",
-      "metadata": {
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDPackUpdateProcedure.java"
-        ],
-        "dependencies": [
-          {
-            "name": "x",
-            "type": "number"
-          },
-          {
-            "name": "y",
-            "type": "number"
-          },
-          {
-            "name": "z",
-            "type": "number"
-          },
-          {
-            "name": "world",
-            "type": "world"
-          }
-        ]
-      },
-      "path": "~/. Other/Command"
-    },
-    {
-      "name": "DeveloperMode",
-      "type": "procedure",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "developer_mode",
-      "metadata": {
-        "return_type": "logic",
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/procedures/DeveloperModeProcedure.java"
-        ],
-        "dependencies": []
-      },
-      "path": "~/. Other"
+      "path": "~/Living Tree Mechanics/Seasons"
     },
     {
       "name": "DiskGrass",
@@ -828,7 +758,7 @@
           "src/main/resources/data/tanshugetrees/worldgen/configured_feature/disk_grass.json"
         ]
       },
-      "path": "~/. Other"
+      "path": "~/.Misc"
     },
     {
       "name": "COMMANDLivingTreeMechanics",
@@ -872,7 +802,7 @@
           }
         ]
       },
-      "path": "~/. Other/Command"
+      "path": "~/Config"
     },
     {
       "name": "OVERLAYWorldGen",
@@ -885,7 +815,7 @@
           "src/main/java/tannyjung/tanshugetrees/client/screens/OVERLAYWorldGenOverlay.java"
         ]
       },
-      "path": "~/. Other/Overlay"
+      "path": "~/Overlay"
     },
     {
       "name": "OVERLAYWorldGenBar",
@@ -900,7 +830,7 @@
         ],
         "dependencies": []
       },
-      "path": "~/. Other/Overlay"
+      "path": "~/Overlay"
     },
     {
       "name": "OVERLAYWorldGenDetailsBiome",
@@ -915,7 +845,7 @@
         ],
         "dependencies": []
       },
-      "path": "~/. Other/Overlay"
+      "path": "~/Overlay"
     },
     {
       "name": "OVERLAYWorldGenAnimation",
@@ -930,7 +860,7 @@
         ],
         "dependencies": []
       },
-      "path": "~/. Other/Overlay"
+      "path": "~/Overlay"
     },
     {
       "name": "OVERLAYWorldGenMenu",
@@ -943,7 +873,7 @@
           "src/main/java/tannyjung/tanshugetrees/client/screens/OVERLAYWorldGenMenuOverlay.java"
         ]
       },
-      "path": "~/. Other/Overlay"
+      "path": "~/Overlay"
     },
     {
       "name": "OVERLAYWorldGenShow",
@@ -958,7 +888,7 @@
         ],
         "dependencies": []
       },
-      "path": "~/. Other/Overlay"
+      "path": "~/Overlay"
     },
     {
       "name": "OVERLAYWorldGenDetailsTree",
@@ -973,7 +903,7 @@
         ],
         "dependencies": []
       },
-      "path": "~/. Other/Overlay"
+      "path": "~/Overlay"
     },
     {
       "name": "OVERLAYWorldGenShowDetails",
@@ -988,7 +918,7 @@
         ],
         "dependencies": []
       },
-      "path": "~/. Other/Overlay"
+      "path": "~/Overlay"
     },
     {
       "name": "COMMANDTreeGenerator",
@@ -1195,37 +1125,6 @@
         ]
       },
       "path": "~/Shape File Converter"
-    },
-    {
-      "name": "COMMANDPackCheckUpdate",
-      "type": "procedure",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "command_pack_check_update",
-      "metadata": {
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDPackCheckUpdateProcedure.java"
-        ],
-        "dependencies": [
-          {
-            "name": "x",
-            "type": "number"
-          },
-          {
-            "name": "y",
-            "type": "number"
-          },
-          {
-            "name": "z",
-            "type": "number"
-          },
-          {
-            "name": "world",
-            "type": "world"
-          }
-        ]
-      },
-      "path": "~/. Other/Command"
     },
     {
       "name": "COMMANDShapeFileConverterStart",
@@ -1494,56 +1393,156 @@
         ]
       },
       "path": "~/Saplings/Available"
+    },
+    {
+      "name": "COMMANDSeason",
+      "type": "command",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "command_season",
+      "metadata": {
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/command/COMMANDSeasonCommand.java"
+        ]
+      },
+      "path": "~/Living Tree Mechanics/Seasons"
+    },
+    {
+      "name": "COMMANDConfig",
+      "type": "command",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "command_config",
+      "metadata": {
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/command/COMMANDConfigCommand.java"
+        ]
+      },
+      "path": "~/Config"
+    },
+    {
+      "name": "COMMANDTannyPack",
+      "type": "command",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "command_tanny_pack",
+      "metadata": {
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/command/COMMANDTannyPackCommand.java"
+        ]
+      },
+      "path": "~/TannyJung Pack"
+    },
+    {
+      "name": "COMMANDTannyPackCheckUpdate",
+      "type": "procedure",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "command_tanny_pack_check_update",
+      "metadata": {
+        "dependencies": [
+          {
+            "name": "x",
+            "type": "number"
+          },
+          {
+            "name": "y",
+            "type": "number"
+          },
+          {
+            "name": "z",
+            "type": "number"
+          },
+          {
+            "name": "world",
+            "type": "world"
+          }
+        ],
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDTannyPackCheckUpdateProcedure.java"
+        ]
+      },
+      "path": "~/TannyJung Pack"
+    },
+    {
+      "name": "COMMANDTannyPackUpdate",
+      "type": "procedure",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "command_tanny_pack_update",
+      "metadata": {
+        "dependencies": [
+          {
+            "name": "x",
+            "type": "number"
+          },
+          {
+            "name": "y",
+            "type": "number"
+          },
+          {
+            "name": "z",
+            "type": "number"
+          },
+          {
+            "name": "world",
+            "type": "world"
+          }
+        ],
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDTannyPackUpdateProcedure.java"
+        ]
+      },
+      "path": "~/TannyJung Pack"
+    },
+    {
+      "name": "CreativeTabMain",
+      "type": "tab",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "creative_tab_main",
+      "metadata": {
+        "files": []
+      },
+      "path": "~/.Misc"
     }
   ],
   "variable_elements": [
     {
-      "name": "auto_gen",
+      "name": "shape_file_converter",
       "type": "logic",
       "scope": "map",
       "value": "false"
     },
     {
-      "name": "auto_gen_chat_messages",
+      "name": "shape_file_converter_chat_messages",
       "type": "logic",
       "scope": "map",
       "value": "false"
     },
     {
-      "name": "auto_gen_cooldown",
+      "name": "shape_file_converter_cooldown",
       "type": "number",
       "scope": "map",
       "value": "0"
     },
     {
-      "name": "auto_gen_count",
+      "name": "shape_file_converter_count",
       "type": "number",
       "scope": "map",
       "value": "0"
     },
     {
-      "name": "auto_gen_teleport_player_back",
+      "name": "shape_file_converter_back_position",
       "type": "string",
       "scope": "map",
       "value": ""
-    },
-    {
-      "name": "detect_exist",
-      "type": "logic",
-      "scope": "map",
-      "value": "false"
     },
     {
       "name": "season",
       "type": "string",
       "scope": "map",
       "value": "Summer"
-    },
-    {
-      "name": "version_1192",
-      "type": "logic",
-      "scope": "map",
-      "value": "false"
     }
   ],
   "sound_elements": [],
@@ -1665,15 +1664,7 @@
       "CUSTOM:BlockPlacerTwigOuter"
     ]
   },
-  "tab_element_order": {
-    "CUSTOM:ThtTab": [
-      "WaypointFlower",
-      "PresetFixer",
-      "Yokai",
-      "RandomTree",
-      "Halcyon"
-    ]
-  },
+  "tab_element_order": {},
   "language_map": {
     "en_us": {
       "block.tht.wendy": "Wendy",
@@ -1896,7 +1887,6 @@
       "gamerule.tht_rarity_b_15.description": "This Gamerule For Tan\u0027s Huge Trees Mod",
       "gamerule.tht_rarity_c_2.description": "This Gamerule For Tan\u0027s Huge Trees Mod",
       "block.tanshugetrees.block_placer_branch_core": "Block Placer",
-      "item_group.tanshugetrees.tht_tab": "Tan\u0027s Huge Trees",
       "gamerule.tht_rarity_b_11": "THT-rarity_b2",
       "gamerule.tht_rarity_b_12": "THT-rarity_b2",
       "gamerule.tht_rarity_b_10": "THT-rarity_b2",
@@ -2106,7 +2096,8 @@
       "block.tanshugetrees.halcyon.description_4": "§8Blocks : Oak / Stripped Oak Wood / Oak Leaves",
       "block.tanshugetrees.halcyon": "Halcyon",
       "block.tanshugetrees.halcyon.description_5": "§8Special : None",
-      "block.tanshugetrees.halcyon.description_6": "§8----------------------------------------------------------------------------------------------------"
+      "block.tanshugetrees.halcyon.description_6": "§8----------------------------------------------------------------------------------------------------",
+      "item_group.tanshugetrees.creative_tab_main": "Tan\u0027s Huge Trees"
     }
   },
   "metadata": {
@@ -2138,17 +2129,8 @@
         ]
       },
       {
-        "name": ". Other",
-        "children": [
-          {
-            "name": "Command",
-            "children": []
-          },
-          {
-            "name": "Overlay",
-            "children": []
-          }
-        ]
+        "name": ".Misc",
+        "children": []
       },
       {
         "name": "Shape File Converter",
@@ -2165,10 +2147,27 @@
       },
       {
         "name": "Living Tree Mechanics",
-        "children": []
+        "children": [
+          {
+            "name": "Seasons",
+            "children": []
+          }
+        ]
       },
       {
         "name": "Preset Fixer",
+        "children": []
+      },
+      {
+        "name": "Config",
+        "children": []
+      },
+      {
+        "name": "Overlay",
+        "children": []
+      },
+      {
+        "name": "TannyJung Pack",
         "children": []
       }
     ]
@@ -2176,7 +2175,7 @@
   "workspaceSettings": {
     "modid": "tanshugetrees",
     "modName": "Tan\u0027s Huge Trees",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "description": "Generate trees and nature stuffs around the world",
     "author": "TannyJung",
     "websiteURL": "https://legacy.curseforge.com/minecraft/mc-mods/tans-huge-trees",

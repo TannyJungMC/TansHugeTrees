@@ -1,0 +1,10 @@
+{
+  "_fv": 79,
+  "_type": "command",
+  "definition": {
+    "commandName": "TANSHUGETREES",
+    "type": "STANDARD",
+    "permissionLevel": "2",
+    "argsxml": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"args_start\" deletable=\"false\" x=\"40\" y=\"40\"><next><block type=\"literal\"><field name=\"name\">config</field><statement name=\"args\"><block type=\"literal\"><field name=\"name\">repair</field><statement name=\"args\"><block type=\"call_procedure\"><field name=\"procedure\">COMMANDConfigRepair</field></block></statement><next><block type=\"literal\"><field name=\"name\">apply</field><statement name=\"args\"><block type=\"call_procedure\"><field name=\"procedure\">COMMANDConfigApply</field></block></statement></block></next></block></statement></block></next></block></xml>"
+  }
+}
