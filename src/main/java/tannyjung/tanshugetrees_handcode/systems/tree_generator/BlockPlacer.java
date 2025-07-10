@@ -15,7 +15,7 @@ public class BlockPlacer {
 
         ServerLevel level_server = (ServerLevel) level_accessor;
 
-        if (TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen == false) {
+        if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
             // Function
             {

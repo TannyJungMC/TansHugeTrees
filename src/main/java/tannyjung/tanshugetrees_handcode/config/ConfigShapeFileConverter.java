@@ -13,7 +13,7 @@ public class ConfigShapeFileConverter {
 
 			write.append("""
 					- It will use my void dimension to generate trees so it not affect to normal world. When start, you will teleport to this dimension and teleport you back when finished.
-					- To use this, write correct file location, then use command [ /THT auto_gen start <loop> ].
+					- To use this, write correct file location, then use command [ /THT shape_file_converter start <loop> ].
 					- Warning! This dimension height is 0 to 1024 blocks, so be careful about world high/low cut the trees. You can change the Y position of trees using [ posY ] option.
 					
 					----------------------------------------------------------------------------------------------------

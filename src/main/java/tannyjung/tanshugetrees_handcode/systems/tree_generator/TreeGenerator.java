@@ -42,7 +42,7 @@ public class TreeGenerator {
 
         GameUtils.command.runEntity(entity, "kill @e[name=TANSHUGETREES-tree_countdown,distance=..1]");
 
-        if (TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen == false) {
+        if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
             GameUtils.command.runEntity(entity, "tp ~ ~" + GameUtils.nbt.entity.getNumber(entity, "start_height") + " ~");
 
@@ -115,7 +115,7 @@ public class TreeGenerator {
         // Summon Status Display
         GameUtils.command.runEntity(entity, "execute positioned ~ ~1 ~ run " + GameUtils.misc.summonEntity("text_display",  "TANSHUGETREES / TANSHUGETREES-" + GameUtils.nbt.entity.getText(entity, "id") + " / TANSHUGETREES-tree_generator_status", "Tree Generator Status", "see_through:1b,alignment:\"left\",brightness:{block:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"In Progress...\",\"color\":\"white\"}'"));
 
-        if (TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen == false) {
+        if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
             if (Math.random() < GameUtils.nbt.entity.getNumber(entity, "function_start_chance")) {
 
@@ -1297,7 +1297,7 @@ public class TreeGenerator {
             GameUtils.nbt.block.setText(level_accessor, pos, "function", function[1]);
             GameUtils.nbt.block.setText(level_accessor, pos, "block", GameUtils.nbt.entity.getText(entity, block));
 
-            if (TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen == true) {
+            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == true) {
 
                 GameUtils.nbt.block.setText(level_accessor, pos, "export_file_name", GameUtils.nbt.entity.getText(entity, "export_file_name"));
                 GameUtils.nbt.block.setNumber(level_accessor, pos, "center_posX", entity.getBlockX());
@@ -1380,7 +1380,7 @@ public class TreeGenerator {
             GameUtils.command.runEntity(entity, "summon firework_rocket ~-20 ~10 ~20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
             GameUtils.command.runEntity(entity, "summon firework_rocket ~-20 ~10 ~-20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
 
-            if (TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen == false) {
+            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
                 if (Math.random() < GameUtils.nbt.entity.getNumber(entity, "function_end_chance")) {
 

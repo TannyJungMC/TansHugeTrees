@@ -27,13 +27,13 @@ public class ShapeFileConverter {
 
         } else {
 
-            GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen_count);
+            GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
 
-            if (TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen == false) {
+            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen = true;
+                TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = true;
                 GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned ON");
-                TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen_teleport_player_back = entity.position().x + " " + entity.position().y + " " + entity.position().z;
+                TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position = entity.position().x + " " + entity.position().y + " " + entity.position().z;
                 GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:dimension run forceload add -100 -100 100 100");
                 GameUtils.command.runEntity(entity, "execute in tanshugetrees:dimension run tp @s 0 300 0");
                 GameUtils.command.runEntity(entity, "gamemode spectator");
@@ -55,22 +55,22 @@ public class ShapeFileConverter {
 
         ServerLevel level_server = (ServerLevel) level_accessor;
         
-        if (TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen == true) {
+        if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == true) {
 
-            if (TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen_count > 0) {
+            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 
-                TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen_count = 0;
+                TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = 0;
                 GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Will turn OFF after this one");
 
             } else {
 
-                TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen = false;
+                TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = false;
                 GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned OFF");
                 GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:dimension run forceload remove all");
 
                 TanshugetreesMod.queueServerWork(20, () -> {
 
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @a at @s if dimension tanshugetrees:dimension in minecraft:overworld run tp @s " + TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen_teleport_player_back);
+                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @a at @s if dimension tanshugetrees:dimension in minecraft:overworld run tp @s " + TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position);
 
                 });
 
@@ -141,7 +141,7 @@ public class ShapeFileConverter {
 
         if (file.exists() == true && file.isDirectory() == false) {
 
-            TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen_count = TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen_count - 1;
+            TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count - 1;
 
             // Summon
             {
@@ -557,9 +557,9 @@ public class ShapeFileConverter {
 
             GameUtils.misc.sendChatMessage(level_server, "@a", "green", "THT : Completed!");
 
-            if (TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen_count > 0) {
+            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 
-                GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).auto_gen_count);
+                GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
                 summon(level_accessor, level_server);
 
             } else {
