@@ -950,13 +950,13 @@ public class TreeGenerator {
 
                                             }
 
+                                            if (thickness <= 1) {
+
+                                                buildBlockConnector(level_accessor, level_server, entity, center_pos, pos, type, block_type, replace);
+
+                                            }
+
                                             if (block_type.equals("") == false) {
-
-                                                if (thickness <= 1) {
-
-                                                    buildBlockConnector(level_accessor, level_server, entity, center_pos, pos, type, block_type, replace);
-
-                                                }
 
                                                 if (buildTestKeep(level_accessor, pos, replace) == true) {
 
@@ -1065,34 +1065,39 @@ public class TreeGenerator {
             GameUtils.nbt.entity.setNumber(entity, "block_connector_posX", center_pos[0]);
             GameUtils.nbt.entity.setNumber(entity, "block_connector_posY", center_pos[1]);
             GameUtils.nbt.entity.setNumber(entity, "block_connector_posZ", center_pos[2]);
-            int testX = (int) Math.floor(center_pos[0]) - (int) Math.floor(block_connector_posX);
-            int testY = (int) Math.floor(center_pos[1]) - (int) Math.floor(block_connector_posY);
-            int testZ = (int) Math.floor(center_pos[2]) - (int) Math.floor(block_connector_posZ);
-            BlockPos pos_connect = pos;
 
-            if (Math.abs(testX) == 1 || Math.abs(testY) == 1 || Math.abs(testZ) == 1) {
+            if (block_type.equals("") == false) {
 
-                if (Math.abs(testX) == 1 && Math.abs(testZ) == 1) {
+                int testX = (int) Math.floor(center_pos[0]) - (int) Math.floor(block_connector_posX);
+                int testY = (int) Math.floor(center_pos[1]) - (int) Math.floor(block_connector_posY);
+                int testZ = (int) Math.floor(center_pos[2]) - (int) Math.floor(block_connector_posZ);
+                BlockPos pos_connect = pos;
 
-                    // For X and Z
-                    {
+                if (Math.abs(testX) == 1 || Math.abs(testY) == 1 || Math.abs(testZ) == 1) {
 
-                        if (center_pos[0] - block_connector_posX > center_pos[2] - block_connector_posZ) {
+                    if (Math.abs(testX) == 1 && Math.abs(testZ) == 1) {
 
-                            pos_connect = new BlockPos(pos_connect.getX() - testX, pos_connect.getY(), pos_connect.getZ());
-
-                        } else {
-
-                            pos_connect = new BlockPos(pos_connect.getX(), pos_connect.getY(), pos_connect.getZ() - testZ);
-
-                        }
-
-                        // Place Block
+                        // For X and Z
                         {
 
-                            if (buildTestKeep(level_accessor, pos_connect, replace) == true) {
+                            if (center_pos[0] - block_connector_posX > center_pos[2] - block_connector_posZ) {
 
-                                buildPlaceBlock(level_accessor, level_server, entity, pos_connect, type, block_type);
+                                pos_connect = new BlockPos(pos_connect.getX() - testX, pos_connect.getY(), pos_connect.getZ());
+
+                            } else {
+
+                                pos_connect = new BlockPos(pos_connect.getX(), pos_connect.getY(), pos_connect.getZ() - testZ);
+
+                            }
+
+                            // Place Block
+                            {
+
+                                if (buildTestKeep(level_accessor, pos_connect, replace) == true) {
+
+                                    buildPlaceBlock(level_accessor, level_server, entity, pos_connect, type, block_type);
+
+                                }
 
                             }
 
@@ -1100,21 +1105,21 @@ public class TreeGenerator {
 
                     }
 
-                }
+                    if ((Math.abs(testX) == 1 || Math.abs(testZ) == 1) && Math.abs(testY) == 1) {
 
-                if ((Math.abs(testX) == 1 || Math.abs(testZ) == 1) && Math.abs(testY) == 1) {
-
-                    // For Y
-                    {
-
-                        pos_connect = new BlockPos(pos_connect.getX(), pos_connect.getY() - testY, pos_connect.getZ());
-
-                        // Place Block
+                        // For Y
                         {
 
-                            if (buildTestKeep(level_accessor, pos_connect, replace) == true) {
+                            pos_connect = new BlockPos(pos_connect.getX(), pos_connect.getY() - testY, pos_connect.getZ());
 
-                                buildPlaceBlock(level_accessor, level_server, entity, pos_connect, type, block_type);
+                            // Place Block
+                            {
+
+                                if (buildTestKeep(level_accessor, pos_connect, replace) == true) {
+
+                                    buildPlaceBlock(level_accessor, level_server, entity, pos_connect, type, block_type);
+
+                                }
 
                             }
 
