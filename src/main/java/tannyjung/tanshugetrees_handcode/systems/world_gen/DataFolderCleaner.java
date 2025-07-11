@@ -42,24 +42,19 @@ public class DataFolderCleaner {
 
         if (full_node == true) {
 
+            file_region.delete();
+
             File file_place = new File(Handcode.directory_world_data + "/place/" + file_path);
             File file_detailed_detection = new File(Handcode.directory_world_data + "/detailed_detection/" + file_path);
 
-            file_region.delete();
             file_place.delete();
             file_detailed_detection.delete();
 
             // If finish placing all chunks in region
-            if (false && file_place.getParentFile().listFiles() == null) {
+            if (file_place.getParentFile().listFiles() == null) {
 
-                // file_region.getParentFile().delete();
-                // file_place.getParentFile().delete();
-                // file_detailed_detection.getParentFile().delete();
-
-                System.out.println("Delete region folders...");
-                System.out.println(file_region.getParentFile().delete());
-                System.out.println(file_place.getParentFile().delete());
-                System.out.println(file_detailed_detection.getParentFile().delete());
+                file_place.getParentFile().delete();
+                file_detailed_detection.getParentFile().delete();
 
             }
 

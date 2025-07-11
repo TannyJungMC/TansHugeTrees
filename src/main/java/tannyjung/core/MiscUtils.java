@@ -1,6 +1,8 @@
 package tannyjung.core;
 
 import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -10,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -37,8 +41,11 @@ public class MiscUtils {
 
 		try {
 
-			URL url = new URL("http://example.com");
-			URLConnection connection = url.openConnection();
+			URL url = new URL("https://sites.google.com/view/tannyjung");
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("HEAD");
+			connection.setConnectTimeout(5000);
+			connection.setReadTimeout(5000);
 			connection.connect();
 			return true;
 

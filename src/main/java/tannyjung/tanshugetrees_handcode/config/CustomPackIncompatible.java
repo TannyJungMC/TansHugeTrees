@@ -16,13 +16,13 @@ import java.nio.file.Path;
 
 public class CustomPackIncompatible {
 
-    public static void scanMain (ServerLevel level_server) {
+    public static void scanMain (LevelAccessor level_accessor) {
 
         for (File pack : new File(Handcode.directory_config + "/custom_packs").listFiles()) {
 
             if (pack.getName().equals(".organized") == false) {
 
-                testVersion(level_server, new File(pack.toPath() + "/version.txt"));
+                testVersion(level_accessor, new File(pack.toPath() + "/version.txt"));
 
             }
 
@@ -30,7 +30,7 @@ public class CustomPackIncompatible {
 
     }
 
-    public static void scanOrganized (ServerLevel level_server) {
+    public static void scanOrganized () {
 
         File file = new File(Handcode.directory_config + "/custom_packs/.organized");
 
@@ -66,7 +66,7 @@ public class CustomPackIncompatible {
 
     }
 
-    private static void testVersion (ServerLevel level_server, File file) {
+    private static void testVersion (LevelAccessor level_accessor, File file) {
 
         boolean incompatible = false;
 
@@ -82,8 +82,13 @@ public class CustomPackIncompatible {
 
                             if (Double.parseDouble(read_all.replace("data_structure_version = ", "")) != Handcode.data_structure_version_pack) {
 
+                                if (level_accessor instanceof ServerLevel level_server) {
+
+                                    GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Detected incompatible pack. Caused by unsupported mod version. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+
+                                }
+
                                 incompatible = true;
-                                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Detected incompatible pack. Caused by unsupported mod version. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
                                 break;
 
                             }
@@ -101,7 +106,12 @@ public class CustomPackIncompatible {
         } else {
 
             incompatible = true;
-            GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Detected incompatible pack. Caused by no version file. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+
+            if (level_accessor instanceof ServerLevel level_server) {
+
+                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Detected incompatible pack. Caused by no version file. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+
+            }
 
         }
 

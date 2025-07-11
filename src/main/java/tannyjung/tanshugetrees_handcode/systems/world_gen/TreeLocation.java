@@ -113,7 +113,7 @@ public class TreeLocation {
 
     private static void getData (LevelAccessor level_accessor, String dimension, int chunk_posX, int chunk_posZ) {
 
-        File file = new File(Handcode.directory_config + "/config/world_gen.txt");
+        File file = new File(Handcode.directory_config + "/config_world_gen.txt");
 
         if (file.exists() == true) {
 
@@ -916,61 +916,15 @@ public class TreeLocation {
 
     private static void writeLocationFile(String dimension, String id, int center_posX, int center_posZ) {
 
-        StringBuilder write = new StringBuilder();
-
-        {
-
-            write
-                    .append(id)
-                    .append("|")
-                    .append(center_posX)
-                    .append("/")
-                    .append(center_posZ)
-            ;
-
-            write.append("\n");
-
-        }
-
+        String write = id + "|" + center_posX + "/" + center_posZ + "\n";
         String folder = Handcode.directory_world_data + "/tree_locations/" + dimension + "/" + (center_posX >> 9) + "," + (center_posZ >> 9);
-        FileManager.writeTXT(folder + "/" + MiscUtils.quardtreeChunkToNode((center_posX >> 4), (center_posZ >> 4)) + ".txt", write.toString(), true);
+        FileManager.writeTXT(folder + "/" + MiscUtils.quardtreeChunkToNode((center_posX >> 4), (center_posZ >> 4)) + ".txt", write, true);
 
     }
 
     private static void writePlaceFile(String dimension, int from_chunkX, int from_chunkZ, int to_chunkX, int to_chunkZ, String id, File chosen, int center_posX, int center_posZ, String rotation, String mirrored, String other_data) {
 
-        StringBuilder write = new StringBuilder();
-
-        {
-
-            write
-                    .append(from_chunkX)
-                    .append("/")
-                    .append(from_chunkZ)
-                    .append("/")
-                    .append(to_chunkX)
-                    .append("/")
-                    .append(to_chunkZ)
-                    .append("|")
-                    .append(id)
-                    .append("|")
-                    .append(chosen.getName())
-                    .append("|")
-                    .append(center_posX)
-                    .append("/")
-                    .append(center_posZ)
-                    .append("|")
-                    .append(rotation)
-                    .append("/")
-                    .append(mirrored)
-                    .append("|")
-                    .append(other_data)
-            ;
-
-            write.append("\n");
-
-        }
-
+        String write = from_chunkX + "/" + from_chunkZ + "/" + to_chunkX + "/" + to_chunkZ + "|" + id + "|" + chosen.getName() + "|" + center_posX + "/" + center_posZ + "|" + rotation + "/" + mirrored + "|" + other_data + "\n";
         int size = 32 >> 2;
         int to_chunkX_test = ((int) Math.ceil(to_chunkX / (double) size) * size) + size;
         int to_chunkZ_test = ((int) Math.ceil(to_chunkZ / (double) size) * size) + size;
@@ -979,7 +933,7 @@ public class TreeLocation {
 
             for (int scanZ = from_chunkZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
 
-                FileManager.writeTXT(Handcode.directory_world_data + "/place/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
+                FileManager.writeTXT(Handcode.directory_world_data + "/place/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(scanX, scanZ) + ".txt", write, true);
 
             }
 

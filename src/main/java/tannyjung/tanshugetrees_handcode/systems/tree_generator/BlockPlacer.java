@@ -22,7 +22,7 @@ public class BlockPlacer {
 
                 if (GameUtils.nbt.block.getText(level_accessor, pos, "function").equals("") == false) {
 
-                    TreeFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.nbt.block.getText(level_accessor, pos, "function"));
+                    TreeFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.nbt.block.getText(level_accessor, pos, "function"), false);
 
                 }
 

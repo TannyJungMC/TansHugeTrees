@@ -274,8 +274,6 @@ public class GameUtils {
 
 		public static String toID (Holder<Biome> biome) {
 
-			System.out.println(biome.get());
-
 			String return_text = biome.toString().replace("Reference{ResourceKey[minecraft:worldgen/biome / ", "");
 			return return_text.substring(0, return_text.indexOf("]"));
 

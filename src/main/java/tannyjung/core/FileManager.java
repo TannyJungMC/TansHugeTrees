@@ -63,6 +63,7 @@ public class FileManager {
 
 		File file = new File(path);
 		createFolder(file.getParent());
+		boolean old_file_exists = file.exists() == true && file.isDirectory() == false;
 
 		// Test and Write
 		{
@@ -79,32 +80,28 @@ public class FileManager {
 						if (read_new.contains(" = ") == true) {
 
 							String test = read_new.substring(0, read_new.indexOf(" = "));
-							boolean exists = false;
 
-							// Read Old
-							{
+							if (old_file_exists) {
 
-								try { BufferedReader buffered_reader2 = new BufferedReader(new FileReader(file), 65536); String read_old = ""; while ((read_old = buffered_reader2.readLine()) != null) {
+								// Read Old
+								{
 
-									{
+									try { BufferedReader buffered_reader2 = new BufferedReader(new FileReader(file), 65536); String read_old = ""; while ((read_old = buffered_reader2.readLine()) != null) {
 
-										if (read_old.startsWith(test + " = ") == true) {
+										{
 
-											read_new = read_old;
-											exists = true;
-											break;
+											if (read_old.startsWith(test + " = ") == true) {
+
+												read_new = read_old;
+												break;
+
+											}
 
 										}
 
-									}
+									} buffered_reader2.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
-								} buffered_reader2.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
-
-							}
-
-							if (exists == false) {
-
-								System.out.println("Repaired " + file.getName() + " > " + test);
+								}
 
 							}
 

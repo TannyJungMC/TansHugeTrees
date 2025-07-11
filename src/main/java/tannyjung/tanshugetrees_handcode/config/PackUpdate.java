@@ -39,60 +39,55 @@ public class PackUpdate {
 
 						install_pause_systems = true;
 
-						TanshugetreesMod.queueServerWork(20, () -> {
+						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+						GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
 
-							GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
-							GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
+						// Delete Old Folders
+						{
 
-							// Delete Old Folders
-							{
-
-								if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack") == false) {
-									return;
-								}
-								if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Tree-Pack") == false) {
-									return;
-								}
-
+							if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack") == false) {
+								return;
+							}
+							if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Tree-Pack") == false) {
+								return;
 							}
 
-							// Systems
-							{
+						}
 
-								if (createZIP(level_server) == false) {
-									return;
-								}
-								if (createZIP(level_server) == false) {
-									return;
-								}
-								if (download(level_server) == false) {
-									return;
-								}
-								if (unzip(level_server) == false) {
-									return;
-								}
-								if (deleteZIP(level_server) == false) {
-									return;
-								}
-								if (renameFolder(level_server) == false) {
-									return;
-								}
+						// Systems
+						{
 
+							if (createZIP(level_server) == false) {
+								return;
+							}
+							if (createZIP(level_server) == false) {
+								return;
+							}
+							if (download(level_server) == false) {
+								return;
+							}
+							if (unzip(level_server) == false) {
+								return;
+							}
+							if (deleteZIP(level_server) == false) {
+								return;
+							}
+							if (renameFolder(level_server) == false) {
+								return;
 							}
 
-							GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Install Completed!");
+						}
 
-							ConfigMain.repairAll(level_server, true);
-							ConfigMain.apply(level_server);
+						GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Install Completed!");
+						ConfigMain.repairAll(level_server, true);
+						ConfigMain.apply(level_server);
 
-							GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
-							CustomPackFileCount.start(level_server);
-							GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
-							message(level_server);
+						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+						CustomPackFileCount.start(level_server);
+						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+						message(level_server);
 
-							install_pause_systems = false;
-
-						});
+						install_pause_systems = false;
 
 					}
 
@@ -139,12 +134,9 @@ public class PackUpdate {
 		// Read URL
 		{
 
-			try {
+			try { BufferedReader buffered_reader = new BufferedReader(new InputStreamReader(new URI(url).toURL().openStream())); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-				BufferedReader buffered_reader = new BufferedReader(new InputStreamReader(new URI(url).toURL().openStream()));
-				String read_all = "";
-
-				while ((read_all = buffered_reader.readLine()) != null) {
+				{
 
 					if (read_all.startsWith("data_structure_version = ")) {
 
@@ -153,13 +145,8 @@ public class PackUpdate {
 					}
 
 				}
-				buffered_reader.close();
 
-			} catch (Exception exception) {
-
-				MiscUtils.exception(new Exception(), exception);
-
-			}
+			} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
         }
 

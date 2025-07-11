@@ -1,0 +1,10 @@
+{
+  "_fv": 79,
+  "_type": "command",
+  "definition": {
+    "commandName": "TANSHUGETREES",
+    "type": "STANDARD",
+    "permissionLevel": "2",
+    "argsxml": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"args_start\" deletable=\"false\" x=\"40\" y=\"40\"><next><block type=\"literal\"><field name=\"name\">tanny_pack</field><statement name=\"args\"><block type=\"literal\"><field name=\"name\">check_update</field><statement name=\"args\"><block type=\"call_procedure\"><field name=\"procedure\">COMMANDPackCheckUpdate</field></block></statement><next><block type=\"literal\"><field name=\"name\">update</field><statement name=\"args\"><block type=\"call_procedure\"><field name=\"procedure\">COMMANDPackUpdate</field></block></statement></block></next></block></statement></block></next></block></xml>"
+  }
+}

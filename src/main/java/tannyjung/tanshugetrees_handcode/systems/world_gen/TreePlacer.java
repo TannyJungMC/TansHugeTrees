@@ -955,7 +955,7 @@ public class TreePlacer {
                                         // Separate like this because start and end function doesn't need to test "can_run_function"
                                         if (can_run_function == true || get_short.equals("fs") == true || get_short.equals("fe") == true) {
 
-                                            TreeFunction.start(level_accessor, level_server, testX, testY, testZ, get);
+                                            TreeFunction.start(level_accessor, level_server, testX, testY, testZ, get, false);
 
                                         }
 

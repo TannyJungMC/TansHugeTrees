@@ -119,7 +119,7 @@ public class TreeGenerator {
 
             if (Math.random() < GameUtils.nbt.entity.getNumber(entity, "function_start_chance")) {
 
-                TreeFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), GameUtils.nbt.entity.getText(entity, "function_start"));
+                TreeFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), GameUtils.nbt.entity.getText(entity, "function_start"), false);
 
             }
 
@@ -1389,7 +1389,7 @@ public class TreeGenerator {
 
                 if (Math.random() < GameUtils.nbt.entity.getNumber(entity, "function_end_chance")) {
 
-                    TreeFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), GameUtils.nbt.entity.getText(entity, "function_end"));
+                    TreeFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), GameUtils.nbt.entity.getText(entity, "function_end"), false);
 
                 }
 

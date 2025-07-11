@@ -15,15 +15,11 @@ public class CustomPackOrganized {
 
     public static void start (LevelAccessor level_accessor) {
 
-        if (level_accessor instanceof ServerLevel level_server) {
-
-            clearFolder();
-            CustomPackIncompatible.scanMain(level_server);
-            organizing();
-            replace();
-            CustomPackIncompatible.scanOrganized(level_server);
-
-        }
+        clearFolder();
+        CustomPackIncompatible.scanMain(level_accessor);
+        organizing();
+        replace();
+        CustomPackIncompatible.scanOrganized();
 
     }
 

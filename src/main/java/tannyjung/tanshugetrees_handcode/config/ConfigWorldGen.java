@@ -24,8 +24,8 @@ public class ConfigWorldGen {
 
     private static void createTemp () {
 
-        Path from = Paths.get(Handcode.directory_config + "/config/world_gen.txt");
-        Path to = Paths.get(Handcode.directory_config + "/config/world_gen_temp.txt");
+        Path from = Paths.get(Handcode.directory_config + "/config_world_gen.txt");
+        Path to = Paths.get(Handcode.directory_config + "/config_world_gen_temp.txt");
 
         try {
 
@@ -56,7 +56,7 @@ public class ConfigWorldGen {
     private static void create () {
 
         File file_organized = new File(Handcode.directory_config + "/custom_packs/.organized/world_gen");
-        File file = new File(Handcode.directory_config + "/config/world_gen.txt");
+        File file = new File(Handcode.directory_config + "/config_world_gen.txt");
 
         // Re-Create The File
         {
@@ -178,7 +178,7 @@ public class ConfigWorldGen {
         // Test Old File
         {
 
-            File file = new File(Handcode.directory_config + "/config/world_gen_temp.txt");
+            File file = new File(Handcode.directory_config + "/config_world_gen_temp.txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -218,7 +218,7 @@ public class ConfigWorldGen {
 
         }
 
-        File file = new File(Handcode.directory_config + "/config/world_gen.txt");
+        File file = new File(Handcode.directory_config + "/config_world_gen.txt");
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -279,7 +279,7 @@ public class ConfigWorldGen {
                                             // Get Old Value
                                             {
 
-                                                File file_temp = new File(Handcode.directory_config + "/config/world_gen_temp.txt");
+                                                File file_temp = new File(Handcode.directory_config + "/config_world_gen_temp.txt");
                                                 boolean thisID = false;
                                                 option = read_all.substring(0, read_all.indexOf(" = "));
 
@@ -352,7 +352,7 @@ public class ConfigWorldGen {
 
     private static void deleteTemp () {
 
-        File file = new File(Handcode.directory_config + "/config/world_gen_temp.txt");
+        File file = new File(Handcode.directory_config + "/config_world_gen_temp.txt");
 
         if (file.exists() == true && file.isDirectory() == false) {
 
