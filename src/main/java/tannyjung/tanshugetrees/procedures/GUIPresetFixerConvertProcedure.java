@@ -27,7 +27,7 @@ public class GUIPresetFixerConvertProcedure {
 		String name = "";
 		boolean start = false;
 		all = (entity instanceof Player _entity && _entity.containerMenu instanceof TanshugetreesModMenus.MenuAccessor _menu0) ? _menu0.getMenuState(0, "preset", "") : "";
-		file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/TannyJung-Tree-Pack/dev"), File.separator + "preset_template.txt");
+		file = new File((FMLPaths.GAMEDIR.get().toString() + "/config/tanshugetrees/custom_packs/TannyJung-Tree-Pack/.dev"), File.separator + "preset_template.txt");
 		if (file.exists()) {
 			try {
 				BufferedReader fileReader = new BufferedReader(new FileReader(file));

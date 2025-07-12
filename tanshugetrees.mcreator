@@ -1522,7 +1522,7 @@
     {
       "name": "COMMANDTreeFunctionInLoadedChunkRun",
       "type": "procedure",
-      "compiles": false,
+      "compiles": true,
       "locked_code": false,
       "registry_name": "command_tree_function_in_loaded_chunk_run",
       "metadata": {
