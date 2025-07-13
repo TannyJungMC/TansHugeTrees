@@ -507,89 +507,6 @@
       "path": "~/Tree Generator/Block Placer"
     },
     {
-      "name": "PresetFixer",
-      "type": "item",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "preset_fixer",
-      "metadata": {
-        "files": [
-          "src/main/resources/assets/tanshugetrees/models/item/preset_fixer.json",
-          "src/main/java/tannyjung/tanshugetrees/item/PresetFixerItem.java"
-        ]
-      },
-      "path": "~/Preset Fixer"
-    },
-    {
-      "name": "GUIPresetFixer",
-      "type": "gui",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "gui_preset_fixer",
-      "metadata": {
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/network/GUIPresetFixerButtonMessage.java",
-          "src/main/java/tannyjung/tanshugetrees/client/gui/GUIPresetFixerScreen.java",
-          "src/main/java/tannyjung/tanshugetrees/world/inventory/GUIPresetFixerMenu.java"
-        ]
-      },
-      "path": "~/Preset Fixer"
-    },
-    {
-      "name": "GUIPresetFixerConvert",
-      "type": "procedure",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "gui_preset_fixer_convert",
-      "metadata": {
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/procedures/GUIPresetFixerConvertProcedure.java"
-        ],
-        "dependencies": [
-          {
-            "name": "entity",
-            "type": "entity"
-          }
-        ]
-      },
-      "path": "~/Preset Fixer"
-    },
-    {
-      "name": "GUIPresetFixerOpen",
-      "type": "procedure",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "gui_preset_fixer_open",
-      "metadata": {
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/procedures/GUIPresetFixerOpenProcedure.java"
-        ],
-        "dependencies": [
-          {
-            "name": "entity",
-            "type": "entity"
-          },
-          {
-            "name": "x",
-            "type": "number"
-          },
-          {
-            "name": "y",
-            "type": "number"
-          },
-          {
-            "name": "z",
-            "type": "number"
-          },
-          {
-            "name": "world",
-            "type": "world"
-          }
-        ]
-      },
-      "path": "~/Preset Fixer"
-    },
-    {
       "name": "ConvertSecondToHourText",
       "type": "procedure",
       "compiles": true,
@@ -638,7 +555,7 @@
           }
         ]
       },
-      "path": "~/Config"
+      "path": "~/.Misc/Commands"
     },
     {
       "name": "COMMANDSeasonGet",
@@ -802,7 +719,7 @@
           }
         ]
       },
-      "path": "~/Config"
+      "path": "~/.Misc/Commands"
     },
     {
       "name": "OVERLAYWorldGen",
@@ -1124,7 +1041,7 @@
           "src/main/java/tannyjung/tanshugetrees/command/COMMANDShapeFileConverterCommand.java"
         ]
       },
-      "path": "~/Shape File Converter"
+      "path": "~/.Misc/Commands"
     },
     {
       "name": "COMMANDShapeFileConverterStart",
@@ -1163,7 +1080,7 @@
           }
         ]
       },
-      "path": "~/Shape File Converter"
+      "path": "~/.Misc/Commands"
     },
     {
       "name": "COMMANDShapeFileConverterStop",
@@ -1198,7 +1115,7 @@
           }
         ]
       },
-      "path": "~/Shape File Converter"
+      "path": "~/.Misc/Commands"
     },
     {
       "name": "COMMANDLivingTreeMechanicsLeafDrop",
@@ -1418,7 +1335,7 @@
           "src/main/java/tannyjung/tanshugetrees/command/COMMANDConfigCommand.java"
         ]
       },
-      "path": "~/Config"
+      "path": "~/.Misc/Commands"
     },
     {
       "name": "CreativeTabMain",
@@ -1442,7 +1359,7 @@
           "src/main/java/tannyjung/tanshugetrees/command/COMMANDPackCommand.java"
         ]
       },
-      "path": "~/Pack"
+      "path": "~/.Misc/Commands"
     },
     {
       "name": "COMMANDPackCheckUpdate",
@@ -1473,7 +1390,7 @@
           "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDPackCheckUpdateProcedure.java"
         ]
       },
-      "path": "~/Pack"
+      "path": "~/.Misc/Commands"
     },
     {
       "name": "COMMANDPackUpdate",
@@ -1504,7 +1421,7 @@
           "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDPackUpdateProcedure.java"
         ]
       },
-      "path": "~/Pack"
+      "path": "~/.Misc/Commands"
     },
     {
       "name": "COMMANDTreeFunctionInLoadedChunk",
@@ -1517,7 +1434,7 @@
           "src/main/java/tannyjung/tanshugetrees/command/COMMANDTreeFunctionInLoadedChunkCommand.java"
         ]
       },
-      "path": "~/Tree Function in Loaded Chunk"
+      "path": "~/.Misc/Commands"
     },
     {
       "name": "COMMANDTreeFunctionInLoadedChunkRun",
@@ -1536,7 +1453,34 @@
           "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDTreeFunctionInLoadedChunkRunProcedure.java"
         ]
       },
-      "path": "~/Tree Function in Loaded Chunk"
+      "path": "~/.Misc/Commands"
+    },
+    {
+      "name": "COMMANDPresetFixer",
+      "type": "command",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "command_preset_fixer",
+      "metadata": {
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/command/COMMANDPresetFixerCommand.java"
+        ]
+      },
+      "path": "~/.Misc/Commands"
+    },
+    {
+      "name": "COMMANDPresetFixerRun",
+      "type": "procedure",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "command_preset_fixer_run",
+      "metadata": {
+        "dependencies": [],
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDPresetFixerRunProcedure.java"
+        ]
+      },
+      "path": "~/.Misc/Commands"
     }
   ],
   "variable_elements": [
@@ -1733,12 +1677,6 @@
       "block.tanshugetrees.block_placer_twig_inner": "Block Placer",
       "block.tanshugetrees.block_placer_twig_outer": "Block Placer",
       "block.tanshugetrees.block_placer_leaves_2": "Block Placer",
-      "item.tanshugetrees.preset_fixer.description_2": "§8----------------------------------------------------------------------------------------------------",
-      "item.tanshugetrees.preset_fixer": "Preset Fixer",
-      "item.tanshugetrees.preset_fixer.description_1": "§8This is developer tool, not related to game play. For fix presets, reordering and repairing missing options.",
-      "item.tanshugetrees.preset_fixer.description_0": "§8----------------------------------------------------------------------------------------------------",
-      "gui.tanshugetrees.gui_preset_fixer.preset": "preset",
-      "gui.tanshugetrees.gui_preset_fixer.button_convert": "Fix",
       "gui.tanshugetrees.overlay_world_gen_menu.label_tanss_huge_trees_generating_t": "Generating tree locations. This may take a while.",
       "block.tanshugetrees.block_placer_leaves_1": "Block Placer",
       "block.tanshugetrees.block_placer_sprig_core": "Block Placer",
@@ -1773,9 +1711,6 @@
       "src/main/java/tannyjung/tanshugetrees/TanshugetreesMod.java",
       "src/main/java/tannyjung/tanshugetrees/network/TanshugetreesModVariables.java",
       "src/main/java/tannyjung/tanshugetrees/init/TanshugetreesModTabs.java",
-      "src/main/java/tannyjung/tanshugetrees/init/TanshugetreesModScreens.java",
-      "src/main/java/tannyjung/tanshugetrees/init/TanshugetreesModMenus.java",
-      "src/main/java/tannyjung/tanshugetrees/network/MenuStateUpdateMessage.java",
       "src/main/java/tannyjung/tanshugetrees/init/TanshugetreesModBlocks.java",
       "src/main/java/tannyjung/tanshugetrees/init/TanshugetreesModBlockEntities.java",
       "src/main/java/tannyjung/tanshugetrees/init/TanshugetreesModItems.java"
@@ -1795,11 +1730,12 @@
       },
       {
         "name": ".Misc",
-        "children": []
-      },
-      {
-        "name": "Shape File Converter",
-        "children": []
+        "children": [
+          {
+            "name": "Commands",
+            "children": []
+          }
+        ]
       },
       {
         "name": "Saplings",
@@ -1820,23 +1756,7 @@
         ]
       },
       {
-        "name": "Preset Fixer",
-        "children": []
-      },
-      {
-        "name": "Config",
-        "children": []
-      },
-      {
         "name": "Overlay",
-        "children": []
-      },
-      {
-        "name": "Pack",
-        "children": []
-      },
-      {
-        "name": "Tree Function in Loaded Chunk",
         "children": []
       }
     ]
