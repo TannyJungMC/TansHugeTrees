@@ -3,7 +3,6 @@ package tannyjung.tanshugetrees;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 import tannyjung.tanshugetrees.init.TanshugetreesModTabs;
-import tannyjung.tanshugetrees.init.TanshugetreesModMenus;
 import tannyjung.tanshugetrees.init.TanshugetreesModItems;
 import tannyjung.tanshugetrees.init.TanshugetreesModBlocks;
 import tannyjung.tanshugetrees.init.TanshugetreesModBlockEntities;
@@ -48,7 +47,6 @@ public class TanshugetreesMod {
 		TanshugetreesModBlockEntities.REGISTRY.register(bus);
 		TanshugetreesModItems.REGISTRY.register(bus);
 		TanshugetreesModTabs.REGISTRY.register(bus);
-		TanshugetreesModMenus.REGISTRY.register(bus);
 		// Start of user code block mod init
 		Handcode.startGame();
 		// End of user code block mod init

@@ -19,7 +19,6 @@ public class TanshugetreesModTabs {
 			() -> CreativeModeTab.builder().title(Component.translatable("item_group.tanshugetrees.creative_tab_main")).icon(() -> new ItemStack(TanshugetreesModBlocks.YOKAI.get())).displayItems((parameters, tabData) -> {
 				tabData.accept(TanshugetreesModBlocks.WAYPOINT_FLOWER.get().asItem());
 				tabData.accept(TanshugetreesModBlocks.YOKAI.get().asItem());
-				tabData.accept(TanshugetreesModItems.PRESET_FIXER.get());
 				tabData.accept(TanshugetreesModBlocks.RANDOM_TREE.get().asItem());
 				tabData.accept(TanshugetreesModBlocks.HALCYON.get().asItem());
 			}).build());

@@ -3,7 +3,6 @@
  */
 package tannyjung.tanshugetrees.init;
 
-import tannyjung.tanshugetrees.item.PresetFixerItem;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 
 import net.minecraftforge.registries.RegistryObject;
@@ -40,7 +39,6 @@ public class TanshugetreesModItems {
 	public static final RegistryObject<Item> BLOCK_PLACER_TWIG_INNER = block(TanshugetreesModBlocks.BLOCK_PLACER_TWIG_INNER);
 	public static final RegistryObject<Item> BLOCK_PLACER_TWIG_OUTER = block(TanshugetreesModBlocks.BLOCK_PLACER_TWIG_OUTER);
 	public static final RegistryObject<Item> BLOCK_PLACER_LEAVES_2 = block(TanshugetreesModBlocks.BLOCK_PLACER_LEAVES_2);
-	public static final RegistryObject<Item> PRESET_FIXER = REGISTRY.register("preset_fixer", () -> new PresetFixerItem());
 	public static final RegistryObject<Item> BLOCK_PLACER_LEAVES_1 = block(TanshugetreesModBlocks.BLOCK_PLACER_LEAVES_1);
 	public static final RegistryObject<Item> BLOCK_PLACER_SPRIG_CORE = block(TanshugetreesModBlocks.BLOCK_PLACER_SPRIG_CORE);
 	public static final RegistryObject<Item> BLOCK_PLACER_SPRIG_INNER = block(TanshugetreesModBlocks.BLOCK_PLACER_SPRIG_INNER);
