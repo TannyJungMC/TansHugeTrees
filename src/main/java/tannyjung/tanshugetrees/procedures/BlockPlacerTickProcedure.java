@@ -9,11 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.CommandSource;
 
-import java.io.File;
-
 public class BlockPlacerTickProcedure {
 	public static void execute(LevelAccessor world, double x, double y, double z) {
-		File file = new File("");
 		String function = "";
 		if (false) {
 			if (world instanceof ServerLevel _level)
