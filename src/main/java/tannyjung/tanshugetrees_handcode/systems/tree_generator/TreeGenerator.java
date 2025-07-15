@@ -156,7 +156,7 @@ public class TreeGenerator {
                     .append("Thickness : ").append(GameUtils.nbt.entity.getNumber(entity, type + "_thickness")).append(" / ").append(GameUtils.nbt.entity.getNumber(entity, type + "_thickness_start"))
             ;
 
-            GameUtils.command.runEntity(entity, "execute positioned ~ ~1 ~ run data merge entity @e[tag=TANSHUGETREES-tree_generator_status,distance=..1,limit=1,sort=nearest] {text:'{\"text\":\"" + command + "\",\"color\":\"red\"}'}");
+            GameUtils.command.runEntity(entity, "execute positioned ~ ~1 ~ run data merge entity @e[tag=TANSHUGETREES-tree_generator_status,distance=..1,limit=1,sort=nearest] {text:'{\"text\":\"" + command + "\",\"color\":\"white\"}'}");
 
         }
 
@@ -184,7 +184,7 @@ public class TreeGenerator {
 
             } else if (step.equals("build") == true) {
 
-                Step.build(level_accessor, level_server, entity, id, type);
+                Step.build(level_accessor, level_server, entity, id, type, type_pre_next);
 
             } else {
 
@@ -746,7 +746,7 @@ public class TreeGenerator {
 
         }
 
-        private static void build (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, String id, String type) {
+        private static void build (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, String id, String type, String[] type_pre_next) {
 
             double thickness = 0.0;
 
@@ -937,7 +937,7 @@ public class TreeGenerator {
 
                                                 if (generator_type.equals("sphere") == true) {
 
-                                                    block_type = buildOuterInnerCore(level_accessor, entity, type, half_thickness, pos, build_area);
+                                                    block_type = buildOuterInnerCore(level_accessor, entity, type, type_pre_next, half_thickness, pos, build_area);
 
                                                 } else {
 
@@ -1000,11 +1000,11 @@ public class TreeGenerator {
 
                                                     }
 
-                                                    pos_leaves = new BlockPos(pos.getX(), pos.getY() - deep_test, pos.getZ());
+                                                    if (block_type.equals("") == false) {
 
-                                                    if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos_leaves), "tanshugetrees:block_placer_blacklist_leaves") == false) {
+                                                        pos_leaves = new BlockPos(pos.getX(), pos.getY() - deep_test, pos.getZ());
 
-                                                        if (block_type.equals("") == false && buildTestKeep(level_accessor, pos_leaves, replace) == true) {
+                                                        if (buildTestKeep(level_accessor, pos_leaves, replace) == true) {
 
                                                             buildPlaceBlock(level_accessor, level_server, entity, pos_leaves, type, block_type);
 
@@ -1131,125 +1131,108 @@ public class TreeGenerator {
 
         }
 
-        private static String buildOuterInnerCore (LevelAccessor level_accessor, Entity entity, String type, double half_thickness, BlockPos pos, double build_area) {
+        private static String buildOuterInnerCore (LevelAccessor level_accessor, Entity entity, String type, String[] type_pre_next, double half_thickness, BlockPos pos, double build_area) {
 
             Block previous_block = level_accessor.getBlockState(pos).getBlock();
             String block = "";
 
-            if (GameUtils.block.isTaggedAs(previous_block.defaultBlockState(), "tanshugetrees:block_placer_blacklist_" + type) == false) {
+            // Get Type
+            {
 
-                // Get Type
+                double outer_level = GameUtils.nbt.entity.getNumber(entity, type + "_outer_level");
+                double inner_level = GameUtils.nbt.entity.getNumber(entity, type + "_inner_level");
+                double outer_level_area = outer_level;
+                double inner_level_area = inner_level;
+
+                // Outer and inner thickness must not lower than 1
                 {
 
-                    double outer_level = GameUtils.nbt.entity.getNumber(entity, type + "_outer_level");
-                    double inner_level = GameUtils.nbt.entity.getNumber(entity, type + "_inner_level");
-                    double outer_level_area = outer_level;
-                    double inner_level_area = inner_level;
+                    if (outer_level_area < 1) {
 
-                    // Outer and inner thickness must not lower than 1
-                    {
-
-                        if (outer_level_area < 1) {
-
-                            outer_level_area = 1;
-
-                        }
-
-                        if (inner_level_area < 1) {
-
-                            inner_level_area = 1;
-
-                        }
+                        outer_level_area = 1;
 
                     }
 
-                    double outer_area = half_thickness - outer_level_area;
-                    double inner_area = outer_area - inner_level_area;
+                    if (inner_level_area < 1) {
 
-                    // Applying
-                    {
-
-                        if (outer_area > 0) {
-
-                            outer_area = outer_area * outer_area;
-
-                        } else {
-
-                            outer_area = 0;
-
-                        }
-
-                        if (inner_area > 0) {
-
-                            inner_area = inner_area * inner_area;
-
-                        } else {
-
-                            inner_area = 0;
-
-                        }
-
-                    }
-
-                    if (build_area < inner_area) {
-
-                        block = "core";
-
-                    } else if (build_area < outer_area) {
-
-                        if (inner_level >= 1 || Math.random() < inner_level) {
-
-                            block = "inner";
-
-                        } else {
-
-                            // Make inner and core blend. Do not make inner become hollow when chance is false, but swap to use core instead.
-                            block = "core";
-
-                        }
-
-                    } else {
-
-                        if (outer_level >= 1 || Math.random() < outer_level) {
-
-                            block = "outer";
-
-                        }
+                        inner_level_area = 1;
 
                     }
 
                 }
 
-                // Replace
+                double outer_area = half_thickness - outer_level_area;
+                double inner_area = outer_area - inner_level_area;
+
+                // Applying
                 {
 
-                    Block block_outer = GameUtils.block.fromText("tanshugetrees:block_placer_" + type + "_outer").getBlock();
-                    Block block_inner = GameUtils.block.fromText("tanshugetrees:block_placer_" + type + "_inner").getBlock();
-                    Block block_core = GameUtils.block.fromText("tanshugetrees:block_placer_" + type + "_core").getBlock();
+                    if (outer_area > 0) {
 
-                    if (block.equals("outer") == true) {
+                        outer_area = outer_area * outer_area;
 
-                        if (previous_block == block_outer || previous_block == block_inner || previous_block == block_core) {
+                    } else {
 
-                            block = "";
+                        outer_area = 0;
 
-                        }
+                    }
 
-                    } else if (block.equals("inner") == true) {
+                    if (inner_area > 0) {
 
-                        if (previous_block == block_inner || previous_block == block_core) {
+                        inner_area = inner_area * inner_area;
 
-                            block = "";
+                    } else {
 
-                        }
+                        inner_area = 0;
 
-                    } else if (block.equals("core") == true) {
+                    }
 
-                        if (previous_block == block_core) {
+                }
 
-                            block = "";
+                if (build_area < inner_area) {
 
-                        }
+                    block = "core";
+
+                } else if (build_area < outer_area) {
+
+                    if (inner_level >= 1 || Math.random() < inner_level) {
+
+                        block = "inner";
+
+                    } else {
+
+                        // Make inner and core blend. Do not make inner become hollow when chance is false, but swap to use core instead.
+                        block = "core";
+
+                    }
+
+                } else {
+
+                    if (outer_level >= 1 || Math.random() < outer_level) {
+
+                        block = "outer";
+
+                    }
+
+                }
+
+            }
+
+            // Replace
+            {
+
+                String previous_blockID = GameUtils.block.toTextID(previous_block.defaultBlockState());
+                boolean previous_is_core = previous_blockID.startsWith("tanshugetrees:block_placer_") && previous_blockID.endsWith("_core");
+
+                if (previous_is_core == true) {
+
+                    block = "";
+
+                } else if (block.equals("core") == false) {
+
+                    if (GameUtils.block.isTaggedAs(previous_block.defaultBlockState(), "tanshugetrees:air_blocks") == false) {
+
+                        block = "";
 
                     }
 
