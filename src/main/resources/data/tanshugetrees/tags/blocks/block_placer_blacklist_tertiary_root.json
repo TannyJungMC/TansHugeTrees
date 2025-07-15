@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "tanshugetrees:block_placer_taproot_inner",
+    "tanshugetrees:block_placer_secondary_root_core",
+    "tanshugetrees:block_placer_taproot_core",
+    "tanshugetrees:block_placer_secondary_root_outer",
+    "tanshugetrees:block_placer_secondary_root_inner",
+    "tanshugetrees:block_placer_taproot_outer"
+  ]
+}

@@ -9,6 +9,8 @@
       "id": "#minecraft:flowers",
       "required": false
     },
+    "tanshugetrees:block_placer_leaves_2",
+    "tanshugetrees:block_placer_leaves_1",
     {
       "id": "#tanshugetrees:air_blocks",
       "required": false
