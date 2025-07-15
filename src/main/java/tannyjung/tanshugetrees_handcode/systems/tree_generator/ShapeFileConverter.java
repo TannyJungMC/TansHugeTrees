@@ -34,8 +34,8 @@ public class ShapeFileConverter {
                 TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = true;
                 GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned ON");
                 TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position = entity.position().x + " " + entity.position().y + " " + entity.position().z;
-                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:dimension run forceload add -100 -100 100 100");
-                GameUtils.command.runEntity(entity, "execute in tanshugetrees:dimension run tp @s 0 300 0");
+                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension run forceload add -100 -100 100 100");
+                GameUtils.command.runEntity(entity, "execute in tanshugetrees:tanshugetrees_dimension run tp @s 0 300 0");
                 GameUtils.command.runEntity(entity, "gamemode spectator");
                 GameUtils.command.runEntity(entity, "gamemode creative");
 
@@ -66,11 +66,11 @@ public class ShapeFileConverter {
 
                 TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = false;
                 GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned OFF");
-                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:dimension run forceload remove all");
+                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension run forceload remove all");
 
                 TanshugetreesMod.queueServerWork(20, () -> {
 
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @a at @s if dimension tanshugetrees:dimension in minecraft:overworld run tp @s " + TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position);
+                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @a at @s if dimension tanshugetrees:tanshugetrees_dimension in minecraft:overworld run tp @s " + TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position);
 
                 });
 
@@ -146,9 +146,9 @@ public class ShapeFileConverter {
             // Summon
             {
 
-                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 " + posY + " 0 run " + GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", MiscUtils.getForgeDataFromGiveFile(file.getPath())));
+                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension positioned 0 " + posY + " 0 run " + GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", MiscUtils.getForgeDataFromGiveFile(file.getPath())));
                 String data_modify = "debug_mode:false,global_generate_speed:false,generate_speed_tick:" + generate_speed_tick + ",generate_speed_repeat:" + generate_speed_repeat + ",generate_speed_tp:" + generate_speed_tp;
-                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:dimension positioned 0 " + posY + " 0 run data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
+                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension positioned 0 " + posY + " 0 run data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
 
             }
 
