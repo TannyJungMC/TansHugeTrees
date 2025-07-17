@@ -184,7 +184,7 @@ public class TreeGenerator {
 
             } else if (step.equals("build") == true) {
 
-                Step.build(level_accessor, level_server, entity, id, type, type_pre_next);
+                Step.build(level_accessor, level_server, entity, id, type);
 
             } else {
 
@@ -338,9 +338,9 @@ public class TreeGenerator {
                     GameUtils.nbt.entity.setNumber(entity, type + "_length", length);
                     GameUtils.nbt.entity.setNumber(entity, type + "_length_save", length);
 
-                    double thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_start") - 1;
+                    double thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_start");
                     thickness = thickness * summonReduction(entity, type, "thickness_reduce");
-                    GameUtils.nbt.entity.setNumber(entity, type + "_thickness", thickness);
+                    GameUtils.nbt.entity.setNumber(entity, type + "_thickness", thickness - 1);
 
                 }
 
@@ -384,7 +384,7 @@ public class TreeGenerator {
 
                         double size = Mth.nextDouble(RandomSource.create(), GameUtils.nbt.entity.getNumber(entity, "leaves_size_min"), GameUtils.nbt.entity.getNumber(entity, "leaves_size_max"));
                         size = size * summonReduction(entity, "leaves", "size_reduce");
-                        GameUtils.nbt.entity.setNumber(entity, "leaves_size", size);
+                        GameUtils.nbt.entity.setNumber(entity, "leaves_size", size - 1);
 
                     }
 
@@ -443,7 +443,7 @@ public class TreeGenerator {
                                     // Non Center Direction
                                     {
 
-                                        if (GameUtils.nbt.entity.getNumber(entity, type + "_count") > 0) {
+                                        if (GameUtils.nbt.entity.getNumber(entity, type + "_count") > 1) {
 
                                             vertical = GameUtils.nbt.entity.getNumber(entity, type + "_start_vertical");
                                             horizontal = GameUtils.nbt.entity.getNumber(entity, type + "_start_horizontal");
@@ -675,16 +675,16 @@ public class TreeGenerator {
 
                         }
 
-                        double percent = GameUtils.nbt.entity.getNumber(entity, type + "_length") / GameUtils.nbt.entity.getNumber(entity, type + "_length_save");
+                        double length_percent = GameUtils.nbt.entity.getNumber(entity, type + "_length") / GameUtils.nbt.entity.getNumber(entity, type + "_length_save");
                         double thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_start") - GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end");
-                        thickness = (GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end") - 1) + (thickness * percent);
+                        thickness = (GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end") - 1) + (thickness * length_percent);
                         thickness = Math.round(thickness);
                         GameUtils.nbt.entity.setNumber(entity, type + "_thickness", Double.parseDouble(String.format("%.2f", thickness)));
                         GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ^ ^ ^1");
 
-                    }
+                        }
 
-                }
+                    }
 
             } else {
 
@@ -746,7 +746,7 @@ public class TreeGenerator {
 
         }
 
-        private static void build (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, String id, String type, String[] type_pre_next) {
+        private static void build (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, String id, String type) {
 
             double thickness = 0.0;
 
@@ -930,32 +930,32 @@ public class TreeGenerator {
                                         // General
                                         {
 
-                                            String block_type = "";
+                                            if (buildTestKeep(level_accessor, pos, replace) == true) {
 
-                                            // Get Block
-                                            {
+                                                if (thickness <= 1) {
 
-                                                if (generator_type.equals("sphere") == true) {
-
-                                                    block_type = buildOuterInnerCore(level_accessor, entity, type, type_pre_next, half_thickness, pos, build_area);
-
-                                                } else {
-
-                                                    block_type = "outer";
+                                                    buildBlockConnector(level_accessor, level_server, entity, center_pos, pos, type, generator_type, half_thickness, build_area, replace);
 
                                                 }
 
-                                            }
+                                                String block_type = "";
 
-                                            if (thickness <= 1) {
+                                                // Get Block
+                                                {
 
-                                                buildBlockConnector(level_accessor, level_server, entity, center_pos, pos, type, block_type, replace);
+                                                    if (generator_type.equals("sphere") == true) {
 
-                                            }
+                                                        block_type = buildOuterInnerCore(level_accessor, entity, type, half_thickness, pos, build_area);
 
-                                            if (block_type.equals("") == false) {
+                                                    } else {
 
-                                                if (buildTestKeep(level_accessor, pos, replace) == true) {
+                                                        block_type = "outer";
+
+                                                    }
+
+                                                }
+
+                                                if (block_type.equals("") == false) {
 
                                                     buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type);
                                                     return;
@@ -1000,9 +1000,9 @@ public class TreeGenerator {
 
                                                     }
 
-                                                    if (block_type.equals("") == false) {
+                                                    pos_leaves = new BlockPos(pos.getX(), pos.getY() - deep_test, pos.getZ());
 
-                                                        pos_leaves = new BlockPos(pos.getX(), pos.getY() - deep_test, pos.getZ());
+                                                    if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos_leaves), "tanshugetrees:block_placer_blacklist_leaves") == false) {
 
                                                         if (buildTestKeep(level_accessor, pos_leaves, replace) == true) {
 
@@ -1055,7 +1055,7 @@ public class TreeGenerator {
 
         }
 
-        private static void buildBlockConnector (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, double[] center_pos, BlockPos pos, String type, String block_type, boolean replace) {
+        private static void buildBlockConnector (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, double[] center_pos, BlockPos pos, String type, String generator_type, double half_thickness, double build_area, boolean replace) {
 
             double block_connector_posX = GameUtils.nbt.entity.getNumber(entity, "block_connector_posX");
             double block_connector_posY = GameUtils.nbt.entity.getNumber(entity, "block_connector_posY");
@@ -1064,34 +1064,47 @@ public class TreeGenerator {
             GameUtils.nbt.entity.setNumber(entity, "block_connector_posY", center_pos[1]);
             GameUtils.nbt.entity.setNumber(entity, "block_connector_posZ", center_pos[2]);
 
-            if (block_type.equals("") == false) {
+            int testX = (int) Math.floor(center_pos[0]) - (int) Math.floor(block_connector_posX);
+            int testY = (int) Math.floor(center_pos[1]) - (int) Math.floor(block_connector_posY);
+            int testZ = (int) Math.floor(center_pos[2]) - (int) Math.floor(block_connector_posZ);
 
-                int testX = (int) Math.floor(center_pos[0]) - (int) Math.floor(block_connector_posX);
-                int testY = (int) Math.floor(center_pos[1]) - (int) Math.floor(block_connector_posY);
-                int testZ = (int) Math.floor(center_pos[2]) - (int) Math.floor(block_connector_posZ);
+            if (Math.abs(testX) == 1 || Math.abs(testY) == 1 || Math.abs(testZ) == 1) {
+
                 BlockPos pos_connect = pos;
+                String block_type = "";
 
-                if (Math.abs(testX) == 1 || Math.abs(testY) == 1 || Math.abs(testZ) == 1) {
 
-                    if (Math.abs(testX) == 1 && Math.abs(testZ) == 1) {
+                if (Math.abs(testX) == 1 && Math.abs(testZ) == 1) {
 
-                        // For X and Z
+                    // For X and Z
+                    {
+
+                        if (center_pos[0] - block_connector_posX > center_pos[2] - block_connector_posZ) {
+
+                            pos_connect = new BlockPos(pos_connect.getX() - testX, pos_connect.getY(), pos_connect.getZ());
+
+                        } else {
+
+                            pos_connect = new BlockPos(pos_connect.getX(), pos_connect.getY(), pos_connect.getZ() - testZ);
+
+                        }
+
+                        // Place Block
                         {
 
-                            if (center_pos[0] - block_connector_posX > center_pos[2] - block_connector_posZ) {
+                            if (buildTestKeep(level_accessor, pos_connect, replace) == true) {
 
-                                pos_connect = new BlockPos(pos_connect.getX() - testX, pos_connect.getY(), pos_connect.getZ());
+                                if (generator_type.equals("sphere") == true) {
 
-                            } else {
+                                    block_type = buildOuterInnerCore(level_accessor, entity, type, half_thickness, pos, build_area);
 
-                                pos_connect = new BlockPos(pos_connect.getX(), pos_connect.getY(), pos_connect.getZ() - testZ);
+                                } else {
 
-                            }
+                                    block_type = "outer";
 
-                            // Place Block
-                            {
+                                }
 
-                                if (buildTestKeep(level_accessor, pos_connect, replace) == true) {
+                                if (block_type.equals("") == false) {
 
                                     buildPlaceBlock(level_accessor, level_server, entity, pos_connect, type, block_type);
 
@@ -1103,17 +1116,31 @@ public class TreeGenerator {
 
                     }
 
-                    if ((Math.abs(testX) == 1 || Math.abs(testZ) == 1) && Math.abs(testY) == 1) {
+                }
 
-                        // For Y
+                if ((Math.abs(testX) == 1 || Math.abs(testZ) == 1) && Math.abs(testY) == 1) {
+
+                    // For Y
+                    {
+
+                        pos_connect = new BlockPos(pos_connect.getX(), pos_connect.getY() - testY, pos_connect.getZ());
+
+                        // Place Block
                         {
 
-                            pos_connect = new BlockPos(pos_connect.getX(), pos_connect.getY() - testY, pos_connect.getZ());
+                            if (buildTestKeep(level_accessor, pos_connect, replace) == true) {
 
-                            // Place Block
-                            {
+                                if (generator_type.equals("sphere") == true) {
 
-                                if (buildTestKeep(level_accessor, pos_connect, replace) == true) {
+                                    block_type = buildOuterInnerCore(level_accessor, entity, type, half_thickness, pos, build_area);
+
+                                } else {
+
+                                    block_type = "outer";
+
+                                }
+
+                                if (block_type.equals("") == false) {
 
                                     buildPlaceBlock(level_accessor, level_server, entity, pos_connect, type, block_type);
 
@@ -1131,9 +1158,8 @@ public class TreeGenerator {
 
         }
 
-        private static String buildOuterInnerCore (LevelAccessor level_accessor, Entity entity, String type, String[] type_pre_next, double half_thickness, BlockPos pos, double build_area) {
+        private static String buildOuterInnerCore (LevelAccessor level_accessor, Entity entity, String type, double half_thickness, BlockPos pos, double build_area) {
 
-            Block previous_block = level_accessor.getBlockState(pos).getBlock();
             String block = "";
 
             // Get Type
@@ -1221,24 +1247,139 @@ public class TreeGenerator {
             // Replace
             {
 
+                Block previous_block = level_accessor.getBlockState(pos).getBlock();
                 String previous_blockID = GameUtils.block.toTextID(previous_block.defaultBlockState());
-                boolean previous_is_core = previous_blockID.startsWith("tanshugetrees:block_placer_") && previous_blockID.endsWith("_core");
+                boolean is_block_placer = previous_blockID.startsWith("tanshugetrees:block_placer");
 
-                if (previous_is_core == true) {
+                if (is_block_placer == true) {
 
-                    block = "";
+                    boolean is_roots = GameUtils.block.isTaggedAs(previous_block.defaultBlockState(), "tanshugetrees:block_placer_roots");
+                    boolean is_blacklist = GameUtils.block.isTaggedAs(previous_block.defaultBlockState(), "tanshugetrees:block_placer_blacklist_" + type);
+                    boolean is_same_type = previous_blockID.startsWith("tanshugetrees:block_placer_" + type);
+                    boolean is_core = previous_blockID.endsWith("_core");
 
-                } else if (block.equals("core") == false) {
+                    if (block.equals("core") == true) {
 
-                    if (GameUtils.block.isTaggedAs(previous_block.defaultBlockState(), "tanshugetrees:air_blocks") == false) {
+                        // Core
+                        {
 
-                        block = "";
+                            if (is_blacklist == true && is_core == true) {
+
+                                block = "";
+
+                            }
+
+                        }
+
+                    } else {
+
+                        // Outer and Inner
+                        {
+
+                            if (is_core == true) {
+
+                                block = "";
+
+                            } else if (is_blacklist == true || is_roots == true) {
+
+                                block = "";
+
+                            } else {
+
+                                boolean is_same_type_outer = previous_blockID.equals("tanshugetrees:block_placer_" + type + "_outer");
+                                boolean is_same_type_inner = previous_blockID.equals("tanshugetrees:block_placer_" + type + "_inner");
+
+                                if (block.equals("outer") == true) {
+
+                                    if (is_same_type_outer == true || is_same_type_inner == true) {
+
+                                        block = "";
+
+                                    }
+
+                                } else if (block.equals("inner") == true) {
+
+                                    if (is_same_type_inner == true) {
+
+                                        block = "";
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
 
                     }
 
                 }
 
             }
+
+            /*
+
+            // Replace
+            {
+
+                Block previous_block = level_accessor.getBlockState(pos).getBlock();
+                String previous_blockID = GameUtils.block.toTextID(previous_block.defaultBlockState());
+                boolean is_blacklist = GameUtils.block.isTaggedAs(previous_block.defaultBlockState(), "tanshugetrees:block_placer_blacklist_" + type);
+                boolean is_core = previous_blockID.startsWith("tanshugetrees:block_placer_") == true && previous_blockID.endsWith("_core") == true;
+                boolean is_core_same_type = previous_blockID.startsWith("tanshugetrees:block_placer_" + type + "core");
+
+                if (block.equals("core") == true) {
+
+                    if (is_core_same_type == true) {
+
+                        block = "";
+
+                    } else if (is_blacklist == true && is_core == true) {
+
+                        block = "";
+
+                    }
+
+                } else {
+
+                    if (is_blacklist == true) {
+
+                        block = "";
+
+                    } else if (is_core == true) {
+
+                        block = "";
+
+                    } else {
+
+                        Block block_outer = GameUtils.block.fromText("tanshugetrees:block_placer_" + type + "_outer").getBlock();
+                        Block block_inner = GameUtils.block.fromText("tanshugetrees:block_placer_" + type + "_inner").getBlock();
+
+                        if (block.equals("outer") == true) {
+
+                            if (previous_block == block_outer || previous_block == block_inner) {
+
+                                block = "";
+
+                            }
+
+                        } else if (block.equals("inner") == true) {
+
+                            if (previous_block == block_inner) {
+
+                                block = "";
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+             */
 
             return block;
 
