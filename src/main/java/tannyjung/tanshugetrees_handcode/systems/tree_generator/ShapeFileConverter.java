@@ -27,14 +27,11 @@ public class ShapeFileConverter {
 
         } else {
 
-            GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
-
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
                 TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = true;
                 GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned ON");
                 TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position = entity.position().x + " " + entity.position().y + " " + entity.position().z;
-                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension run forceload add -100 -100 100 100");
                 GameUtils.command.runEntity(entity, "execute in tanshugetrees:tanshugetrees_dimension run tp @s 0 300 0");
                 GameUtils.command.runEntity(entity, "gamemode spectator");
                 GameUtils.command.runEntity(entity, "gamemode creative");
@@ -46,6 +43,8 @@ public class ShapeFileConverter {
                 });
 
             }
+
+            GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
 
         }
 
@@ -66,7 +65,6 @@ public class ShapeFileConverter {
 
                 TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = false;
                 GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned OFF");
-                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension run forceload remove all");
 
                 TanshugetreesMod.queueServerWork(20, () -> {
 
@@ -251,7 +249,6 @@ public class ShapeFileConverter {
                         .append("\n")
                         .append("----------------------------------------------------------------------------------------------------").append("\n")
                         .append("\n")
-                        .append("+b0/0/0tro").append("\n")
                 ;
 
             }
