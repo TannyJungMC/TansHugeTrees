@@ -930,13 +930,13 @@ public class TreeGenerator {
                                         // General
                                         {
 
+                                            if (thickness <= 1) {
+
+                                                buildBlockConnector(level_accessor, level_server, entity, center_pos, pos, type, generator_type, half_thickness, build_area, replace);
+
+                                            }
+
                                             if (buildTestKeep(level_accessor, pos, replace) == true) {
-
-                                                if (thickness <= 1) {
-
-                                                    buildBlockConnector(level_accessor, level_server, entity, center_pos, pos, type, generator_type, half_thickness, build_area, replace);
-
-                                                }
 
                                                 String block_type = "";
 
@@ -985,26 +985,26 @@ public class TreeGenerator {
 
                                                 for (int deep_test = 0; deep_test < deep; deep_test++) {
 
-                                                    // Get Block
-                                                    {
-
-                                                        if (Math.random() < GameUtils.nbt.entity.getNumber(entity, "leaves2_chance")) {
-
-                                                            block_type = "2";
-
-                                                        } else {
-
-                                                            block_type = "1";
-
-                                                        }
-
-                                                    }
-
                                                     pos_leaves = new BlockPos(pos.getX(), pos.getY() - deep_test, pos.getZ());
 
                                                     if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos_leaves), "tanshugetrees:block_placer_blacklist_leaves") == false) {
 
                                                         if (buildTestKeep(level_accessor, pos_leaves, replace) == true) {
+
+                                                            // Get Block
+                                                            {
+
+                                                                if (Math.random() < GameUtils.nbt.entity.getNumber(entity, "leaves2_chance")) {
+
+                                                                    block_type = "2";
+
+                                                                } else {
+
+                                                                    block_type = "1";
+
+                                                                }
+
+                                                            }
 
                                                             buildPlaceBlock(level_accessor, level_server, entity, pos_leaves, type, block_type);
 
@@ -1064,35 +1064,33 @@ public class TreeGenerator {
             GameUtils.nbt.entity.setNumber(entity, "block_connector_posY", center_pos[1]);
             GameUtils.nbt.entity.setNumber(entity, "block_connector_posZ", center_pos[2]);
 
-            int testX = (int) Math.floor(center_pos[0]) - (int) Math.floor(block_connector_posX);
-            int testY = (int) Math.floor(center_pos[1]) - (int) Math.floor(block_connector_posY);
-            int testZ = (int) Math.floor(center_pos[2]) - (int) Math.floor(block_connector_posZ);
+            int testX = (int) (Math.floor(center_pos[0]) - Math.floor(block_connector_posX));
+            int testY = (int) (Math.floor(center_pos[1]) - Math.floor(block_connector_posY));
+            int testZ = (int) (Math.floor(center_pos[2]) - Math.floor(block_connector_posZ));
 
             if (Math.abs(testX) == 1 || Math.abs(testY) == 1 || Math.abs(testZ) == 1) {
 
-                BlockPos pos_connect = pos;
-                String block_type = "";
+                // For X and Z
+                {
 
-
-                if (Math.abs(testX) == 1 && Math.abs(testZ) == 1) {
-
-                    // For X and Z
-                    {
+                    if (Math.abs(testX) == 1 && Math.abs(testZ) == 1) {
 
                         if (center_pos[0] - block_connector_posX > center_pos[2] - block_connector_posZ) {
 
-                            pos_connect = new BlockPos(pos_connect.getX() - testX, pos_connect.getY(), pos_connect.getZ());
+                            pos = new BlockPos(pos.getX() - testX, pos.getY(), pos.getZ());
 
                         } else {
 
-                            pos_connect = new BlockPos(pos_connect.getX(), pos_connect.getY(), pos_connect.getZ() - testZ);
+                            pos = new BlockPos(pos.getX(), pos.getY(), pos.getZ() - testZ);
 
                         }
 
                         // Place Block
                         {
 
-                            if (buildTestKeep(level_accessor, pos_connect, replace) == true) {
+                            if (buildTestKeep(level_accessor, pos, replace) == true) {
+
+                                String block_type = "";
 
                                 if (generator_type.equals("sphere") == true) {
 
@@ -1106,7 +1104,7 @@ public class TreeGenerator {
 
                                 if (block_type.equals("") == false) {
 
-                                    buildPlaceBlock(level_accessor, level_server, entity, pos_connect, type, block_type);
+                                    buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type);
 
                                 }
 
@@ -1118,17 +1116,19 @@ public class TreeGenerator {
 
                 }
 
-                if ((Math.abs(testX) == 1 || Math.abs(testZ) == 1) && Math.abs(testY) == 1) {
+                // For Y
+                {
 
-                    // For Y
-                    {
+                    if ((Math.abs(testX) == 1 || Math.abs(testZ) == 1) && Math.abs(testY) == 1) {
 
-                        pos_connect = new BlockPos(pos_connect.getX(), pos_connect.getY() - testY, pos_connect.getZ());
+                        pos = new BlockPos(pos.getX(), pos.getY() - testY, pos.getZ());
 
                         // Place Block
                         {
 
-                            if (buildTestKeep(level_accessor, pos_connect, replace) == true) {
+                            if (buildTestKeep(level_accessor, pos, replace) == true) {
+
+                                String block_type = "";
 
                                 if (generator_type.equals("sphere") == true) {
 
@@ -1142,7 +1142,7 @@ public class TreeGenerator {
 
                                 if (block_type.equals("") == false) {
 
-                                    buildPlaceBlock(level_accessor, level_server, entity, pos_connect, type, block_type);
+                                    buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type);
 
                                 }
 
@@ -1263,9 +1263,17 @@ public class TreeGenerator {
                         // Core
                         {
 
-                            if (is_blacklist == true && is_core == true) {
+                            if (is_core == true) {
 
-                                block = "";
+                                if (is_same_type == true) {
+
+                                    block = "";
+
+                                } else if (is_blacklist == true) {
+
+                                    block = "";
+
+                                }
 
                             }
 
@@ -1276,34 +1284,50 @@ public class TreeGenerator {
                         // Outer and Inner
                         {
 
-                            if (is_core == true) {
+                            if (is_same_type == true) {
 
-                                block = "";
+                                if (is_core == true) {
 
-                            } else if (is_blacklist == true || is_roots == true) {
+                                    block = "";
 
-                                block = "";
+                                } else {
+
+                                    {
+
+                                        boolean is_same_type_outer = previous_blockID.equals("tanshugetrees:block_placer_" + type + "_outer");
+                                        boolean is_same_type_inner = previous_blockID.equals("tanshugetrees:block_placer_" + type + "_inner");
+
+                                        if (block.equals("outer") == true) {
+
+                                            if (is_same_type_outer == true || is_same_type_inner == true) {
+
+                                                block = "";
+
+                                            }
+
+                                        } else if (block.equals("inner") == true) {
+
+                                            if (is_same_type_inner == true) {
+
+                                                block = "";
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
 
                             } else {
 
-                                boolean is_same_type_outer = previous_blockID.equals("tanshugetrees:block_placer_" + type + "_outer");
-                                boolean is_same_type_inner = previous_blockID.equals("tanshugetrees:block_placer_" + type + "_inner");
+                                if (is_blacklist == true) {
 
-                                if (block.equals("outer") == true) {
+                                    block = "";
 
-                                    if (is_same_type_outer == true || is_same_type_inner == true) {
+                                } else if (is_roots == true) {
 
-                                        block = "";
-
-                                    }
-
-                                } else if (block.equals("inner") == true) {
-
-                                    if (is_same_type_inner == true) {
-
-                                        block = "";
-
-                                    }
+                                    block = "";
 
                                 }
 
@@ -1316,70 +1340,6 @@ public class TreeGenerator {
                 }
 
             }
-
-            /*
-
-            // Replace
-            {
-
-                Block previous_block = level_accessor.getBlockState(pos).getBlock();
-                String previous_blockID = GameUtils.block.toTextID(previous_block.defaultBlockState());
-                boolean is_blacklist = GameUtils.block.isTaggedAs(previous_block.defaultBlockState(), "tanshugetrees:block_placer_blacklist_" + type);
-                boolean is_core = previous_blockID.startsWith("tanshugetrees:block_placer_") == true && previous_blockID.endsWith("_core") == true;
-                boolean is_core_same_type = previous_blockID.startsWith("tanshugetrees:block_placer_" + type + "core");
-
-                if (block.equals("core") == true) {
-
-                    if (is_core_same_type == true) {
-
-                        block = "";
-
-                    } else if (is_blacklist == true && is_core == true) {
-
-                        block = "";
-
-                    }
-
-                } else {
-
-                    if (is_blacklist == true) {
-
-                        block = "";
-
-                    } else if (is_core == true) {
-
-                        block = "";
-
-                    } else {
-
-                        Block block_outer = GameUtils.block.fromText("tanshugetrees:block_placer_" + type + "_outer").getBlock();
-                        Block block_inner = GameUtils.block.fromText("tanshugetrees:block_placer_" + type + "_inner").getBlock();
-
-                        if (block.equals("outer") == true) {
-
-                            if (previous_block == block_outer || previous_block == block_inner) {
-
-                                block = "";
-
-                            }
-
-                        } else if (block.equals("inner") == true) {
-
-                            if (previous_block == block_inner) {
-
-                                block = "";
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-             */
 
             return block;
 
