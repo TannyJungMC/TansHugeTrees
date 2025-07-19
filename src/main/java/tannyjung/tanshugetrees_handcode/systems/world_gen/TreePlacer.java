@@ -627,14 +627,11 @@ public class TreePlacer {
 
                                             block_count_bough = Integer.parseInt(read_all.replace("block_count_bough = ", ""));
 
-                                            if (dead_tree_level == 5) {
+                                            if (dead_tree_level >= 5) {
 
                                                 block_count_bough = (int) (RandomSource.create(seed + block_count_bough).nextDouble() * (double) block_count_bough);
                                                 block_count_bough = (int) (Mth.nextDouble(RandomSource.create(seed + 5), 0.0, 1.0) * (double) block_count_bough);
-
-                                            } else if (dead_tree_level > 5) {
-
-                                                block_count_bough = 0;
+                                                block_count_bough = block_count_bough / dead_tree_level;
 
                                             }
 
@@ -646,14 +643,11 @@ public class TreePlacer {
 
                                             block_count_branch = Integer.parseInt(read_all.replace("block_count_branch = ", ""));
 
-                                            if (dead_tree_level == 4) {
+                                            if (dead_tree_level >= 4) {
 
                                                 block_count_branch = (int) (RandomSource.create(seed + block_count_branch).nextDouble() * (double) block_count_branch);
-                                                block_count_branch = (int) (Mth.nextDouble(RandomSource.create(seed + 4), 0.0, 1.0) * (double) block_count_branch);
-
-                                            } else if (dead_tree_level > 4) {
-
-                                                block_count_branch = 0;
+                                                block_count_branch = (int) (Mth.nextDouble(RandomSource.create(seed + 4), 0.0, 0.5) * (double) block_count_branch);
+                                                block_count_branch = block_count_branch / dead_tree_level;
 
                                             }
 
@@ -665,14 +659,11 @@ public class TreePlacer {
 
                                             block_count_limb = Integer.parseInt(read_all.replace("block_count_limb = ", ""));
 
-                                            if (dead_tree_level == 3) {
+                                            if (dead_tree_level >= 3) {
 
                                                 block_count_limb = (int) (RandomSource.create(seed + block_count_limb).nextDouble() * (double) block_count_limb);
-                                                block_count_limb = (int) (Mth.nextDouble(RandomSource.create(seed + 3), 0.0, 1.0) * (double) block_count_limb);
-
-                                            } else if (dead_tree_level > 3) {
-
-                                                block_count_limb = 0;
+                                                block_count_limb = (int) (Mth.nextDouble(RandomSource.create(seed + 3), 0.0, 0.5) * (double) block_count_limb);
+                                                block_count_limb = block_count_limb / dead_tree_level;
 
                                             }
 
@@ -684,14 +675,11 @@ public class TreePlacer {
 
                                             block_count_twig = Integer.parseInt(read_all.replace("block_count_twig = ", ""));
 
-                                            if (dead_tree_level == 2) {
+                                            if (dead_tree_level >= 2) {
 
                                                 block_count_twig = (int) (RandomSource.create(seed + block_count_twig).nextDouble() * (double) block_count_twig);
-                                                block_count_twig = (int) (Mth.nextDouble(RandomSource.create(seed + 2), 0.0, 1.0) * (double) block_count_twig);
-
-                                            } else if (dead_tree_level > 2) {
-
-                                                block_count_twig = 0;
+                                                block_count_twig = (int) (Mth.nextDouble(RandomSource.create(seed + 2), 0.0, 0.5) * (double) block_count_twig);
+                                                block_count_twig = block_count_twig / dead_tree_level;
 
                                             }
 
@@ -702,18 +690,9 @@ public class TreePlacer {
                                         {
 
                                             block_count_sprig = Integer.parseInt(read_all.replace("block_count_sprig = ", ""));
-
-                                            if (dead_tree_level == 1) {
-
-                                                block_count_sprig = (int) (RandomSource.create(seed + block_count_sprig).nextDouble() * (double) block_count_sprig);
-                                                block_count_sprig = (int) (Mth.nextDouble(RandomSource.create(seed + 1), 0.0, 1.0) * (double) block_count_sprig);
-
-                                            } else if (dead_tree_level > 1) {
-
-                                                block_count_sprig = 0;
-
-                                            }
-
+                                            block_count_sprig = (int) (RandomSource.create(seed + block_count_sprig).nextDouble() * (double) block_count_sprig);
+                                            block_count_sprig = (int) (Mth.nextDouble(RandomSource.create(seed + 1), 0.0, 0.5) * (double) block_count_sprig);
+                                            block_count_sprig = block_count_sprig / dead_tree_level;
                                         }
 
                                     }
@@ -830,49 +809,65 @@ public class TreePlacer {
 
                                             } else if (get_short.startsWith("tw") == true) {
 
-                                                if (block_count_twig > 0) {
+                                                if (block_count_sprig == 0) {
 
-                                                    block_count_twig = block_count_twig - 1;
+                                                    if (block_count_twig > 0) {
 
-                                                } else {
+                                                        block_count_twig = block_count_twig - 1;
 
-                                                    continue;
+                                                    } else {
+
+                                                        continue;
+
+                                                    }
 
                                                 }
 
                                             } else if (get_short.startsWith("li") == true) {
 
-                                                if (block_count_limb > 0) {
+                                                if (block_count_twig == 0) {
 
-                                                    block_count_limb = block_count_limb - 1;
+                                                    if (block_count_limb > 0) {
 
-                                                } else {
+                                                        block_count_limb = block_count_limb - 1;
 
-                                                    continue;
+                                                    } else {
+
+                                                        continue;
+
+                                                    }
 
                                                 }
 
                                             } else if (get_short.startsWith("br") == true) {
 
-                                                if (block_count_branch > 0) {
+                                                if (block_count_limb == 0) {
 
-                                                    block_count_branch = block_count_branch - 1;
+                                                    if (block_count_branch > 0) {
 
-                                                } else {
+                                                        block_count_branch = block_count_branch - 1;
 
-                                                    continue;
+                                                    } else {
+
+                                                        continue;
+
+                                                    }
 
                                                 }
 
                                             } else if (get_short.startsWith("bo") == true) {
 
-                                                if (block_count_bough > 0) {
+                                                if (block_count_branch == 0) {
 
-                                                    block_count_bough = block_count_bough - 1;
+                                                    if (block_count_bough > 0) {
 
-                                                } else {
+                                                        block_count_bough = block_count_bough - 1;
 
-                                                    continue;
+                                                    } else {
+
+                                                        continue;
+
+                                                    }
 
                                                 }
 
