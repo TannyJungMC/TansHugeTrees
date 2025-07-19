@@ -2,13 +2,12 @@ package tannyjung.tanshugetrees_handcode;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.event.server.ServerLifecycleEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -22,7 +21,6 @@ import tannyjung.tanshugetrees_handcode.config.PackCheckUpdate;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.Loop;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDetector;
-import tannyjung.tanshugetrees_handcode.systems.world_gen.DataFolderCleaner;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFeature;
 
 import java.util.concurrent.CompletableFuture;
@@ -44,6 +42,8 @@ public class Handcode {
 	public static String directory_world_data = directory_game + "/saves/tanshugetrees-error/directory_world_data";
 	public static String directory_world_generated = directory_game + "/saves/tanshugetrees-error/directory_world_generated";
 	public static String tanny_pack_version_name = ""; // Make this because version can swap to "WIP" by config
+
+	public static boolean world_generation_active = false;
 
 	public Handcode () {}
 
@@ -69,7 +69,10 @@ public class Handcode {
 	}
 
 	@SubscribeEvent
-	public static void startWorld (ServerLifecycleEvent event) {
+	public static void startWorld (ServerStartingEvent event) {
+
+		world_generation_active = true;
+		TanshugetreesMod.LOGGER.info("Turned ON world generation");
 
 		ServerLevel level_server = event.getServer().overworld();
 		String world_path = String.valueOf(event.getServer().getWorldPath(new LevelResource(".")));
@@ -78,6 +81,14 @@ public class Handcode {
 
 		ConfigMain.repairAll(level_server, false);
 		ConfigMain.apply(level_server);
+
+	}
+
+	@SubscribeEvent
+	public static void stopWorld (ServerStoppedEvent event) {
+
+		world_generation_active = false;
+		TanshugetreesMod.LOGGER.info("Turned OFF world generation");
 
 	}
 
@@ -112,26 +123,6 @@ public class Handcode {
 				}
 
 			});
-
-		}
-
-	}
-
-	@SubscribeEvent
-	public static void chunkLoad (ChunkEvent.Load event) {
-
-		if (event.isNewChunk() == true) {
-
-			LevelAccessor level_accessor = event.getLevel();
-
-			if (level_accessor instanceof ServerLevel level_server) {
-
-				String dimension = GameUtils.misc.getCurrentDimensionID(level_server).replace(":", "-");
-				ChunkPos chunk_pos = event.getChunk().getPos();
-
-				DataFolderCleaner.start(dimension, chunk_pos);
-
-			}
 
 		}
 
