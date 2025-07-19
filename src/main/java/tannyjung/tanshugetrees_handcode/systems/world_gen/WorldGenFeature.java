@@ -8,6 +8,7 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import tannyjung.core.GameUtils;
+import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class WorldGenFeature extends Feature <NoneFeatureConfiguration> {
 
@@ -20,14 +21,19 @@ public class WorldGenFeature extends Feature <NoneFeatureConfiguration> {
     @Override
     public boolean place (FeaturePlaceContext <NoneFeatureConfiguration> context) {
 
-        LevelAccessor level_accessor = context.level();
-        ServerLevel level_server = context.level().getLevel();
-        ChunkGenerator chunk_generator = context.chunkGenerator();
-        String dimension = GameUtils.misc.getCurrentDimensionID(level_server).replace(":", "-");
-        ChunkPos chunk_pos = new ChunkPos(context.origin().getX() >> 4, context.origin().getZ() >> 4);
+        if (Handcode.world_generation_active == true) {
 
-        TreeLocation.start(level_accessor, dimension, chunk_pos);
-        TreePlacer.start(level_accessor, level_server, chunk_generator, dimension, chunk_pos);
+            LevelAccessor level_accessor = context.level();
+            ServerLevel level_server = context.level().getLevel();
+            ChunkGenerator chunk_generator = context.chunkGenerator();
+            String dimension = GameUtils.misc.getCurrentDimensionID(level_server).replace(":", "-");
+            ChunkPos chunk_pos = new ChunkPos(context.origin().getX() >> 4, context.origin().getZ() >> 4);
+
+            TreeLocation.start(level_accessor, dimension, chunk_pos);
+            TreePlacer.start(level_accessor, level_server, chunk_generator, dimension, chunk_pos);
+            DataFolderCleaner.start(dimension, chunk_pos);
+
+        }
 
         return true;
 
