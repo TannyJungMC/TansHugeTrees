@@ -17,6 +17,8 @@ import java.util.Calendar;
 
 public class ShapeFileConverter {
 
+    public static StringBuilder shape_file_converter_export_data = new StringBuilder();
+
     public static void start (LevelAccessor level_accessor, Entity entity) {
 
         ServerLevel level_server = (ServerLevel) level_accessor;
@@ -31,6 +33,8 @@ public class ShapeFileConverter {
 
                 TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = true;
                 GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned ON");
+                shape_file_converter_export_data = new StringBuilder();
+
                 TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position = entity.position().x + " " + entity.position().y + " " + entity.position().z;
                 GameUtils.command.runEntity(entity, "execute in tanshugetrees:tanshugetrees_dimension run tp @s 0 300 0");
                 GameUtils.command.runEntity(entity, "gamemode spectator");
@@ -245,10 +249,16 @@ public class ShapeFileConverter {
                         .append("center_sizeY = ###").append("\n")
                         .append("center_sizeZ = ###").append("\n")
                         .append("\n")
-                        .append("trunk_block_count = ###").append("\n")
+                        .append("block_count_trunk = ###").append("\n")
+                        .append("block_count_bough = ###").append("\n")
+                        .append("block_count_branch = ###").append("\n")
+                        .append("block_count_limb = ###").append("\n")
+                        .append("block_count_twig = ###").append("\n")
+                        .append("block_count_sprig = ###").append("\n")
                         .append("\n")
                         .append("----------------------------------------------------------------------------------------------------").append("\n")
                         .append("\n")
+                        .append("+f0/0/0fs").append("\n")
                 ;
 
             }
@@ -256,9 +266,6 @@ public class ShapeFileConverter {
             FileManager.writeTXT(Handcode.directory_world_generated + "/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), write.toString(), false);
 
         }
-
-        // Start Function
-        FileManager.writeTXT(Handcode.directory_world_generated + "/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), "+f0/0/0fs" + "\n", true);
 
     }
 
@@ -341,14 +348,16 @@ public class ShapeFileConverter {
 
         TanshugetreesMod.queueServerWork(220, () -> {
 
-            // End Function
-            FileManager.writeTXT(Handcode.directory_world_generated + "/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), "+f0/0/0fe" + "\n", true);
+            shape_file_converter_export_data.append("+f0/0/0fe");
+            FileManager.writeTXT(Handcode.directory_world_generated + "/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), String.valueOf(shape_file_converter_export_data), true);
+            shape_file_converter_export_data = new StringBuilder();
 
             // Update Generated File
             {
 
                 File file = new File(Handcode.directory_world_generated + "/" + GameUtils.nbt.entity.getText(entity, "export_file_name"));
-                int trunk_block_count = 0;
+                StringBuilder data = new StringBuilder();
+
                 int min_sizeX = 0;
                 int min_sizeY = 0;
                 int min_sizeZ = 0;
@@ -361,6 +370,13 @@ public class ShapeFileConverter {
                 int center_sizeX = 0;
                 int center_sizeY = 0;
                 int center_sizeZ = 0;
+
+                int block_count_trunk = 0;
+                int block_count_bough = 0;
+                int block_count_branch = 0;
+                int block_count_limb = 0;
+                int block_count_twig = 0;
+                int block_count_sprig = 0;
 
                 // Scanning
                 {
@@ -388,20 +404,9 @@ public class ShapeFileConverter {
 
                                 } else {
 
+                                    data.append(read_all).append("\n");
+
                                     if (read_all.startsWith("+b") == true) {
-
-                                        // Trunk Block Count
-                                        {
-
-                                            type_short = read_all.substring(read_all.length() - 3);
-
-                                            if (type_short.startsWith("tr") == true) {
-
-                                                trunk_block_count = trunk_block_count + 1;
-
-                                            }
-
-                                        }
 
                                         // Size
                                         {
@@ -454,6 +459,39 @@ public class ShapeFileConverter {
 
                                         }
 
+                                        // Block Count
+                                        {
+
+                                            type_short = read_all.substring(read_all.length() - 3);
+
+                                            if (type_short.startsWith("tr") == true) {
+
+                                                block_count_trunk = block_count_trunk + 1;
+
+                                            } else if (type_short.startsWith("bo") == true) {
+
+                                                block_count_bough = block_count_bough + 1;
+
+                                            } else if (type_short.startsWith("br") == true) {
+
+                                                block_count_branch = block_count_branch + 1;
+
+                                            } else if (type_short.startsWith("li") == true) {
+
+                                                block_count_limb = block_count_limb + 1;
+
+                                            } else if (type_short.startsWith("tw") == true) {
+
+                                                block_count_twig = block_count_twig + 1;
+
+                                            } else if (type_short.startsWith("sp") == true) {
+
+                                                block_count_sprig = block_count_sprig + 1;
+
+                                            }
+
+                                        }
+
                                     }
 
                                 }
@@ -483,70 +521,82 @@ public class ShapeFileConverter {
                 // Updating
                 {
 
-                    boolean skip = false;
+                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-                    {
+                        {
 
-                        try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                            if (read_all.startsWith("---") == false) {
 
-                            {
+                                if (read_all.startsWith("Complete Date : ") == true) {
 
-                                if (skip == false) {
+                                    read_all = read_all.replace("###", complete_date);
 
-                                    if (read_all.startsWith("---") == true) {
+                                } else if (read_all.startsWith("sizeX = ") == true) {
 
-                                        skip = true;
+                                    read_all = read_all.replace("###", "" + sizeX);
 
-                                    } else {
+                                } else if (read_all.startsWith("sizeY = ") == true) {
 
-                                        if (read_all.startsWith("Complete Date : ") == true) {
+                                    read_all = read_all.replace("###", "" + sizeY);
 
-                                            read_all = read_all.replace("###", complete_date);
+                                } else if (read_all.startsWith("sizeZ = ") == true) {
 
-                                        } else if (read_all.startsWith("sizeX = ") == true) {
+                                    read_all = read_all.replace("###", "" + sizeZ);
 
-                                            read_all = read_all.replace("###", "" + sizeX);
+                                } else if (read_all.startsWith("center_sizeX = ") == true) {
 
-                                        } else if (read_all.startsWith("sizeY = ") == true) {
+                                    read_all = read_all.replace("###", "" + center_sizeX);
 
-                                            read_all = read_all.replace("###", "" + sizeY);
+                                } else if (read_all.startsWith("center_sizeY = ") == true) {
 
-                                        } else if (read_all.startsWith("sizeZ = ") == true) {
+                                    read_all = read_all.replace("###", "" + center_sizeY);
 
-                                            read_all = read_all.replace("###", "" + sizeZ);
+                                } else if (read_all.startsWith("center_sizeZ = ") == true) {
 
-                                        } else if (read_all.startsWith("center_sizeX = ") == true) {
+                                    read_all = read_all.replace("###", "" + center_sizeZ);
 
-                                            read_all = read_all.replace("###", "" + center_sizeX);
+                                } else if (read_all.startsWith("block_count_trunk = ") == true) {
 
-                                        } else if (read_all.startsWith("center_sizeY = ") == true) {
+                                    read_all = read_all.replace("###", "" + block_count_trunk);
 
-                                            read_all = read_all.replace("###", "" + center_sizeY);
+                                } else if (read_all.startsWith("block_count_bough = ") == true) {
 
-                                        } else if (read_all.startsWith("center_sizeZ = ") == true) {
+                                    read_all = read_all.replace("###", "" + block_count_bough);
 
-                                            read_all = read_all.replace("###", "" + center_sizeZ);
+                                } else if (read_all.startsWith("block_count_branch = ") == true) {
 
-                                        } else if (read_all.startsWith("trunk_block_count = ") == true) {
+                                    read_all = read_all.replace("###", "" + block_count_branch);
 
-                                            read_all = read_all.replace("###", "" + trunk_block_count);
+                                } else if (read_all.startsWith("block_count_limb = ") == true) {
 
-                                        }
+                                    read_all = read_all.replace("###", "" + block_count_limb);
 
-                                    }
+                                } else if (read_all.startsWith("block_count_twig = ") == true) {
+
+                                    read_all = read_all.replace("###", "" + block_count_twig);
+
+                                } else if (read_all.startsWith("block_count_sprig = ") == true) {
+
+                                    read_all = read_all.replace("###", "" + block_count_sprig);
 
                                 }
 
                                 FileManager.writeTXT(file_new, read_all + "\n", true);
 
+                            } else {
+
+                                FileManager.writeTXT(file_new, read_all + "\n" + "\n", true);
+                                break;
+
                             }
 
-                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                        }
 
-                    }
+                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
 
                 }
 
+                FileManager.writeTXT(file_new, data.toString(), true);
                 file.delete();
                 new File(file_new).renameTo(new File(file.getParentFile().getPath() + "/" + file.getName().replace("(generating)", "")));
 
