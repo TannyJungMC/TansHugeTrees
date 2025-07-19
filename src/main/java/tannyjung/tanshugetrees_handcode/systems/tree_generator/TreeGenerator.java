@@ -987,7 +987,7 @@ public class TreeGenerator {
 
                                                     pos_leaves = new BlockPos(pos.getX(), pos.getY() - deep_test, pos.getZ());
 
-                                                    if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos_leaves), "tanshugetrees:block_placer_blacklist_leaves") == false) {
+                                                    if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos_leaves), "tanshugetrees:block_placer_blacklist_leaves") == false && GameUtils.block.toTextID(level_accessor.getBlockState(pos_leaves)).startsWith("tanshugetrees:block_placer_leaves") == false) {
 
                                                         if (buildTestKeep(level_accessor, pos_leaves, replace) == true) {
 
