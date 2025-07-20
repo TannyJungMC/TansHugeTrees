@@ -79,7 +79,7 @@ public class PackUpdate {
 						}
 
 						GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Install Completed!");
-						ConfigMain.repairAll(level_server, true);
+						ConfigMain.repairAll(level_server);
 						ConfigMain.apply(level_server);
 
 						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");

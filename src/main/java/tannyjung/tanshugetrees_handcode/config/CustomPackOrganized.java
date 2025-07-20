@@ -15,11 +15,11 @@ public class CustomPackOrganized {
 
     public static void start (LevelAccessor level_accessor) {
 
-        clearFolder();
         CustomPackIncompatible.scanMain(level_accessor);
+        clearFolder();
         organizing();
         replace();
-        CustomPackIncompatible.scanOrganized();
+        CustomPackIncompatible.scanOrganized(level_accessor);
 
     }
 
