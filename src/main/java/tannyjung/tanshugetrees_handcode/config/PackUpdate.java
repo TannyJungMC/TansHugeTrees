@@ -79,8 +79,8 @@ public class PackUpdate {
 						}
 
 						GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Install Completed!");
-						ConfigMain.repairAll(level_server);
-						ConfigMain.apply(level_server);
+						ConfigMain.repairAll(null);
+						ConfigMain.apply(null);
 
 						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
 						CustomPackFileCount.start(level_server);
