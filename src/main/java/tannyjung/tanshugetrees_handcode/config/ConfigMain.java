@@ -401,26 +401,22 @@ public class ConfigMain {
 
 	}
 
-	public static void repairAll (LevelAccessor level_accessor, boolean send_chat) {
+	public static void repairAll (LevelAccessor level_accessor) {
 
-		FileManager.createFolder(Handcode.directory_config + "/custom_packs/.organized");
+		FileManager.createFolder(Handcode.directory_config + "/community_packs/.organized");
 		CustomPackOrganized.start(level_accessor);
 		ConfigMain.repair();
 		ConfigWorldGen.start();
 
-		if (level_accessor != null) {
+		if (Handcode.world_active == true) {
 
 			ConfigShapeFileConverter.repair();
 
-			if (send_chat == true) {
+		}
 
-				if (level_accessor instanceof ServerLevel level_server) {
+		if (level_accessor instanceof ServerLevel level_server) {
 
-					GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Repaired The Config");
-
-				}
-
-			}
+			GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Repaired The Config");
 
 		}
 

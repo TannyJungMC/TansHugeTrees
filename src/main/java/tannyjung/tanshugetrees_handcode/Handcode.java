@@ -6,8 +6,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
+import net.minecraftforge.event.server.*;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -17,6 +16,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
 import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.tanshugetrees_handcode.config.CustomPackIncompatible;
 import tannyjung.tanshugetrees_handcode.config.PackCheckUpdate;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.Loop;
@@ -30,7 +30,7 @@ public class Handcode {
 
 	// ----------------------------------------------------------------------------------------------------
 
-	public static double data_structure_version_pack = 1.3;
+	public static double data_structure_version_pack = 1.4;
 	public static String tanny_pack_version = "Alpha";
 
 	public static boolean version_1192 = false;
@@ -43,11 +43,13 @@ public class Handcode {
 	public static String directory_world_generated = directory_game + "/saves/tanshugetrees-error/directory_world_generated";
 	public static String tanny_pack_version_name = ""; // Make this because version can swap to "WIP" by config
 
-	public static boolean world_generation_active = false;
+	public static boolean world_active = false;
 
 	public Handcode () {}
 
 	public static void startGame () {
+
+		TanshugetreesMod.LOGGER.info("Loading mod registries and config");
 
 		// // Basic Registries
 		{
@@ -61,7 +63,7 @@ public class Handcode {
 
 		CompletableFuture.runAsync(() -> {
 
-			ConfigMain.repairAll(null, false);
+			ConfigMain.repairAll(null);
 			ConfigMain.apply(null);
 
 		});
@@ -69,38 +71,27 @@ public class Handcode {
 	}
 
 	@SubscribeEvent
-	public static void startWorld (ServerStartingEvent event) {
+	public static void worldAboutToStart (ServerAboutToStartEvent event) {
 
-		world_generation_active = true;
-		TanshugetreesMod.LOGGER.info("Turned ON world generation");
+		world_active = true;
+		TanshugetreesMod.LOGGER.info("Turned ON world systems");
 
-		ServerLevel level_server = event.getServer().overworld();
 		String world_path = String.valueOf(event.getServer().getWorldPath(new LevelResource(".")));
 		directory_world_data = world_path + "/data/tanshugetrees";
 		directory_world_generated = world_path + "/generated/tanshugetrees";
 
-		ConfigMain.repairAll(level_server, false);
-		ConfigMain.apply(level_server);
+		ConfigMain.repairAll(null);
+		ConfigMain.apply(null);
 
 	}
 
 	@SubscribeEvent
-	public static void stopWorld (ServerStoppedEvent event) {
+	public static void worldStarted (ServerStartedEvent event) {
 
-		world_generation_active = false;
-		TanshugetreesMod.LOGGER.info("Turned OFF world generation");
+		LevelAccessor level_accessor = event.getServer().overworld();
 
-	}
+		if (level_accessor instanceof ServerLevel level_server) {
 
-	@SubscribeEvent
-	public static void playerJoin (PlayerEvent.PlayerLoggedInEvent event) {
-
-		LevelAccessor level_accessor = event.getEntity().level();
-		ServerLevel level_server = (ServerLevel) event.getEntity().level();
-
-		if (GameUtils.misc.playerCount() == 1) {
-
-			Loop.start(level_accessor, level_server);
 			GameUtils.command.run(level_server, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
 
 			// Season Detector
@@ -114,11 +105,32 @@ public class Handcode {
 
 			}
 
+			Loop.start(level_accessor, level_server);
+
+		}
+
+	}
+
+	@SubscribeEvent
+	public static void worldStopped (ServerStoppingEvent event) {
+
+		world_active = false;
+		TanshugetreesMod.LOGGER.info("Turned OFF world systems");
+
+	}
+
+	@SubscribeEvent
+	public static void playerJoined (PlayerEvent.PlayerLoggedInEvent event) {
+
+		if (GameUtils.misc.playerCount() == 1) {
+
 			TanshugetreesMod.queueServerWork(100, () -> {
 
 				if (ConfigMain.auto_check_update == true) {
 
-					PackCheckUpdate.start(level_server);
+					LevelAccessor level_accessor = event.getEntity().level();
+					PackCheckUpdate.start(level_accessor);
+					CustomPackIncompatible.scanMain(level_accessor);
 
 				}
 
