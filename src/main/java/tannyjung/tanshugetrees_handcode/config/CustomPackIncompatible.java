@@ -3,6 +3,7 @@ package tannyjung.tanshugetrees_handcode.config;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.fml.ModList;
 import tannyjung.core.MiscUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
@@ -12,51 +13,28 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class CustomPackIncompatible {
 
     public static void scanMain (LevelAccessor level_accessor) {
 
+        String path = "";
+
         for (File pack : new File(Handcode.directory_config + "/custom_packs").listFiles()) {
 
             if (pack.getName().equals(".organized") == false) {
 
-                testVersion(level_accessor, new File(pack.toPath() + "/version.txt"));
+                path = pack.toPath().toString().replace("[INCOMPATIBLE] ", "");
 
-            }
+                if (testVersion(level_accessor, new File(path + "/version.txt")) == false) {
 
-        }
+                    break;
 
-    }
+                }
 
-    public static void scanOrganized () {
+                if (testDependencies(level_accessor, new File(path + "/dependencies.txt")) == false) {
 
-        File file = new File(Handcode.directory_config + "/custom_packs/.organized");
-
-        for (File category : file.listFiles()) {
-
-            if (category.getName().equals("world_gen") == true) {
-
-                {
-
-                    try {
-
-                        Files.walk(category.toPath()).forEach(source -> {
-
-                            if (source.toFile().isDirectory() == false) {
-
-                                testTreeSettings(source);
-
-                            }
-
-                        });
-
-                    } catch (Exception exception) {
-
-                        MiscUtils.exception(new Exception(), exception);
-
-                    }
+                    break;
 
                 }
 
@@ -66,9 +44,63 @@ public class CustomPackIncompatible {
 
     }
 
-    private static void testVersion (LevelAccessor level_accessor, File file) {
+    public static void scanOrganized (LevelAccessor level_accessor) {
 
-        boolean incompatible = false;
+        // Tree Settings
+        {
+
+            File file = new File(Handcode.directory_config + "/custom_packs/.organized/world_gen");
+
+            {
+
+                try {
+
+                    Files.walk(file.toPath()).forEach(source -> {
+
+                        if (source.toFile().isDirectory() == false) {
+
+                            testTreeSettings(level_accessor, source.toFile());
+
+                        }
+
+                    });
+
+                } catch (Exception exception) {
+
+                    MiscUtils.exception(new Exception(), exception);
+
+                }
+
+            }
+
+        }
+
+    }
+
+    private static void rename (String path, boolean pass) {
+
+        File file = new File(path);
+
+        if (pass == true) {
+
+            file.renameTo(new File(file.getParentFile().toPath() + "/" + file.getName().replace("[INCOMPATIBLE] ", "")));
+
+        } else {
+
+            if (file.getName().startsWith("[INCOMPATIBLE]") == false) {
+
+                file.renameTo(new File(file.getParentFile().toPath() + "/[INCOMPATIBLE] " + file.getName()));
+
+            }
+
+        }
+
+    }
+
+    private static boolean testVersion (LevelAccessor level_accessor, File file) {
+
+        boolean pass = true;
+        String message = "";
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -82,18 +114,11 @@ public class CustomPackIncompatible {
 
                             if (Double.parseDouble(read_all.replace("data_structure_version = ", "")) != Handcode.data_structure_version_pack) {
 
-                                if (level_accessor instanceof ServerLevel level_server) {
-
-                                    GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Detected incompatible pack. Caused by unsupported mod version. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
-
-                                }
-
-                                incompatible = true;
+                                pass = false;
+                                message = "Detected incompatible pack. Caused by unsupported mod version. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]";
                                 break;
 
                             }
-
-                            break;
 
                         }
 
@@ -105,29 +130,124 @@ public class CustomPackIncompatible {
 
         } else {
 
-            incompatible = true;
+            pass = false;
+            message = "Detected incompatible pack. Caused by no version file. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]";
+
+        }
+
+        if (message.equals("") == false) {
 
             if (level_accessor instanceof ServerLevel level_server) {
 
-                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Detected incompatible pack. Caused by no version file. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + message);
 
             }
 
         }
 
-        rename(new File(file.getParentFile().getPath()), incompatible);
+        rename(file.getParentFile().getPath(), pass);
+        return pass;
 
     }
 
-    private static void testTreeSettings (Path source) {
+    private static boolean testDependencies (LevelAccessor level_accessor, File file) {
 
-        boolean incompatible = false;
+        boolean pass = true;
+        String message = "";
+
+        if (file.exists() == true && file.isDirectory() == false) {
+
+            String get = "";
+
+            {
+
+                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+
+                    {
+
+                        if (read_all.startsWith("required_packs = ")) {
+
+                            {
+
+                                get = read_all.replace("required_packs = ", "");
+
+                                if (get.equals("none") == false) {
+
+                                    for (String test : get.split(", ")) {
+
+                                        if (new File(Handcode.directory_config + "/custom_packs/" + test).exists() == false) {
+
+                                            pass = false;
+                                            message = "Detected incompatible pack. Caused by required pack not found. [ " + file.getParentFile().getName() + " > " + test + " ]";
+                                            break;
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        } else if (read_all.startsWith("required_mods = ")) {
+
+                            {
+
+                                get = read_all.replace("required_mods = ", "");
+
+                                if (get.equals("none") == false) {
+
+                                    for (String test : get.split(", ")) {
+
+                                        if (ModList.get().isLoaded(test) == false) {
+
+                                            pass = false;
+                                            message = "Detected incompatible pack. Caused by required mod not found. [ " + file.getParentFile().getName() + " > " + test + " ]";
+                                            break;
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+
+            }
+
+        }
+
+        if (message.equals("") == false) {
+
+            if (level_accessor instanceof ServerLevel level_server) {
+
+                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + message);
+
+            }
+
+        }
+
+        rename(file.getParentFile().getPath(), pass);
+        return pass;
+
+    }
+
+    private static void testTreeSettings (LevelAccessor level_accessor, File file) {
+
+        boolean pass = true;
+        String message = "";
         String tree_settings = "";
 
         // Read "World Gen" File
         {
 
-            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(source.toFile())); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
                 {
 
@@ -144,14 +264,14 @@ public class CustomPackIncompatible {
 
         }
 
-        File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings.replace("[INCOMPATIBLE] ", ""));
+        File file_settings = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings.replace("[INCOMPATIBLE] ", ""));
 
-        if (file.exists() == true && file.isDirectory() == false) {
+        if (file_settings.exists() == true && file_settings.isDirectory() == false) {
 
             // Read "Tree Settings" File
             {
 
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file_settings), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
                     {
 
@@ -163,8 +283,8 @@ public class CustomPackIncompatible {
 
                                 if (GameUtils.block.fromText(id).getBlock() == Blocks.AIR) {
 
-                                    incompatible = true;
-                                    TanshugetreesMod.LOGGER.error("Detected incompatible tree. Caused by unknown block ID. [ " + source.toFile().getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+                                    pass = false;
+                                    message = "Detected incompatible tree. Caused by unknown block ID. [ " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " > " + file.getName().replace("[INCOMPATIBLE] ", "") + " ]";
                                     break;
 
                                 }
@@ -181,30 +301,22 @@ public class CustomPackIncompatible {
 
         } else {
 
-            incompatible = true;
-            TanshugetreesMod.LOGGER.error("Detected incompatible tree. Caused by no tree settings. [ " + source.toFile().getParentFile().getParentFile().getName() + " > " + source.toFile().getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " > " + source.toFile().getName().replace("[INCOMPATIBLE] ", "") + " ]");
+            pass = false;
+            message = "Detected incompatible tree. Caused by tree settings not found. [ " + file.getParentFile().getParentFile().getName() + " > " + file.getParentFile().getName().replace("[INCOMPATIBLE] ", "") + " > " + file.getName().replace("[INCOMPATIBLE] ", "") + " ]";
 
         }
 
-        rename(source.toFile(), incompatible);
+        if (message.equals("") == false) {
 
-    }
+            if (level_accessor instanceof ServerLevel level_server) {
 
-    private static void rename (File file, boolean incompatible) {
-
-        if (incompatible == false) {
-
-            file.renameTo(new File(file.getParentFile().toPath() + "/" + file.getName().replace("[INCOMPATIBLE] ", "")));
-
-        } else {
-
-            if (file.getName().startsWith("[INCOMPATIBLE]") == false) {
-
-                file.renameTo(new File(file.getParentFile().toPath() + "/[INCOMPATIBLE] " + file.getName()));
+                TanshugetreesMod.LOGGER.error(message);
 
             }
 
         }
+
+        rename(file.getPath(), pass);
 
     }
 
