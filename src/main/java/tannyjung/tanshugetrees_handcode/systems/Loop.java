@@ -20,7 +20,7 @@ public class Loop {
 
     public static void start (LevelAccessor level_accessor, ServerLevel level_server) {
 
-        if (GameUtils.misc.playerCount() > 0) {
+        if (Handcode.world_active == true) {
 
             TanshugetreesMod.queueServerWork(1, () -> {
 
