@@ -403,7 +403,7 @@ public class ConfigMain {
 
 	public static void repairAll (LevelAccessor level_accessor) {
 
-		FileManager.createFolder(Handcode.directory_config + "/community_packs/.organized");
+		FileManager.createFolder(Handcode.directory_config + "/custom_packs/.organized");
 		CustomPackOrganized.start(level_accessor);
 		ConfigMain.repair();
 		ConfigWorldGen.start();

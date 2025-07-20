@@ -21,19 +21,15 @@ public class WorldGenFeature extends Feature <NoneFeatureConfiguration> {
     @Override
     public boolean place (FeaturePlaceContext <NoneFeatureConfiguration> context) {
 
-        if (Handcode.world_generation_active == true) {
+        LevelAccessor level_accessor = context.level();
+        ServerLevel level_server = context.level().getLevel();
+        ChunkGenerator chunk_generator = context.chunkGenerator();
+        String dimension = GameUtils.misc.getCurrentDimensionID(level_server).replace(":", "-");
+        ChunkPos chunk_pos = new ChunkPos(context.origin().getX() >> 4, context.origin().getZ() >> 4);
 
-            LevelAccessor level_accessor = context.level();
-            ServerLevel level_server = context.level().getLevel();
-            ChunkGenerator chunk_generator = context.chunkGenerator();
-            String dimension = GameUtils.misc.getCurrentDimensionID(level_server).replace(":", "-");
-            ChunkPos chunk_pos = new ChunkPos(context.origin().getX() >> 4, context.origin().getZ() >> 4);
-
-            TreeLocation.start(level_accessor, dimension, chunk_pos);
-            TreePlacer.start(level_accessor, level_server, chunk_generator, dimension, chunk_pos);
-            DataFolderCleaner.start(dimension, chunk_pos);
-
-        }
+        TreeLocation.start(level_accessor, dimension, chunk_pos);
+        TreePlacer.start(level_accessor, level_server, chunk_generator, dimension, chunk_pos);
+        DataFolderCleaner.start(dimension, chunk_pos);
 
         return true;
 
