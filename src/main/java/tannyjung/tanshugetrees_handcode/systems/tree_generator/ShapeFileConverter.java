@@ -29,26 +29,34 @@ public class ShapeFileConverter {
 
         } else {
 
-            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
+            if (GameUtils.command.result(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension if dimension tanshugetrees:tanshugetrees_dimension") == false) {
 
-                TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = true;
-                GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned ON");
-                shape_file_converter_export_data = new StringBuilder();
+                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Dimension not found. Please install the shape file converter datapack, then try again.");
 
-                TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position = entity.position().x + " " + entity.position().y + " " + entity.position().z;
-                GameUtils.command.runEntity(entity, "execute in tanshugetrees:tanshugetrees_dimension run tp @s 0 300 0");
-                GameUtils.command.runEntity(entity, "gamemode spectator");
-                GameUtils.command.runEntity(entity, "gamemode creative");
+            } else {
 
-                TanshugetreesMod.queueServerWork(220, () -> {
+                if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                    summon(level_accessor, level_server);
+                    TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = true;
+                    GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned ON");
+                    shape_file_converter_export_data = new StringBuilder();
 
-                });
+                    TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position = entity.position().x + " " + entity.position().y + " " + entity.position().z;
+                    GameUtils.command.runEntity(entity, "execute in tanshugetrees:tanshugetrees_dimension run tp @s 0 300 0");
+                    GameUtils.command.runEntity(entity, "gamemode spectator");
+                    GameUtils.command.runEntity(entity, "gamemode creative");
+
+                    TanshugetreesMod.queueServerWork(220, () -> {
+
+                        summon(level_accessor, level_server);
+
+                    });
+
+                }
+
+                GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
 
             }
-
-            GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
 
         }
 
