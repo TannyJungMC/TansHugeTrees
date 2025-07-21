@@ -21,6 +21,8 @@ public class ShapeFileConverter {
 
     public static void start (LevelAccessor level_accessor, Entity entity, int count) {
 
+        level_accessor = level_accessor.getServer().overworld();
+
         if (level_accessor instanceof ServerLevel level_server) {
 
             if (Handcode.version_1192 == true) {
@@ -49,11 +51,7 @@ public class ShapeFileConverter {
                         GameUtils.command.runEntity(entity, "gamemode spectator");
                         GameUtils.command.runEntity(entity, "gamemode creative");
 
-                        TanshugetreesMod.queueServerWork(220, () -> {
-
-                            summon(level_accessor, level_server);
-
-                        });
+                        summon(level_accessor, level_server);
 
                     }
 
@@ -66,6 +64,8 @@ public class ShapeFileConverter {
     }
 
     public static void stop (LevelAccessor level_accessor) {
+
+        level_accessor = level_accessor.getServer().overworld();
 
         if (level_accessor instanceof ServerLevel level_server) {
 
@@ -615,16 +615,20 @@ public class ShapeFileConverter {
 
             GameUtils.misc.sendChatMessage(level_server, "@a", "green", "THT : Completed!");
 
-            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
+            TanshugetreesMod.queueServerWork(220, () -> {
 
-                GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
-                summon(level_accessor, level_server);
+                if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 
-            } else {
+                    GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
+                    summon(level_accessor, level_server);
 
-                stop(level_accessor);
+                } else {
 
-            }
+                    stop(level_accessor);
+
+                }
+
+            });
 
         });
 
