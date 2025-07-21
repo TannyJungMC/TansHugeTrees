@@ -687,6 +687,7 @@ public class TreeGenerator {
                     }
 
                     GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ^ ^ ^1");
+                    GameUtils.nbt.entity.addNumber(entity, type + "_length", -1);
 
                 }
 
@@ -1076,7 +1077,6 @@ public class TreeGenerator {
             // If it builds to the end without any break
             GameUtils.nbt.entity.setLogic(entity, "still_building", false);
             GameUtils.nbt.entity.setText(entity, "step", "calculation");
-            GameUtils.nbt.entity.addNumber(entity, type + "_length", -1);
 
         }
 
