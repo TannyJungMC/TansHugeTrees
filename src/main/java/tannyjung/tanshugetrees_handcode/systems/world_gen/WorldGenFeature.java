@@ -29,7 +29,6 @@ public class WorldGenFeature extends Feature <NoneFeatureConfiguration> {
 
         TreeLocation.start(level_accessor, dimension, chunk_pos);
         TreePlacer.start(level_accessor, level_server, chunk_generator, dimension, chunk_pos);
-        DataFolderCleaner.start(dimension, chunk_pos);
 
         return true;
 
