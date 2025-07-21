@@ -55,7 +55,7 @@ public class CustomPackIncompatible {
 
                         if (source.toFile().isDirectory() == false) {
 
-                            testTreeSettings(level_accessor, source.toFile());
+                            testTreeSettings(source.toFile());
 
                         }
 
@@ -236,7 +236,7 @@ public class CustomPackIncompatible {
 
     }
 
-    private static void testTreeSettings (LevelAccessor level_accessor, File file) {
+    private static void testTreeSettings (File file) {
 
         boolean pass = true;
         String message = "";
@@ -266,44 +266,56 @@ public class CustomPackIncompatible {
         }
 
         File file_settings = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
+        File file_settings_incompatible = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + "[INCOMPATIBLE] " + tree_settings);
 
-        if (file_settings.exists() == true && file_settings.isDirectory() == false) {
+        if (file_settings_incompatible.exists() == false) {
 
-            // Read "Tree Settings" File
-            {
+            if (file_settings.exists() == true && file_settings.isDirectory() == false) {
 
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file_settings), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                // Read "Tree Settings" File
+                {
 
-                    {
+                    try {
+                        BufferedReader buffered_reader = new BufferedReader(new FileReader(file_settings), 65536);
+                        String read_all = "";
+                        while ((read_all = buffered_reader.readLine()) != null) {
 
-                        if (read_all.startsWith("Block ")) {
+                            {
 
-                            String id = read_all.substring(read_all.indexOf(" = ") + 3).replace(" keep", "");
+                                if (read_all.startsWith("Block ")) {
 
-                            if (id.equals("") == false) {
+                                    String id = read_all.substring(read_all.indexOf(" = ") + 3).replace(" keep", "");
 
-                                if (GameUtils.block.fromText(id).getBlock() == Blocks.AIR) {
+                                    if (id.equals("") == false) {
 
-                                    pass = false;
-                                    message = "Detected incompatible tree. Caused by unknown block ID. [ " + name_pack + " > " + name_tree + " > " + id + " ]";
-                                    break;
+                                        if (GameUtils.block.fromText(id).getBlock() == Blocks.AIR) {
+
+                                            pass = false;
+                                            message = "Detected incompatible tree. Caused by unknown block ID. [ " + name_pack + " > " + name_tree + " > " + id + " ]";
+                                            break;
+
+                                        }
+
+                                    }
 
                                 }
 
                             }
 
                         }
-
+                        buffered_reader.close();
+                    } catch (Exception exception) {
+                        MiscUtils.exception(new Exception(), exception);
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                }
+
+            } else {
+
+                pass = false;
+                message = "Detected incompatible tree. Caused by tree settings not found. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
 
             }
-
-        } else {
-
-            pass = false;
-            message = "Detected incompatible tree. Caused by tree settings not found. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
 
         }
 

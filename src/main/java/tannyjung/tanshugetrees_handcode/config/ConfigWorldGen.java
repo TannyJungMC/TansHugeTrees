@@ -98,7 +98,7 @@ public class ConfigWorldGen {
 
         if (file_organized.exists() == true) {
 
-            if (file_organized.listFiles().length > 0) {
+            if (file_organized.listFiles() != null && file_organized.listFiles().length > 0) {
 
                 // Scanning The Packs
                 {
