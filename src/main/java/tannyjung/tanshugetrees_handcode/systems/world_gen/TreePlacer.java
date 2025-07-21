@@ -602,23 +602,19 @@ public class TreePlacer {
 
                                                 block_count_trunk = Integer.parseInt(read_all.replace("block_count_trunk = ", ""));
 
-                                                if (dead_tree_level >= 6) {
+                                                if (dead_tree_level == 6 || dead_tree_level == 7) {
 
-                                                    if (dead_tree_level == 6 || dead_tree_level == 7) {
+                                                    block_count_trunk = (int) (Mth.nextDouble(RandomSource.create(seed), 0.0, 0.5) * (double) block_count_trunk);
 
-                                                        block_count_trunk = (int) (Mth.nextDouble(RandomSource.create(seed), 0.0, 0.5) * (double) block_count_trunk);
+                                                } else if (dead_tree_level == 8 || dead_tree_level == 9) {
 
-                                                    } else if (dead_tree_level == 8 || dead_tree_level == 9) {
+                                                    block_count_trunk = (int) (Mth.nextDouble(RandomSource.create(seed), 0.5, 1.0) * (double) block_count_trunk);
 
-                                                        block_count_trunk = (int) (Mth.nextDouble(RandomSource.create(seed), 0.5, 1.0) * (double) block_count_trunk);
+                                                }
 
-                                                    }
+                                                if (dead_tree_level == 7 || dead_tree_level == 9) {
 
-                                                    if (dead_tree_level == 7 || dead_tree_level == 9) {
-
-                                                        hollowed = true;
-
-                                                    }
+                                                    hollowed = true;
 
                                                 }
 
@@ -728,6 +724,8 @@ public class TreePlacer {
             double pre_leaf_litter_chance = 0.0;
             int height_motion_block = 0;
 
+            String dead_tree_current_remove = "";
+
             // Read File
             {
 
@@ -790,20 +788,32 @@ public class TreePlacer {
 
                                 if (dead_tree_level > 0) {
 
-                                    if (dead_tree_level < 6) {
+                                    // Basic Style
+                                    {
 
-                                        // Basic Style
-                                        {
+                                        if (get_short.startsWith("le") == true) {
 
-                                            if (get_short.startsWith("le") == true) {
+                                            continue;
+
+                                        } else if (get_short.startsWith("sp") == true) {
+
+                                            if (block_count_sprig > 0) {
+
+                                                block_count_sprig = block_count_sprig - 1;
+
+                                            } else {
 
                                                 continue;
 
-                                            } else if (get_short.startsWith("sp") == true) {
+                                            }
 
-                                                if (block_count_sprig > 0) {
+                                        } else if (get_short.startsWith("tw") == true) {
 
-                                                    block_count_sprig = block_count_sprig - 1;
+                                            if (block_count_sprig == 0) {
+
+                                                if (block_count_twig > 0) {
+
+                                                    block_count_twig = block_count_twig - 1;
 
                                                 } else {
 
@@ -811,67 +821,51 @@ public class TreePlacer {
 
                                                 }
 
-                                            } else if (get_short.startsWith("tw") == true) {
+                                            }
 
-                                                if (block_count_sprig == 0) {
+                                        } else if (get_short.startsWith("li") == true) {
 
-                                                    if (block_count_twig > 0) {
+                                            if (block_count_twig == 0) {
 
-                                                        block_count_twig = block_count_twig - 1;
+                                                if (block_count_limb > 0) {
 
-                                                    } else {
+                                                    block_count_limb = block_count_limb - 1;
 
-                                                        continue;
+                                                } else {
 
-                                                    }
-
-                                                }
-
-                                            } else if (get_short.startsWith("li") == true) {
-
-                                                if (block_count_twig == 0) {
-
-                                                    if (block_count_limb > 0) {
-
-                                                        block_count_limb = block_count_limb - 1;
-
-                                                    } else {
-
-                                                        continue;
-
-                                                    }
+                                                    continue;
 
                                                 }
 
-                                            } else if (get_short.startsWith("br") == true) {
+                                            }
 
-                                                if (block_count_limb == 0) {
+                                        } else if (get_short.startsWith("br") == true) {
 
-                                                    if (block_count_branch > 0) {
+                                            if (block_count_limb == 0) {
 
-                                                        block_count_branch = block_count_branch - 1;
+                                                if (block_count_branch > 0) {
 
-                                                    } else {
+                                                    block_count_branch = block_count_branch - 1;
 
-                                                        continue;
+                                                } else {
 
-                                                    }
+                                                    continue;
 
                                                 }
 
-                                            } else if (get_short.startsWith("bo") == true) {
+                                            }
 
-                                                if (block_count_branch == 0) {
+                                        } else if (get_short.startsWith("bo") == true) {
 
-                                                    if (block_count_bough > 0) {
+                                            if (block_count_branch == 0) {
 
-                                                        block_count_bough = block_count_bough - 1;
+                                                if (block_count_bough > 0) {
 
-                                                    } else {
+                                                    block_count_bough = block_count_bough - 1;
 
-                                                        continue;
+                                                } else {
 
-                                                    }
+                                                    continue;
 
                                                 }
 
@@ -879,16 +873,14 @@ public class TreePlacer {
 
                                         }
 
-                                    } else {
+                                    }
+
+                                    if (dead_tree_level >= 6) {
 
                                         // Only Trunk
                                         {
 
-                                            if (get_short.startsWith("tr") == false) {
-
-                                                continue;
-
-                                            } else {
+                                            if (get_short.startsWith("tr") == true) {
 
                                                 if (block_count_trunk > 0) {
 
