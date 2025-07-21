@@ -11,6 +11,8 @@ import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 
+import java.util.Arrays;
+
 public class TreeGenerator {
 
     public static void start (LevelAccessor level_accessor, Entity entity) {
@@ -596,6 +598,23 @@ public class TreeGenerator {
 
         private static void calculation (ServerLevel level_server, Entity entity, String id, String type, String[] type_pre_next) {
 
+            // Save Block Connector
+            {
+
+                if (GameUtils.nbt.entity.getNumber(entity, type + "_thickness") <= 2) {
+
+                    GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.builder_pos set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",limit=1] Pos");
+                    double[] pos = GameUtils.nbt.entity.getListNumber(entity, "builder_pos");
+                    GameUtils.nbt.entity.setNumber(entity, "block_connector_posX", pos[0]);
+                    GameUtils.nbt.entity.setNumber(entity, "block_connector_posY", pos[1]);
+                    GameUtils.nbt.entity.setNumber(entity, "block_connector_posZ", pos[2]);
+
+                    System.out.println("Save -> " + Arrays.toString(pos));
+
+                }
+
+            }
+
             boolean go_next = false;
 
             // Test
@@ -681,7 +700,6 @@ public class TreeGenerator {
                         double thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_start") - GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end");
                         double length_percent = GameUtils.nbt.entity.getNumber(entity, type + "_length") / GameUtils.nbt.entity.getNumber(entity, type + "_length_save");
                         thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end") + (thickness * length_percent);
-                        // thickness = Math.round(thickness);
                         GameUtils.nbt.entity.setNumber(entity, type + "_thickness", thickness);
 
                     }
@@ -790,10 +808,10 @@ public class TreeGenerator {
                     {
 
                         GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.builder_pos set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",limit=1] Pos");
-                        double[] center_pos = GameUtils.nbt.entity.getListNumber(entity, "builder_pos");
-                        GameUtils.nbt.entity.setNumber(entity, "build_centerX", center_pos[0]);
-                        GameUtils.nbt.entity.setNumber(entity, "build_centerY", center_pos[1]);
-                        GameUtils.nbt.entity.setNumber(entity, "build_centerZ", center_pos[2]);
+                        double[] pos = GameUtils.nbt.entity.getListNumber(entity, "builder_pos");
+                        GameUtils.nbt.entity.setNumber(entity, "build_centerX", pos[0]);
+                        GameUtils.nbt.entity.setNumber(entity, "build_centerY", pos[1]);
+                        GameUtils.nbt.entity.setNumber(entity, "build_centerZ", pos[2]);
 
                     }
 
@@ -956,7 +974,7 @@ public class TreeGenerator {
                                         // General
                                         {
 
-                                            if (size < 2) {
+                                            if (thickness <= 2) {
 
                                                 buildBlockConnector(level_accessor, level_server, entity, center_pos, pos, type, generator_type, radius, build_area, replace);
 
@@ -1085,13 +1103,11 @@ public class TreeGenerator {
             double block_connector_posX = GameUtils.nbt.entity.getNumber(entity, "block_connector_posX");
             double block_connector_posY = GameUtils.nbt.entity.getNumber(entity, "block_connector_posY");
             double block_connector_posZ = GameUtils.nbt.entity.getNumber(entity, "block_connector_posZ");
-            GameUtils.nbt.entity.setNumber(entity, "block_connector_posX", center_pos[0]);
-            GameUtils.nbt.entity.setNumber(entity, "block_connector_posY", center_pos[1]);
-            GameUtils.nbt.entity.setNumber(entity, "block_connector_posZ", center_pos[2]);
-
             int testX = (int) (Math.floor(center_pos[0]) - Math.floor(block_connector_posX));
             int testY = (int) (Math.floor(center_pos[1]) - Math.floor(block_connector_posY));
             int testZ = (int) (Math.floor(center_pos[2]) - Math.floor(block_connector_posZ));
+
+            System.out.println(pos.getX() + " " + pos.getY() + " " + pos.getZ() + " -> " + testX + "/" + testY + "/" + testZ);
 
             if (Math.abs(testX) == 1 || Math.abs(testY) == 1 || Math.abs(testZ) == 1) {
 
@@ -1129,6 +1145,7 @@ public class TreeGenerator {
 
                                 if (block_type.equals("") == false) {
 
+                                    System.out.println("Place A -> " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
                                     buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type);
 
                                 }
@@ -1167,6 +1184,7 @@ public class TreeGenerator {
 
                                 if (block_type.equals("") == false) {
 
+                                    System.out.println("Place B -> " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
                                     buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type);
 
                                 }
@@ -1278,7 +1296,6 @@ public class TreeGenerator {
 
                 if (is_block_placer == true) {
 
-                    boolean is_roots = GameUtils.block.isTaggedAs(previous_block.defaultBlockState(), "tanshugetrees:block_placer_roots");
                     boolean is_blacklist = GameUtils.block.isTaggedAs(previous_block.defaultBlockState(), "tanshugetrees:block_placer_blacklist_" + type);
                     boolean is_same_type = previous_blockID.startsWith("tanshugetrees:block_placer_" + type);
                     boolean is_core = previous_blockID.endsWith("_core");
@@ -1346,13 +1363,19 @@ public class TreeGenerator {
 
                             } else {
 
+                                boolean is_roots = GameUtils.block.isTaggedAs(previous_block.defaultBlockState(), "tanshugetrees:block_placer_roots");
+
                                 if (is_blacklist == true) {
 
                                     block = "";
 
                                 } else if (is_roots == true) {
 
-                                    block = "";
+                                    if (type.endsWith("root") == false) {
+
+                                        block = "";
+
+                                    }
 
                                 }
 
