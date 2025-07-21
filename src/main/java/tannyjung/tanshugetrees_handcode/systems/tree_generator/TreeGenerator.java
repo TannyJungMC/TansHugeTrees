@@ -365,8 +365,8 @@ public class TreeGenerator {
 
                         if (GameUtils.nbt.entity.getLogic(entity, type_pre_next[1] + "_chance_auto") == true) {
 
-                            auto_distance = (int) Math.ceil(GameUtils.nbt.entity.getNumber(entity, type + "_length_save") * (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance_percent") * 0.01));
-                            auto_distance = (int) Math.ceil(auto_distance / GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count_save"));
+                            auto_distance = (int) (Math.ceil(GameUtils.nbt.entity.getNumber(entity, type + "_length_save") * (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance_percent") * 0.01)));
+                            auto_distance = (int) (Math.ceil(auto_distance / GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count_save")));
                         }
 
                         GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_chance_auto_distance", auto_distance);
@@ -563,7 +563,7 @@ public class TreeGenerator {
                 int length = (int) GameUtils.nbt.entity.getNumber(entity, from + "_length");
                 int length_save = (int) GameUtils.nbt.entity.getNumber(entity, from + "_length_save");
                 double center = GameUtils.nbt.entity.getNumber(entity, type + "_" + step + "_center") * 0.01;
-                int length_below = (int) (length_save * center);
+                int length_below = (int) ((double) length_save * center);
                 int length_above = length_save - length_below;
 
                 String above_below = "";
@@ -603,7 +603,7 @@ public class TreeGenerator {
 
                 if (GameUtils.nbt.entity.getNumber(entity, type + "_length") > 0) {
 
-                    if (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count") > 1) {
+                    if (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count") > GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_min_last_count")) {
 
                         if (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance_distance_left") > 0) {
 
