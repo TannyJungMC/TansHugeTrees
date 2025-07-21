@@ -2,6 +2,7 @@ package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
 import tannyjung.core.FileManager;
 import tannyjung.core.MiscUtils;
+import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.BufferedReader;
@@ -14,17 +15,25 @@ public class PresetFixer {
 
     public static void start () {
 
+        File[] list_preset = null;
+
         for (File pack : new File(Handcode.directory_config + "/custom_packs").listFiles()) {
 
             if (pack.getName().equals(".organized") == false) {
 
-                for (File species : new File(Handcode.directory_config + "/custom_packs/" + pack.getName() + "/presets").listFiles()) {
+                list_preset = new File(Handcode.directory_config + "/custom_packs/" + pack.getName() + "/presets").listFiles();
 
-                    for (File preset : species.listFiles()) {
+                if (list_preset != null && list_preset.length > 0) {
 
-                        if (preset.isDirectory() == false && preset.getName().endsWith("_settings.txt") == false) {
+                    for (File species : list_preset) {
 
-                            fix(preset);
+                        for (File preset : species.listFiles()) {
+
+                            if (preset.isDirectory() == false && preset.getName().endsWith("_settings.txt") == false) {
+
+                                fix(preset);
+
+                            }
 
                         }
 
@@ -35,6 +44,8 @@ public class PresetFixer {
             }
 
         }
+
+        TanshugetreesMod.LOGGER.info("Fixed all presets in all packs");
 
     }
 
