@@ -153,7 +153,7 @@ public class ConfigMain {
 					pre_leaf_litter = true
 					pre_leaf_litter_chance = 0.1
 					pre_leaf_litter_chance_coniferous = 0.05
-					| Create leaf litter on ground and water while on world generation. Leaf litter config must be enable, to allow this.
+					| Create leaf litter on ground and water while on world generation. Leaf litter config must be enable to allow this.
 					| Default is [ true ] [ 0.25 ] [ 0.1 ]
 					
 					abscission_world_gen = true
@@ -181,7 +181,7 @@ public class ConfigMain {
 					| Default is [ 100 ]
 					
 					leaf_litter = true
-					| Create leaves block on the ground and on water. Disable leaf drop animation to make this instantly create leaves little instead of create when leaf drop animation touch the ground, also disable that will use full chance to be leaves litter.
+					| Create leaves block on the ground and on water. Disable leaf drop animation to make this instantly create leaves litter instead of create when leaf drop animation touch the ground.
 					| Default is [ true ]
 					
 					leaf_litter_classic = true
@@ -233,15 +233,12 @@ public class ConfigMain {
 					leaf_drop_chance_summer = 0.05
 					leaf_drop_chance_autumn = 0.1
 					leaf_drop_chance_winter = 0.1
-					| Chance of deciduous leaves to drop based on seasons, but note that it will only use summer value when in tropical biomes. For general leaves that not marked as deciduous, will use summer value.
-					| Default is [ 0.0 ] [ 0.05 ] [ 0.1 ] [ 0.1 ]
-					
 					leaf_regrowth_chance_spring = 0.05
 					leaf_regrowth_chance_summer = 0.1
 					leaf_regrowth_chance_autumn = 0.0
 					leaf_regrowth_chance_winter = 0.0
-					| Chance of deciduous leaves to regrow based on seasons, but note that it will only use summer value when in tropical biomes. For general leaves that not marked as deciduous, will use summer value.
-					| Default is [ 0.05 ] [ 0.1 ] [ 0.0 ] [ 0.0 ]
+					| Chance of deciduous leaves to drop and regrow based on seasons. But note that it will only use summer value when in tropical biomes. For general leaves that not marked as deciduous, will use summer value.
+					| Default is [ 0.0 ] [ 0.05 ] [ 0.1 ] [ 0.1 ] [ 0.05 ] [ 0.1 ] [ 0.0 ] [ 0.0 ]
 					
 					leaf_drop_chance_coniferous = 0.001
 					leaf_regrowth_chance_coniferous = 0.005
