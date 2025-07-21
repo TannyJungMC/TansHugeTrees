@@ -335,12 +335,14 @@ public class TreeGenerator {
 
                     double length = Mth.nextInt(RandomSource.create(), (int) GameUtils.nbt.entity.getNumber(entity, type + "_length_min"), (int) GameUtils.nbt.entity.getNumber(entity, type + "_length_max"));
                     length = length * summonReduction(entity, type, "length_reduce");
+                    length = Math.ceil(length);
                     GameUtils.nbt.entity.setNumber(entity, type + "_length", length);
                     GameUtils.nbt.entity.setNumber(entity, type + "_length_save", length);
 
-                    double thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_start");
+                    double thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_start") - GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end");
                     thickness = thickness * summonReduction(entity, type, "thickness_reduce");
-                    GameUtils.nbt.entity.setNumber(entity, type + "_thickness", thickness - 1);
+                    thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end") + thickness;
+                    GameUtils.nbt.entity.setNumber(entity, type + "_thickness", thickness);
 
                 }
 
@@ -381,10 +383,11 @@ public class TreeGenerator {
 
                         GameUtils.nbt.entity.setNumber(entity, "leaves_count", 1);
                         GameUtils.nbt.entity.setNumber(entity, "leaves_length", 1);
+                        GameUtils.nbt.entity.setNumber(entity, "leaves_length_save", 1);
 
                         double size = Mth.nextDouble(RandomSource.create(), GameUtils.nbt.entity.getNumber(entity, "leaves_size_min"), GameUtils.nbt.entity.getNumber(entity, "leaves_size_max"));
                         size = size * summonReduction(entity, "leaves", "size_reduce");
-                        GameUtils.nbt.entity.setNumber(entity, "leaves_size", size - 1);
+                        GameUtils.nbt.entity.setNumber(entity, "leaves_size", size);
 
                     }
 
@@ -534,7 +537,7 @@ public class TreeGenerator {
             // Next Step
             {
 
-                if (GameUtils.nbt.entity.getNumber(entity, type + "_count") > 0 && GameUtils.nbt.entity.getNumber(entity, type + "_length") > 0) {
+                if (taproot_trunk == true) {
 
                     GameUtils.nbt.entity.setText(entity, "step", "build");
 
@@ -675,16 +678,17 @@ public class TreeGenerator {
 
                         }
 
-                        double length_percent = GameUtils.nbt.entity.getNumber(entity, type + "_length") / GameUtils.nbt.entity.getNumber(entity, type + "_length_save");
                         double thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_start") - GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end");
-                        thickness = (GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end") - 1) + (thickness * length_percent);
-                        thickness = Math.round(thickness);
-                        GameUtils.nbt.entity.setNumber(entity, type + "_thickness", Double.parseDouble(String.format("%.2f", thickness)));
-                        GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ^ ^ ^1");
-
-                        }
+                        double length_percent = GameUtils.nbt.entity.getNumber(entity, type + "_length") / GameUtils.nbt.entity.getNumber(entity, type + "_length_save");
+                        thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end") + (thickness * length_percent);
+                        // thickness = Math.round(thickness);
+                        GameUtils.nbt.entity.setNumber(entity, type + "_thickness", thickness);
 
                     }
+
+                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ^ ^ ^1");
+
+                }
 
             } else {
 
@@ -748,19 +752,30 @@ public class TreeGenerator {
 
         private static void build (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, String id, String type) {
 
-            double thickness = 0.0;
+            double thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness");
+            double size = 0.0;
+            double radius = 0.0;
+            double radius_ceil = 0.0;
 
-            if (type.equals("leaves") == false) {
+            // Get Size and Radius
+            {
 
-                thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness");
+                if (type.equals("leaves") == false) {
 
-            } else {
+                    size = thickness;
 
-                thickness = GameUtils.nbt.entity.getNumber(entity, "leaves_size");
+                } else {
+
+                    size = GameUtils.nbt.entity.getNumber(entity, "leaves_size");
+
+                }
+
+                size = size + 0.5;
+                radius = size * 0.5;
+                radius_ceil = Math.ceil(radius);
 
             }
 
-            double half_thickness = thickness * 0.5;
             String generator_type = GameUtils.nbt.entity.getText(entity, type + "_generator_type");
 
             // Start Settings
@@ -805,8 +820,8 @@ public class TreeGenerator {
                             }
 
                             pitch = Math.toRadians(pitch);
-                            double distance = half_thickness;
-                            int size = (int) GameUtils.nbt.entity.getNumber(entity, type + "_sphere_zone_size");
+                            double distance = radius;
+                            int sphere_zone_size = (int) GameUtils.nbt.entity.getNumber(entity, type + "_sphere_zone_size");
 
                             GameUtils.nbt.entity.setNumber(entity, "sphere_zone_posX", distance * Math.cos(pitch) * Math.cos(yaw));
                             GameUtils.nbt.entity.setNumber(entity, "sphere_zone_posY", distance * Math.sin(pitch));
@@ -815,7 +830,7 @@ public class TreeGenerator {
                             // Change Build Center
                             {
 
-                                distance = distance - size;
+                                distance = distance - sphere_zone_size;
                                 GameUtils.nbt.entity.addNumber(entity, "build_centerX", distance * Math.cos(pitch) * Math.cos(yaw));
                                 GameUtils.nbt.entity.addNumber(entity, "build_centerY", distance * Math.sin(pitch));
                                 GameUtils.nbt.entity.addNumber(entity, "build_centerZ", distance * Math.cos(pitch) * Math.sin(yaw));
@@ -825,7 +840,7 @@ public class TreeGenerator {
                             // Get Area
                             {
 
-                                double sphere_zone_area = thickness - size;
+                                double sphere_zone_area = size - sphere_zone_size;
 
                                 if (sphere_zone_area < 0) {
 
@@ -841,9 +856,9 @@ public class TreeGenerator {
 
                     }
 
-                    GameUtils.nbt.entity.setNumber(entity, "build_saveX", -(half_thickness));
-                    GameUtils.nbt.entity.setNumber(entity, "build_saveY", -(half_thickness));
-                    GameUtils.nbt.entity.setNumber(entity, "build_saveZ", -(half_thickness));
+                    GameUtils.nbt.entity.setNumber(entity, "build_saveX", -(radius_ceil));
+                    GameUtils.nbt.entity.setNumber(entity, "build_saveY", -(radius_ceil));
+                    GameUtils.nbt.entity.setNumber(entity, "build_saveZ", -(radius_ceil));
 
                 }
 
@@ -851,7 +866,7 @@ public class TreeGenerator {
 
             double[] center_pos = new double[]{GameUtils.nbt.entity.getNumber(entity, "build_centerX"), GameUtils.nbt.entity.getNumber(entity, "build_centerY"), GameUtils.nbt.entity.getNumber(entity, "build_centerZ")};
             boolean replace = GameUtils.nbt.entity.getLogic(entity, type + "_replace");
-            double sphere_area = half_thickness * half_thickness;
+            double sphere_area = radius * radius;
             double sphere_zone_area = 0.0;
             double[] sphere_zone_pos = new double[0];
 
@@ -867,50 +882,60 @@ public class TreeGenerator {
 
             }
 
+            double build_saveX = 0.0;
+            double build_saveY = 0.0;
+            double build_saveZ = 0.0;
+            double build_area = 0.0;
+            BlockPos pos = null;
+
             while (true) {
 
                 // Building
                 {
 
-                    double build_saveX = GameUtils.nbt.entity.getNumber(entity, "build_saveX");
-                    double build_saveY = GameUtils.nbt.entity.getNumber(entity, "build_saveY");
-                    double build_saveZ = GameUtils.nbt.entity.getNumber(entity, "build_saveZ");
+                    build_saveX = GameUtils.nbt.entity.getNumber(entity, "build_saveX");
+                    build_saveY = GameUtils.nbt.entity.getNumber(entity, "build_saveY");
+                    build_saveZ = GameUtils.nbt.entity.getNumber(entity, "build_saveZ");
 
-                    if (build_saveY <= half_thickness) {
+                    if (build_saveY <= radius_ceil) {
 
-                        if (build_saveX <= half_thickness) {
+                        if (build_saveX <= radius_ceil) {
 
-                            if (build_saveZ <= half_thickness) {
+                            if (build_saveZ <= radius_ceil) {
 
                                 GameUtils.nbt.entity.addNumber(entity, "build_saveZ", 1);
-                                double build_area = 0.0;
+                                build_area = 0.0;
 
                                 // Shaping
                                 {
 
-                                    if (generator_type.startsWith("sphere") == true) {
+                                    if (size > 0) {
 
-                                        {
+                                        if (generator_type.startsWith("sphere") == true) {
 
-                                            build_area = (build_saveX * build_saveX) + (build_saveY * build_saveY) + (build_saveZ * build_saveZ);
+                                            {
 
-                                            if ((thickness > 1) && (build_area > sphere_area)) {
+                                                build_area = (build_saveX * build_saveX) + (build_saveY * build_saveY) + (build_saveZ * build_saveZ);
 
-                                                continue;
+                                                if (build_area > sphere_area) {
+
+                                                    continue;
+
+                                                }
 
                                             }
 
                                         }
 
-                                    }
+                                        if (generator_type.equals("sphere_zone") == true) {
 
-                                    if (generator_type.equals("sphere_zone") == true) {
+                                            {
 
-                                        {
+                                                if (Math.pow(sphere_zone_pos[0] - build_saveX, 2) + Math.pow(sphere_zone_pos[1] - build_saveY, 2) + Math.pow(sphere_zone_pos[2] - build_saveZ, 2) < sphere_zone_area) {
 
-                                            if (Math.pow(sphere_zone_pos[0] - build_saveX, 2) + Math.pow(sphere_zone_pos[1] - build_saveY, 2) + Math.pow(sphere_zone_pos[2] - build_saveZ, 2) < sphere_zone_area) {
+                                                    continue;
 
-                                                continue;
+                                                }
 
                                             }
 
@@ -920,7 +945,7 @@ public class TreeGenerator {
 
                                 }
 
-                                BlockPos pos = new BlockPos((int) Math.floor(center_pos[0] + build_saveX), (int) Math.floor(center_pos[1] + build_saveY), (int) Math.floor(center_pos[2] + build_saveZ));
+                                pos = new BlockPos((int) Math.floor(center_pos[0] + build_saveX), (int) Math.floor(center_pos[1] + build_saveY), (int) Math.floor(center_pos[2] + build_saveZ));
 
                                 // Place Block
                                 {
@@ -930,9 +955,9 @@ public class TreeGenerator {
                                         // General
                                         {
 
-                                            if (thickness <= 1) {
+                                            if (size < 2) {
 
-                                                buildBlockConnector(level_accessor, level_server, entity, center_pos, pos, type, generator_type, half_thickness, build_area, replace);
+                                                buildBlockConnector(level_accessor, level_server, entity, center_pos, pos, type, generator_type, radius, build_area, replace);
 
                                             }
 
@@ -945,7 +970,7 @@ public class TreeGenerator {
 
                                                     if (generator_type.equals("sphere") == true) {
 
-                                                        block_type = buildOuterInnerCore(level_accessor, entity, type, half_thickness, pos, build_area);
+                                                        block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
 
                                                     } else {
 
@@ -1026,14 +1051,14 @@ public class TreeGenerator {
 
                             } else {
 
-                                GameUtils.nbt.entity.setNumber(entity, "build_saveZ", -(half_thickness));
+                                GameUtils.nbt.entity.setNumber(entity, "build_saveZ", -(radius_ceil));
                                 GameUtils.nbt.entity.addNumber(entity, "build_saveX", 1);
 
                             }
 
                         } else {
 
-                            GameUtils.nbt.entity.setNumber(entity, "build_saveX", -(half_thickness));
+                            GameUtils.nbt.entity.setNumber(entity, "build_saveX", -(radius_ceil));
                             GameUtils.nbt.entity.addNumber(entity, "build_saveY", 1);
 
                         }
@@ -1055,7 +1080,7 @@ public class TreeGenerator {
 
         }
 
-        private static void buildBlockConnector (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, double[] center_pos, BlockPos pos, String type, String generator_type, double half_thickness, double build_area, boolean replace) {
+        private static void buildBlockConnector (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, double[] center_pos, BlockPos pos, String type, String generator_type, double radius, double build_area, boolean replace) {
 
             double block_connector_posX = GameUtils.nbt.entity.getNumber(entity, "block_connector_posX");
             double block_connector_posY = GameUtils.nbt.entity.getNumber(entity, "block_connector_posY");
@@ -1094,7 +1119,7 @@ public class TreeGenerator {
 
                                 if (generator_type.equals("sphere") == true) {
 
-                                    block_type = buildOuterInnerCore(level_accessor, entity, type, half_thickness, pos, build_area);
+                                    block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
 
                                 } else {
 
@@ -1132,7 +1157,7 @@ public class TreeGenerator {
 
                                 if (generator_type.equals("sphere") == true) {
 
-                                    block_type = buildOuterInnerCore(level_accessor, entity, type, half_thickness, pos, build_area);
+                                    block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
 
                                 } else {
 
@@ -1158,7 +1183,7 @@ public class TreeGenerator {
 
         }
 
-        private static String buildOuterInnerCore (LevelAccessor level_accessor, Entity entity, String type, double half_thickness, BlockPos pos, double build_area) {
+        private static String buildOuterInnerCore (LevelAccessor level_accessor, Entity entity, String type, double radius, BlockPos pos, double build_area) {
 
             String block = "";
 
@@ -1187,7 +1212,7 @@ public class TreeGenerator {
 
                 }
 
-                double outer_area = half_thickness - outer_level_area;
+                double outer_area = radius - outer_level_area;
                 double inner_area = outer_area - inner_level_area;
 
                 // Applying
