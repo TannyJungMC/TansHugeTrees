@@ -2,10 +2,12 @@ package tannyjung.tanshugetrees_handcode;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.server.*;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,6 +23,7 @@ import tannyjung.tanshugetrees_handcode.config.PackCheckUpdate;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.Loop;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDetector;
+import tannyjung.tanshugetrees_handcode.systems.world_gen.DataFolderCleaner;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFeature;
 
 import java.util.concurrent.CompletableFuture;
@@ -135,6 +138,21 @@ public class Handcode {
 				}
 
 			});
+
+		}
+
+	}
+
+	@SubscribeEvent
+	public static void chunkLoaded (ChunkEvent.Load event) {
+
+		if (event.isNewChunk() == true) {
+
+			ServerLevel level_server = (ServerLevel) event.getLevel();
+			String dimension = GameUtils.misc.getCurrentDimensionID(level_server).replace(":", "-");
+			ChunkPos chunk_pos = event.getChunk().getPos();
+
+			DataFolderCleaner.start(dimension, chunk_pos);
 
 		}
 
