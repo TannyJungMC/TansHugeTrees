@@ -2,7 +2,6 @@ package tannyjung.tanshugetrees.procedures;
 
 import tannyjung.tanshugetrees_handcode.systems.tree_generator.ShapeFileConverter;
 
-import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 
 import net.minecraft.world.phys.Vec3;
@@ -21,13 +20,13 @@ public class COMMANDShapeFileConverterStartProcedure {
 	public static void execute(LevelAccessor world, double x, double y, double z, CommandContext<CommandSourceStack> arguments, Entity entity) {
 		if (entity == null)
 			return;
+		double count = 0;
 		if (false) {
 			if (world instanceof ServerLevel _level)
 				_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(), "");
 			TanshugetreesMod.LOGGER.info(entity);
 		}
-		TanshugetreesModVariables.MapVariables.get(world).shape_file_converter_count = DoubleArgumentType.getDouble(arguments, "count");
-		TanshugetreesModVariables.MapVariables.get(world).syncData(world);
-		ShapeFileConverter.start(world, entity);
+		count = DoubleArgumentType.getDouble(arguments, "count");
+		ShapeFileConverter.start(world, entity, (int) count);
 	}
 }
