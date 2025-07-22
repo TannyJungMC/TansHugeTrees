@@ -51,7 +51,7 @@ public class PresetFixer {
 
     private static void fix (File file) {
 
-        File template = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack/.dev/preset_template.txt");
+        File template = new File(Handcode.directory_config + "/custom_packs/TannyJung-Main-Pack/.dev/preset_template.txt");
 
         if (template.exists() == true && template.isDirectory() == false) {
 
