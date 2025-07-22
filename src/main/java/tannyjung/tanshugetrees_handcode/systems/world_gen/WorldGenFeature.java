@@ -8,7 +8,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import tannyjung.core.GameUtils;
-import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class WorldGenFeature extends Feature <NoneFeatureConfiguration> {
 

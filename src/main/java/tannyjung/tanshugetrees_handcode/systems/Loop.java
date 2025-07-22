@@ -13,10 +13,10 @@ public class Loop {
 
     private static int second = 0;
     private static int living_tree_mechanics_tick = 0;
-    private static boolean tick_tree_generator = false;
-    private static boolean tick_tree_location = false;
-    private static boolean tick_living_tree_mechanics_leaf_drop = false;
-    private static boolean tick_living_tree_mechanics_leaf_litter_remover = false;
+    private static boolean loop_tree_generator = false;
+    private static boolean loop_tree_location = false;
+    private static boolean loop_living_tree_mechanics_leaf_drop = false;
+    private static boolean loop_living_tree_mechanics_leaf_litter_remover = false;
 
     public static void start (LevelAccessor level_accessor, ServerLevel level_server) {
 
@@ -54,10 +54,10 @@ public class Loop {
 
     private static void tick (LevelAccessor level_accessor, ServerLevel level_server) {
 
+        if (loop_tree_generator == true) {
+
         // Tree Generator
         {
-
-            if (tick_tree_generator == true) {
 
                 if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
@@ -101,10 +101,10 @@ public class Loop {
         // Living Tree Mechanics
         {
 
-            // Main
-            {
+            if (loop_tree_location == true) {
 
-                if (tick_tree_location == true) {
+                // Main
+                {
 
                     if (ConfigMain.living_tree_mechanics_tick > 0) {
 
@@ -132,13 +132,13 @@ public class Loop {
 
             }
 
-            if (tick_living_tree_mechanics_leaf_drop == true) {
+            if (loop_living_tree_mechanics_leaf_drop == true) {
 
                 GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-leaf_drop] at @s run TANSHUGETREES dev living_tree_mechanics leaf_drop");
 
             }
 
-            if (tick_living_tree_mechanics_leaf_litter_remover == true) {
+            if (loop_living_tree_mechanics_leaf_litter_remover == true) {
 
                 GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-leaf_litter_remover] at @s run TANSHUGETREES dev living_tree_mechanics leaf_litter_remover");
 
@@ -149,11 +149,6 @@ public class Loop {
     }
 
     private static void second (ServerLevel level_server) {
-
-        tick_tree_generator = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_generator]");
-        tick_tree_location = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity  @e[tag=TANSHUGETREES-tree_location]");
-        tick_living_tree_mechanics_leaf_drop = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity  @e[tag=TANSHUGETREES-leaf_drop]");
-        tick_living_tree_mechanics_leaf_litter_remover = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity  @e[tag=TANSHUGETREES-leaf_litter_remover]");
 
         // Developer Mode
         {
@@ -166,10 +161,34 @@ public class Loop {
 
         }
 
-        // Tree Location
+        // Tree Function
         {
 
-            if (tick_tree_location == true) {
+            if (GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk]") == true) {
+
+                if (Handcode.version_1192 == false) {
+
+                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk] at @s if loaded ~ ~ ~ run TANSHUGETREES dev tree_function_in_loaded_chunk");
+
+                } else {
+
+                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk] at @s run TANSHUGETREES dev tree_function_in_loaded_chunk");
+
+                }
+
+            }
+
+        }
+
+        loop_tree_generator = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_generator]");
+        loop_tree_location = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_location]");
+        loop_living_tree_mechanics_leaf_drop = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_drop]");
+        loop_living_tree_mechanics_leaf_litter_remover = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_litter_remover]");
+
+        if (loop_tree_location == true) {
+
+            // Tree Location
+            {
 
                 GameUtils.score.set(level_server, "TANSHUGETREES", "tree_location", 0);
 
@@ -191,12 +210,13 @@ public class Loop {
         // Living Tree Mechanics
         {
 
-            // Leaf Drop
-            {
+            GameUtils.score.set(level_server, "TANSHUGETREES", "leaf_drop", 0);
+            GameUtils.score.set(level_server, "TANSHUGETREES", "leaf_litter_remover", 0);
 
-                if (tick_living_tree_mechanics_leaf_drop == true) {
+            if (loop_living_tree_mechanics_leaf_drop == true) {
 
-                    GameUtils.score.set(level_server, "TANSHUGETREES", "leaf_drop", 0);
+                // Leaf Drop
+                {
 
                     if (Handcode.version_1192 == false) {
 
@@ -213,12 +233,10 @@ public class Loop {
 
             }
 
-            // Leaf Litter Remover
-            {
+            if (loop_living_tree_mechanics_leaf_litter_remover == true) {
 
-                if (tick_living_tree_mechanics_leaf_litter_remover == true) {
-
-                    GameUtils.score.set(level_server, "TANSHUGETREES", "leaf_litter_remover", 0);
+                // Leaf Litter Remover
+                {
 
                     if (Handcode.version_1192 == false) {
 
@@ -230,25 +248,6 @@ public class Loop {
 
 
                     }
-
-                }
-
-            }
-
-        }
-
-        // Tree Function
-        {
-
-            if (GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk]") == true) {
-
-                if (Handcode.version_1192 == false) {
-
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk] at @s if loaded ~ ~ ~ run TANSHUGETREES dev tree_function_in_loaded_chunk");
-
-                } else {
-
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk] at @s run TANSHUGETREES dev tree_function_in_loaded_chunk");
 
                 }
 

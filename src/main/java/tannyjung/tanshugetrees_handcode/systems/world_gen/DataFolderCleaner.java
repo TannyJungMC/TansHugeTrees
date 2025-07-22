@@ -46,9 +46,10 @@ public class DataFolderCleaner {
 
             File file_place = new File(Handcode.directory_world_data + "/place/" + file_path);
             File file_detailed_detection = new File(Handcode.directory_world_data + "/detailed_detection/" + file_path);
-
             file_place.delete();
             file_detailed_detection.delete();
+
+            // TanshugetreesMod.LOGGER.debug("Debugging : Delete Place File -> " + chunk_pos.x + " " + chunk_pos.z);
 
             // If finish placing all chunks in region
             if (file_place.getParentFile().listFiles() == null) {
