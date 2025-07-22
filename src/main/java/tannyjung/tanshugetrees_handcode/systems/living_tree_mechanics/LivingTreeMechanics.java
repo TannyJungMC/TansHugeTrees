@@ -17,7 +17,8 @@ import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LivingTreeMechanics {
 
@@ -43,7 +44,7 @@ public class LivingTreeMechanics {
 
 		}
 
-		BlockState[] leaves_block = new BlockState[2];
+		Map<String, BlockState> map_block = new HashMap<>();
 		int[] leaves_type = new int[2];
 		boolean can_leaves_decay = false;
 		boolean can_leaves_drop = false;
@@ -53,7 +54,7 @@ public class LivingTreeMechanics {
 		{
 
 			File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + GameUtils.nbt.entity.getText(entity, "settings"));
-			String id = "";
+			String get_short = "";
 			String get = "";
 
 			if (file.exists() == true && file.isDirectory() == false) {
@@ -78,34 +79,34 @@ public class LivingTreeMechanics {
 
 							} else if (read_all.startsWith("Block ") == true) {
 
-								id = read_all.substring(("Block ").length(), ("Block ###").length());
+								get_short = read_all.substring(("Block ").length(), ("Block ###").length());
 								get = read_all.substring(("Block ### = ").length());
 
-								// Test Leaves Type
+								// Get ID
 								{
 
-									if (id.startsWith("le") == true) {
+									if (get.endsWith(" keep") == true) {
 
-										int number = Integer.parseInt(id.substring(2)) - 1;
+										get = get.substring(0, get.length() - (" keep").length());
 
-										// Get ID
-										{
+									}
 
-											if (get.endsWith(" keep") == true) {
+								}
 
-												get = get.substring(0, get.length() - (" keep").length());
+								map_block.put(get_short, GameUtils.block.fromText(get));
 
-											}
+								if (get_short.startsWith("le") == true) {
 
-											if (get.endsWith("]") == true) {
+									// Leaves Types
+									{
 
-												get = get.substring(0, get.indexOf("["));
+										if (get.endsWith("]") == true) {
 
-											}
-
-											leaves_block[number] = GameUtils.block.fromText(get);
+											get = get.substring(0, get.indexOf("["));
 
 										}
+
+										int number = Integer.parseInt(get_short.substring(2)) - 1;
 
 										if (ConfigMain.deciduous_leaves_list.contains(get) == true) {
 
@@ -236,7 +237,7 @@ public class LivingTreeMechanics {
 
 									pos = new BlockPos(posX, posY, posZ);
 									id = read_all.substring(read_all.length() - 3);
-									block = leaves_block[Integer.parseInt(id.substring(2)) - 1];
+									block = map_block.get(id);
 
 								}
 
@@ -244,7 +245,6 @@ public class LivingTreeMechanics {
 								{
 
 									pre_block_data = GameUtils.nbt.entity.getText(entity, "pre_block");
-
 									get = MiscUtils.textPosConverter(pre_block_data.substring(2, pre_block_data.length() - 3), rotation, mirrored);
 									posX = entity.getBlockX() + get[0];
 									posY = entity.getBlockY() + get[1];
@@ -257,7 +257,7 @@ public class LivingTreeMechanics {
 									}
 
 									pre_pos = new BlockPos(posX, posY, posZ);
-									pre_block = GameUtils.block.fromText(GameUtils.nbt.entity.getText(entity, pre_block_data.substring(pre_block_data.length() - 3)));
+									pre_block = map_block.get(pre_block_data.substring(pre_block_data.length() - 3));
 
 								}
 
@@ -265,7 +265,7 @@ public class LivingTreeMechanics {
 
 									if (can_leaves_drop == true || can_leaves_regrow == true) {
 
-										run(level_accessor, level_server, entity, pos, block, leaves_block, leaves_type[Integer.parseInt(id.substring(2)) - 1], biome_type, current_season, can_leaves_drop, can_leaves_regrow);
+										run(level_accessor, level_server, entity, pos, map_block, block, leaves_type[Integer.parseInt(id.substring(2)) - 1], biome_type, current_season, can_leaves_drop, can_leaves_regrow);
 
 									}
 
@@ -276,7 +276,7 @@ public class LivingTreeMechanics {
 
 										if (can_leaves_decay == true) {
 
-											if (level_accessor.getBlockState(pos).equals(block) == true) {
+											if (level_accessor.getBlockState(pos).getBlock() == block.getBlock()) {
 
 												block = GameUtils.block.propertyBooleanSet(block, "persistent", false);
 												level_accessor.setBlock(pos, block, 2);
@@ -333,7 +333,7 @@ public class LivingTreeMechanics {
 
 	}
 
-	private static void run (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, BlockPos pos, BlockState block, BlockState[] leaves_block, int leaves_type, int biome_type, String current_season, boolean can_leaves_drop, boolean can_leaves_regrow) {
+	private static void run (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, BlockPos pos, Map<String, BlockState> map_block, BlockState block, int leaves_type, int biome_type, String current_season, boolean can_leaves_drop, boolean can_leaves_regrow) {
 
 		boolean straighten = false;
 		boolean can_pos_photosynthesis = false;
@@ -395,9 +395,9 @@ public class LivingTreeMechanics {
 
 					if (straighten == true) {
 
-						BlockState test_block = level_accessor.getBlockState(new BlockPos(pos.getX(), (int) GameUtils.nbt.entity.getNumber(entity, "straighten_highestY"), pos.getZ()));
+						BlockState test = level_accessor.getBlockState(new BlockPos(pos.getX(), (int) GameUtils.nbt.entity.getNumber(entity, "straighten_highestY"), pos.getZ()));
 
-						if (Arrays.stream(leaves_block).toList().contains(test_block) == false) {
+						if (map_block.get("le1").getBlock() != test.getBlock() && map_block.get("le2").getBlock() != test.getBlock()) {
 
 							chance = 1.0;
 
@@ -478,6 +478,7 @@ public class LivingTreeMechanics {
 										GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), command);
 
 									}
+
 								}
 
 							}
@@ -519,15 +520,15 @@ public class LivingTreeMechanics {
 						// Cancel By Straighten (if no block above)
 						{
 
-							BlockState test_block = level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ()));
+							BlockState test = level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ()));
 
-							if (Arrays.stream(leaves_block).toList().contains(test_block) == true) {
+							if (map_block.get("le1").getBlock() != test.getBlock() && map_block.get("le2").getBlock() != test.getBlock()) {
 
-								chance = 1.0;
+								return;
 
 							} else {
 
-								return;
+								chance = 1.0;
 
 							}
 
