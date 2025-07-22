@@ -25,9 +25,9 @@ public class PackUpdate {
 
     public static void start (LevelAccessor level_accessor) {
 
-		if (level_accessor instanceof ServerLevel level_server) {
+		CompletableFuture.runAsync(() -> {
 
-			CompletableFuture.runAsync(() -> {
+			if (level_accessor instanceof ServerLevel level_server) {
 
 				if (MiscUtils.isConnectedToInternet() == false) {
 
@@ -45,10 +45,10 @@ public class PackUpdate {
 						// Delete Old Folders
 						{
 
-							if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack") == false) {
+							if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/TannyJung-Main-Pack") == false) {
 								return;
 							}
-							if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Tree-Pack") == false) {
+							if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] TannyJung-Main-Pack") == false) {
 								return;
 							}
 
@@ -93,15 +93,15 @@ public class PackUpdate {
 
 				}
 
-			});
+			}
 
-		}
+		});
 
 	}
 
 	public static void message (ServerLevel level_server) {
 
-		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack/message.txt");
+		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Main-Pack/message.txt");
 		StringBuilder message = new StringBuilder();
 
 		if (file.exists() == true && file.isDirectory() == false) {
@@ -153,12 +153,12 @@ public class PackUpdate {
 		if (Handcode.data_structure_version_pack > data_structure_version_url) {
 
 			return_logic = false;
-			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Tree Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to available.");
+			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to be available.");
 
 		} else if (Handcode.data_structure_version_pack < data_structure_version_url) {
 
 			return_logic = false;
-			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : You're currently using mod version that does not support to new tree pack version, try update the mod and do it again.");
+			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : You're currently using mod version that does not support to new version of the pack. Try update the mod and do it again.");
 
 		}
 
@@ -199,7 +199,7 @@ public class PackUpdate {
 
 	private static boolean createZIP (ServerLevel level_server) {
 
-		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip");
+		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Main-Pack.zip");
 		ZipOutputStream out = null;
 
 		try {
@@ -221,7 +221,7 @@ public class PackUpdate {
 	private static boolean download (ServerLevel level_server) {
 
 		String download_from = "https://github.com/TannyJungMC/THT-tree_pack/archive/refs/heads/" + Handcode.tanny_pack_version_name.toLowerCase() + ".zip";
-		String download_to = Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip";
+		String download_to = Handcode.directory_config + "/custom_packs/TannyJung-Main-Pack.zip";
 
 		try {
 
@@ -255,7 +255,7 @@ public class PackUpdate {
 
 	private static boolean unzip (ServerLevel level_server) {
 
-		File unzip = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip");
+		File unzip = new File(Handcode.directory_config + "/custom_packs/TannyJung-Main-Pack.zip");
 		File unzip_to = new File(Handcode.directory_config + "/custom_packs");
 		byte[] buffer = new byte[1024];
 
@@ -327,7 +327,7 @@ public class PackUpdate {
 
 	private static boolean deleteZIP (ServerLevel level_server) {
 
-		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack.zip");
+		File file = new File(Handcode.directory_config + "/custom_packs/TannyJung-Main-Pack.zip");
 
 		if (file.exists() == true) {
 
@@ -363,7 +363,7 @@ public class PackUpdate {
 	private static boolean renameFolder (ServerLevel level_server) {
 
 		File rename_from = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-" + Handcode.tanny_pack_version_name.toLowerCase());
-		File rename_to = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack");
+		File rename_to = new File(Handcode.directory_config + "/custom_packs/TannyJung-Main-Pack");
 
 		if (rename_from.renameTo(rename_to) == false) {
 

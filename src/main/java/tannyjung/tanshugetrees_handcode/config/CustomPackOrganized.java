@@ -66,11 +66,11 @@ public class CustomPackOrganized {
 
                 if (pack.getName().equals(".organized") == true) {
 
-                    pack = new File(Handcode.directory_config + "/custom_packs/TannyJung-Tree-Pack");
+                    pack = new File(Handcode.directory_config + "/custom_packs/TannyJung-Main-Pack");
 
                 } else {
 
-                    if (pack.getName().equals("TannyJung-Tree-Pack") == true) {
+                    if (pack.getName().equals("TannyJung-Main-Pack") == true) {
 
                         continue;
 

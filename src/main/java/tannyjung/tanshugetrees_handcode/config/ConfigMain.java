@@ -91,7 +91,7 @@ public class ConfigMain {
 					- To repair missing values, run this command [ /TANSHUGETREES config repair ] or restart the world.
 					
 					----------------------------------------------------------------------------------------------------
-					TannyJung's Tree Pack
+					TannyJung's Main Pack
 					----------------------------------------------------------------------------------------------------
 					
 					auto_check_update = true
