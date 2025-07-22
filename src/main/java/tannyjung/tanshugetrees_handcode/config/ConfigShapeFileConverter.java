@@ -21,7 +21,7 @@ public class ConfigShapeFileConverter {
 					file_location = TannyJung-Main-Pack/folder/file.txt
 					
 					generate_speed_tick = 1
-					generate_speed_repeat = 10000
+					generate_speed_repeat = 100000
 					generate_speed_tp = 0
 					
 					posY = 300
