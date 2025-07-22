@@ -15,18 +15,27 @@ public class BlockPlacer {
 
         if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-            // Function
-            {
+            if (GameUtils.nbt.block.getLogic(level_accessor, pos, "delaying") == false) {
 
-                if (GameUtils.nbt.block.getText(level_accessor, pos, "function").equals("") == false) {
+                GameUtils.nbt.block.setLogic(level_accessor, pos, "delaying", true);
+                level_server.scheduleTick(pos, level_server.getBlockState(pos).getBlock(), 180);
 
-                    TreeFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.nbt.block.getText(level_accessor, pos, "function"), false);
+            } else {
+
+                // Function
+                {
+
+                    if (GameUtils.nbt.block.getText(level_accessor, pos, "function").equals("") == false) {
+
+                        TreeFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.nbt.block.getText(level_accessor, pos, "function"), false);
+
+                    }
 
                 }
 
-            }
+                level_accessor.setBlock(pos, GameUtils.block.fromText(GameUtils.nbt.block.getText(level_accessor, pos, "block")), 2);
 
-            level_accessor.setBlock(pos, GameUtils.block.fromText(GameUtils.nbt.block.getText(level_accessor, pos, "block")), 2);
+            }
 
         } else {
 

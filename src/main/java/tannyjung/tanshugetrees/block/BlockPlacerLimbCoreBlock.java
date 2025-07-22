@@ -95,7 +95,7 @@ public class BlockPlacerLimbCoreBlock extends Block implements SimpleWaterlogged
 	@Override
 	public void onPlace(BlockState blockstate, Level world, BlockPos pos, BlockState oldState, boolean moving) {
 		super.onPlace(blockstate, world, pos, oldState, moving);
-		world.scheduleTick(pos, this, 200);
+		world.scheduleTick(pos, this, 20);
 	}
 
 	@Override
@@ -105,7 +105,7 @@ public class BlockPlacerLimbCoreBlock extends Block implements SimpleWaterlogged
 		int y = pos.getY();
 		int z = pos.getZ();
 		BlockPlacerTickProcedure.execute(world, x, y, z);
-		world.scheduleTick(pos, this, 200);
+		world.scheduleTick(pos, this, 20);
 	}
 
 	@Override

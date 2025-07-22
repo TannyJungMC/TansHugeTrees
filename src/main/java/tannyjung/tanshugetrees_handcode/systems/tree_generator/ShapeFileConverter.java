@@ -357,7 +357,7 @@ public class ShapeFileConverter {
 
         String complete_date = new java.text.SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + " at " + new java.text.SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
 
-        TanshugetreesMod.queueServerWork(220, () -> {
+        TanshugetreesMod.queueServerWork(40, () -> {
 
             shape_file_converter_export_data.append("+f0/0/0fe");
             FileManager.writeTXT(Handcode.directory_world_generated + "/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), String.valueOf(shape_file_converter_export_data), true);
@@ -615,7 +615,7 @@ public class ShapeFileConverter {
 
             GameUtils.misc.sendChatMessage(level_server, "@a", "green", "THT : Completed!");
 
-            TanshugetreesMod.queueServerWork(220, () -> {
+            TanshugetreesMod.queueServerWork(40, () -> {
 
                 if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 
