@@ -25,22 +25,21 @@ public class PackUpdate {
 
     public static void start (LevelAccessor level_accessor) {
 
-		CompletableFuture.runAsync(() -> {
+		if (level_accessor instanceof ServerLevel level_server) {
 
-			if (level_accessor instanceof ServerLevel level_server) {
+			if (MiscUtils.isConnectedToInternet() == false) {
 
-				if (MiscUtils.isConnectedToInternet() == false) {
+				GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't update right now, as the mod can't connect to the internet.");
 
-					GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't update right now, as the mod can't connect to the internet.");
+			} else {
 
-				} else {
+				if (checkModVersion(level_server, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
 
-					if (checkModVersion(level_server, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
+					install_pause_systems = true;
+					GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+					GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
 
-						install_pause_systems = true;
-
-						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
-						GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
+					TanshugetreesMod.queueServerWork(40, () -> {
 
 						// Delete Old Folders
 						{
@@ -89,13 +88,13 @@ public class PackUpdate {
 
 						install_pause_systems = false;
 
-					}
+					});
 
 				}
 
 			}
 
-		});
+		}
 
 	}
 
