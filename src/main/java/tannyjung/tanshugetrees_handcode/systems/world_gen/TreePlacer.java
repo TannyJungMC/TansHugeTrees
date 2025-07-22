@@ -39,6 +39,8 @@ public class TreePlacer {
 
             if (file.exists() == true) {
 
+                // TanshugetreesMod.LOGGER.debug("Debugging : Place -> " + chunk_pos.x + " " + chunk_pos.z);
+
                 String[] array_text = null;
                 String[] from_to_chunk_get = null;
                 int[] from_to_chunk = new int[4];
@@ -439,8 +441,7 @@ public class TreePlacer {
             boolean can_leaves_decay = false;
             boolean can_leaves_drop = false;
             boolean can_leaves_regrow = false;
-            int leaves1_type = 0;
-            int leaves2_type = 0;
+            int[] leaves_type = new int[2];
 
             // Get Tree Settings
             {
@@ -500,40 +501,37 @@ public class TreePlacer {
                                         get = read_all.substring("Block ### = ".length());
                                         map_block.put(get_short, get);
 
-                                        // Test Leaves Type
+                                        // Leaves Types
                                         {
 
                                             if (get_short.startsWith("le") == true) {
 
-                                                if (get.endsWith(" keep") == true) {
+                                                // Get ID
+                                                {
 
-                                                    get = get.substring(0, get.length() - (" keep").length());
+                                                    if (get.endsWith(" keep") == true) {
+
+                                                        get = get.substring(0, get.length() - (" keep").length());
+
+                                                    }
+
+                                                    if (get.endsWith("]") == true) {
+
+                                                        get = get.substring(0, get.indexOf("["));
+
+                                                    }
 
                                                 }
 
-                                                if (get.endsWith("]") == true) {
-
-                                                    get = get.substring(0, get.indexOf("["));
-
-                                                }
+                                                int number = Integer.parseInt(get_short.substring(2)) - 1;
 
                                                 if (ConfigMain.deciduous_leaves_list.contains(get) == true) {
 
-                                                    leaves_type_test = 1;
+                                                    leaves_type[number] = 1;
 
                                                 } else if (ConfigMain.coniferous_leaves_list.contains(get) == true) {
 
-                                                    leaves_type_test = 2;
-
-                                                }
-
-                                                if (get_short.endsWith("1") == true) {
-
-                                                    leaves1_type = leaves_type_test;
-
-                                                } else if (get_short.endsWith("2") == true) {
-
-                                                    leaves2_type = leaves_type_test;
+                                                    leaves_type[number] = 2;
 
                                                 }
 
@@ -741,7 +739,6 @@ public class TreePlacer {
                                 if (read_all.startsWith("+b") == true) {
 
                                     get_short = read_all.substring(read_all.length() - 3);
-                                    can_run_function = false;
 
                                 } else if (read_all.startsWith("+f") == true) {
 
@@ -752,17 +749,21 @@ public class TreePlacer {
                                 get = map_block.get(get_short);
 
                                 // This fix the error >>> Cannot invoke "String.equals(Object)" because "get" is null
-                                try {
+                                {
 
-                                    if (get.equals("") == true) {
+                                    try {
+
+                                        if (get.equals("") == true) {
+
+                                            continue;
+
+                                        }
+
+                                    } catch (Exception exception) {
 
                                         continue;
 
                                     }
-
-                                } catch (Exception exception) {
-
-                                    continue;
 
                                 }
 
@@ -956,7 +957,9 @@ public class TreePlacer {
 
                                 }
 
-                                if (read_all.startsWith("+b")) {
+                                if (read_all.startsWith("+b") == true) {
+
+                                    can_run_function = false;
 
                                     // Place Block
                                     {
@@ -978,7 +981,7 @@ public class TreePlacer {
                                                             // Get "Chance" Value
                                                             {
 
-                                                                if ((get_short.endsWith("1") == true && leaves1_type == 2) || (get_short.endsWith("2") == true && leaves2_type == 2)) {
+                                                                if ((get_short.endsWith("1") == true && leaves_type[0] == 2) || (get_short.endsWith("2") == true && leaves_type[1] == 2)) {
 
                                                                     pre_leaf_litter_chance = ConfigMain.pre_leaf_litter_chance_coniferous;
 
@@ -1011,9 +1014,9 @@ public class TreePlacer {
 
                                                         if (ConfigMain.abscission_world_gen == true) {
 
-                                                            if ((get_short.endsWith("1") == true && leaves1_type == 1) || (get_short.endsWith("2") == true && leaves2_type == 1)) {
+                                                            if (in_snowy_biome == true) {
 
-                                                                if (in_snowy_biome == true) {
+                                                                if ((get_short.endsWith("1") == true && leaves_type[0] == 1) || (get_short.endsWith("2") == true && leaves_type[1] == 1)) {
 
                                                                     continue;
 
@@ -1047,7 +1050,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (read_all.startsWith("+f")) {
+                                } else if (read_all.startsWith("+f") == true) {
 
                                     // Run Function
                                     {
@@ -1061,21 +1064,23 @@ public class TreePlacer {
 
                                     }
 
-                                    // Summon Marker
-                                    {
+                                }
 
-                                        if (read_all.endsWith("fs") == true) {
+                            }
 
-                                            if (ConfigMain.tree_location == true && dead_tree_level == 0) {
+                        } else if (read_all.startsWith("---") == true) {
 
-                                                if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
+                            // Summon Marker
+                            {
 
-                                                    String marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
-                                                    GameUtils.command.run(level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
+                                if (chunk_pos.equals(new ChunkPos(center_posX >> 4, center_posZ >> 4)) == true) {
 
-                                                }
+                                    if (ConfigMain.tree_location == true && dead_tree_level == 0) {
 
-                                            }
+                                        if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
+
+                                            String marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
+                                            GameUtils.command.run(level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
 
                                         }
 
