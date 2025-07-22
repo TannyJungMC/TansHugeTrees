@@ -18,7 +18,7 @@ public class DataFolderCleaner {
         String file_path = dimension + "/" + region + "/" + node + ".txt";
 
         boolean full_node = false;
-        File file_region = new File(Handcode.directory_world_data + "/regions/" + file_path);
+        File file_region = new File(Handcode.directory_world_data + "/world_gen/regions/" + file_path);
         FileManager.writeTXT(file_region.toPath().toString(), "A", true);
 
         // Read to get text length
@@ -44,8 +44,8 @@ public class DataFolderCleaner {
 
             file_region.delete();
 
-            File file_place = new File(Handcode.directory_world_data + "/place/" + file_path);
-            File file_detailed_detection = new File(Handcode.directory_world_data + "/detailed_detection/" + file_path);
+            File file_place = new File(Handcode.directory_world_data + "/world_gen/place/" + file_path);
+            File file_detailed_detection = new File(Handcode.directory_world_data + "/world_gen/detailed_detection/" + file_path);
             file_place.delete();
             file_detailed_detection.delete();
 

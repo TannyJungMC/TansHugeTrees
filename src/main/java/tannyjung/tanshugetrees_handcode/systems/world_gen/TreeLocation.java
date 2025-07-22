@@ -29,7 +29,7 @@ public class TreeLocation {
 
         int region_posX = chunk_pos.x >> 5;
         int region_posZ = chunk_pos.z >> 5;
-        File file = new File(Handcode.directory_world_data + "/regions/" + dimension + "/" + region_posX + "," + region_posZ);
+        File file = new File(Handcode.directory_world_data + "/world_gen/regions/" + dimension + "/" + region_posX + "," + region_posZ);
 
         if (file.exists() == false) {
 
@@ -457,7 +457,7 @@ public class TreeLocation {
 
                         {
 
-                            File file = file = new File(Handcode.directory_world_data + "/tree_locations/" + dimension + "/" + (chunk_posX >> 5) + "," + (chunk_posZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(chunk_posX, chunk_posZ) + ".txt");
+                            File file = file = new File(Handcode.directory_world_data + "/world_gen/tree_locations/" + dimension + "/" + (chunk_posX >> 5) + "," + (chunk_posZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(chunk_posX, chunk_posZ) + ".txt");
                             String[] get = null;
                             String[] pos = null;
                             int posX = 0;
@@ -917,7 +917,7 @@ public class TreeLocation {
     private static void writeFileLocation (String dimension, String id, int center_posX, int center_posZ) {
 
         String write = id + "|" + center_posX + "/" + center_posZ + "\n";
-        String folder = Handcode.directory_world_data + "/tree_locations/" + dimension + "/" + (center_posX >> 9) + "," + (center_posZ >> 9);
+        String folder = Handcode.directory_world_data + "/world_gen/tree_locations/" + dimension + "/" + (center_posX >> 9) + "," + (center_posZ >> 9);
         FileManager.writeTXT(folder + "/" + MiscUtils.quardtreeChunkToNode((center_posX >> 4), (center_posZ >> 4)) + ".txt", write, true);
 
     }
@@ -933,7 +933,7 @@ public class TreeLocation {
 
             for (int scanZ = from_chunkZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
 
-                FileManager.writeTXT(Handcode.directory_world_data + "/place/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(scanX, scanZ) + ".txt", write, true);
+                FileManager.writeTXT(Handcode.directory_world_data + "/world_gen/place/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(scanX, scanZ) + ".txt", write, true);
 
                 // TanshugetreesMod.LOGGER.debug("Debugging : Write Place File -> " + scanX + " " + scanZ);
 

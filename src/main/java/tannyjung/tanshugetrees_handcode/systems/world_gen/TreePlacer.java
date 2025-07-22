@@ -35,7 +35,7 @@ public class TreePlacer {
         // Read To Get Tree(s)
         {
 
-            File file = new File(Handcode.directory_world_data + "/place/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + "/" + MiscUtils.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z) + ".txt");
+            File file = new File(Handcode.directory_world_data + "/world_gen/place/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + "/" + MiscUtils.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z) + ".txt");
 
             if (file.exists() == true) {
 
@@ -139,7 +139,7 @@ public class TreePlacer {
         // Already Tested
         {
 
-            File file = new File(Handcode.directory_world_data + "/detailed_detection/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + "/" + MiscUtils.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z) + ".txt");
+            File file = new File(Handcode.directory_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + "/" + MiscUtils.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z) + ".txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -370,7 +370,7 @@ public class TreePlacer {
 
                         for (int scanZ = from_chunkZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
 
-                            FileManager.writeTXT(Handcode.directory_world_data + "/detailed_detection/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
+                            FileManager.writeTXT(Handcode.directory_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
 
                         }
 
