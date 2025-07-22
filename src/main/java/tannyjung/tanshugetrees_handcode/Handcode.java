@@ -132,8 +132,8 @@ public class Handcode {
 				if (ConfigMain.auto_check_update == true) {
 
 					LevelAccessor level_accessor = event.getEntity().level();
-					PackCheckUpdate.start(level_accessor);
 					CustomPackIncompatible.scanMain(level_accessor);
+					PackCheckUpdate.start(level_accessor, false);
 
 				}
 
@@ -148,7 +148,8 @@ public class Handcode {
 
 		if (event.isNewChunk() == true) {
 
-			ServerLevel level_server = (ServerLevel) event.getLevel();
+			LevelAccessor level_accessor = event.getLevel();
+			ServerLevel level_server = (ServerLevel) level_accessor;
 			String dimension = GameUtils.misc.getCurrentDimensionID(level_server).replace(":", "-");
 			ChunkPos chunk_pos = event.getChunk().getPos();
 
