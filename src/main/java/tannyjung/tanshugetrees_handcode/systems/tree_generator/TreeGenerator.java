@@ -7,7 +7,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.core.GameUtils;
+import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 
@@ -609,8 +611,6 @@ public class TreeGenerator {
                     GameUtils.nbt.entity.setNumber(entity, "block_connector_posY", pos[1]);
                     GameUtils.nbt.entity.setNumber(entity, "block_connector_posZ", pos[2]);
 
-                    System.out.println("Save -> " + Arrays.toString(pos));
-
                 }
 
             }
@@ -1107,8 +1107,6 @@ public class TreeGenerator {
             int testY = (int) (Math.floor(center_pos[1]) - Math.floor(block_connector_posY));
             int testZ = (int) (Math.floor(center_pos[2]) - Math.floor(block_connector_posZ));
 
-            System.out.println(pos.getX() + " " + pos.getY() + " " + pos.getZ() + " -> " + testX + "/" + testY + "/" + testZ);
-
             if (Math.abs(testX) == 1 || Math.abs(testY) == 1 || Math.abs(testZ) == 1) {
 
                 // For X and Z
@@ -1145,7 +1143,6 @@ public class TreeGenerator {
 
                                 if (block_type.equals("") == false) {
 
-                                    System.out.println("Place A -> " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
                                     buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type);
 
                                 }
@@ -1184,7 +1181,6 @@ public class TreeGenerator {
 
                                 if (block_type.equals("") == false) {
 
-                                    System.out.println("Place B -> " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
                                     buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type);
 
                                 }
@@ -1425,7 +1421,8 @@ public class TreeGenerator {
 
             }
 
-            level_accessor.setBlock(pos, GameUtils.block.fromText("tanshugetrees:block_placer_" + block_placer), 2);
+            BlockState block_place = GameUtils.block.fromText("tanshugetrees:block_placer_" + block_placer);
+            level_accessor.setBlock(pos, block_place, 2);
             GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
 
             String[] function = buildGetWayFunction(entity, type);
