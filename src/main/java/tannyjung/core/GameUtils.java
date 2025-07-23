@@ -3,6 +3,7 @@ package tannyjung.core;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -24,12 +25,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -456,18 +456,19 @@ public class GameUtils {
 
 		public static BlockState propertyEnumSet (BlockState block, String name, String value) {
 
-			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+			if (name.equals("facing") == true) {
 
-            if (block.hasProperty(property) == true) {
+				if (block.hasProperty(DirectionalBlock.FACING) == true) {
 
-                if (property instanceof EnumProperty property_instance) {
+					block = block.setValue(DirectionalBlock.FACING, Direction.valueOf(value.toUpperCase()));
 
+				} else if (block.hasProperty(HorizontalDirectionalBlock.FACING) == true) {
 
-                    block = block.setValue(property_instance, value);
+					block = block.setValue(HorizontalDirectionalBlock.FACING, Direction.valueOf(value.toUpperCase()));
 
-                }
+				}
 
-            }
+			}
 
 			return block;
 
