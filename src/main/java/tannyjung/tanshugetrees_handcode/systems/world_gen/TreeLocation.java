@@ -680,7 +680,7 @@ public class TreeLocation {
             int center_sizeY = 0;
             int center_sizeZ = 0;
 
-            // Get Size
+            // Scan Shape File
             {
 
                 try { BufferedReader buffered_reader = new BufferedReader(new FileReader(chosen)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
@@ -823,9 +823,9 @@ public class TreeLocation {
 
             String tree_type = "";
             int start_height = 0;
-            int dead_tree_level = Integer.parseInt(dead_tree_levels[(int) (Math.random() * (dead_tree_levels.length - 1))]);
+            int dead_tree_level = 0;
 
-            // Scan "Tree Settings" File
+            // Scan Tree Settings File
             {
 
                 File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
@@ -872,6 +872,31 @@ public class TreeLocation {
                 String[] offset_get = start_height_offset.split(" <> ");
                 int offset = Mth.nextInt(RandomSource.create(), Integer.parseInt(offset_get[0]), Integer.parseInt(offset_get[1]));
                 start_height = start_height + offset;
+
+            }
+
+            // Dead Tree Level
+            {
+
+                dead_tree_level = Integer.parseInt(dead_tree_levels[(int) (Math.random() * (dead_tree_levels.length - 1))]);
+
+                if (dead_tree_level > 0) {
+
+                    if (dead_tree_level <= 5) {
+
+                        dead_tree_level = dead_tree_level * 10;
+
+                    } else if (dead_tree_level >= 10) {
+
+                        dead_tree_level = dead_tree_level + 1;
+
+                    } else {
+
+                        dead_tree_level = dead_tree_level * 10;
+
+                    }
+
+                }
 
             }
 

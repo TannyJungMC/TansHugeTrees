@@ -30,6 +30,8 @@ import java.util.Map;
 
 public class TreePlacer {
 
+    private static Map<String, String[]> cache_shape = new HashMap<>();
+
     public static void start (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos) {
 
         // Read To Get Tree(s)
@@ -592,7 +594,7 @@ public class TreePlacer {
 
                                 } else {
 
-                                    if (dead_tree_level >= 6) {
+                                    if (dead_tree_level >= 60) {
 
                                         if (read_all.startsWith("block_count_trunk = ")) {
 
@@ -600,17 +602,17 @@ public class TreePlacer {
 
                                                 block_count_trunk = Integer.parseInt(read_all.replace("block_count_trunk = ", ""));
 
-                                                if (dead_tree_level == 6 || dead_tree_level == 7) {
+                                                if (dead_tree_level == 60 || dead_tree_level == 70) {
 
                                                     block_count_trunk = (int) (Mth.nextDouble(RandomSource.create(seed), 0.0, 0.5) * (double) block_count_trunk);
 
-                                                } else if (dead_tree_level == 8 || dead_tree_level == 9) {
+                                                } else if (dead_tree_level == 80 || dead_tree_level == 90) {
 
                                                     block_count_trunk = (int) (Mth.nextDouble(RandomSource.create(seed), 0.5, 1.0) * (double) block_count_trunk);
 
                                                 }
 
-                                                if (dead_tree_level == 7 || dead_tree_level == 9) {
+                                                if (dead_tree_level == 70 || dead_tree_level == 90) {
 
                                                     hollowed = true;
 
@@ -622,11 +624,18 @@ public class TreePlacer {
 
                                     } else {
 
+                                        multiply = 1.0;
+
                                         if (read_all.startsWith("block_count_bough = ")) {
 
                                             {
 
-                                                multiply = Mth.nextDouble(RandomSource.create(seed + 5), 0.1, 0.5);
+                                                if (dead_tree_level == 50) {
+
+                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 5), 0.1, 1.0);
+
+                                                }
+
                                                 block_count_bough = (int) (Double.parseDouble(read_all.replace("block_count_bough = ", "")) * multiply);
 
                                             }
@@ -635,13 +644,18 @@ public class TreePlacer {
 
                                             {
 
-                                                if (dead_tree_level > 4) {
+                                                if (dead_tree_level > 49) {
 
                                                     continue;
 
                                                 }
 
-                                                multiply = Mth.nextDouble(RandomSource.create(seed + 4), 0.1, 0.5);
+                                                if (dead_tree_level == 40) {
+
+                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 4), 0.1, 1.0);
+
+                                                }
+
                                                 block_count_branch = (int) (Double.parseDouble(read_all.replace("block_count_branch = ", "")) * multiply);
 
                                             }
@@ -650,13 +664,18 @@ public class TreePlacer {
 
                                             {
 
-                                                if (dead_tree_level > 3) {
+                                                if (dead_tree_level > 39) {
 
                                                     continue;
 
                                                 }
 
-                                                multiply = Mth.nextDouble(RandomSource.create(seed + 3), 0.1, 0.5);
+                                                if (dead_tree_level == 30) {
+
+                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 3), 0.1, 1.0);
+
+                                                }
+
                                                 block_count_limb = (int) (Double.parseDouble(read_all.replace("block_count_limb = ", "")) * multiply);
 
                                             }
@@ -665,13 +684,18 @@ public class TreePlacer {
 
                                             {
 
-                                                if (dead_tree_level > 2) {
+                                                if (dead_tree_level > 29) {
 
                                                     continue;
 
                                                 }
 
-                                                multiply = Mth.nextDouble(RandomSource.create(seed + 2), 0.1, 0.5);
+                                                if (dead_tree_level == 20) {
+
+                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 2), 0.1, 1.0);
+
+                                                }
+
                                                 block_count_twig = (int) (Double.parseDouble(read_all.replace("block_count_twig = ", "")) * multiply);
 
                                             }
@@ -680,13 +704,18 @@ public class TreePlacer {
 
                                             {
 
-                                                if (dead_tree_level > 1) {
+                                                if (dead_tree_level > 19) {
 
                                                     continue;
 
                                                 }
 
-                                                multiply = Mth.nextDouble(RandomSource.create(seed + 1), 0.1, 0.5);
+                                                if (dead_tree_level == 10) {
+
+                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 1), 0.1, 1.0);
+
+                                                }
+
                                                 block_count_sprig = (int) (Double.parseDouble(read_all.replace("block_count_sprig = ", "")) * multiply);
 
                                             }
@@ -721,8 +750,6 @@ public class TreePlacer {
             BlockPos pos = null;
             double pre_leaf_litter_chance = 0.0;
             int height_motion_block = 0;
-
-            String dead_tree_current_remove = "";
 
             // Read File
             {
@@ -876,7 +903,7 @@ public class TreePlacer {
 
                                     }
 
-                                    if (dead_tree_level >= 6) {
+                                    if (dead_tree_level >= 60) {
 
                                         // Only Trunk
                                         {
