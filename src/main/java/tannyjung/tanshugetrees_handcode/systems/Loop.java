@@ -56,45 +56,45 @@ public class Loop {
 
         if (loop_tree_generator == true) {
 
-        // Tree Generator
-        {
+            // Tree Generator
+            {
 
-                if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
+                    if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                    // From Saplings
-                    {
+                        // From Saplings
+                        {
 
-                        if (ConfigMain.global_speed > 0) {
+                            if (ConfigMain.global_speed > 0) {
 
-                            StringBuilder custom = new StringBuilder();
+                                StringBuilder custom = new StringBuilder();
 
-                            if (ConfigMain.count_limit > 0) {
+                                if (ConfigMain.count_limit > 0) {
 
-                                custom
-                                        .append(",sort=nearest,limit=")
-                                        .append(ConfigMain.count_limit)
-                                ;
+                                    custom
+                                            .append(",sort=nearest,limit=")
+                                            .append(ConfigMain.count_limit)
+                                    ;
+
+                                }
+
+                                GameUtils.command.run(level_server, 0, 0, 0, "execute at @p as @e[tag=TANSHUGETREES-tree_generator" + custom + "] at @s run TANSHUGETREES dev tree_generator");
 
                             }
 
-                            GameUtils.command.run(level_server, 0, 0, 0, "execute at @p as @e[tag=TANSHUGETREES-tree_generator" + custom + "] at @s run TANSHUGETREES dev tree_generator");
+                        }
+
+                    } else {
+
+                        // From Converter
+                        {
+
+                            GameUtils.command.run(level_server, 0, 0, 0, "execute at @p in tanshugetrees:tanshugetrees_dimension positioned 0 0 0 as @e[tag=TANSHUGETREES-tree_generator,limit=1,sort=nearest] at @s run TANSHUGETREES dev tree_generator");
 
                         }
 
                     }
 
-                } else {
-
-                    // From Converter
-                    {
-
-                        GameUtils.command.run(level_server, 0, 0, 0, "execute at @p in tanshugetrees:tanshugetrees_dimension positioned 0 0 0 as @e[tag=TANSHUGETREES-tree_generator,limit=1,sort=nearest] at @s run TANSHUGETREES dev tree_generator");
-
-                    }
-
                 }
-
-            }
 
         }
 

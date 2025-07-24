@@ -39,7 +39,7 @@ public class PackUpdate {
 					GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
 					GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
 
-					TanshugetreesMod.queueServerWork(40, () -> {
+					TanshugetreesMod.queueServerWork(50, () -> {
 
 						// Delete Old Folders
 						{
