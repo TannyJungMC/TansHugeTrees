@@ -407,7 +407,7 @@ public class TreeLocation {
                                         }
 
                                         String tree_data = id + "|" + ground_block + "|" + start_height_offset + "|" + rotation + "|" + mirrored + "|" + dead_tree_chance + "|" + dead_tree_level;
-                                        readTreeFile(level_accessor, dimension, tree_data, center_posX, center_posZ);
+                                        readTreeFile(level_accessor, tree_data, center_posX, center_posZ);
 
                                         // Group Spawning
                                         {
@@ -448,7 +448,7 @@ public class TreeLocation {
 
                                                     }
 
-                                                    readTreeFile(level_accessor, dimension, tree_data, center_posX, center_posZ);
+                                                    readTreeFile(level_accessor, tree_data, center_posX, center_posZ);
 
                                                 }
 
@@ -694,7 +694,7 @@ public class TreeLocation {
 
     }
 
-    private static void readTreeFile (LevelAccessor level_accessor, String dimension, String tree_data, int center_posX, int center_posZ) {
+    private static void readTreeFile (LevelAccessor level_accessor, String tree_data, int center_posX, int center_posZ) {
 
         String id = "";
         String ground_block = "";
@@ -1008,24 +1008,23 @@ public class TreeLocation {
 
             }
 
-            // Calculation
+            int from_chunkX = center_posX - center_sizeX;
+            int from_chunkZ = center_posZ - center_sizeZ;
+            int to_chunkX = (from_chunkX + sizeX) >> 4;
+            int to_chunkZ = (from_chunkZ + sizeZ) >> 4;
+            from_chunkX = from_chunkX >> 4;
+            from_chunkZ = from_chunkZ >> 4;
+
+            // Test Exist Chunk
             {
 
-                int from_chunkX = center_posX - center_sizeX;
-                int from_chunkZ = center_posZ - center_sizeZ;
-                int to_chunkX = (from_chunkX + sizeX) >> 4;
-                int to_chunkZ = (from_chunkZ + sizeZ) >> 4;
-                from_chunkX = from_chunkX >> 4;
-                from_chunkZ = from_chunkZ >> 4;
+                for (int scanX = from_chunkX; scanX <= to_chunkX; scanX++) {
 
-                // Test Exist Chunk
-                {
+                    for (int scanZ = from_chunkZ; scanZ <= to_chunkZ; scanZ++) {
 
-                    for (int scanX = from_chunkX; scanX <= to_chunkX; scanX++) {
+                        if (level_accessor.hasChunk(scanX, scanZ) == true && level_accessor.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.FEATURES) == true) {
 
-                        for (int scanZ = from_chunkZ; scanZ <= to_chunkZ; scanZ++) {
-
-                            if (level_accessor.hasChunk(scanX, scanZ) == true && level_accessor.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.CARVERS) == true) {
+                            if (level_accessor.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.CARVERS) == true) {
 
                                 return;
 
@@ -1037,35 +1036,35 @@ public class TreeLocation {
 
                 }
 
-                String other_data = tree_type + "/" + start_height + "/" + sizeY + "/" + ground_block + "/" + dead_tree_chance + "/" + dead_tree_level;
+            }
 
-                // Write Tree Location
-                {
+            String other_data = tree_type + "/" + start_height + "/" + sizeY + "/" + ground_block + "/" + dead_tree_chance + "/" + dead_tree_level;
 
-                    String node = MiscUtils.quardtreeChunkToNode((center_posX >> 4), (center_posZ >> 4));
-                    cache_write_tree_location.computeIfAbsent(node, test -> new ArrayList<>()).add(id + "|" + center_posX + "/" + center_posZ);
+            // Write Tree Location
+            {
 
-                }
+                String node = MiscUtils.quardtreeChunkToNode((center_posX >> 4), (center_posZ >> 4));
+                cache_write_tree_location.computeIfAbsent(node, test -> new ArrayList<>()).add(id + "|" + center_posX + "/" + center_posZ);
 
-                // Write Place
-                {
+            }
 
-                    String data = from_chunkX + "/" + from_chunkZ + "/" + to_chunkX + "/" + to_chunkZ + "|" + id + "|" + chosen.getName() + "|" + center_posX + "/" + center_posZ + "|" + rotation + "/" + mirrored + "|" + other_data + "\n";
-                    int size = 32 >> 2;
-                    int to_chunkX_test = ((int) Math.ceil(to_chunkX / (double) size) * size) + size;
-                    int to_chunkZ_test = ((int) Math.ceil(to_chunkZ / (double) size) * size) + size;
+            // Write Place
+            {
 
-                    for (int scanX = from_chunkX; scanX < to_chunkX_test; scanX = scanX + size) {
+                String data = from_chunkX + "/" + from_chunkZ + "/" + to_chunkX + "/" + to_chunkZ + "|" + id + "|" + chosen.getName() + "|" + center_posX + "/" + center_posZ + "|" + rotation + "/" + mirrored + "|" + other_data + "\n";
+                int size = 32 >> 2;
+                int to_chunkX_test = ((int) Math.ceil(to_chunkX / (double) size) * size) + size;
+                int to_chunkZ_test = ((int) Math.ceil(to_chunkZ / (double) size) * size) + size;
 
-                        for (int scanZ = from_chunkZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
+                for (int scanX = from_chunkX; scanX < to_chunkX_test; scanX = scanX + size) {
 
-                            String location = (scanX >> 5) + "," + (scanZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(scanX, scanZ);
-                            String value_new = cache_write_place.getOrDefault(location, "") + data;
-                            cache_write_place.put(location, value_new);
+                    for (int scanZ = from_chunkZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
 
-                            // TanshugetreesMod.LOGGER.debug("Debugging : Write Place File -> " + scanX + " " + scanZ);
+                        String location = (scanX >> 5) + "," + (scanZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(scanX, scanZ);
+                        String value_new = cache_write_place.getOrDefault(location, "") + data;
+                        cache_write_place.put(location, value_new);
 
-                        }
+                        // TanshugetreesMod.LOGGER.debug("Debugging : Write Place File -> " + scanX + " " + scanZ);
 
                     }
 
