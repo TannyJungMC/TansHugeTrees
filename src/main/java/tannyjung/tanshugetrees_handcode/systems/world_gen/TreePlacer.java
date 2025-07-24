@@ -19,6 +19,7 @@ import tannyjung.core.MiscUtils;
 import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.systems.Cache;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LeafLitter;
 import tannyjung.tanshugetrees_handcode.systems.tree_generator.TreeFunction;
 
@@ -29,8 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TreePlacer {
-
-    private static Map<String, String[]> cache_shape = new HashMap<>();
 
     public static void start (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos) {
 
@@ -434,7 +433,8 @@ public class TreePlacer {
 
         }
 
-        File file_chosen = new File(Handcode.directory_config + "/custom_packs/" + storage_directory + "/" + chosen);
+        String location = storage_directory + "/" + chosen;
+        File file_chosen = new File(Handcode.directory_config + "/custom_packs/" + location);
 
         if (file_chosen.exists() == true && file_chosen.isDirectory() == false) {
 
@@ -754,7 +754,7 @@ public class TreePlacer {
             // Read File
             {
 
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file_chosen)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                for (String read_all : Cache.tree_shape(location)) {
 
                     {
 
@@ -1106,7 +1106,7 @@ public class TreePlacer {
 
                                         if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
 
-                                            String marker_data = "ForgeData:{file:\"" + storage_directory + "/" + chosen + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
+                                            String marker_data = "ForgeData:{file:\"" + storage_directory + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
                                             GameUtils.command.run(level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
 
                                         }
@@ -1121,7 +1121,7 @@ public class TreePlacer {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                }
 
             }
 
