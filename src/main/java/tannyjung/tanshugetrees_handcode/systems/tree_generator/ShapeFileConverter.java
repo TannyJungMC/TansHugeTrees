@@ -37,13 +37,18 @@ public class ShapeFileConverter {
 
                 } else {
 
+                    if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
+
+                        GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned ON");
+
+                    }
+
                     TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = count;
                     GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
 
                     if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
                         TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = true;
-                        GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned ON");
 
                         shape_file_converter_export_data = new StringBuilder();
                         TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position = entity.position().x + " " + entity.position().y + " " + entity.position().z;
