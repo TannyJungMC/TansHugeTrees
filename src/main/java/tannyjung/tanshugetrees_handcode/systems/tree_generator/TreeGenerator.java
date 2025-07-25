@@ -397,20 +397,20 @@ public class TreeGenerator {
 
                 }
 
-            }
+                // Chance of Discontinue
+                {
 
-            // Chance of Discontinue
-            {
+                    if (taproot_trunk == false) {
 
-                if (taproot_trunk == false) {
+                        double chance = GameUtils.nbt.entity.getNumber(entity, type + "_continue_chance");
+                        chance = chance * summonReduction(entity, type, "continue_reduce");
+                        chance = 1.0 - chance;
 
-                    double chance = GameUtils.nbt.entity.getNumber(entity, type + "_continue_chance");
-                    chance = chance * summonReduction(entity, type, "continue_reduce");
-                    chance = 1.0 - chance;
+                        if (Math.random() < chance) {
 
-                    if (Math.random() < chance) {
+                            GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_count", 0);
 
-                        GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_count", 0);
+                        }
 
                     }
 
