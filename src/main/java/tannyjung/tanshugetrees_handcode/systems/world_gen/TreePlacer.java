@@ -632,7 +632,7 @@ public class TreePlacer {
 
                                                 if (dead_tree_level == 50) {
 
-                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 5), 0.1, 1.0);
+                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 5), 0.1, 0.5);
 
                                                 }
 
@@ -652,7 +652,7 @@ public class TreePlacer {
 
                                                 if (dead_tree_level == 40) {
 
-                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 4), 0.1, 1.0);
+                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 4), 0.1, 0.5);
 
                                                 }
 
@@ -672,7 +672,7 @@ public class TreePlacer {
 
                                                 if (dead_tree_level == 30) {
 
-                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 3), 0.1, 1.0);
+                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 3), 0.1, 0.5);
 
                                                 }
 
@@ -692,7 +692,7 @@ public class TreePlacer {
 
                                                 if (dead_tree_level == 20) {
 
-                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 2), 0.1, 1.0);
+                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 2), 0.1, 0.5);
 
                                                 }
 
@@ -712,7 +712,7 @@ public class TreePlacer {
 
                                                 if (dead_tree_level == 10) {
 
-                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 1), 0.1, 1.0);
+                                                    multiply = Mth.nextDouble(RandomSource.create(seed + 1), 0.1, 0.5);
 
                                                 }
 
