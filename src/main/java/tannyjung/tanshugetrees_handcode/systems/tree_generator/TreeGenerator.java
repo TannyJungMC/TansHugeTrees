@@ -605,8 +605,8 @@ public class TreeGenerator {
 
                 if (GameUtils.nbt.entity.getNumber(entity, type + "_thickness") <= 2) {
 
-                    GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.builder_pos set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",limit=1] Pos");
-                    double[] pos = GameUtils.nbt.entity.getListNumber(entity, "builder_pos");
+                    GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.pos set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",limit=1] Pos");
+                    double[] pos = GameUtils.nbt.entity.getListNumber(entity, "pos");
                     GameUtils.nbt.entity.setNumber(entity, "block_connector_posX", pos[0]);
                     GameUtils.nbt.entity.setNumber(entity, "block_connector_posY", pos[1]);
                     GameUtils.nbt.entity.setNumber(entity, "block_connector_posZ", pos[2]);
@@ -681,6 +681,8 @@ public class TreeGenerator {
 
                         }
 
+                        boolean gravity_run = false;
+
                         // Gravity
                         {
 
@@ -690,8 +692,43 @@ public class TreeGenerator {
 
                                 int min = (int) GameUtils.nbt.entity.getNumber(entity, type + "_gravity_min");
                                 int max = (int) GameUtils.nbt.entity.getNumber(entity, type + "_gravity_max");
-                                GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",x_rotation=" + min + "..90] at @s run tp @s ~ ~ ~ ~ ~-" + weightiness);
-                                GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",x_rotation=-90.." + max + "] at @s run tp @s ~ ~ ~ ~ ~" + weightiness);
+
+                                if (GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",x_rotation=" + min + "..90]") == true) {
+
+                                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ~ ~ ~ ~ ~-" + weightiness);
+                                    gravity_run = true;
+
+                                }
+
+                                if (GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",x_rotation=-90.." + max + "]") == true) {
+
+                                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ~ ~ ~ ~ ~" + weightiness);
+                                    gravity_run = true;
+
+                                }
+
+                            }
+
+                        }
+
+                        if (gravity_run == false) {
+
+                            // Centripetal
+                            {
+
+                                double centripetal = GameUtils.nbt.entity.getNumber(entity, type + "_centripetal") * 0.01;
+
+                                if (centripetal != 0.0) {
+
+                                    GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.pos set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",limit=1] Pos");
+                                    double[] pos = GameUtils.nbt.entity.getListNumber(entity, "pos");
+                                    String old_pos = pos[0] + " " + pos[1] + " " + pos[2];
+
+                                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ^ ^ ^1");
+                                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s facing entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_trunk] feet run tp @s ^ ^ ^-" + centripetal);
+                                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s facing " + old_pos + " positioned " + old_pos + " run tp @s ~ ~ ~ facing ^ ^ ^-1");
+
+                                }
 
                             }
 
@@ -807,8 +844,8 @@ public class TreeGenerator {
                     // Get Center Pos
                     {
 
-                        GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.builder_pos set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",limit=1] Pos");
-                        double[] pos = GameUtils.nbt.entity.getListNumber(entity, "builder_pos");
+                        GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.pos set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",limit=1] Pos");
+                        double[] pos = GameUtils.nbt.entity.getListNumber(entity, "pos");
                         GameUtils.nbt.entity.setNumber(entity, "build_centerX", pos[0]);
                         GameUtils.nbt.entity.setNumber(entity, "build_centerY", pos[1]);
                         GameUtils.nbt.entity.setNumber(entity, "build_centerZ", pos[2]);
