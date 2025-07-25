@@ -13,6 +13,7 @@ import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -179,7 +180,7 @@ public class LivingTreeMechanics {
 				BlockPos pos = new BlockPos(0, 0, 0);
 				BlockState block = Blocks.AIR.defaultBlockState();
 
-				try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+				for (String read_all : Cache.tree_shape(GameUtils.nbt.entity.getText(entity, "file"))) {
 
 					{
 
@@ -295,7 +296,7 @@ public class LivingTreeMechanics {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+				}
 
 			}
 
@@ -335,6 +336,7 @@ public class LivingTreeMechanics {
 
 	private static void run (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, BlockPos pos, Map<String, BlockState> map_block, BlockState block, int leaves_type, int biome_type, String current_season, boolean can_leaves_drop, boolean can_leaves_regrow) {
 
+		boolean have_leaves = false;
 		boolean straighten = false;
 		boolean can_pos_photosynthesis = false;
 
@@ -361,7 +363,6 @@ public class LivingTreeMechanics {
 			if (ConfigMain.leaf_light_level_detection <= level_accessor.getBrightness(LightLayer.SKY, pos) + 1) {
 
 				can_pos_photosynthesis = true;
-				GameUtils.nbt.entity.setLogic(entity, "still_alive", true);
 
 			}
 
@@ -506,6 +507,8 @@ public class LivingTreeMechanics {
 
 			}
 
+			have_leaves = true;
+
 		} else if (level_accessor.getBlockState(pos).isAir() == true) {
 
 			// Leaf Regrowth
@@ -580,6 +583,21 @@ public class LivingTreeMechanics {
 						level_accessor.setBlock(pos, block, 2);
 
 					}
+
+				}
+
+			}
+
+		}
+
+		// Still Alive
+		{
+
+			if (have_leaves == true || leaves_type == 1 && biome_type == 1) {
+
+				if (GameUtils.nbt.entity.getLogic(entity, "still_alive") == false) {
+
+					GameUtils.nbt.entity.setLogic(entity, "still_alive", true);
 
 				}
 
