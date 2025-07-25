@@ -1024,11 +1024,7 @@ public class TreeLocation {
 
                         if (level_accessor.hasChunk(scanX, scanZ) == true && level_accessor.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.FEATURES) == true) {
 
-                            if (level_accessor.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.CARVERS) == true) {
-
-                                return;
-
-                            }
+                            return;
 
                         }
 
@@ -1053,8 +1049,8 @@ public class TreeLocation {
 
                 String data = from_chunkX + "/" + from_chunkZ + "/" + to_chunkX + "/" + to_chunkZ + "|" + id + "|" + chosen.getName() + "|" + center_posX + "/" + center_posZ + "|" + rotation + "/" + mirrored + "|" + other_data + "\n";
                 int size = 32 >> 2;
-                int to_chunkX_test = ((int) Math.ceil(to_chunkX / (double) size) * size) + size;
-                int to_chunkZ_test = ((int) Math.ceil(to_chunkZ / (double) size) * size) + size;
+                int to_chunkX_test = (int) ((Math.ceil((double) to_chunkX / (double) size) * size) + size);
+                int to_chunkZ_test = (int) ((Math.ceil((double) to_chunkZ / (double) size) * size) + size);
 
                 for (int scanX = from_chunkX; scanX < to_chunkX_test; scanX = scanX + size) {
 
