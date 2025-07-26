@@ -147,16 +147,16 @@ public class TreeGenerator {
 
             command
                     .append("Total Processes : ").append((int) GameUtils.nbt.entity.getNumber(entity, "total_processes"))
-                    .append("\\\\n")
+                    .append("\n")
                     .append("Generating : ").append(type)
-                    .append("\\\\n")
-                    .append("\\\\n")
+                    .append("\n")
+                    .append("\n")
                     .append("Step : ").append(step)
-                    .append("\\\\n")
+                    .append("\n")
                     .append("Count : ").append((int) GameUtils.nbt.entity.getNumber(entity, type + "_count"))
-                    .append("\\\\n")
+                    .append("\n")
                     .append("Length : ").append((int) GameUtils.nbt.entity.getNumber(entity, type + "_length")).append(" / ").append((int) GameUtils.nbt.entity.getNumber(entity, type + "_length_save"))
-                    .append("\\\\n")
+                    .append("\n")
                     .append("Thickness : ").append(GameUtils.nbt.entity.getNumber(entity, type + "_thickness")).append(" / ").append(GameUtils.nbt.entity.getNumber(entity, type + "_thickness_start"))
             ;
 
@@ -588,20 +588,11 @@ public class TreeGenerator {
 
         private static void calculation (ServerLevel level_server, Entity entity, String id, String type, String[] type_pre_next) {
 
-            // Save Block Connector
-            {
-
-                if (GameUtils.nbt.entity.getNumber(entity, type + "_thickness") <= 2) {
-
-                    GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.pos set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",limit=1] Pos");
-                    double[] pos = GameUtils.nbt.entity.getListNumber(entity, "pos");
-                    GameUtils.nbt.entity.setNumber(entity, "block_connector_posX", pos[0]);
-                    GameUtils.nbt.entity.setNumber(entity, "block_connector_posY", pos[1]);
-                    GameUtils.nbt.entity.setNumber(entity, "block_connector_posZ", pos[2]);
-
-                }
-
-            }
+            GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.previous_pos set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",limit=1] Pos");
+            double[] pos = GameUtils.nbt.entity.getListNumber(entity, "previous_pos");
+            GameUtils.nbt.entity.setNumber(entity, "previous_posX", pos[0]);
+            GameUtils.nbt.entity.setNumber(entity, "previous_posY", pos[1]);
+            GameUtils.nbt.entity.setNumber(entity, "previous_posZ", pos[2]);
 
             boolean go_next = false;
 
@@ -708,10 +699,7 @@ public class TreeGenerator {
 
                                 if (centripetal != 0.0) {
 
-                                    GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.pos set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",limit=1] Pos");
-                                    double[] pos = GameUtils.nbt.entity.getListNumber(entity, "pos");
                                     String old_pos = pos[0] + " " + pos[1] + " " + pos[2];
-
                                     GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ^ ^ ^1");
                                     GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s facing entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_trunk] feet run tp @s ^ ^ ^-" + centripetal);
                                     GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s facing " + old_pos + " positioned " + old_pos + " run tp @s ~ ~ ~ facing ^ ^ ^-1");
@@ -832,8 +820,8 @@ public class TreeGenerator {
                     // Get Center Pos
                     {
 
-                        GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.pos set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",limit=1] Pos");
-                        double[] pos = GameUtils.nbt.entity.getListNumber(entity, "pos");
+                        GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.build_center set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",limit=1] Pos");
+                        double[] pos = GameUtils.nbt.entity.getListNumber(entity, "build_center");
                         GameUtils.nbt.entity.setNumber(entity, "build_centerX", pos[0]);
                         GameUtils.nbt.entity.setNumber(entity, "build_centerY", pos[1]);
                         GameUtils.nbt.entity.setNumber(entity, "build_centerZ", pos[2]);
@@ -1125,9 +1113,9 @@ public class TreeGenerator {
 
         private static void buildBlockConnector (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, double[] center_pos, BlockPos pos, String type, String generator_type, double radius, double build_area, boolean replace) {
 
-            double block_connector_posX = GameUtils.nbt.entity.getNumber(entity, "block_connector_posX");
-            double block_connector_posY = GameUtils.nbt.entity.getNumber(entity, "block_connector_posY");
-            double block_connector_posZ = GameUtils.nbt.entity.getNumber(entity, "block_connector_posZ");
+            double block_connector_posX = GameUtils.nbt.entity.getNumber(entity, "previous_posX");
+            double block_connector_posY = GameUtils.nbt.entity.getNumber(entity, "previous_posY");
+            double block_connector_posZ = GameUtils.nbt.entity.getNumber(entity, "previous_posZ");
             int testX = (int) (Math.floor(center_pos[0]) - Math.floor(block_connector_posX));
             int testY = (int) (Math.floor(center_pos[1]) - Math.floor(block_connector_posY));
             int testZ = (int) (Math.floor(center_pos[2]) - Math.floor(block_connector_posZ));
