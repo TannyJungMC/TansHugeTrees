@@ -64,15 +64,15 @@ public class Loop {
                         // From Saplings
                         {
 
-                            if (ConfigMain.global_speed > 0) {
+                            if (ConfigMain.tree_generator_speed_tick > 0) {
 
                                 StringBuilder custom = new StringBuilder();
 
-                                if (ConfigMain.count_limit > 0) {
+                                if (ConfigMain.tree_generator_count_limit > 0) {
 
                                     custom
                                             .append(",sort=nearest,limit=")
-                                            .append(ConfigMain.count_limit)
+                                            .append(ConfigMain.tree_generator_count_limit)
                                     ;
 
                                 }

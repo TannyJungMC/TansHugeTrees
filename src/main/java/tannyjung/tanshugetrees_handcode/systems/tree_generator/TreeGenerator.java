@@ -29,11 +29,11 @@ public class TreeGenerator {
 
         } else {
 
-            GameUtils.nbt.entity.addNumber(entity, "generate_speed_test", 1);
+            GameUtils.nbt.entity.addNumber(entity, "tree_generator_speed_tick_test", 1);
 
-            if (GameUtils.nbt.entity.getNumber(entity, "generate_speed_test") >= GameUtils.nbt.entity.getNumber(entity, "generate_speed_tick")) {
+            if (GameUtils.nbt.entity.getNumber(entity, "tree_generator_speed_tick_test") >= GameUtils.nbt.entity.getNumber(entity, "tree_generator_speed_tick")) {
 
-                GameUtils.nbt.entity.setNumber(entity, "generate_speed_test", 0);
+                GameUtils.nbt.entity.setNumber(entity, "tree_generator_speed_tick_test", 0);
                 runSystem(level_accessor, level_server, entity);
 
             }
@@ -164,11 +164,10 @@ public class TreeGenerator {
 
         }
 
-        if (ConfigMain.global_speed_enable == true && GameUtils.nbt.entity.getLogic(entity, "global_generate_speed") == true) {
+        if (ConfigMain.tree_generator_speed_global == true && GameUtils.nbt.entity.getLogic(entity, "tree_generator_speed_global") == true) {
 
-            GameUtils.nbt.entity.setNumber(entity, "generate_speed_tick", ConfigMain.global_speed);
-            GameUtils.nbt.entity.setNumber(entity, "generate_speed_repeat", ConfigMain.global_speed_repeat);
-            GameUtils.nbt.entity.setNumber(entity, "generate_speed_tp", ConfigMain.global_speed_tp);
+            GameUtils.nbt.entity.setNumber(entity, "tree_generator_speed_tick", ConfigMain.tree_generator_speed_tick);
+            GameUtils.nbt.entity.setNumber(entity, "tree_generator_speed_repeat", ConfigMain.tree_generator_speed_repeat);
 
         }
 
@@ -208,17 +207,6 @@ public class TreeGenerator {
 
                 }
 
-                if (GameUtils.nbt.entity.getNumber(entity, "generate_speed_tp") != 0) {
-
-                    if (GameUtils.nbt.entity.getNumber(entity, "generate_speed_tp_test") < GameUtils.nbt.entity.getNumber(entity, "generate_speed_tp")) {
-
-                        GameUtils.nbt.entity.setNumber(entity, "generate_speed_tp_test", 0);
-                        break;
-
-                    }
-
-                }
-
             }
 
         }
@@ -229,15 +217,15 @@ public class TreeGenerator {
 
         boolean return_logic = false;
 
-        if (GameUtils.nbt.entity.getNumber(entity, "generate_speed_repeat") != 0) {
+        if (GameUtils.nbt.entity.getNumber(entity, "tree_generator_speed_repeat") != 0) {
 
-            if (GameUtils.nbt.entity.getNumber(entity, "generate_speed_repeat_test") < GameUtils.nbt.entity.getNumber(entity, "generate_speed_repeat")) {
+            if (GameUtils.nbt.entity.getNumber(entity, "tree_generator_speed_repeat_test") < GameUtils.nbt.entity.getNumber(entity, "tree_generator_speed_repeat")) {
 
-                GameUtils.nbt.entity.addNumber(entity, "generate_speed_repeat_test", 1);
+                GameUtils.nbt.entity.addNumber(entity, "tree_generator_speed_repeat_test", 1);
 
             } else {
 
-                GameUtils.nbt.entity.setNumber(entity, "generate_speed_repeat_test", 0);
+                GameUtils.nbt.entity.setNumber(entity, "tree_generator_speed_repeat_test", 0);
                 return_logic = true;
 
             }
