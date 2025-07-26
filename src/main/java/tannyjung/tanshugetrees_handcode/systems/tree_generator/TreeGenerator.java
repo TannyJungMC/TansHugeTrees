@@ -350,15 +350,22 @@ public class TreeGenerator {
 
                     if (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count") > 0) {
 
-                        int auto_distance = 0;
+                        double distance = 0.0;
 
                         if (GameUtils.nbt.entity.getLogic(entity, type_pre_next[1] + "_chance_auto") == true) {
 
-                            auto_distance = (int) (Math.ceil(GameUtils.nbt.entity.getNumber(entity, type + "_length_save") * (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance_percent") * 0.01)));
-                            auto_distance = (int) (Math.ceil(auto_distance / GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count_save")));
+                            double count_available = GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count_save") - GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_min_last_count");
+
+                            if (count_available > 0) {
+
+                                double length_percent = Math.ceil(GameUtils.nbt.entity.getNumber(entity, type + "_length_save") * (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance_percent") * 0.01));
+                                distance = length_percent / count_available;
+
+                            }
+
                         }
 
-                        GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_chance_auto_distance", auto_distance);
+                        GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_chance_auto_distance", distance);
                         GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_chance_distance_left", 0);
 
                     }
@@ -600,14 +607,14 @@ public class TreeGenerator {
 
                     if (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count") > GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_min_last_count")) {
 
-                        if (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance_distance_left") > 0) {
+                        // Length Range
+                        if (GameUtils.nbt.entity.getNumber(entity, type + "_length") / GameUtils.nbt.entity.getNumber(entity, type + "_length_save") <= GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance_percent") * 0.01) {
 
-                            GameUtils.nbt.entity.addNumber(entity, type_pre_next[1] + "_chance_distance_left", -1);
+                            if (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance_distance_left") > 0) {
 
-                        } else {
+                                GameUtils.nbt.entity.addNumber(entity, type_pre_next[1] + "_chance_distance_left", -1);
 
-                            // Length Range
-                            if (GameUtils.nbt.entity.getNumber(entity, type + "_length") / GameUtils.nbt.entity.getNumber(entity, type + "_length_save") <= GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance_percent") * 0.01) {
+                            } else {
 
                                 GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_chance_distance_left", GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance_auto_distance"));
 
