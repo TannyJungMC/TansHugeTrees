@@ -37,10 +37,259 @@ import net.minecraft.world.scores.Objective;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.Comparator;
 import java.util.List;
 
 public class GameUtils {
+
+	public static class outside {
+
+		public static String quardtreeChunkToNode (int chunkX, int chunkZ) {
+
+			StringBuilder return_text = new StringBuilder();
+
+			{
+
+				int localX = chunkX & 31;
+				int localZ = chunkZ & 31;
+
+				for (int level = 0; level < 2; level++) {
+
+					int size = 32 >> (level + 1);
+					int posX = (localX / size) % 2;
+					int posZ = (localZ / size) % 2;
+
+					if (posX == 0 && posZ == 0) return_text.append("-NW");
+					else if (posX == 1 && posZ == 0) return_text.append("-NE");
+					else if (posX == 0) return_text.append("-SW");
+					else return_text.append("-SE");
+
+				}
+
+			}
+
+			return return_text.substring(1);
+
+		}
+
+		public static int[] textPosConverter (String pos, int rotation, boolean mirrored) {
+
+			int[] return_number = new int[3];
+
+			{
+
+				String[] get = pos.split("/");
+				int posX = Integer.parseInt(get[0]);
+				int posY = Integer.parseInt(get[1]);
+				int posZ = Integer.parseInt(get[2]);
+
+				// Rotation & Mirrored
+				{
+
+					if (mirrored == true) {
+
+						posX = posX * (-1);
+
+					}
+
+					if (rotation == 2) {
+
+						int posX_save = posX;
+						posX = posZ;
+						posZ = posX_save * (-1);
+
+					} else if (rotation == 3) {
+
+						posX = posX * (-1);
+						posZ = posZ * (-1);
+
+					} else if (rotation == 4) {
+
+						int posX_save = posX;
+						int posZ_save = posZ;
+						posX = posZ_save * (-1);
+						posZ = posX_save;
+
+					}
+
+				}
+
+				return_number[0] = posX;
+				return_number[1] = posY;
+				return_number[2] = posZ;
+
+			}
+
+			return return_number;
+
+		}
+
+		public static boolean configTestBiome (Holder<Biome> biome_center, String config_value) {
+
+			boolean return_logic = false;
+
+			{
+
+				String biome_centerID = GameUtils.biome.toID(biome_center);
+
+				for (String split : config_value.split(" / ")) {
+
+					return_logic = true;
+
+					for (String split2 : split.split(", ")) {
+
+						String split_get = split2.replaceAll("[#!]", "");
+
+						{
+
+							if (split2.contains("#") == false) {
+
+								if (biome_centerID.equals(split_get) == false) {
+
+									return_logic = false;
+
+								}
+
+							} else {
+
+								if (GameUtils.biome.isTaggedAs(biome_center, split_get) == false) {
+
+									return_logic = false;
+
+								}
+
+							}
+
+							if (split2.contains("!") == true) {
+
+								return_logic = !return_logic;
+
+							}
+
+						}
+
+						if (return_logic == false) {
+
+							break;
+
+						}
+
+					}
+
+					if (return_logic == true) {
+
+						break;
+
+					}
+
+				}
+
+			}
+
+			return return_logic;
+
+		}
+
+		public static boolean configTestBlock (BlockState ground_block, String config_value) {
+
+			boolean return_logic = false;
+
+			{
+
+				for (String split : config_value.split(" / ")) {
+
+					return_logic = true;
+
+					for (String split2 : split.split(", ")) {
+
+						String split_get = split2.replaceAll("[#!]", "");
+
+						{
+
+							if (split2.contains("#") == false) {
+
+								if (ForgeRegistries.BLOCKS.getKey(ground_block.getBlock()).toString().equals(split_get) == false) {
+
+									return_logic = false;
+
+								}
+
+							} else {
+
+								if (GameUtils.block.isTaggedAs(ground_block, split_get) == false) {
+
+									return_logic = false;
+
+								}
+
+							}
+
+							if (split2.contains("!") == true) {
+
+								return_logic = !return_logic;
+
+							}
+
+						}
+
+						if (return_logic == false) {
+
+							break;
+
+						}
+
+					}
+
+					if (return_logic == true) {
+
+						break;
+
+					}
+
+				}
+
+			}
+
+			return return_logic;
+
+		}
+
+		public static String getForgeDataFromGiveFile (String path) {
+
+			String return_text = "";
+			File file = new File(path);
+
+			if (file.exists() == true && file.isDirectory() == false) {
+
+				StringBuilder data = new StringBuilder();
+
+				// Read File
+				{
+
+					try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+
+						{
+
+							data.append(read_all);
+
+						}
+
+					} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+
+				}
+
+				return_text = data.substring(data.indexOf("ForgeData"), data.length() - 2);
+
+			}
+
+			return return_text;
+
+		}
+
+	}
 
 	public static class misc {
 
@@ -56,57 +305,9 @@ public class GameUtils {
 
 		}
 
-		public static String summonEntity (String id, String tag, String name, String custom) {
-
-			StringBuilder return_text = new StringBuilder();
-
-			return_text
-					.append("summon ")
-					.append(id)
-					.append(" ~ ~ ~ {Tags:[\"")
-			;
-
-			if (tag.equals("") == false) {
-
-				return_text.append(tag.replace(" / ", "\",\""));
-
-			}
-
-			return_text.append("\"]");
-
-			if (name.equals("") == false) {
-
-				return_text
-						.append(",CustomName:'{\"text\":\"")
-						.append(name)
-						.append("\"}'")
-				;
-
-			}
-
-			if (custom.equals("") == false) {
-
-				return_text
-						.append(",")
-						.append(custom)
-				;
-
-			}
-
-			return return_text + "}";
-
-		}
-
 		public static String getCurrentDimensionID (Level level) {
 
 			return level.dimension().location().toString();
-
-		}
-
-		public static List<Entity> getEntitiesAt (Level level, int posX, int posY, int posZ) {
-
-			Vec3 center = new Vec3((posX + 0.5), (posY + 0.5), (posZ + 0.5));
-			return level.getEntitiesOfClass(Entity.class, new AABB(center, center).inflate(3 / 2d), e -> true).stream().sorted(Comparator.comparingDouble(_entcnd -> _entcnd.distanceToSqr(center))).toList();
 
 		}
 
@@ -287,7 +488,7 @@ public class GameUtils {
 
 			} catch (Exception exception) {
 
-				MiscUtils.exception(new Exception(), exception);
+				OutsideUtils.exception(new Exception(), exception);
 
 			}
 
@@ -307,7 +508,7 @@ public class GameUtils {
 
 			} catch (Exception exception) {
 
-				MiscUtils.exception(new Exception(), exception);
+				OutsideUtils.exception(new Exception(), exception);
 
 			}
 
@@ -347,7 +548,15 @@ public class GameUtils {
 
 			} else {
 
-				block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(data)).defaultBlockState();
+				try {
+
+					block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(data)).defaultBlockState();
+
+				} catch (Exception exception) {
+
+					OutsideUtils.exception(new Exception(), exception);
+
+				}
 
 			}
 
@@ -478,6 +687,54 @@ public class GameUtils {
 	}
 
 	public static class entity {
+
+		public static String summonCommand (String id, String tag, String name, String custom) {
+
+			StringBuilder return_text = new StringBuilder();
+
+			return_text
+					.append("summon ")
+					.append(id)
+					.append(" ~ ~ ~ {Tags:[\"")
+			;
+
+			if (tag.equals("") == false) {
+
+				return_text.append(tag.replace(" / ", "\",\""));
+
+			}
+
+			return_text.append("\"]");
+
+			if (name.equals("") == false) {
+
+				return_text
+						.append(",CustomName:'{\"text\":\"")
+						.append(name)
+						.append("\"}'")
+				;
+
+			}
+
+			if (custom.equals("") == false) {
+
+				return_text
+						.append(",")
+						.append(custom)
+				;
+
+			}
+
+			return return_text + "}";
+
+		}
+
+		public static List<Entity> getAllAt (Level level, int posX, int posY, int posZ) {
+
+			Vec3 center = new Vec3((posX + 0.5), (posY + 0.5), (posZ + 0.5));
+			return level.getEntitiesOfClass(Entity.class, new AABB(center, center).inflate(3 / 2d), e -> true).stream().sorted(Comparator.comparingDouble(_entcnd -> _entcnd.distanceToSqr(center))).toList();
+
+		}
 
 		public static boolean isCreativeMode (Entity entity) {
 
