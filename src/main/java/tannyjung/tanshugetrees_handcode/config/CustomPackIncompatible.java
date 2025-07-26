@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.fml.ModList;
-import tannyjung.core.MiscUtils;
+import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.GameUtils;
@@ -40,7 +40,7 @@ public class CustomPackIncompatible {
 
     }
 
-    public static void scanOrganized (LevelAccessor level_accessor) {
+    public static void scanOrganized () {
 
         // Tree Settings
         {
@@ -63,7 +63,7 @@ public class CustomPackIncompatible {
 
                 } catch (Exception exception) {
 
-                    MiscUtils.exception(new Exception(), exception);
+                    OutsideUtils.exception(new Exception(), exception);
 
                 }
 
@@ -121,7 +121,7 @@ public class CustomPackIncompatible {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
             }
 
@@ -215,7 +215,7 @@ public class CustomPackIncompatible {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
             }
 
@@ -261,7 +261,7 @@ public class CustomPackIncompatible {
 
                 }
 
-            } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
         }
 
@@ -305,7 +305,7 @@ public class CustomPackIncompatible {
                         }
                         buffered_reader.close();
                     } catch (Exception exception) {
-                        MiscUtils.exception(new Exception(), exception);
+                        OutsideUtils.exception(new Exception(), exception);
                     }
 
                 }

@@ -1,7 +1,7 @@
 package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
 import tannyjung.core.FileManager;
-import tannyjung.core.MiscUtils;
+import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
@@ -72,7 +72,7 @@ public class PresetFixer {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
             }
 
@@ -103,7 +103,7 @@ public class PresetFixer {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
             }
 

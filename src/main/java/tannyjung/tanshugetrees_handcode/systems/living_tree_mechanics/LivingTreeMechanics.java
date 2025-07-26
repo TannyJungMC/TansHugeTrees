@@ -8,7 +8,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import tannyjung.core.MiscUtils;
+import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.GameUtils;
@@ -127,7 +127,7 @@ public class LivingTreeMechanics {
 
 						}
 
-					} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+					} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
 				}
 
@@ -225,7 +225,7 @@ public class LivingTreeMechanics {
 								// Get Leave Data
 								{
 
-									get = MiscUtils.textPosConverter(read_all.substring(2, read_all.length() - 3), rotation, mirrored);
+									get = GameUtils.outside.textPosConverter(read_all.substring(2, read_all.length() - 3), rotation, mirrored);
 									posX = entity.getBlockX() + get[0];
 									posY = entity.getBlockY() + get[1];
 									posZ = entity.getBlockZ() + get[2];
@@ -246,7 +246,7 @@ public class LivingTreeMechanics {
 								{
 
 									pre_block_data = GameUtils.nbt.entity.getText(entity, "pre_block");
-									get = MiscUtils.textPosConverter(pre_block_data.substring(2, pre_block_data.length() - 3), rotation, mirrored);
+									get = GameUtils.outside.textPosConverter(pre_block_data.substring(2, pre_block_data.length() - 3), rotation, mirrored);
 									posX = entity.getBlockX() + get[0];
 									posY = entity.getBlockY() + get[1];
 									posZ = entity.getBlockZ() + get[2];
@@ -377,7 +377,7 @@ public class LivingTreeMechanics {
 
 					GameUtils.score.add(level_server, "TANSHUGETREES", "leaf_litter_remover", 1);
 
-					GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-leaf_litter_remover", "Leaf Litter Remover", "ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}"));
+					GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-leaf_litter_remover", "Leaf Litter Remover", "ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}"));
 
 				}
 
@@ -475,7 +475,7 @@ public class LivingTreeMechanics {
 										GameUtils.score.add(level_server, "TANSHUGETREES", "leaf_drop", 1);
 
 										String command = "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.block.toTextID(block) + "\"},ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}";
-										command = GameUtils.misc.summonEntity("block_display", "TANSHUGETREES / TANSHUGETREES-leaf_drop", "Falling Leaf", command);
+										command = GameUtils.entity.summonCommand("block_display", "TANSHUGETREES / TANSHUGETREES-leaf_drop", "Falling Leaf", command);
 										GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), command);
 
 									}

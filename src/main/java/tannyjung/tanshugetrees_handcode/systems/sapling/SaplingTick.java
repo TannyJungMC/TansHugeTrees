@@ -22,7 +22,7 @@ public class SaplingTick {
 
                 if (countdown >= 0) {
 
-                    GameUtils.command.run(level_server, pos.getX(), pos.getY(),  pos.getZ(), "execute positioned ~0.5 ~1.25 ~0.5 run " + GameUtils.misc.summonEntity("text_display",  "TANSHUGETREES / TANSHUGETREES-sapling_text", "Spaling Countdown", "see_through:1b,alignment:\"left\",brightness:{block:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"" + countdown + "\",\"color\":\"red\"}'"));
+                    GameUtils.command.run(level_server, pos.getX(), pos.getY(),  pos.getZ(), "execute positioned ~0.5 ~1.25 ~0.5 run " + GameUtils.entity.summonCommand("text_display",  "TANSHUGETREES / TANSHUGETREES-sapling_text", "Spaling Countdown", "see_through:1b,alignment:\"left\",brightness:{block:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"" + countdown + "\",\"color\":\"red\"}'"));
 
                     // If Break Sapling
                     {
@@ -43,7 +43,7 @@ public class SaplingTick {
 
                 } else {
 
-                    GameUtils.command.run(level_server, pos.getX(), pos.getY(),  pos.getZ(), "execute positioned ~0.5 ~0.5 ~0.5 run " + GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", ""));
+                    GameUtils.command.run(level_server, pos.getX(), pos.getY(),  pos.getZ(), "execute positioned ~0.5 ~0.5 ~0.5 run " + GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", ""));
                     GameUtils.command.run(level_server, pos.getX(), pos.getY(),  pos.getZ(), "data modify entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] ForgeData set from block ~ ~ ~ ForgeData");
                     level_accessor.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 

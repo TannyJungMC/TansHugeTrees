@@ -2,7 +2,7 @@ package tannyjung.tanshugetrees_handcode.config;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.core.MiscUtils;
+import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.GameUtils;
 
@@ -57,7 +57,7 @@ public class CustomPackFileCount {
 
                 } catch (Exception exception) {
 
-                    MiscUtils.exception(new Exception(), exception);
+                    OutsideUtils.exception(new Exception(), exception);
 
                 }
 
@@ -89,7 +89,7 @@ public class CustomPackFileCount {
 
                 } catch (Exception exception) {
 
-                    MiscUtils.exception(new Exception(), exception);
+                    OutsideUtils.exception(new Exception(), exception);
 
                 }
 
@@ -121,7 +121,7 @@ public class CustomPackFileCount {
 
                 } catch (Exception exception) {
 
-                    MiscUtils.exception(new Exception(), exception);
+                    OutsideUtils.exception(new Exception(), exception);
 
                 }
 

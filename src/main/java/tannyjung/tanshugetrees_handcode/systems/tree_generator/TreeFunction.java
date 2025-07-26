@@ -8,10 +8,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkStatus;
-import tannyjung.core.FileManager;
-import tannyjung.core.MiscUtils;
-import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.GameUtils;
 ;
@@ -219,13 +216,13 @@ public class TreeFunction {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+				} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
 			}
 
 			if (function_in_loaded_chunk == true) {
 
-				GameUtils.command.run(level_server, posX, posY, posZ, GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_function_in_loaded_chunk", "Tree Function in Loaded Chunk", "ForgeData:{function:\"" + path +"\"}"));
+				GameUtils.command.run(level_server, posX, posY, posZ, GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_function_in_loaded_chunk", "Tree Function in Loaded Chunk", "ForgeData:{function:\"" + path +"\"}"));
 
 			}
 

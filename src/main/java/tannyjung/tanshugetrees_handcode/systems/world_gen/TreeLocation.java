@@ -9,7 +9,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.*;
 import tannyjung.core.FileManager;
-import tannyjung.core.MiscUtils;
+import tannyjung.core.OutsideUtils;
 import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
@@ -24,7 +24,6 @@ import java.util.concurrent.*;
 
 public class TreeLocation {
 
-    private static String[] cache_config_world_gen = new String[0];
     private static final Map<String, List<String>> cache_write_tree_location = new HashMap<>();
     private static final Map<String, String> cache_write_place = new HashMap<>();
 
@@ -47,21 +46,7 @@ public class TreeLocation {
             if (file.exists() == true && file.isDirectory() == false) {
 
                 TanshugetreesMod.LOGGER.info("Generating tree locations for a new region ({} -> {}/{})", dimension.replace("-", ":"), region_posX, region_posZ);
-
-                // Cache Config World Gen
-                {
-
-                    try {
-
-                        cache_config_world_gen = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8).toArray(new String[0]);
-
-                    } catch (Exception exception) {
-
-                        MiscUtils.exception(new Exception(), exception);
-
-                    }
-
-                }
+                String[] config_world_gen = FileManager.fileToStringArray(file.getPath());
 
                 // Overlay Loading Loop
                 {
@@ -89,7 +74,7 @@ public class TreeLocation {
 
                             } catch (InterruptedException exception) {
 
-                                MiscUtils.exception(new Exception(), exception);
+                                OutsideUtils.exception(new Exception(), exception);
 
                             }
 
@@ -118,7 +103,7 @@ public class TreeLocation {
 
                                 if (level_accessor.hasChunk(chunk_posX, chunk_posZ) == false || (level_accessor.hasChunk(chunk_posX, chunk_posZ) == true && level_accessor.getChunk(chunk_posX, chunk_posZ).getStatus().isOrAfter(ChunkStatus.FULL)) == false) {
 
-                                    getData(level_accessor, dimension, chunk_posX, chunk_posZ);
+                                    getData(level_accessor, dimension, chunk_posX, chunk_posZ, config_world_gen);
 
                                 }
 
@@ -130,7 +115,6 @@ public class TreeLocation {
 
                 }
 
-                cache_config_world_gen = new String[0];
                 world_gen_overlay_animation = 0;
                 TanshugetreesMod.LOGGER.info("Completed!");
 
@@ -175,7 +159,7 @@ public class TreeLocation {
 
     }
 
-    private static void getData (LevelAccessor level_accessor, String dimension, int chunk_posX, int chunk_posZ) {
+    private static void getData (LevelAccessor level_accessor, String dimension, int chunk_posX, int chunk_posZ, String[] config_world_gen) {
 
         boolean start_test = false;
         boolean skip = true;
@@ -198,7 +182,7 @@ public class TreeLocation {
 
         world_gen_overlay_details_tree = "No Matching";
 
-        for (String read_all : cache_config_world_gen) {
+        for (String read_all : config_world_gen) {
 
             {
 
@@ -259,7 +243,7 @@ public class TreeLocation {
 
                                         biome = read_all.replace("biome = ", "");
 
-                                        if (MiscUtils.configTestBiome(biome_center, biome) == false) {
+                                        if (GameUtils.outside.configTestBiome(biome_center, biome) == false) {
 
                                             skip = true;
 
@@ -425,7 +409,7 @@ public class TreeLocation {
 
                                                         biome_center = level_accessor.getBiome(new BlockPos(center_posX, level_accessor.getMaxBuildHeight(), center_posZ));
 
-                                                        if (MiscUtils.configTestBiome(biome_center, biome) == false) {
+                                                        if (GameUtils.outside.configTestBiome(biome_center, biome) == false) {
 
                                                             continue;
 
@@ -523,7 +507,7 @@ public class TreeLocation {
                         // Read Data
                         {
 
-                            node = MiscUtils.quardtreeChunkToNode(chunk_posX, chunk_posZ);
+                            node = GameUtils.outside.quardtreeChunkToNode(chunk_posX, chunk_posZ);
 
                             if (center_region_posX == chunk_posX >> 5 && center_region_posZ == chunk_posZ >> 5) {
 
@@ -591,7 +575,7 @@ public class TreeLocation {
 
                                                 }
 
-                                            } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                                            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
                                         }
 
@@ -754,7 +738,7 @@ public class TreeLocation {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
                 }
 
@@ -882,7 +866,7 @@ public class TreeLocation {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                        } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
                     }
 
@@ -1039,7 +1023,7 @@ public class TreeLocation {
             // Write Tree Location
             {
 
-                String node = MiscUtils.quardtreeChunkToNode((center_posX >> 4), (center_posZ >> 4));
+                String node = GameUtils.outside.quardtreeChunkToNode((center_posX >> 4), (center_posZ >> 4));
                 cache_write_tree_location.computeIfAbsent(node, test -> new ArrayList<>()).add(id + "|" + center_posX + "/" + center_posZ);
 
             }
@@ -1056,7 +1040,7 @@ public class TreeLocation {
 
                     for (int scanZ = from_chunkZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
 
-                        String location = (scanX >> 5) + "," + (scanZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(scanX, scanZ);
+                        String location = (scanX >> 5) + "," + (scanZ >> 5) + "/" + GameUtils.outside.quardtreeChunkToNode(scanX, scanZ);
                         String value_new = cache_write_place.getOrDefault(location, "") + data;
                         cache_write_place.put(location, value_new);
 

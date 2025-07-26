@@ -15,7 +15,7 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import tannyjung.core.FileManager;
-import tannyjung.core.MiscUtils;
+import tannyjung.core.OutsideUtils;
 import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
@@ -36,7 +36,7 @@ public class TreePlacer {
         // Read To Get Tree(s)
         {
 
-            File file = new File(Handcode.directory_world_data + "/world_gen/place/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + "/" + MiscUtils.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z) + ".txt");
+            File file = new File(Handcode.directory_world_data + "/world_gen/place/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + "/" + GameUtils.outside.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z) + ".txt");
 
             if (file.exists() == true) {
 
@@ -120,7 +120,7 @@ public class TreePlacer {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
                 }
 
@@ -140,7 +140,7 @@ public class TreePlacer {
         // Already Tested
         {
 
-            File file = new File(Handcode.directory_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + "/" + MiscUtils.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z) + ".txt");
+            File file = new File(Handcode.directory_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + "/" + GameUtils.outside.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z) + ".txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -175,7 +175,7 @@ public class TreePlacer {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
                 }
 
@@ -257,7 +257,7 @@ public class TreePlacer {
                             // Ground Block
                             {
 
-                                if (MiscUtils.configTestBlock(chunk.getBlockState(new BlockPos(center_posX, center_posY - 1, center_posZ)), ground_block) == false) {
+                                if (GameUtils.outside.configTestBlock(chunk.getBlockState(new BlockPos(center_posX, center_posY - 1, center_posZ)), ground_block) == false) {
 
                                     pass = false;
                                     break test;
@@ -371,7 +371,7 @@ public class TreePlacer {
 
                         for (int scanZ = from_chunkZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
 
-                            FileManager.writeTXT(Handcode.directory_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + MiscUtils.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
+                            FileManager.writeTXT(Handcode.directory_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + GameUtils.outside.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
 
                         }
 
@@ -425,7 +425,7 @@ public class TreePlacer {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
                 }
 
@@ -557,7 +557,7 @@ public class TreePlacer {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                        } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
                     }
 
@@ -728,7 +728,7 @@ public class TreePlacer {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                        } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
                     }
 
@@ -953,7 +953,7 @@ public class TreePlacer {
 
                                 }
 
-                                get_pos_array = MiscUtils.textPosConverter(get_pos, rotation, mirrored);
+                                get_pos_array = GameUtils.outside.textPosConverter(get_pos, rotation, mirrored);
 
                                 // Apply Block Pos With Real Pos
                                 testX = center_posX + get_pos_array[0];
@@ -1107,7 +1107,7 @@ public class TreePlacer {
                                         if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
 
                                             String marker_data = "ForgeData:{file:\"" + storage_directory + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
-                                            GameUtils.command.run(level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.misc.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
+                                            GameUtils.command.run(level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
 
                                         }
 

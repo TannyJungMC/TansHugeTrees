@@ -7,7 +7,6 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Comparator;
-import java.util.concurrent.CompletableFuture;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -17,7 +16,7 @@ import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 ;
 import tannyjung.core.GameUtils;
-import tannyjung.core.MiscUtils;
+import tannyjung.core.OutsideUtils;
 
 public class PackUpdate {
 
@@ -27,7 +26,7 @@ public class PackUpdate {
 
 		if (level_accessor instanceof ServerLevel level_server) {
 
-			if (MiscUtils.isConnectedToInternet() == false) {
+			if (OutsideUtils.isConnectedToInternet() == false) {
 
 				GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't update right now, as the mod can't connect to the internet.");
 
@@ -115,7 +114,7 @@ public class PackUpdate {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+				} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
 			}
 
@@ -145,7 +144,7 @@ public class PackUpdate {
 
 				}
 
-			} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+			} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
         }
 
@@ -340,7 +339,7 @@ public class PackUpdate {
 
 					} catch (Exception exception) {
 
-						MiscUtils.exception(new Exception(), exception);
+						OutsideUtils.exception(new Exception(), exception);
 
                     }
 

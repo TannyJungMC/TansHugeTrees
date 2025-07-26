@@ -7,7 +7,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.core.GameUtils;
-import tannyjung.core.MiscUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.init.TanshugetreesModBlocks;
 import tannyjung.tanshugetrees_handcode.Handcode;
@@ -72,7 +71,7 @@ public class Sapling {
 
                                     } else {
 
-                                        GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "data merge block ~ ~ ~ {" + MiscUtils.getForgeDataFromGiveFile(file.getPath()) + "}");
+                                        GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "data merge block ~ ~ ~ {" + GameUtils.outside.getForgeDataFromGiveFile(file.getPath()) + "}");
 
                                     }
 
@@ -108,7 +107,7 @@ public class Sapling {
 
         for (int test = (int) GameUtils.nbt.block.getNumber(level_accessor, pos, "bone_meal_usage"); test > 0; test--) {
 
-            GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "execute positioned ~0.5 ~0.5 ~0.5 run " + GameUtils.misc.summonEntity("item", "", "", "Item:{id:\"minecraft:bone_meal\",Count:1b}"));
+            GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "execute positioned ~0.5 ~0.5 ~0.5 run " + GameUtils.entity.summonCommand("item", "", "", "Item:{id:\"minecraft:bone_meal\",Count:1b}"));
 
         }
 
@@ -117,7 +116,7 @@ public class Sapling {
         // Display Text
         {
 
-            GameUtils.command.run(level_server, pos.getX(), pos.getY(),  pos.getZ(), "execute positioned ~0.5 ~1.25 ~0.5 run " + GameUtils.misc.summonEntity("text_display",  "TANSHUGETREES / TANSHUGETREES-sapling_text", "Spaling Countdown", "see_through:1b,alignment:\"left\",brightness:{block:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"" + message + "\",\"color\":\"red\"}'"));
+            GameUtils.command.run(level_server, pos.getX(), pos.getY(),  pos.getZ(), "execute positioned ~0.5 ~1.25 ~0.5 run " + GameUtils.entity.summonCommand("text_display",  "TANSHUGETREES / TANSHUGETREES-sapling_text", "Spaling Countdown", "see_through:1b,alignment:\"left\",brightness:{block:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"" + message + "\",\"color\":\"red\"}'"));
 
             TanshugetreesMod.queueServerWork(200, () -> {
 

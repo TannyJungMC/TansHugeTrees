@@ -2,8 +2,9 @@ package tannyjung.tanshugetrees_handcode.systems.world_gen;
 
 import net.minecraft.world.level.ChunkPos;
 import tannyjung.core.FileManager;
+import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.core.MiscUtils;
+import tannyjung.core.OutsideUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +15,7 @@ public class DataFolderCleaner {
     public static void start (String dimension, ChunkPos chunk_pos) {
 
         String region = (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5);
-        String node = MiscUtils.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z);
+        String node = GameUtils.outside.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z);
         String file_path = dimension + "/" + region + "/" + node + ".txt";
 
         boolean full_node = false;
@@ -36,7 +37,7 @@ public class DataFolderCleaner {
 
                 }
 
-            } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
         }
 

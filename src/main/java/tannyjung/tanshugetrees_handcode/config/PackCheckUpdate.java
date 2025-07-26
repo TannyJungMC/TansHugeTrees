@@ -6,7 +6,6 @@ import java.net.URI;
 import java.net.URL;
 import java.io.File;
 import java.io.FileReader;
-import java.util.concurrent.CompletableFuture;
 
 import net.minecraft.server.level.ServerLevel;
 
@@ -15,7 +14,7 @@ import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 ;
 import tannyjung.core.GameUtils;
-import tannyjung.core.MiscUtils;
+import tannyjung.core.OutsideUtils;
 
 public class PackCheckUpdate {
 
@@ -23,7 +22,7 @@ public class PackCheckUpdate {
 
 		if (level_accessor instanceof ServerLevel level_server) {
 
-			if (MiscUtils.isConnectedToInternet() == false) {
+			if (OutsideUtils.isConnectedToInternet() == false) {
 
 				GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't check for update right now, as the mod can't connect to the internet.");
 
@@ -76,7 +75,7 @@ public class PackCheckUpdate {
 
 								}
 
-							} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+							} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
 						}
 
@@ -99,7 +98,7 @@ public class PackCheckUpdate {
 
 								}
 
-							} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+							} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
 						}
 

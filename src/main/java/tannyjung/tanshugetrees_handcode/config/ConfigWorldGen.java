@@ -1,6 +1,6 @@
 package tannyjung.tanshugetrees_handcode.config;
 
-import tannyjung.core.MiscUtils;
+import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.FileManager;
 
@@ -39,7 +39,7 @@ public class ConfigWorldGen {
 
                 } catch (Exception exception) {
 
-                    MiscUtils.exception(new Exception(), exception);
+                    OutsideUtils.exception(new Exception(), exception);
 
                 }
 
@@ -47,7 +47,7 @@ public class ConfigWorldGen {
 
         } catch (Exception exception) {
 
-            MiscUtils.exception(new Exception(), exception);
+            OutsideUtils.exception(new Exception(), exception);
 
         }
 
@@ -121,7 +121,7 @@ public class ConfigWorldGen {
 
                     } catch (Exception exception) {
 
-                        MiscUtils.exception(new Exception(), exception);
+                        OutsideUtils.exception(new Exception(), exception);
 
                     }
 
@@ -210,7 +210,7 @@ public class ConfigWorldGen {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
                 }
 
@@ -320,7 +320,7 @@ public class ConfigWorldGen {
 
                                                         }
 
-                                                    } buffered_reader2.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                                                    } buffered_reader2.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
                                                 }
 
@@ -336,7 +336,7 @@ public class ConfigWorldGen {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+                        } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
                     }
 
@@ -362,7 +362,7 @@ public class ConfigWorldGen {
 
             } catch (Exception exception) {
 
-                MiscUtils.exception(new Exception(), exception);
+                OutsideUtils.exception(new Exception(), exception);
 
             }
 

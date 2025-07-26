@@ -1,11 +1,10 @@
 package tannyjung.tanshugetrees_handcode.systems;
 
-import tannyjung.core.MiscUtils;
+import tannyjung.core.FileManager;
+import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,13 +18,9 @@ public class Cache {
 
             File file = new File(Handcode.directory_config + "/custom_packs/" + location);
 
-            try {
+            if (file.exists() == true && file.isDirectory() == false) {
 
-                cache_shape.put(location, Files.readAllLines(file.toPath(), StandardCharsets.UTF_8).toArray(new String[0]));
-
-            } catch (Exception exception) {
-
-                MiscUtils.exception(new Exception(), exception);
+                cache_shape.put(location, FileManager.fileToStringArray(file.getPath()));
 
             }
 

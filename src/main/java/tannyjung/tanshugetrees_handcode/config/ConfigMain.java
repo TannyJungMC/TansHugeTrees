@@ -312,68 +312,68 @@ public class ConfigMain {
 
 		String path = Handcode.directory_config + "/config.txt";
 
-		auto_check_update = FileManager.GetConfigValue.logic(path, "auto_check_update");
-		auto_update = FileManager.GetConfigValue.logic(path, "auto_update");
-		wip_version = FileManager.GetConfigValue.logic(path, "wip_version");
+		auto_check_update = FileManager.getConfigValue.logic(path, "auto_check_update");
+		auto_update = FileManager.getConfigValue.logic(path, "auto_update");
+		wip_version = FileManager.getConfigValue.logic(path, "wip_version");
 
-		region_scan_chance = FileManager.GetConfigValue.numberDouble(path, "region_scan_chance");
-		multiply_rarity = FileManager.GetConfigValue.numberDouble(path, "multiply_rarity");
-		multiply_min_distance = FileManager.GetConfigValue.numberDouble(path, "multiply_min_distance");
-		multiply_group_size = FileManager.GetConfigValue.numberDouble(path, "multiply_group_size");
-		multiply_waterside_chance = FileManager.GetConfigValue.numberDouble(path, "multiply_waterside_chance");
-		multiply_dead_tree_chance = FileManager.GetConfigValue.numberDouble(path, "multiply_dead_tree_chance");
-		tree_location = FileManager.GetConfigValue.logic(path, "tree_location");
-		world_gen_roots = FileManager.GetConfigValue.logic(path, "world_gen_roots");
-		surrounding_area_detection = FileManager.GetConfigValue.logic(path, "surrounding_area_detection");
-		surrounding_area_detection_size = FileManager.GetConfigValue.numberInt(path, "surrounding_area_detection_size");
-		waterside_detection = FileManager.GetConfigValue.logic(path, "waterside_detection");
-		surface_smoothness_detection = FileManager.GetConfigValue.logic(path, "surface_smoothness_detection");
-		surface_smoothness_detection_height = FileManager.GetConfigValue.numberInt(path, "surface_smoothness_detection_height");
-		pre_leaf_litter = FileManager.GetConfigValue.logic(path, "pre_leaf_litter");
-		pre_leaf_litter_chance = FileManager.GetConfigValue.numberDouble(path, "pre_leaf_litter_chance");
-		pre_leaf_litter_chance_coniferous = FileManager.GetConfigValue.numberDouble(path, "pre_leaf_litter_chance_coniferous");
-		abscission_world_gen = FileManager.GetConfigValue.logic(path, "abscission_world_gen");
+		region_scan_chance = FileManager.getConfigValue.numberDouble(path, "region_scan_chance");
+		multiply_rarity = FileManager.getConfigValue.numberDouble(path, "multiply_rarity");
+		multiply_min_distance = FileManager.getConfigValue.numberDouble(path, "multiply_min_distance");
+		multiply_group_size = FileManager.getConfigValue.numberDouble(path, "multiply_group_size");
+		multiply_waterside_chance = FileManager.getConfigValue.numberDouble(path, "multiply_waterside_chance");
+		multiply_dead_tree_chance = FileManager.getConfigValue.numberDouble(path, "multiply_dead_tree_chance");
+		tree_location = FileManager.getConfigValue.logic(path, "tree_location");
+		world_gen_roots = FileManager.getConfigValue.logic(path, "world_gen_roots");
+		surrounding_area_detection = FileManager.getConfigValue.logic(path, "surrounding_area_detection");
+		surrounding_area_detection_size = FileManager.getConfigValue.numberInt(path, "surrounding_area_detection_size");
+		waterside_detection = FileManager.getConfigValue.logic(path, "waterside_detection");
+		surface_smoothness_detection = FileManager.getConfigValue.logic(path, "surface_smoothness_detection");
+		surface_smoothness_detection_height = FileManager.getConfigValue.numberInt(path, "surface_smoothness_detection_height");
+		pre_leaf_litter = FileManager.getConfigValue.logic(path, "pre_leaf_litter");
+		pre_leaf_litter_chance = FileManager.getConfigValue.numberDouble(path, "pre_leaf_litter_chance");
+		pre_leaf_litter_chance_coniferous = FileManager.getConfigValue.numberDouble(path, "pre_leaf_litter_chance_coniferous");
+		abscission_world_gen = FileManager.getConfigValue.logic(path, "abscission_world_gen");
 
-		living_tree_mechanics = FileManager.GetConfigValue.logic(path, "living_tree_mechanics");
-		living_tree_mechanics_tick = FileManager.GetConfigValue.numberInt(path, "living_tree_mechanics_tick");
-		living_tree_mechanics_process_limit = FileManager.GetConfigValue.numberInt(path, "living_tree_mechanics_process_limit");
-		living_tree_mechanics_simulation = FileManager.GetConfigValue.numberInt(path, "living_tree_mechanics_simulation");
-		leaf_litter = FileManager.GetConfigValue.logic(path, "leaf_litter");
-		leaf_litter_classic = FileManager.GetConfigValue.logic(path, "leaf_litter_classic");
-		leaf_litter_classic_only = FileManager.GetConfigValue.logic(path, "leaf_litter_classic_only");
-		leaf_litter_remover_chance = FileManager.GetConfigValue.numberDouble(path, "leaf_litter_remover_chance");
-		leaf_litter_remover_count_limit = FileManager.GetConfigValue.numberInt(path, "leaf_litter_remover_count_limit");
-		leaf_drop_animation_chance = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_animation_chance");
-		leaf_drop_animation_count_limit = FileManager.GetConfigValue.numberInt(path, "leaf_drop_animation_count_limit");
-		leaf_light_level_detection = FileManager.GetConfigValue.numberInt(path, "leaf_light_level_detection");
-		leaf_light_level_detection_drop_chance = FileManager.GetConfigValue.numberDouble(path, "leaf_light_level_detection_drop_chance");
-		deciduous_leaves_list = new HashSet<>(Arrays.asList(FileManager.GetConfigValue.text(path, "deciduous_leaves_list").split(" / ")));
-		coniferous_leaves_list = new HashSet<>(Arrays.asList(FileManager.GetConfigValue.text(path, "coniferous_leaves_list").split(" / ")));
+		living_tree_mechanics = FileManager.getConfigValue.logic(path, "living_tree_mechanics");
+		living_tree_mechanics_tick = FileManager.getConfigValue.numberInt(path, "living_tree_mechanics_tick");
+		living_tree_mechanics_process_limit = FileManager.getConfigValue.numberInt(path, "living_tree_mechanics_process_limit");
+		living_tree_mechanics_simulation = FileManager.getConfigValue.numberInt(path, "living_tree_mechanics_simulation");
+		leaf_litter = FileManager.getConfigValue.logic(path, "leaf_litter");
+		leaf_litter_classic = FileManager.getConfigValue.logic(path, "leaf_litter_classic");
+		leaf_litter_classic_only = FileManager.getConfigValue.logic(path, "leaf_litter_classic_only");
+		leaf_litter_remover_chance = FileManager.getConfigValue.numberDouble(path, "leaf_litter_remover_chance");
+		leaf_litter_remover_count_limit = FileManager.getConfigValue.numberInt(path, "leaf_litter_remover_count_limit");
+		leaf_drop_animation_chance = FileManager.getConfigValue.numberDouble(path, "leaf_drop_animation_chance");
+		leaf_drop_animation_count_limit = FileManager.getConfigValue.numberInt(path, "leaf_drop_animation_count_limit");
+		leaf_light_level_detection = FileManager.getConfigValue.numberInt(path, "leaf_light_level_detection");
+		leaf_light_level_detection_drop_chance = FileManager.getConfigValue.numberDouble(path, "leaf_light_level_detection_drop_chance");
+		deciduous_leaves_list = new HashSet<>(Arrays.asList(FileManager.getConfigValue.text(path, "deciduous_leaves_list").split(" / ")));
+		coniferous_leaves_list = new HashSet<>(Arrays.asList(FileManager.getConfigValue.text(path, "coniferous_leaves_list").split(" / ")));
 
-		serene_seasons_compatibility = FileManager.GetConfigValue.logic(path, "serene_seasons_compatibility");
-		leaf_drop_chance_spring = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_chance_spring");
-		leaf_drop_chance_summer = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_chance_summer");
-		leaf_drop_chance_autumn = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_chance_autumn");
-		leaf_drop_chance_winter = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_chance_winter");
-		leaf_regrowth_chance_spring = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_spring");
-		leaf_regrowth_chance_summer = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_summer");
-		leaf_regrowth_chance_autumn = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_autumn");
-		leaf_regrowth_chance_winter = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_winter");
-		leaf_drop_chance_coniferous = FileManager.GetConfigValue.numberDouble(path, "leaf_drop_chance_coniferous");
-		leaf_regrowth_chance_coniferous = FileManager.GetConfigValue.numberDouble(path, "leaf_regrowth_chance_coniferous");
+		serene_seasons_compatibility = FileManager.getConfigValue.logic(path, "serene_seasons_compatibility");
+		leaf_drop_chance_spring = FileManager.getConfigValue.numberDouble(path, "leaf_drop_chance_spring");
+		leaf_drop_chance_summer = FileManager.getConfigValue.numberDouble(path, "leaf_drop_chance_summer");
+		leaf_drop_chance_autumn = FileManager.getConfigValue.numberDouble(path, "leaf_drop_chance_autumn");
+		leaf_drop_chance_winter = FileManager.getConfigValue.numberDouble(path, "leaf_drop_chance_winter");
+		leaf_regrowth_chance_spring = FileManager.getConfigValue.numberDouble(path, "leaf_regrowth_chance_spring");
+		leaf_regrowth_chance_summer = FileManager.getConfigValue.numberDouble(path, "leaf_regrowth_chance_summer");
+		leaf_regrowth_chance_autumn = FileManager.getConfigValue.numberDouble(path, "leaf_regrowth_chance_autumn");
+		leaf_regrowth_chance_winter = FileManager.getConfigValue.numberDouble(path, "leaf_regrowth_chance_winter");
+		leaf_drop_chance_coniferous = FileManager.getConfigValue.numberDouble(path, "leaf_drop_chance_coniferous");
+		leaf_regrowth_chance_coniferous = FileManager.getConfigValue.numberDouble(path, "leaf_regrowth_chance_coniferous");
 
-		global_speed_enable = FileManager.GetConfigValue.logic(path, "global_speed_enable");
-		global_speed = FileManager.GetConfigValue.numberInt(path, "global_speed");
-		global_speed_repeat = FileManager.GetConfigValue.numberInt(path, "global_speed_repeat");
-		global_speed_tp = FileManager.GetConfigValue.numberInt(path, "global_speed_tp");
-		count_limit = FileManager.GetConfigValue.numberInt(path, "count_limit");
+		global_speed_enable = FileManager.getConfigValue.logic(path, "global_speed_enable");
+		global_speed = FileManager.getConfigValue.numberInt(path, "global_speed");
+		global_speed_repeat = FileManager.getConfigValue.numberInt(path, "global_speed_repeat");
+		global_speed_tp = FileManager.getConfigValue.numberInt(path, "global_speed_tp");
+		count_limit = FileManager.getConfigValue.numberInt(path, "count_limit");
 
-		square_parts = FileManager.GetConfigValue.logic(path, "square_parts");
-		square_leaves = FileManager.GetConfigValue.logic(path, "square_leaves");
-		rt_roots = FileManager.GetConfigValue.numberInt(path, "rt_roots");
-		no_core = FileManager.GetConfigValue.logic(path, "no_core");
+		square_parts = FileManager.getConfigValue.logic(path, "square_parts");
+		square_leaves = FileManager.getConfigValue.logic(path, "square_leaves");
+		rt_roots = FileManager.getConfigValue.numberInt(path, "rt_roots");
+		no_core = FileManager.getConfigValue.logic(path, "no_core");
 
-		developer_mode = FileManager.GetConfigValue.logic(path, "developer_mode");
+		developer_mode = FileManager.getConfigValue.logic(path, "developer_mode");
 
 		// After Applying
 		{
