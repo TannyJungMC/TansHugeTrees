@@ -24,6 +24,8 @@ public class OutsideUtils {
 
 		}
 
+		logger.error("----------------------------------------------------------------------------------------------------");
+
 	}
 
 	public static boolean isConnectedToInternet () {
