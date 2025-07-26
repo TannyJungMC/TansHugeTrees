@@ -46,7 +46,7 @@ public class Sapling {
                                 // Custom Tree
                                 {
 
-                                    if (GameUtils.nbt.block.getNumber(level_accessor, pos, "generate_speed_tick") == 0) {
+                                    if (GameUtils.nbt.block.getNumber(level_accessor, pos, "tree_generator_speed_tick") == 0) {
 
                                         cancel(level_accessor, level_server, pos, "No Preset Inside");
                                         pass = false;

@@ -102,9 +102,8 @@ public class ShapeFileConverter {
     private static void summon (LevelAccessor level_accessor, ServerLevel level_server) {
 
         String file_location = "";
-        int generate_speed_tick = 0;
-        int generate_speed_repeat = 0;
-        int generate_speed_tp = 0;
+        int tree_generator_speed_tick = 0;
+        int tree_generator_speed_repeat = 0;
         int posY = 0;
 
         // Get data
@@ -124,17 +123,13 @@ public class ShapeFileConverter {
 
                                 file_location = read_all.replace("file_location = ", "");
 
-                            } else if (read_all.startsWith("generate_speed_tick = ") == true) {
+                            } else if (read_all.startsWith("tree_generator_speed_tick = ") == true) {
 
-                                generate_speed_tick = Integer.parseInt(read_all.replace("generate_speed_tick = ", ""));
+                                tree_generator_speed_tick = Integer.parseInt(read_all.replace("tree_generator_speed_tick = ", ""));
 
-                            } else if (read_all.startsWith("generate_speed_repeat = ") == true) {
+                            } else if (read_all.startsWith("tree_generator_speed_repeat = ") == true) {
 
-                                generate_speed_repeat = Integer.parseInt(read_all.replace("generate_speed_repeat = ", ""));
-
-                            } else if (read_all.startsWith("generate_speed_tp = ") == true) {
-
-                                generate_speed_tp = Integer.parseInt(read_all.replace("generate_speed_tp = ", ""));
+                                tree_generator_speed_repeat = Integer.parseInt(read_all.replace("tree_generator_speed_repeat = ", ""));
 
                             } else if (read_all.startsWith("posY = ") == true) {
 
@@ -164,7 +159,7 @@ public class ShapeFileConverter {
             {
 
                 GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension positioned 0 " + posY + " 0 run " + GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", GameUtils.outside.getForgeDataFromGiveFile(file.getPath())));
-                String data_modify = "debug_mode:false,global_generate_speed:false,generate_speed_tick:" + generate_speed_tick + ",generate_speed_repeat:" + generate_speed_repeat + ",generate_speed_tp:" + generate_speed_tp;
+                String data_modify = "debug_mode:false,global_tree_generator_speed:false,tree_generator_speed_tick:" + tree_generator_speed_tick + ",tree_generator_speed_repeat:" + tree_generator_speed_repeat;
                 GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension positioned 0 " + posY + " 0 run data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
 
             }
