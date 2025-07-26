@@ -17,7 +17,7 @@ import java.util.Calendar;
 
 public class ShapeFileConverter {
 
-    public static StringBuilder shape_file_converter_export_data = new StringBuilder();
+    public static StringBuilder export_data = new StringBuilder();
 
     public static void start (LevelAccessor level_accessor, Entity entity, int count) {
 
@@ -50,7 +50,7 @@ public class ShapeFileConverter {
 
                         TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = true;
 
-                        shape_file_converter_export_data = new StringBuilder();
+                        export_data = new StringBuilder();
                         TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position = entity.position().x + " " + entity.position().y + " " + entity.position().z;
                         GameUtils.command.runEntity(entity, "execute in tanshugetrees:tanshugetrees_dimension run tp @s 0 300 0");
                         GameUtils.command.runEntity(entity, "gamemode spectator");
@@ -102,8 +102,6 @@ public class ShapeFileConverter {
     private static void summon (LevelAccessor level_accessor, ServerLevel level_server) {
 
         String file_location = "";
-        int tree_generator_speed_tick = 0;
-        int tree_generator_speed_repeat = 0;
         int posY = 0;
 
         // Get data
@@ -122,14 +120,6 @@ public class ShapeFileConverter {
                             if (read_all.startsWith("file_location = ") == true) {
 
                                 file_location = read_all.replace("file_location = ", "");
-
-                            } else if (read_all.startsWith("tree_generator_speed_tick = ") == true) {
-
-                                tree_generator_speed_tick = Integer.parseInt(read_all.replace("tree_generator_speed_tick = ", ""));
-
-                            } else if (read_all.startsWith("tree_generator_speed_repeat = ") == true) {
-
-                                tree_generator_speed_repeat = Integer.parseInt(read_all.replace("tree_generator_speed_repeat = ", ""));
 
                             } else if (read_all.startsWith("posY = ") == true) {
 
@@ -159,7 +149,7 @@ public class ShapeFileConverter {
             {
 
                 GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension positioned 0 " + posY + " 0 run " + GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", GameUtils.outside.getForgeDataFromGiveFile(file.getPath())));
-                String data_modify = "debug_mode:false,global_tree_generator_speed:false,tree_generator_speed_tick:" + tree_generator_speed_tick + ",tree_generator_speed_repeat:" + tree_generator_speed_repeat;
+                String data_modify = "debug_mode:false,global_tree_generator_speed:false,tree_generator_speed_tick:" + 1 + ",tree_generator_speed_repeat:" + 0;
                 GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension positioned 0 " + posY + " 0 run data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
 
             }
@@ -359,9 +349,9 @@ public class ShapeFileConverter {
 
         TanshugetreesMod.queueServerWork(40, () -> {
 
-            shape_file_converter_export_data.append("+f0/0/0fe");
-            FileManager.writeTXT(Handcode.directory_world_generated + "/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), String.valueOf(shape_file_converter_export_data), true);
-            shape_file_converter_export_data = new StringBuilder();
+            export_data.append("+f0/0/0fe");
+            FileManager.writeTXT(Handcode.directory_world_generated + "/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), export_data.toString(), true);
+            export_data = new StringBuilder();
 
             // Update Generated File
             {
@@ -527,7 +517,7 @@ public class ShapeFileConverter {
 
                 }
 
-                String file_new = file.getParentFile().getPath() + "/" + file.getName().replace("(generating)", "(updating)");
+                String file_new = file.getParentFile().getPath() + "/" + file.getName().replace(" (generating)", " (updating)");
 
                 // Updating
                 {
@@ -609,7 +599,7 @@ public class ShapeFileConverter {
 
                 FileManager.writeTXT(file_new, data.toString(), true);
                 file.delete();
-                new File(file_new).renameTo(new File(file.getParentFile().getPath() + "/" + file.getName().replace("(generating)", "")));
+                new File(file_new).renameTo(new File(file.getParentFile().getPath() + "/" + file.getName().replace(" (generating)", "")));
 
             }
 

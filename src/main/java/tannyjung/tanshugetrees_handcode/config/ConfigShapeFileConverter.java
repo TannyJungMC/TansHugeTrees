@@ -19,12 +19,7 @@ public class ConfigShapeFileConverter {
 					----------------------------------------------------------------------------------------------------
 					
 					file_location = TannyJung-Main-Pack/folder/file.txt
-					
-					tree_generator_speed_tick = 1
-					tree_generator_speed_repeat = 100000
-					
 					posY = 300
-					chat_message = true
 					
 					----------------------------------------------------------------------------------------------------
 					"""
