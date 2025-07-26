@@ -4,14 +4,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.fml.ModList;
+import tannyjung.core.FileManager;
 import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.GameUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.nio.file.Files;
 
 public class CustomPackIncompatible {
@@ -22,13 +21,13 @@ public class CustomPackIncompatible {
 
             if (pack.getName().equals(".organized") == false) {
 
-                if (testVersion(level_accessor, new File(pack + "/version.txt")) == false) {
+                if (testVersion(level_accessor, pack + "/version.txt") == false) {
 
                     break;
 
                 }
 
-                if (testDependencies(level_accessor, new File(pack + "/dependencies.txt")) == false) {
+                if (testDependencies(level_accessor, pack + "/dependencies.txt") == false) {
 
                     break;
 
@@ -53,7 +52,7 @@ public class CustomPackIncompatible {
 
                     Files.walk(file.toPath()).forEach(source -> {
 
-                        if (source.toFile().isDirectory() == false) {
+                        if (source.toFile().isDirectory() == false && source.toFile().getName().startsWith("[INCOMPATIBLE] ") == false) {
 
                             testTreeSettings(source.toFile());
 
@@ -93,35 +92,32 @@ public class CustomPackIncompatible {
 
     }
 
-    private static boolean testVersion (LevelAccessor level_accessor, File file) {
+    private static boolean testVersion (LevelAccessor level_accessor, String path) {
 
         boolean pass = true;
         String message = "";
+        File file = new File(path);
         String pack_name = file.getParentFile().getName().replace("[INCOMPATIBLE] ", "");
 
         if (file.exists() == true && file.isDirectory() == false) {
 
-            {
+            for (String read_all : FileManager.fileToStringArray(file.getPath())) {
 
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                {
 
-                    {
+                    if (read_all.startsWith("data_structure_version = ")) {
 
-                        if (read_all.startsWith("data_structure_version = ")) {
+                        if (Double.parseDouble(read_all.replace("data_structure_version = ", "")) != Handcode.data_structure_version_pack) {
 
-                            if (Double.parseDouble(read_all.replace("data_structure_version = ", "")) != Handcode.data_structure_version_pack) {
-
-                                pass = false;
-                                message = "Detected incompatible pack. Caused by unsupported mod version. [ " + pack_name + " ]";
-                                break;
-
-                            }
+                            pass = false;
+                            message = "Detected incompatible pack. Caused by unsupported mod version. [ " + pack_name + " ]";
+                            break;
 
                         }
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                }
 
             }
 
@@ -147,39 +143,36 @@ public class CustomPackIncompatible {
 
     }
 
-    private static boolean testDependencies (LevelAccessor level_accessor, File file) {
+    private static boolean testDependencies (LevelAccessor level_accessor, String path) {
 
         boolean pass = true;
         String message = "";
+        File file = new File(path);
         String name_pack = file.getParentFile().getName().replace("[INCOMPATIBLE] ", "");
 
         if (file.exists() == true && file.isDirectory() == false) {
 
             String get = "";
 
-            {
+            for (String read_all : FileManager.fileToStringArray(file.getPath())) {
 
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                {
 
-                    {
+                    if (read_all.startsWith("required_packs = ")) {
 
-                        if (read_all.startsWith("required_packs = ")) {
+                        {
 
-                            {
+                            get = read_all.replace("required_packs = ", "");
 
-                                get = read_all.replace("required_packs = ", "");
+                            if (get.equals("none") == false) {
 
-                                if (get.equals("none") == false) {
+                                for (String test : get.split(", ")) {
 
-                                    for (String test : get.split(", ")) {
+                                    if (new File(Handcode.directory_config + "/custom_packs/" + test).exists() == false) {
 
-                                        if (new File(Handcode.directory_config + "/custom_packs/" + test).exists() == false) {
-
-                                            pass = false;
-                                            message = "Detected incompatible pack. Caused by required pack not found. [ " + name_pack + " > " + test + " ]";
-                                            break;
-
-                                        }
+                                        pass = false;
+                                        message = "Detected incompatible pack. Caused by required pack not found. [ " + name_pack + " > " + test + " ]";
+                                        break;
 
                                     }
 
@@ -187,23 +180,23 @@ public class CustomPackIncompatible {
 
                             }
 
-                        } else if (read_all.startsWith("required_mods = ")) {
+                        }
 
-                            {
+                    } else if (read_all.startsWith("required_mods = ")) {
 
-                                get = read_all.replace("required_mods = ", "");
+                        {
 
-                                if (get.equals("none") == false) {
+                            get = read_all.replace("required_mods = ", "");
 
-                                    for (String test : get.split(", ")) {
+                            if (get.equals("none") == false) {
 
-                                        if (ModList.get().isLoaded(test) == false) {
+                                for (String test : get.split(", ")) {
 
-                                            pass = false;
-                                            message = "Detected incompatible pack. Caused by required mod not found. [ " + name_pack + " > " + test + " ]";
-                                            break;
+                                    if (ModList.get().isLoaded(test) == false) {
 
-                                        }
+                                        pass = false;
+                                        message = "Detected incompatible pack. Caused by required mod not found. [ " + name_pack + " > " + test + " ]";
+                                        break;
 
                                     }
 
@@ -215,7 +208,7 @@ public class CustomPackIncompatible {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                }
 
             }
 
@@ -248,7 +241,7 @@ public class CustomPackIncompatible {
         // Read "World Gen" File
         {
 
-            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+            for (String read_all : FileManager.fileToStringArray(file.getPath())) {
 
                 {
 
@@ -261,7 +254,7 @@ public class CustomPackIncompatible {
 
                 }
 
-            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+            }
 
         }
 
@@ -275,26 +268,21 @@ public class CustomPackIncompatible {
                 // Read "Tree Settings" File
                 {
 
-                    try {
-                        BufferedReader buffered_reader = new BufferedReader(new FileReader(file_settings), 65536);
-                        String read_all = "";
-                        while ((read_all = buffered_reader.readLine()) != null) {
+                    for (String read_all : FileManager.fileToStringArray(file_settings.getPath())) {
 
-                            {
+                        {
 
-                                if (read_all.startsWith("Block ")) {
+                            if (read_all.startsWith("Block ")) {
 
-                                    String id = read_all.substring(read_all.indexOf(" = ") + 3).replace(" keep", "");
+                                String id = read_all.substring(read_all.indexOf(" = ") + 3).replace(" keep", "");
 
-                                    if (id.equals("") == false) {
+                                if (id.equals("") == false) {
 
-                                        if (GameUtils.block.fromText(id).getBlock() == Blocks.AIR) {
+                                    if (GameUtils.block.fromText(id).getBlock() == Blocks.AIR) {
 
-                                            pass = false;
-                                            message = "Detected incompatible tree. Caused by unknown block ID. [ " + name_pack + " > " + name_tree + " > " + id + " ]";
-                                            break;
-
-                                        }
+                                        pass = false;
+                                        message = "Detected incompatible tree. Caused by unknown block ID. [ " + name_pack + " > " + name_tree + " > " + id + " ]";
+                                        break;
 
                                     }
 
@@ -303,9 +291,7 @@ public class CustomPackIncompatible {
                             }
 
                         }
-                        buffered_reader.close();
-                    } catch (Exception exception) {
-                        OutsideUtils.exception(new Exception(), exception);
+
                     }
 
                 }
