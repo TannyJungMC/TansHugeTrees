@@ -7,7 +7,6 @@ import tannyjung.core.FileManager;
 import tannyjung.core.GameUtils;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 public class ConfigMain {
 
@@ -63,16 +62,10 @@ public class ConfigMain {
 	public static double leaf_drop_chance_coniferous = 0.0;
 	public static double leaf_regrowth_chance_coniferous = 0.0;
 
-	public static boolean global_speed_enable = false;
-	public static int global_speed = 0;
-	public static int global_speed_repeat = 0;
-	public static int global_speed_tp = 0;
-	public static int count_limit = 0;
-
-	public static boolean square_parts = false;
-	public static boolean square_leaves = false;
-	public static int rt_roots = 0;
-	public static boolean no_core = false;
+	public static boolean tree_generator_speed_global = false;
+	public static int tree_generator_speed_tick = 0;
+	public static int tree_generator_speed_repeat = 0;
+	public static int tree_generator_count_limit = 0;
 
 	public static boolean developer_mode = false;
 
@@ -246,48 +239,24 @@ public class ConfigMain {
 					| Default is [ 0.005 ] [ 0.001 ]
 					
 					----------------------------------------------------------------------------------------------------
-					Tree Generator : Performance
+					Tree Generator
 					----------------------------------------------------------------------------------------------------
 					
-					global_speed_enable = true
+					tree_generator_speed_global = true
 					| When true, it will change generator speed of all trees from saplings to the same.
 					| Default is [ true ]
 					
-					global_speed = 1
+					tree_generator_speed_tick = 1
 					| How fast of generator speed in tick. Increase this will make it slower. Set to 0 for temporary pause all trees.
 					| Default is [ 1 ]
 					
-					global_speed_repeat = 1000
+					tree_generator_speed_repeat = 1000
 					| This make generator repeats it process in one time of it speed. Increase this will make it generate faster but also cause lag. Set to 0 for one time generation that can freeze the game.
 					| Default is [ 1000 ]
 					
-					global_speed_tp = 0
-					| This option change how many block the parts generator will teleport in a time. Increase this can cause lag because it teleports too fast. Set to 0 for no limit.
-					| Default is [ 0 ]
-					
-					count_limit = 1
+					tree_generator_count_limit = 1
 					| How many trees will generate in the same time. Set to 0 for no limit.
 					| Default is [ 1 ]
-					
-					----------------------------------------------------------------------------------------------------
-					Tree Generator : Quality
-					----------------------------------------------------------------------------------------------------
-					
-					square_parts = false
-					| Make wood of all trees from saplings and auto gen become cube, or that I called "Low Detail Mode". Make the generation more faster, but become unrealistic.
-					| Default is [ false ]
-					
-					square_leaves = false
-					| Make leaves of all trees from saplings and auto gen become cube, or that I called "Low Detail Mode". Make the generation more faster, but become unrealistic.
-					| Default is [ false ]
-					
-					rt_roots = 100
-					| Change percent of roots length for all trees from saplings and auto gen. Set to 0 will disable roots from generation.
-					| Default is [ 100 ]
-					
-					no_core = false
-					| Disable core and inner for all trees from saplings and auto gen. Can increase speed of tree generation.
-					| Default is [ false ]
 					
 					----------------------------------------------------------------------------------------------------
 					Misc
@@ -310,70 +279,90 @@ public class ConfigMain {
 
 	public static void apply (LevelAccessor level_accessor) {
 
-		String path = Handcode.directory_config + "/config.txt";
+		Map<String, String> data = new HashMap<>();
 
-		auto_check_update = FileManager.getConfigValue.logic(path, "auto_check_update");
-		auto_update = FileManager.getConfigValue.logic(path, "auto_update");
-		wip_version = FileManager.getConfigValue.logic(path, "wip_version");
+		// Get Data
+		{
 
-		region_scan_chance = FileManager.getConfigValue.numberDouble(path, "region_scan_chance");
-		multiply_rarity = FileManager.getConfigValue.numberDouble(path, "multiply_rarity");
-		multiply_min_distance = FileManager.getConfigValue.numberDouble(path, "multiply_min_distance");
-		multiply_group_size = FileManager.getConfigValue.numberDouble(path, "multiply_group_size");
-		multiply_waterside_chance = FileManager.getConfigValue.numberDouble(path, "multiply_waterside_chance");
-		multiply_dead_tree_chance = FileManager.getConfigValue.numberDouble(path, "multiply_dead_tree_chance");
-		tree_location = FileManager.getConfigValue.logic(path, "tree_location");
-		world_gen_roots = FileManager.getConfigValue.logic(path, "world_gen_roots");
-		surrounding_area_detection = FileManager.getConfigValue.logic(path, "surrounding_area_detection");
-		surrounding_area_detection_size = FileManager.getConfigValue.numberInt(path, "surrounding_area_detection_size");
-		waterside_detection = FileManager.getConfigValue.logic(path, "waterside_detection");
-		surface_smoothness_detection = FileManager.getConfigValue.logic(path, "surface_smoothness_detection");
-		surface_smoothness_detection_height = FileManager.getConfigValue.numberInt(path, "surface_smoothness_detection_height");
-		pre_leaf_litter = FileManager.getConfigValue.logic(path, "pre_leaf_litter");
-		pre_leaf_litter_chance = FileManager.getConfigValue.numberDouble(path, "pre_leaf_litter_chance");
-		pre_leaf_litter_chance_coniferous = FileManager.getConfigValue.numberDouble(path, "pre_leaf_litter_chance_coniferous");
-		abscission_world_gen = FileManager.getConfigValue.logic(path, "abscission_world_gen");
+			int index = 0;
 
-		living_tree_mechanics = FileManager.getConfigValue.logic(path, "living_tree_mechanics");
-		living_tree_mechanics_tick = FileManager.getConfigValue.numberInt(path, "living_tree_mechanics_tick");
-		living_tree_mechanics_process_limit = FileManager.getConfigValue.numberInt(path, "living_tree_mechanics_process_limit");
-		living_tree_mechanics_simulation = FileManager.getConfigValue.numberInt(path, "living_tree_mechanics_simulation");
-		leaf_litter = FileManager.getConfigValue.logic(path, "leaf_litter");
-		leaf_litter_classic = FileManager.getConfigValue.logic(path, "leaf_litter_classic");
-		leaf_litter_classic_only = FileManager.getConfigValue.logic(path, "leaf_litter_classic_only");
-		leaf_litter_remover_chance = FileManager.getConfigValue.numberDouble(path, "leaf_litter_remover_chance");
-		leaf_litter_remover_count_limit = FileManager.getConfigValue.numberInt(path, "leaf_litter_remover_count_limit");
-		leaf_drop_animation_chance = FileManager.getConfigValue.numberDouble(path, "leaf_drop_animation_chance");
-		leaf_drop_animation_count_limit = FileManager.getConfigValue.numberInt(path, "leaf_drop_animation_count_limit");
-		leaf_light_level_detection = FileManager.getConfigValue.numberInt(path, "leaf_light_level_detection");
-		leaf_light_level_detection_drop_chance = FileManager.getConfigValue.numberDouble(path, "leaf_light_level_detection_drop_chance");
-		deciduous_leaves_list = new HashSet<>(Arrays.asList(FileManager.getConfigValue.text(path, "deciduous_leaves_list").split(" / ")));
-		coniferous_leaves_list = new HashSet<>(Arrays.asList(FileManager.getConfigValue.text(path, "coniferous_leaves_list").split(" / ")));
+			for (String read_all : FileManager.fileToStringArray(Handcode.directory_config + "/config.txt")) {
 
-		serene_seasons_compatibility = FileManager.getConfigValue.logic(path, "serene_seasons_compatibility");
-		leaf_drop_chance_spring = FileManager.getConfigValue.numberDouble(path, "leaf_drop_chance_spring");
-		leaf_drop_chance_summer = FileManager.getConfigValue.numberDouble(path, "leaf_drop_chance_summer");
-		leaf_drop_chance_autumn = FileManager.getConfigValue.numberDouble(path, "leaf_drop_chance_autumn");
-		leaf_drop_chance_winter = FileManager.getConfigValue.numberDouble(path, "leaf_drop_chance_winter");
-		leaf_regrowth_chance_spring = FileManager.getConfigValue.numberDouble(path, "leaf_regrowth_chance_spring");
-		leaf_regrowth_chance_summer = FileManager.getConfigValue.numberDouble(path, "leaf_regrowth_chance_summer");
-		leaf_regrowth_chance_autumn = FileManager.getConfigValue.numberDouble(path, "leaf_regrowth_chance_autumn");
-		leaf_regrowth_chance_winter = FileManager.getConfigValue.numberDouble(path, "leaf_regrowth_chance_winter");
-		leaf_drop_chance_coniferous = FileManager.getConfigValue.numberDouble(path, "leaf_drop_chance_coniferous");
-		leaf_regrowth_chance_coniferous = FileManager.getConfigValue.numberDouble(path, "leaf_regrowth_chance_coniferous");
+				{
 
-		global_speed_enable = FileManager.getConfigValue.logic(path, "global_speed_enable");
-		global_speed = FileManager.getConfigValue.numberInt(path, "global_speed");
-		global_speed_repeat = FileManager.getConfigValue.numberInt(path, "global_speed_repeat");
-		global_speed_tp = FileManager.getConfigValue.numberInt(path, "global_speed_tp");
-		count_limit = FileManager.getConfigValue.numberInt(path, "count_limit");
+					if (read_all.equals("") == false) {
 
-		square_parts = FileManager.getConfigValue.logic(path, "square_parts");
-		square_leaves = FileManager.getConfigValue.logic(path, "square_leaves");
-		rt_roots = FileManager.getConfigValue.numberInt(path, "rt_roots");
-		no_core = FileManager.getConfigValue.logic(path, "no_core");
+						if (read_all.contains(" = ") == true) {
 
-		developer_mode = FileManager.getConfigValue.logic(path, "developer_mode");
+							index = read_all.indexOf(" = ");
+							data.put(read_all.substring(0, index), read_all.substring(index + 3));
+
+						}
+
+					}
+
+				}
+
+			}
+
+		}
+
+		auto_check_update = Boolean.parseBoolean(data.get("auto_check_update"));
+		auto_update = Boolean.parseBoolean(data.get("auto_update"));
+		wip_version = Boolean.parseBoolean(data.get("wip_version"));
+
+		region_scan_chance = Double.parseDouble(data.get("region_scan_chance"));
+		multiply_rarity = Double.parseDouble(data.get("multiply_rarity"));
+		multiply_min_distance = Double.parseDouble(data.get("multiply_min_distance"));
+		multiply_group_size = Double.parseDouble(data.get("multiply_group_size"));
+		multiply_waterside_chance = Double.parseDouble(data.get("multiply_waterside_chance"));
+		multiply_dead_tree_chance = Double.parseDouble(data.get("multiply_dead_tree_chance"));
+		tree_location = Boolean.parseBoolean(data.get("tree_location"));
+		world_gen_roots = Boolean.parseBoolean(data.get("world_gen_roots"));
+		surrounding_area_detection = Boolean.parseBoolean(data.get("surrounding_area_detection"));
+		surrounding_area_detection_size = Integer.parseInt(data.get("surrounding_area_detection_size"));
+		waterside_detection = Boolean.parseBoolean(data.get("waterside_detection"));
+		surface_smoothness_detection = Boolean.parseBoolean(data.get("surface_smoothness_detection"));
+		surface_smoothness_detection_height = Integer.parseInt(data.get("surface_smoothness_detection_height"));
+		pre_leaf_litter = Boolean.parseBoolean(data.get("pre_leaf_litter"));
+		pre_leaf_litter_chance = Double.parseDouble(data.get("pre_leaf_litter_chance"));
+		pre_leaf_litter_chance_coniferous = Double.parseDouble(data.get("pre_leaf_litter_chance_coniferous"));
+		abscission_world_gen = Boolean.parseBoolean(data.get("abscission_world_gen"));
+
+		living_tree_mechanics = Boolean.parseBoolean(data.get("living_tree_mechanics"));
+		living_tree_mechanics_tick = Integer.parseInt(data.get("living_tree_mechanics_tick"));
+		living_tree_mechanics_process_limit = Integer.parseInt(data.get("living_tree_mechanics_process_limit"));
+		living_tree_mechanics_simulation = Integer.parseInt(data.get("living_tree_mechanics_simulation"));
+		leaf_litter = Boolean.parseBoolean(data.get("leaf_litter"));
+		leaf_litter_classic = Boolean.parseBoolean(data.get("leaf_litter_classic"));
+		leaf_litter_classic_only = Boolean.parseBoolean(data.get("leaf_litter_classic_only"));
+		leaf_litter_remover_chance = Double.parseDouble(data.get("leaf_litter_remover_chance"));
+		leaf_litter_remover_count_limit = Integer.parseInt(data.get("leaf_litter_remover_count_limit"));
+		leaf_drop_animation_chance = Double.parseDouble(data.get("leaf_drop_animation_chance"));
+		leaf_drop_animation_count_limit = Integer.parseInt(data.get("leaf_drop_animation_count_limit"));
+		leaf_light_level_detection = Integer.parseInt(data.get("leaf_light_level_detection"));
+		leaf_light_level_detection_drop_chance = Double.parseDouble(data.get("leaf_light_level_detection_drop_chance"));
+		deciduous_leaves_list = new HashSet<>(List.of(data.get("deciduous_leaves_list").split(" / ")));
+		coniferous_leaves_list = new HashSet<>(List.of(data.get("coniferous_leaves_list").split(" / ")));
+
+		serene_seasons_compatibility = Boolean.parseBoolean(data.get("serene_seasons_compatibility"));
+		leaf_drop_chance_spring = Double.parseDouble(data.get("leaf_drop_chance_spring"));
+		leaf_drop_chance_summer = Double.parseDouble(data.get("leaf_drop_chance_summer"));
+		leaf_drop_chance_autumn = Double.parseDouble(data.get("leaf_drop_chance_autumn"));
+		leaf_drop_chance_winter = Double.parseDouble(data.get("leaf_drop_chance_winter"));
+		leaf_regrowth_chance_spring = Double.parseDouble(data.get("leaf_regrowth_chance_spring"));
+		leaf_regrowth_chance_summer = Double.parseDouble(data.get("leaf_regrowth_chance_summer"));
+		leaf_regrowth_chance_autumn = Double.parseDouble(data.get("leaf_regrowth_chance_autumn"));
+		leaf_regrowth_chance_winter = Double.parseDouble(data.get("leaf_regrowth_chance_winter"));
+		leaf_drop_chance_coniferous = Double.parseDouble(data.get("leaf_drop_chance_coniferous"));
+		leaf_regrowth_chance_coniferous = Double.parseDouble(data.get("leaf_regrowth_chance_coniferous"));
+
+		tree_generator_speed_global = Boolean.parseBoolean(data.get("tree_generator_speed_global"));
+		tree_generator_speed_tick = Integer.parseInt(data.get("tree_generator_speed_tick"));
+		tree_generator_speed_repeat = Integer.parseInt(data.get("tree_generator_speed_repeat"));
+		tree_generator_count_limit = Integer.parseInt(data.get("tree_generator_count_limit"));
+
+		developer_mode = Boolean.parseBoolean(data.get("developer_mode"));
 
 		// After Applying
 		{
