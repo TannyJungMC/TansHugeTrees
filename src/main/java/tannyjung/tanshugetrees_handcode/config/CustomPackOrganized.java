@@ -292,15 +292,7 @@ public class CustomPackOrganized {
 
         }
 
-        StringBuilder write = new StringBuilder();
-
-        for (String read_all : data) {
-
-            write.append(read_all).append("\n");
-
-        }
-
-        FileManager.writeTXT(file.getPath(), write.toString(), false);
+        FileManager.writeTXT(file.getPath(), String.join("\n", data), false);
 
     }
 
