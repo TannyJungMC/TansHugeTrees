@@ -1,8 +1,8 @@
 package tannyjung.tanshugetrees_handcode.config;
 
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.core.MiscUtils;
+import tannyjung.core.FileManager;
+import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.File;
@@ -19,7 +19,7 @@ public class CustomPackOrganized {
         clearFolder();
         organizing();
         replace();
-        CustomPackIncompatible.scanOrganized(level_accessor);
+        CustomPackIncompatible.scanOrganized();
 
     }
 
@@ -39,7 +39,7 @@ public class CustomPackOrganized {
 
                     } catch (Exception exception) {
 
-                        MiscUtils.exception(new Exception(), exception);
+                        OutsideUtils.exception(new Exception(), exception);
 
                     }
 
@@ -49,7 +49,7 @@ public class CustomPackOrganized {
 
         } catch (Exception exception) {
 
-            MiscUtils.exception(new Exception(), exception);
+            OutsideUtils.exception(new Exception(), exception);
 
         }
 
@@ -142,7 +142,7 @@ public class CustomPackOrganized {
 
                                             } catch (Exception exception) {
 
-                                                MiscUtils.exception(new Exception(), exception);
+                                                OutsideUtils.exception(new Exception(), exception);
 
                                             }
 
@@ -154,7 +154,7 @@ public class CustomPackOrganized {
 
                             } catch (Exception exception) {
 
-                                MiscUtils.exception(new Exception(), exception);
+                                OutsideUtils.exception(new Exception(), exception);
 
                             }
 
@@ -174,45 +174,111 @@ public class CustomPackOrganized {
 
         for (File pack : new File(Handcode.directory_config + "/custom_packs/").listFiles()) {
 
-            if (pack.getName().equals(".organized") == false) {
+            if (pack.getName().equals(".organized") == false && pack.getName().startsWith("[INCOMPATIBLE]") == false) {
 
-                if (pack.getName().startsWith("[INCOMPATIBLE]") == false) {
+                File replace = new File(Handcode.directory_config + "/custom_packs/" + pack.getName() + "/replace");
 
-                    File replace = new File(Handcode.directory_config + "/custom_packs/" + pack.getName() + "/replace");
+                if (replace.exists() == true) {
 
-                    if (replace.exists() == true) {
+                    // Scan
+                    {
 
-                        // Copying
-                        {
+                        try {
 
-                            try {
+                            Files.walk(replace.toPath()).forEach(source -> {
 
-                                Files.walk(replace.toPath()).forEach(source -> {
+                                if (source.toFile().isDirectory() == false) {
 
-                                    if (source.toFile().isDirectory() == false) {
+                                    try {
 
-                                        try {
+                                        replaceEachFile(pack, source);
 
-                                            Path from = Path.of(pack.toPath() + "/replace");
-                                            Path to = Path.of(Handcode.directory_config + "/custom_packs/.organized");
+                                    } catch (Exception exception) {
 
-                                            Path copy = to.resolve(from.relativize(source));
-                                            Files.createDirectories(copy.getParent());
-                                            Files.copy(source, copy, StandardCopyOption.REPLACE_EXISTING);
-
-                                        } catch (Exception exception) {
-
-                                            MiscUtils.exception(new Exception(), exception);
-
-                                        }
+                                        OutsideUtils.exception(new Exception(), exception);
 
                                     }
 
-                                });
+                                }
 
-                            } catch (Exception exception) {
+                            });
 
-                                MiscUtils.exception(new Exception(), exception);
+                        } catch (Exception exception) {
+
+                            OutsideUtils.exception(new Exception(), exception);
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    private static void replaceEachFile (File pack, Path source) {
+
+        String[] data_new = FileManager.fileToStringArray(source.toString());
+        boolean specific = false;
+
+        // Get Mode
+        {
+
+            for (String read_all : data_new) {
+
+                if (read_all.equals("# SPECIFIC") == true) {
+
+                    specific = true;
+
+                }
+
+                break;
+
+            }
+
+        }
+
+        File file = Path.of(Handcode.directory_config + "/custom_packs/.organized").resolve(Path.of(pack.toPath() + "/replace").relativize(source)).toFile();
+        String[] data_old = FileManager.fileToStringArray(file.getPath());
+        String[] data = new String[0];
+
+        if (specific == false) {
+
+            data = data_new;
+
+        } else {
+
+            if (data_old.length == 0) {
+
+                return;
+
+            } else {
+
+                data = data_old;
+                int line = 0;
+                String name = "";
+
+                for (String read_all : data_new) {
+
+                    if (read_all.equals("") == false) {
+
+                        if (read_all.contains(" = ") == true) {
+
+                            name = read_all.substring(0, read_all.indexOf(" = ") + 3);
+
+                            for (String read_all_old : data) {
+
+                                if (read_all_old.startsWith(name) == true) {
+
+                                    data[line] = read_all;
+                                    break;
+
+                                }
+
+                                line = line + 1;
 
                             }
 
@@ -225,6 +291,16 @@ public class CustomPackOrganized {
             }
 
         }
+
+        StringBuilder write = new StringBuilder();
+
+        for (String read_all : data) {
+
+            write.append(read_all).append("\n");
+
+        }
+
+        FileManager.writeTXT(file.getPath(), write.toString(), false);
 
     }
 
