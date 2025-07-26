@@ -123,91 +123,20 @@ public class FileManager {
 
 	}
 
-	public static class getConfigValue {
-
-		public static boolean logic (String path, String name) {
-
-			return Boolean.parseBoolean(find(path, name));
-
-		}
-
-		public static int numberInt (String path, String name) {
-
-			return Integer.parseInt(find(path, name));
-
-		}
-
-		public static double numberDouble (String path, String name) {
-
-			return Double.parseDouble(find(path, name));
-
-		}
-
-		public static String text (String path, String name) {
-
-			return find(path, name);
-
-		}
-
-		public static String find (String path, String name) {
-
-			String return_text = "";
-			name = name + " = ";
-
-			{
-
-				File file = new File(path);
-
-				{
-
-					try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
-
-						{
-
-							if (read_all.startsWith("|") == false) {
-
-								if (read_all.startsWith(name) == true) {
-
-									return_text = read_all.replace(name, "");
-									break;
-
-								}
-
-							}
-
-						}
-
-					} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
-
-				}
-
-			}
-
-			return return_text;
-
-		}
-
-	}
-
 	public static String[] fileToStringArray (String path) {
 
 		String[] return_array = new String[0];
+		File file = new File(path);
 
 		{
 
-			File file = new File(path);
+			try {
 
-			if (file.exists() == true && file.isDirectory() == false) {
+				return_array = Files.readAllLines(file.toPath()).toArray(new String[0]);
 
-				try {
+			} catch (Exception exception) {
 
-					return_array = Files.readAllLines(file.toPath()).toArray(new String[0]);
-
-				} catch (Exception exception) {
-
-					OutsideUtils.exception(new Exception(), exception);
-
-				}
+				OutsideUtils.exception(new Exception(), exception);
 
 			}
 
