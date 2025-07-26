@@ -1,6 +1,7 @@
 package tannyjung.core;
 
 import java.io.*;
+import java.nio.file.Files;
 
 public class FileManager {
 
@@ -33,7 +34,7 @@ public class FileManager {
 
 				} catch (Exception exception) {
 
-					MiscUtils.exception(new Exception(), exception);
+					OutsideUtils.exception(new Exception(), exception);
 
 				}
 
@@ -53,7 +54,7 @@ public class FileManager {
 
 		} catch (Exception exception) {
 
-			MiscUtils.exception(new Exception(), exception);
+			OutsideUtils.exception(new Exception(), exception);
 
 		}
 
@@ -99,7 +100,7 @@ public class FileManager {
 
 										}
 
-									} buffered_reader2.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+									} buffered_reader2.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
 								}
 
@@ -112,7 +113,7 @@ public class FileManager {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+				} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
 			}
 
@@ -122,7 +123,7 @@ public class FileManager {
 
 	}
 
-	public static class GetConfigValue {
+	public static class getConfigValue {
 
 		public static boolean logic (String path, String name) {
 
@@ -176,7 +177,7 @@ public class FileManager {
 
 						}
 
-					} buffered_reader.close(); } catch (Exception exception) { MiscUtils.exception(new Exception(), exception); }
+					} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
 				}
 
@@ -185,6 +186,34 @@ public class FileManager {
 			return return_text;
 
 		}
+
+	}
+
+	public static String[] fileToStringArray (String path) {
+
+		String[] return_array = new String[0];
+
+		{
+
+			File file = new File(path);
+
+			if (file.exists() == true && file.isDirectory() == false) {
+
+				try {
+
+					return_array = Files.readAllLines(file.toPath()).toArray(new String[0]);
+
+				} catch (Exception exception) {
+
+					OutsideUtils.exception(new Exception(), exception);
+
+				}
+
+			}
+
+		}
+
+		return return_array;
 
 	}
 
