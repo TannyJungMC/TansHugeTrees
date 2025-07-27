@@ -272,13 +272,30 @@ public class TreePlacer {
 
                     center_posY = center_posY + start_height;
 
-                    // World Height Limit
+                    // Y Level Test
                     {
 
-                        if (center_posY + sizeY > level_accessor.getMaxBuildHeight()) {
+                        // Max Build Limit
+                        {
 
-                            pass = false;
-                            break test;
+                            if (center_posY + sizeY > level_accessor.getMaxBuildHeight()) {
+
+                                pass = false;
+                                break test;
+
+                            }
+
+                        }
+
+                        // Max Height Spawn
+                        {
+
+                            if (center_posY + sizeY > level_accessor.getMaxBuildHeight() || center_posY > ConfigMain.max_height_spawn) {
+
+                                pass = false;
+                                break test;
+
+                            }
 
                         }
 

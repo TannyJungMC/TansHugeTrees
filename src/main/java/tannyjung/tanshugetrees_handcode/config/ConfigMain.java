@@ -33,6 +33,7 @@ public class ConfigMain {
 	public static double pre_leaf_litter_chance = 0.0;
 	public static double pre_leaf_litter_chance_coniferous = 0.0;
 	public static boolean abscission_world_gen = false;
+	public static int max_height_spawn = 0;
 
 	public static boolean living_tree_mechanics = false;
 	public static int living_tree_mechanics_tick = 0;
@@ -152,6 +153,10 @@ public class ConfigMain {
 					abscission_world_gen = true
 					| ###
 					| Default is [ true ]
+					
+					max_height_spawn = 140
+					| Cancel the trees when their spawn center is above this Y level. As some world gen mods such as ReTerraForged, replacing mountain block and my trees can't detect those new block, make them spawn on blocks that not in the list. Set to 0 to disable this.
+					| Default is [ 140 ]
 					
 					----------------------------------------------------------------------------------------------------
 					Living Tree Mechanics
@@ -328,6 +333,7 @@ public class ConfigMain {
 		pre_leaf_litter_chance = Double.parseDouble(data.get("pre_leaf_litter_chance"));
 		pre_leaf_litter_chance_coniferous = Double.parseDouble(data.get("pre_leaf_litter_chance_coniferous"));
 		abscission_world_gen = Boolean.parseBoolean(data.get("abscission_world_gen"));
+		max_height_spawn = Integer.parseInt(data.get("max_height_spawn"));
 
 		living_tree_mechanics = Boolean.parseBoolean(data.get("living_tree_mechanics"));
 		living_tree_mechanics_tick = Integer.parseInt(data.get("living_tree_mechanics_tick"));
