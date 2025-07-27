@@ -654,6 +654,8 @@ public class TreeLocation {
 
             if (ConfigMain.surrounding_area_detection == true && ConfigMain.waterside_detection == true) {
 
+                boolean on_land = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX, level_accessor.getMaxBuildHeight(), center_posZ)), "forge:is_water");
+
                 if (Math.random() < waterside_chance) {
 
                     int size = ConfigMain.surrounding_area_detection_size;
@@ -662,9 +664,21 @@ public class TreeLocation {
                     boolean waterside_test3 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX - size, level_accessor.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
                     boolean waterside_test4 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX - size, level_accessor.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
 
-                    if (waterside_test1 == false && waterside_test2 == false && waterside_test3 == false && waterside_test4 == false) {
+                    if (on_land == true) {
 
-                        return_logic = false;
+                        if (waterside_test1 == false && waterside_test2 == false && waterside_test3 == false && waterside_test4 == false) {
+
+                            return_logic = false;
+
+                        }
+
+                    } else {
+
+                        if (waterside_test1 == true && waterside_test2 == true && waterside_test3 == true && waterside_test4 == true) {
+
+                            return_logic = false;
+
+                        }
 
                     }
 
