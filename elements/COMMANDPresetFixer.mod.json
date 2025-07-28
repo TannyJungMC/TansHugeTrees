@@ -5,6 +5,6 @@
     "commandName": "TANSHUGETREES",
     "type": "STANDARD",
     "permissionLevel": "2",
-    "argsxml": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"args_start\" deletable=\"false\" x=\"40\" y=\"40\"><next><block type=\"literal\"><field name=\"name\">dev</field><statement name=\"args\"><block type=\"literal\"><field name=\"name\">preset_fixer</field><statement name=\"args\"><block type=\"call_procedure\"><field name=\"procedure\">COMMANDPresetFixerRun</field></block></statement></block></statement></block></next></block></xml>"
+    "argsxml": "<xml xmlns=\"https://developers.google.com/blockly/xml\"><block type=\"args_start\" deletable=\"false\" x=\"40\" y=\"40\"><next><block type=\"literal\"><field name=\"name\">command</field><statement name=\"args\"><block type=\"literal\"><field name=\"name\">preset_fixer</field><statement name=\"args\"><block type=\"call_procedure\"><field name=\"procedure\">COMMANDPresetFixerRun</field></block></statement></block></statement></block></next></block></xml>"
   }
 }
