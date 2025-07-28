@@ -1022,28 +1022,32 @@ public class TreePlacer {
 
                                                         if (ConfigMain.leaf_litter == true && ConfigMain.pre_leaf_litter == true) {
 
-                                                            // Get "Chance" Value
-                                                            {
+                                                            if (can_leaves_drop == true) {
 
-                                                                if ((get_short.endsWith("1") == true && leaves_type[0] == 2) || (get_short.endsWith("2") == true && leaves_type[1] == 2)) {
+                                                                // Get "Chance" Value
+                                                                {
 
-                                                                    pre_leaf_litter_chance = ConfigMain.pre_leaf_litter_chance_coniferous;
+                                                                    if ((get_short.endsWith("1") == true && leaves_type[0] == 2) || (get_short.endsWith("2") == true && leaves_type[1] == 2)) {
 
-                                                                } else {
+                                                                        pre_leaf_litter_chance = ConfigMain.pre_leaf_litter_chance_coniferous;
 
-                                                                    pre_leaf_litter_chance = ConfigMain.pre_leaf_litter_chance;
+                                                                    } else {
+
+                                                                        pre_leaf_litter_chance = ConfigMain.pre_leaf_litter_chance;
+
+                                                                    }
 
                                                                 }
 
-                                                            }
+                                                                if (Math.random() < pre_leaf_litter_chance) {
 
-                                                            if (Math.random() < pre_leaf_litter_chance) {
+                                                                    height_motion_block = level_accessor.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, testX, testZ);
 
-                                                                height_motion_block = level_accessor.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, testX, testZ);
+                                                                    if (height_motion_block < testY) {
 
-                                                                if (height_motion_block < testY) {
+                                                                        LeafLitter.start(level_accessor, testX, height_motion_block, testZ, block, false);
 
-                                                                    LeafLitter.start(level_accessor, testX, height_motion_block, testZ, block, false);
+                                                                    }
 
                                                                 }
 
