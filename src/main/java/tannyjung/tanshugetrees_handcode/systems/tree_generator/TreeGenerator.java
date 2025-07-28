@@ -7,7 +7,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
@@ -315,7 +314,7 @@ public class TreeGenerator {
 
         private static void summon (ServerLevel level_server, Entity entity, String id, String type, String[] type_pre_next) {
 
-            boolean taproot_trunk = type.equals("taproot") == true || type.equals("trunk") == true;
+            boolean is_taproot_trunk = type.equals("taproot") == true || type.equals("trunk") == true;
 
             if (type.equals("leaves") == false) {
 
@@ -377,7 +376,7 @@ public class TreeGenerator {
                     // Chance of Discontinue
                     {
 
-                        if (taproot_trunk == false) {
+                        if (is_taproot_trunk == false) {
 
                             double chance = GameUtils.nbt.entity.getNumber(entity, type + "_continue_chance");
                             chance = chance * summonReduction(entity, type, "continue_reduce");
@@ -421,7 +420,7 @@ public class TreeGenerator {
                 // Position
                 {
 
-                    if (taproot_trunk == true) {
+                    if (is_taproot_trunk == true) {
 
                         at_part = "tree_generator";
                         positioned = "positioned ~ ~ ~";
@@ -444,17 +443,17 @@ public class TreeGenerator {
                                     // Non Center Direction
                                     {
 
-                                        if (GameUtils.nbt.entity.getNumber(entity, type + "_count") > 1) {
+                                        if (GameUtils.nbt.entity.getNumber(entity, type + "_min_last_count") > 0 && GameUtils.nbt.entity.getNumber(entity, type + "_count") <= 1) {
+
+                                            // Make last part facing same as previous part
+                                            forward = 1;
+
+                                        } else {
 
                                             vertical = GameUtils.nbt.entity.getNumber(entity, type + "_start_vertical");
                                             horizontal = GameUtils.nbt.entity.getNumber(entity, type + "_start_horizontal");
                                             height = Mth.nextDouble(RandomSource.create(), GameUtils.nbt.entity.getNumber(entity, type + "_start_height_min"), GameUtils.nbt.entity.getNumber(entity, type + "_start_height_max"));
                                             forward = Mth.nextDouble(RandomSource.create(), GameUtils.nbt.entity.getNumber(entity, type + "_start_forward_min"), GameUtils.nbt.entity.getNumber(entity, type + "_start_forward_max"));
-
-                                        } else {
-
-                                            // Make last part facing same as previous part
-                                            forward = 1;
 
                                         }
 
@@ -516,7 +515,7 @@ public class TreeGenerator {
 
                 GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-" + at_part + "] " + positioned + " run " + GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-" + id + " / TANSHUGETREES-generator_" + type, "Tree Generator - Part", ""));
 
-                if (taproot_trunk == true) {
+                if (is_taproot_trunk == true) {
 
                     int direction = Mth.nextInt(RandomSource.create(), (int) GameUtils.nbt.entity.getNumber(entity, type + "_start_direction_min"), (int) GameUtils.nbt.entity.getNumber(entity, type + "_start_direction_max"));
                     int gravity = Mth.nextInt(RandomSource.create(), (int) GameUtils.nbt.entity.getNumber(entity, type + "_start_gravity_max"), (int) GameUtils.nbt.entity.getNumber(entity, type + "_start_gravity_min"));
@@ -535,7 +534,7 @@ public class TreeGenerator {
             // Next Step
             {
 
-                if (taproot_trunk == true) {
+                if (is_taproot_trunk == true) {
 
                     GameUtils.nbt.entity.setText(entity, "step", "build");
 
@@ -640,11 +639,6 @@ public class TreeGenerator {
                 }
 
             }
-
-            System.out.println("-------------");
-            System.out.println(type);
-            System.out.println(go_next);
-            System.out.println(GameUtils.nbt.entity.getNumber(entity, type + "_count") + " -> " + GameUtils.nbt.entity.getNumber(entity, type + "_length"));
 
             if (go_next == false) {
 
@@ -814,12 +808,11 @@ public class TreeGenerator {
 
             if (size > 0) {
 
-                size = size + 0.5;
+                size = size - 1.0;
                 double radius = size * 0.5;
-                double radius_ceil = Math.ceil(radius);
                 String generator_type = GameUtils.nbt.entity.getText(entity, type + "_generator_type");
 
-                // Start Settings
+                // First Settings
                 {
 
                     if (GameUtils.nbt.entity.getLogic(entity, "still_building") == false) {
@@ -897,9 +890,9 @@ public class TreeGenerator {
 
                         }
 
-                        GameUtils.nbt.entity.setNumber(entity, "build_saveX", -(radius_ceil));
-                        GameUtils.nbt.entity.setNumber(entity, "build_saveY", -(radius_ceil));
-                        GameUtils.nbt.entity.setNumber(entity, "build_saveZ", -(radius_ceil));
+                        GameUtils.nbt.entity.setNumber(entity, "build_saveX", -(radius));
+                        GameUtils.nbt.entity.setNumber(entity, "build_saveY", -(radius));
+                        GameUtils.nbt.entity.setNumber(entity, "build_saveZ", -(radius));
 
                     }
 
@@ -923,11 +916,19 @@ public class TreeGenerator {
 
                 }
 
-                double build_saveX = 0.0;
-                double build_saveY = 0.0;
-                double build_saveZ = 0.0;
                 double build_area = 0.0;
+                double build_saveX = 0;
+                double build_saveY = 0;
+                double build_saveZ = 0;
                 BlockPos pos = null;
+
+                double change = radius / Math.ceil(radius);
+
+                if (radius == 0) {
+
+                    change = 1;
+
+                }
 
                 while (true) {
 
@@ -938,45 +939,41 @@ public class TreeGenerator {
                         build_saveY = GameUtils.nbt.entity.getNumber(entity, "build_saveY");
                         build_saveZ = GameUtils.nbt.entity.getNumber(entity, "build_saveZ");
 
-                        if (build_saveY <= radius_ceil) {
+                        if (build_saveY <= radius) {
 
-                            if (build_saveX <= radius_ceil) {
+                            if (build_saveX <= radius) {
 
-                                if (build_saveZ <= radius_ceil) {
+                                if (build_saveZ <= radius) {
 
-                                    GameUtils.nbt.entity.addNumber(entity, "build_saveZ", 1);
+                                    GameUtils.nbt.entity.addNumber(entity, "build_saveZ", change);
                                     build_area = 0.0;
 
                                     // Shaping
                                     {
 
-                                        if (size > 0) {
+                                        if (generator_type.startsWith("sphere") == true) {
 
-                                            if (generator_type.startsWith("sphere") == true) {
+                                            {
 
-                                                {
+                                                build_area = (build_saveX * build_saveX) + (build_saveY * build_saveY) + (build_saveZ * build_saveZ);
 
-                                                    build_area = (build_saveX * build_saveX) + (build_saveY * build_saveY) + (build_saveZ * build_saveZ);
+                                                if (build_area > sphere_area) {
 
-                                                    if (build_area > sphere_area) {
-
-                                                        continue;
-
-                                                    }
+                                                    continue;
 
                                                 }
 
                                             }
 
-                                            if (generator_type.equals("sphere_zone") == true) {
+                                        }
 
-                                                {
+                                        if (generator_type.equals("sphere_zone") == true) {
 
-                                                    if (Math.pow(sphere_zone_pos[0] - build_saveX, 2) + Math.pow(sphere_zone_pos[1] - build_saveY, 2) + Math.pow(sphere_zone_pos[2] - build_saveZ, 2) < sphere_zone_area) {
+                                            {
 
-                                                        continue;
+                                                if (Math.pow(sphere_zone_pos[0] - build_saveX, 2) + Math.pow(sphere_zone_pos[1] - build_saveY, 2) + Math.pow(sphere_zone_pos[2] - build_saveZ, 2) < sphere_zone_area) {
 
-                                                    }
+                                                    continue;
 
                                                 }
 
@@ -996,9 +993,13 @@ public class TreeGenerator {
                                             // General
                                             {
 
-                                                if (thickness <= 2) {
+                                                if (thickness < 2) {
 
-                                                    buildBlockConnector(level_accessor, level_server, entity, center_pos, pos, type, generator_type, radius, build_area, replace);
+                                                    if (build_saveX == 0 && build_saveY == 0 && build_saveZ == 0) {
+
+                                                        buildBlockConnector(level_accessor, level_server, entity, center_pos, pos, type, generator_type, radius, build_area, replace);
+
+                                                    }
 
                                                 }
 
@@ -1092,15 +1093,15 @@ public class TreeGenerator {
 
                                 } else {
 
-                                    GameUtils.nbt.entity.setNumber(entity, "build_saveZ", -(radius_ceil));
-                                    GameUtils.nbt.entity.addNumber(entity, "build_saveX", 1);
+                                    GameUtils.nbt.entity.setNumber(entity, "build_saveZ", -(radius));
+                                    GameUtils.nbt.entity.addNumber(entity, "build_saveX", change);
 
                                 }
 
                             } else {
 
-                                GameUtils.nbt.entity.setNumber(entity, "build_saveX", -(radius_ceil));
-                                GameUtils.nbt.entity.addNumber(entity, "build_saveY", 1);
+                                GameUtils.nbt.entity.setNumber(entity, "build_saveX", -(radius));
+                                GameUtils.nbt.entity.addNumber(entity, "build_saveY", change);
 
                             }
 
@@ -1390,7 +1391,7 @@ public class TreeGenerator {
 
                                     block = "";
 
-                                } else if (is_roots == true) {
+                                } else if (false && is_roots == true) {
 
                                     if (type.endsWith("root") == false) {
 
@@ -1446,22 +1447,25 @@ public class TreeGenerator {
 
             }
 
-            BlockState block_place = GameUtils.block.fromText("tanshugetrees:block_placer_" + block_placer);
-            level_accessor.setBlock(pos, block_place, 2);
-            GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
+            if (GameUtils.nbt.entity.getText(entity, block).equals("") == false) {
 
-            String[] function = buildGetWayFunction(entity, type);
-            GameUtils.nbt.block.setText(level_accessor, pos, "function", function[1]);
-            GameUtils.nbt.block.setText(level_accessor, pos, "block", GameUtils.nbt.entity.getText(entity, block));
+                level_accessor.setBlock(pos, GameUtils.block.fromText("tanshugetrees:block_placer_" + block_placer), 2);
+                GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
 
-            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == true) {
+                String[] function = buildGetWayFunction(entity, type);
+                GameUtils.nbt.block.setText(level_accessor, pos, "function", function[1]);
+                GameUtils.nbt.block.setText(level_accessor, pos, "block", GameUtils.nbt.entity.getText(entity, block));
 
-                GameUtils.nbt.block.setText(level_accessor, pos, "export_file_name", GameUtils.nbt.entity.getText(entity, "export_file_name"));
-                GameUtils.nbt.block.setNumber(level_accessor, pos, "center_posX", entity.getBlockX());
-                GameUtils.nbt.block.setNumber(level_accessor, pos, "center_posY", entity.getBlockY());
-                GameUtils.nbt.block.setNumber(level_accessor, pos, "center_posZ", entity.getBlockZ());
-                GameUtils.nbt.block.setText(level_accessor, pos, "type_short", type_short);
-                GameUtils.nbt.block.setText(level_accessor, pos, "function_short", function[0]);
+                if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == true) {
+
+                    GameUtils.nbt.block.setText(level_accessor, pos, "export_file_name", GameUtils.nbt.entity.getText(entity, "export_file_name"));
+                    GameUtils.nbt.block.setNumber(level_accessor, pos, "center_posX", entity.getBlockX());
+                    GameUtils.nbt.block.setNumber(level_accessor, pos, "center_posY", entity.getBlockY());
+                    GameUtils.nbt.block.setNumber(level_accessor, pos, "center_posZ", entity.getBlockZ());
+                    GameUtils.nbt.block.setText(level_accessor, pos, "type_short", type_short);
+                    GameUtils.nbt.block.setText(level_accessor, pos, "function_short", function[0]);
+
+                }
 
             }
 
