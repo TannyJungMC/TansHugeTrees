@@ -115,11 +115,7 @@ public class TreeGenerator {
 
         if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-            if (Math.random() < GameUtils.nbt.entity.getNumber(entity, "function_start_chance")) {
-
-                TreeFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), GameUtils.nbt.entity.getText(entity, "function_start"), false);
-
-            }
+            TreeFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), GameUtils.nbt.entity.getText(entity, "function_start"), false);
 
         } else {
 
@@ -1543,11 +1539,7 @@ public class TreeGenerator {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                if (Math.random() < GameUtils.nbt.entity.getNumber(entity, "function_end_chance")) {
-
-                    TreeFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), GameUtils.nbt.entity.getText(entity, "function_end"), false);
-
-                }
+                TreeFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), GameUtils.nbt.entity.getText(entity, "function_end"), false);
 
             } else {
 
