@@ -942,7 +942,6 @@ public class TreeGenerator {
                                 if (build_saveZ <= radius) {
 
                                     GameUtils.nbt.entity.addNumber(entity, "build_saveZ", change);
-                                    build_area = 0.0;
 
                                     // Shaping
                                     {
@@ -986,6 +985,14 @@ public class TreeGenerator {
 
                                         if (type.equals("leaves") == false) {
 
+                                            if (generator_type.equals("square") == true) {
+
+                                                build_area = Math.max(Math.abs(build_saveX), Math.abs(build_saveZ));
+                                                build_area = Math.max(build_area, Math.abs(build_saveY));
+                                                build_area = build_area - 0.5;
+
+                                            }
+
                                             // General
                                             {
 
@@ -1001,22 +1008,7 @@ public class TreeGenerator {
 
                                                 if (buildTestKeep(level_accessor, pos, replace) == true) {
 
-                                                    String block_type = "";
-
-                                                    // Get Block
-                                                    {
-
-                                                        if (generator_type.equals("sphere") == true) {
-
-                                                            block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
-
-                                                        } else {
-
-                                                            block_type = "outer";
-
-                                                        }
-
-                                                    }
+                                                    String block_type = buildOuterInnerCore(level_accessor, entity, type, generator_type, radius, pos, build_area);
 
                                                     if (block_type.equals("") == false) {
 
@@ -1151,17 +1143,7 @@ public class TreeGenerator {
 
                             if (buildTestKeep(level_accessor, pos, replace) == true) {
 
-                                String block_type = "";
-
-                                if (generator_type.equals("sphere") == true) {
-
-                                    block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
-
-                                } else {
-
-                                    block_type = "outer";
-
-                                }
+                                String block_type = buildOuterInnerCore(level_accessor, entity, type, generator_type, radius, pos, build_area);
 
                                 if (block_type.equals("") == false) {
 
@@ -1189,17 +1171,7 @@ public class TreeGenerator {
 
                             if (buildTestKeep(level_accessor, pos, replace) == true) {
 
-                                String block_type = "";
-
-                                if (generator_type.equals("sphere") == true) {
-
-                                    block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
-
-                                } else {
-
-                                    block_type = "outer";
-
-                                }
+                                String block_type = buildOuterInnerCore(level_accessor, entity, type, generator_type, radius, pos, build_area);
 
                                 if (block_type.equals("") == false) {
 
@@ -1219,7 +1191,7 @@ public class TreeGenerator {
 
         }
 
-        private static String buildOuterInnerCore (LevelAccessor level_accessor, Entity entity, String type, double radius, BlockPos pos, double build_area) {
+        private static String buildOuterInnerCore (LevelAccessor level_accessor, Entity entity, String type, String generator_type, double radius, BlockPos pos, double build_area) {
 
             String block = "";
 
@@ -1248,29 +1220,33 @@ public class TreeGenerator {
 
                 }
 
-                double outer_area = radius - outer_level_area;
-                double inner_area = outer_area - inner_level_area;
+                double outer_area = radius - outer_level;
+                double inner_area = outer_area - inner_level;
 
-                // Applying
-                {
+                if (generator_type.equals("sphere") == true) {
 
-                    if (outer_area > 0) {
+                    // Outer and Inner Calculations
+                    {
 
-                        outer_area = outer_area * outer_area;
+                        if (outer_area > 0) {
 
-                    } else {
+                            outer_area = outer_area * outer_area;
 
-                        outer_area = 0;
+                        } else {
 
-                    }
+                            outer_area = 0;
 
-                    if (inner_area > 0) {
+                        }
 
-                        inner_area = inner_area * inner_area;
+                        if (inner_area > 0) {
 
-                    } else {
+                            inner_area = inner_area * inner_area;
 
-                        inner_area = 0;
+                        } else {
+
+                            inner_area = 0;
+
+                        }
 
                     }
 
