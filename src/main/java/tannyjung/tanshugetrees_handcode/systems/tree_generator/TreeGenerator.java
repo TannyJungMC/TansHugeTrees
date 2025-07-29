@@ -804,9 +804,9 @@ public class TreeGenerator {
 
             if (size > 0) {
 
+                String generator_type = GameUtils.nbt.entity.getText(entity, type + "_generator_type");
                 size = size - 1.0;
                 double radius = size * 0.5;
-                String generator_type = GameUtils.nbt.entity.getText(entity, type + "_generator_type");
 
                 // First Settings
                 {
@@ -900,15 +900,10 @@ public class TreeGenerator {
                 double sphere_zone_area = 0.0;
                 double[] sphere_zone_pos = new double[0];
 
-                // Get Some Saved Data
-                {
+                if (generator_type.equals("sphere_zone") == true) {
 
-                    if (generator_type.equals("sphere_zone") == true) {
-
-                        sphere_zone_area = GameUtils.nbt.entity.getNumber(entity, "sphere_zone_area");
-                        sphere_zone_pos = new double[]{GameUtils.nbt.entity.getNumber(entity, "sphere_zone_posX"), GameUtils.nbt.entity.getNumber(entity, "sphere_zone_posY"), GameUtils.nbt.entity.getNumber(entity, "sphere_zone_posZ")};
-
-                    }
+                    sphere_zone_area = GameUtils.nbt.entity.getNumber(entity, "sphere_zone_area");
+                    sphere_zone_pos = new double[]{GameUtils.nbt.entity.getNumber(entity, "sphere_zone_posX"), GameUtils.nbt.entity.getNumber(entity, "sphere_zone_posY"), GameUtils.nbt.entity.getNumber(entity, "sphere_zone_posZ")};
 
                 }
 
@@ -917,14 +912,25 @@ public class TreeGenerator {
                 double build_saveY = 0;
                 double build_saveZ = 0;
                 BlockPos pos = null;
+                double scan_start = -(radius);
+                double scan_end = radius + 0.01;
+                double scan_change = 1;
 
-                double change = radius / Math.ceil(radius);
+                if (radius > 0) {
 
-                if (radius == 0) {
-
-                    change = 1;
+                    scan_change = radius / Math.ceil(radius);
 
                 }
+
+                /*
+
+                if (generator_type.equals("square") == false && radius > 0) {
+
+                    scan_change = radius / Math.ceil(radius);
+
+                }
+
+                 */
 
                 while (true) {
 
@@ -935,13 +941,13 @@ public class TreeGenerator {
                         build_saveY = GameUtils.nbt.entity.getNumber(entity, "build_saveY");
                         build_saveZ = GameUtils.nbt.entity.getNumber(entity, "build_saveZ");
 
-                        if (build_saveY <= radius) {
+                        if (build_saveY <= scan_end) {
 
-                            if (build_saveX <= radius) {
+                            if (build_saveX <= scan_end) {
 
-                                if (build_saveZ <= radius) {
+                                if (build_saveZ <= scan_end) {
 
-                                    GameUtils.nbt.entity.addNumber(entity, "build_saveZ", change);
+                                    GameUtils.nbt.entity.addNumber(entity, "build_saveZ", scan_change);
 
                                     // Shaping
                                     {
@@ -985,16 +991,15 @@ public class TreeGenerator {
 
                                         if (type.equals("leaves") == false) {
 
-                                            if (generator_type.equals("square") == true) {
-
-                                                build_area = Math.max(Math.abs(build_saveX), Math.abs(build_saveZ));
-                                                build_area = Math.max(build_area, Math.abs(build_saveY));
-                                                build_area = build_area - 0.5;
-
-                                            }
-
                                             // General
                                             {
+
+                                                if (generator_type.equals("square") == true) {
+
+                                                    build_area = Math.max(Math.abs(build_saveX), Math.abs(build_saveZ));
+                                                    build_area = Math.max(build_area, Math.abs(build_saveY));
+
+                                                }
 
                                                 if (thickness < 2) {
 
@@ -1081,15 +1086,15 @@ public class TreeGenerator {
 
                                 } else {
 
-                                    GameUtils.nbt.entity.setNumber(entity, "build_saveZ", -(radius));
-                                    GameUtils.nbt.entity.addNumber(entity, "build_saveX", change);
+                                    GameUtils.nbt.entity.setNumber(entity, "build_saveZ", scan_start);
+                                    GameUtils.nbt.entity.addNumber(entity, "build_saveX", scan_change);
 
                                 }
 
                             } else {
 
-                                GameUtils.nbt.entity.setNumber(entity, "build_saveX", -(radius));
-                                GameUtils.nbt.entity.addNumber(entity, "build_saveY", change);
+                                GameUtils.nbt.entity.setNumber(entity, "build_saveX", scan_start);
+                                GameUtils.nbt.entity.addNumber(entity, "build_saveY", scan_change);
 
                             }
 
@@ -1217,6 +1222,13 @@ public class TreeGenerator {
                         inner_level_area = 1;
 
                     }
+
+                }
+
+                if (generator_type.equals("square") == true) {
+
+                    radius = Math.ceil(radius);
+                    build_area = Math.round(build_area);
 
                 }
 
