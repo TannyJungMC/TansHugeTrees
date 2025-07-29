@@ -1227,7 +1227,7 @@ public class TreeGenerator {
 
                 if (generator_type.equals("square") == true) {
 
-                    radius = Math.ceil(radius);
+                    radius = Math.round(radius) + 1;
                     build_area = Math.round(build_area);
 
                 }
