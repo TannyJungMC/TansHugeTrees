@@ -913,13 +913,11 @@ public class TreeGenerator {
                 double build_saveY = 0;
                 double build_saveZ = 0;
                 BlockPos pos = null;
-                double scan_start = -(radius_ceil);
-                double scan_end = (radius_ceil) + 0.1;
-                double scan_change = 1;
+                double scan_change = radius / radius_ceil;
 
-                if (radius > 0) {
+                if (radius == 0) {
 
-                    scan_change = radius / Math.ceil(radius);
+                    scan_change = 1;
 
                 }
 
@@ -932,11 +930,11 @@ public class TreeGenerator {
                         build_saveY = GameUtils.nbt.entity.getNumber(entity, "build_saveY");
                         build_saveZ = GameUtils.nbt.entity.getNumber(entity, "build_saveZ");
 
-                        if (build_saveY <= scan_end) {
+                        if (build_saveY <= radius) {
 
-                            if (build_saveX <= scan_end) {
+                            if (build_saveX <= radius) {
 
-                                if (build_saveZ <= scan_end) {
+                                if (build_saveZ <= radius) {
 
                                     GameUtils.nbt.entity.addNumber(entity, "build_saveZ", scan_change);
 
@@ -977,7 +975,7 @@ public class TreeGenerator {
                                             // General
                                             {
 
-                                                if (thickness < 2) {
+                                                if (size < 1) {
 
                                                     if (build_saveX == 0 && build_saveY == 0 && build_saveZ == 0) {
 
@@ -1062,14 +1060,14 @@ public class TreeGenerator {
 
                                 } else {
 
-                                    GameUtils.nbt.entity.setNumber(entity, "build_saveZ", scan_start);
+                                    GameUtils.nbt.entity.setNumber(entity, "build_saveZ", -(radius));
                                     GameUtils.nbt.entity.addNumber(entity, "build_saveX", scan_change);
 
                                 }
 
                             } else {
 
-                                GameUtils.nbt.entity.setNumber(entity, "build_saveX", scan_start);
+                                GameUtils.nbt.entity.setNumber(entity, "build_saveX", -(radius));
                                 GameUtils.nbt.entity.addNumber(entity, "build_saveY", scan_change);
 
                             }
