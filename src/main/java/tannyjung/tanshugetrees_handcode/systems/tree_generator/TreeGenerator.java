@@ -807,6 +807,7 @@ public class TreeGenerator {
                 String generator_type = GameUtils.nbt.entity.getText(entity, type + "_generator_type");
                 size = size - 1.0;
                 double radius = size * 0.5;
+                double radius_ceil = Math.ceil(radius);
 
                 // First Settings
                 {
@@ -912,8 +913,8 @@ public class TreeGenerator {
                 double build_saveY = 0;
                 double build_saveZ = 0;
                 BlockPos pos = null;
-                double scan_start = -(radius);
-                double scan_end = radius + 0.01;
+                double scan_start = -(radius_ceil);
+                double scan_end = (radius_ceil) + 0.1;
                 double scan_change = 1;
 
                 if (radius > 0) {
@@ -921,16 +922,6 @@ public class TreeGenerator {
                     scan_change = radius / Math.ceil(radius);
 
                 }
-
-                /*
-
-                if (generator_type.equals("square") == false && radius > 0) {
-
-                    scan_change = radius / Math.ceil(radius);
-
-                }
-
-                 */
 
                 while (true) {
 
@@ -952,19 +943,11 @@ public class TreeGenerator {
                                     // Shaping
                                     {
 
-                                        if (generator_type.startsWith("sphere") == true) {
+                                        build_area = (build_saveX * build_saveX) + (build_saveY * build_saveY) + (build_saveZ * build_saveZ);
 
-                                            {
+                                        if (build_area > sphere_area) {
 
-                                                build_area = (build_saveX * build_saveX) + (build_saveY * build_saveY) + (build_saveZ * build_saveZ);
-
-                                                if (build_area > sphere_area) {
-
-                                                    continue;
-
-                                                }
-
-                                            }
+                                            continue;
 
                                         }
 
@@ -993,13 +976,6 @@ public class TreeGenerator {
 
                                             // General
                                             {
-
-                                                if (generator_type.equals("square") == true) {
-
-                                                    build_area = Math.max(Math.abs(build_saveX), Math.abs(build_saveZ));
-                                                    build_area = Math.max(build_area, Math.abs(build_saveY));
-
-                                                }
 
                                                 if (thickness < 2) {
 
@@ -1203,6 +1179,9 @@ public class TreeGenerator {
             // Get Type
             {
 
+                // radius = Math.floor(radius);
+                // build_area = Math.ceil(build_area);
+
                 double outer_level = GameUtils.nbt.entity.getNumber(entity, type + "_outer_level");
                 double inner_level = GameUtils.nbt.entity.getNumber(entity, type + "_inner_level");
                 double outer_level_area = outer_level;
@@ -1225,40 +1204,29 @@ public class TreeGenerator {
 
                 }
 
-                if (generator_type.equals("square") == true) {
-
-                    radius = Math.round(radius) + 1;
-                    build_area = Math.round(build_area);
-
-                }
-
                 double outer_area = radius - outer_level;
                 double inner_area = outer_area - inner_level;
 
-                if (generator_type.equals("sphere") == true) {
+                // Outer and Inner Calculations
+                {
 
-                    // Outer and Inner Calculations
-                    {
+                    if (outer_area > 0) {
 
-                        if (outer_area > 0) {
+                        outer_area = outer_area * outer_area;
 
-                            outer_area = outer_area * outer_area;
+                    } else {
 
-                        } else {
+                        outer_area = 0;
 
-                            outer_area = 0;
+                    }
 
-                        }
+                    if (inner_area > 0) {
 
-                        if (inner_area > 0) {
+                        inner_area = inner_area * inner_area;
 
-                            inner_area = inner_area * inner_area;
+                    } else {
 
-                        } else {
-
-                            inner_area = 0;
-
-                        }
+                        inner_area = 0;
 
                     }
 
@@ -1276,7 +1244,6 @@ public class TreeGenerator {
 
                     } else {
 
-                        // Make inner and core blend. Do not make inner become hollow when chance is false, but swap to use core instead.
                         block = "core";
 
                     }
@@ -1286,6 +1253,22 @@ public class TreeGenerator {
                     if (outer_level >= 1 || Math.random() < outer_level) {
 
                         block = "outer";
+
+                    } else {
+
+                        if (radius < 2) {
+
+                            if (inner_level >= 1 || Math.random() < inner_level) {
+
+                                block = "inner";
+
+                            } else {
+
+                                block = "core";
+
+                            }
+
+                        }
 
                     }
 
