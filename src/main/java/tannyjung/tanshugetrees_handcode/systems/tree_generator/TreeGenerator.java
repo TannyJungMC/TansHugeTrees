@@ -369,25 +369,6 @@ public class TreeGenerator {
 
                     }
 
-                    // Chance of Discontinue
-                    {
-
-                        if (is_taproot_trunk == false) {
-
-                            double chance = GameUtils.nbt.entity.getNumber(entity, type + "_continue_chance");
-                            chance = chance * summonReduction(entity, type, "continue_reduce");
-                            chance = 1.0 - chance;
-
-                            if (Math.random() < chance) {
-
-                                GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_count", 0);
-
-                            }
-
-                        }
-
-                    }
-
                 } else {
 
                     // Leaves Settings
@@ -400,6 +381,25 @@ public class TreeGenerator {
                         double size = Mth.nextDouble(RandomSource.create(), GameUtils.nbt.entity.getNumber(entity, "leaves_size_min"), GameUtils.nbt.entity.getNumber(entity, "leaves_size_max"));
                         size = size * summonReduction(entity, "leaves", "size_reduce");
                         GameUtils.nbt.entity.setNumber(entity, "leaves_size", size);
+
+                    }
+
+                }
+
+                // Chance of Discontinue
+                {
+
+                    if (is_taproot_trunk == false) {
+
+                        double chance = GameUtils.nbt.entity.getNumber(entity, type + "_continue_chance");
+                        chance = chance * summonReduction(entity, type, "continue_reduce");
+                        chance = 1.0 - chance;
+
+                        if (Math.random() < chance) {
+
+                            GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_count", 0);
+
+                        }
 
                     }
 
