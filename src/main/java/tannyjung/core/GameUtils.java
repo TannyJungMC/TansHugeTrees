@@ -520,43 +520,43 @@ public class GameUtils {
 
 			BlockState block = Blocks.AIR.defaultBlockState();
 
-			if (data.endsWith("]") == true) {
+			try {
 
-				block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(data.substring(0, data.indexOf("[")))).defaultBlockState();
-				String[] properties = data.substring(data.indexOf("[") + 1, data.length() - 1).split(",");
+				if (data.endsWith("]") == true) {
 
-				for (String property_data : properties) {
+					block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(data.substring(0, data.indexOf("[")))).defaultBlockState();
+					String[] properties = data.substring(data.indexOf("[") + 1, data.length() - 1).split(",");
 
-					String[] get = property_data.split("=");
-					Property<?> property = block.getBlock().getStateDefinition().getProperty(get[0]);
+					for (String property_data : properties) {
 
-					if (property instanceof BooleanProperty) {
+						String[] get = property_data.split("=");
+						Property<?> property = block.getBlock().getStateDefinition().getProperty(get[0]);
 
-						block = propertyBooleanSet(block, get[0], Boolean.parseBoolean(get[1]));
+						if (property instanceof BooleanProperty) {
 
-					} else if (property instanceof IntegerProperty) {
+							block = propertyBooleanSet(block, get[0], Boolean.parseBoolean(get[1]));
 
-						block = propertyIntegerSet(block, get[0], Integer.parseInt(get[1]));
+						} else if (property instanceof IntegerProperty) {
 
-					} else if (property instanceof EnumProperty<?>) {
+							block = propertyIntegerSet(block, get[0], Integer.parseInt(get[1]));
 
-						block = propertyEnumSet(block, get[0], get[1]);
+						} else if (property instanceof EnumProperty<?>) {
+
+							block = propertyEnumSet(block, get[0], get[1]);
+
+						}
 
 					}
 
-				}
-
-			} else {
-
-				try {
+				} else {
 
 					block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(data)).defaultBlockState();
 
-				} catch (Exception exception) {
-
-					OutsideUtils.exception(new Exception(), exception);
-
 				}
+
+			} catch (Exception exception) {
+
+				OutsideUtils.exception(new Exception(), exception);
 
 			}
 
