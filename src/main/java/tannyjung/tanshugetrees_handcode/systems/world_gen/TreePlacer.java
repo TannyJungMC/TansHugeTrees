@@ -813,52 +813,42 @@ public class TreePlacer {
 
                             }
 
-                            // No Roots
-                            {
+                            if (read_all.startsWith("+b") == true) {
 
-                                if (ConfigMain.world_gen_roots == false && can_disable_roots == true) {
+                                can_run_function = false;
 
-                                    if (get_short.startsWith("se") == true || get_short.startsWith("te") == true || get_short.startsWith("fi") == true) {
+                                // No Roots
+                                {
 
-                                        continue;
+                                    if (ConfigMain.world_gen_roots == false && can_disable_roots == true) {
+
+                                        if (get_short.startsWith("se") == true || get_short.startsWith("te") == true || get_short.startsWith("fi") == true) {
+
+                                            continue;
+
+                                        }
 
                                     }
 
                                 }
 
-                            }
+                                // Dead Tree
+                                {
 
-                            // Dead Tree
-                            {
+                                    if (dead_tree_level > 0) {
 
-                                if (dead_tree_level > 0) {
+                                        // Basic Style
+                                        {
 
-                                    // Basic Style
-                                    {
-
-                                        if (get_short.startsWith("le") == true) {
-
-                                            continue;
-
-                                        } else if (get_short.startsWith("sp") == true) {
-
-                                            if (block_count_sprig > 0) {
-
-                                                block_count_sprig = block_count_sprig - 1;
-
-                                            } else {
+                                            if (get_short.startsWith("le") == true) {
 
                                                 continue;
 
-                                            }
+                                            } else if (get_short.startsWith("sp") == true) {
 
-                                        } else if (get_short.startsWith("tw") == true) {
+                                                if (block_count_sprig > 0) {
 
-                                            if (block_count_sprig == 0) {
-
-                                                if (block_count_twig > 0) {
-
-                                                    block_count_twig = block_count_twig - 1;
+                                                    block_count_sprig = block_count_sprig - 1;
 
                                                 } else {
 
@@ -866,51 +856,67 @@ public class TreePlacer {
 
                                                 }
 
-                                            }
+                                            } else if (get_short.startsWith("tw") == true) {
 
-                                        } else if (get_short.startsWith("li") == true) {
+                                                if (block_count_sprig == 0) {
 
-                                            if (block_count_twig == 0) {
+                                                    if (block_count_twig > 0) {
 
-                                                if (block_count_limb > 0) {
+                                                        block_count_twig = block_count_twig - 1;
 
-                                                    block_count_limb = block_count_limb - 1;
+                                                    } else {
 
-                                                } else {
+                                                        continue;
 
-                                                    continue;
-
-                                                }
-
-                                            }
-
-                                        } else if (get_short.startsWith("br") == true) {
-
-                                            if (block_count_limb == 0) {
-
-                                                if (block_count_branch > 0) {
-
-                                                    block_count_branch = block_count_branch - 1;
-
-                                                } else {
-
-                                                    continue;
+                                                    }
 
                                                 }
 
-                                            }
+                                            } else if (get_short.startsWith("li") == true) {
 
-                                        } else if (get_short.startsWith("bo") == true) {
+                                                if (block_count_twig == 0) {
 
-                                            if (block_count_branch == 0) {
+                                                    if (block_count_limb > 0) {
 
-                                                if (block_count_bough > 0) {
+                                                        block_count_limb = block_count_limb - 1;
 
-                                                    block_count_bough = block_count_bough - 1;
+                                                    } else {
 
-                                                } else {
+                                                        continue;
 
-                                                    continue;
+                                                    }
+
+                                                }
+
+                                            } else if (get_short.startsWith("br") == true) {
+
+                                                if (block_count_limb == 0) {
+
+                                                    if (block_count_branch > 0) {
+
+                                                        block_count_branch = block_count_branch - 1;
+
+                                                    } else {
+
+                                                        continue;
+
+                                                    }
+
+                                                }
+
+                                            } else if (get_short.startsWith("bo") == true) {
+
+                                                if (block_count_branch == 0) {
+
+                                                    if (block_count_bough > 0) {
+
+                                                        block_count_bough = block_count_bough - 1;
+
+                                                    } else {
+
+                                                        continue;
+
+                                                    }
 
                                                 }
 
@@ -918,32 +924,32 @@ public class TreePlacer {
 
                                         }
 
-                                    }
+                                        if (dead_tree_level >= 60) {
 
-                                    if (dead_tree_level >= 60) {
+                                            // Only Trunk
+                                            {
 
-                                        // Only Trunk
-                                        {
+                                                if (get_short.startsWith("tr") == true) {
 
-                                            if (get_short.startsWith("tr") == true) {
+                                                    if (block_count_trunk > 0) {
 
-                                                if (block_count_trunk > 0) {
+                                                        block_count_trunk = block_count_trunk - 1;
 
-                                                    block_count_trunk = block_count_trunk - 1;
+                                                        if (hollowed == true) {
 
-                                                    if (hollowed == true) {
+                                                            if (get_short.startsWith("trc") == true) {
 
-                                                        if (get_short.startsWith("trc") == true) {
+                                                                continue;
 
-                                                            continue;
+                                                            }
 
                                                         }
 
+                                                    } else {
+
+                                                        continue;
+
                                                     }
-
-                                                } else {
-
-                                                    continue;
 
                                                 }
 
@@ -1002,8 +1008,6 @@ public class TreePlacer {
                                 }
 
                                 if (read_all.startsWith("+b") == true) {
-
-                                    can_run_function = false;
 
                                     // Place Block
                                     {
