@@ -895,9 +895,6 @@ public class TreeGenerator {
 
                 }
 
-                double[] center_pos = new double[]{GameUtils.nbt.entity.getNumber(entity, "build_centerX"), GameUtils.nbt.entity.getNumber(entity, "build_centerY"), GameUtils.nbt.entity.getNumber(entity, "build_centerZ")};
-                boolean replace = GameUtils.nbt.entity.getLogic(entity, type + "_replace");
-                double sphere_area = radius * radius;
                 double sphere_zone_area = 0.0;
                 double[] sphere_zone_pos = new double[0];
 
@@ -908,11 +905,6 @@ public class TreeGenerator {
 
                 }
 
-                double build_area = 0.0;
-                double build_saveX = 0;
-                double build_saveY = 0;
-                double build_saveZ = 0;
-                BlockPos pos = null;
                 double scan_change = radius / radius_ceil;
 
                 if (radius == 0) {
@@ -920,6 +912,15 @@ public class TreeGenerator {
                     scan_change = 1;
 
                 }
+
+                double[] center_pos = new double[]{GameUtils.nbt.entity.getNumber(entity, "build_centerX"), GameUtils.nbt.entity.getNumber(entity, "build_centerY"), GameUtils.nbt.entity.getNumber(entity, "build_centerZ")};
+                boolean replace = GameUtils.nbt.entity.getLogic(entity, type + "_replace");
+                double sphere_area = radius * radius;
+                double build_area = 0.0;
+                double build_saveX = 0;
+                double build_saveY = 0;
+                double build_saveZ = 0;
+                BlockPos pos = null;
 
                 while (true) {
 
@@ -943,7 +944,7 @@ public class TreeGenerator {
 
                                         build_area = (build_saveX * build_saveX) + (build_saveY * build_saveY) + (build_saveZ * build_saveZ);
 
-                                        if (build_area > sphere_area) {
+                                        if (build_area > sphere_area + 1) {
 
                                             continue;
 
