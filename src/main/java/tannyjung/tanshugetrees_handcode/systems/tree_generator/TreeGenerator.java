@@ -320,8 +320,7 @@ public class TreeGenerator {
                     {
 
                         double length = Mth.nextInt(RandomSource.create(), (int) GameUtils.nbt.entity.getNumber(entity, type + "_length_min"), (int) GameUtils.nbt.entity.getNumber(entity, type + "_length_max"));
-                        length = length * summonReduction(entity, type, "length_reduce");
-                        length = Math.ceil(length);
+                        length = Math.ceil(length * summonReduction(entity, type, "length_reduce"));
                         GameUtils.nbt.entity.setNumber(entity, type + "_length", length);
                         GameUtils.nbt.entity.setNumber(entity, type + "_length_save", length);
 
@@ -336,7 +335,7 @@ public class TreeGenerator {
                     {
 
                         int count = Mth.nextInt(RandomSource.create(), (int) GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count_min"), (int) GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count_max"));
-                        count = (int) ((double) count * summonReduction(entity, type_pre_next[1], "count_reduce"));
+                        count = (int) Math.ceil((double) count * summonReduction(entity, type_pre_next[1], "count_reduce"));
                         GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_count", count);
                         GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_count_save", count);
 
