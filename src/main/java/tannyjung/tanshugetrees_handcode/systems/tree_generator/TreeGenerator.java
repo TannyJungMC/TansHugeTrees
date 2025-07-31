@@ -914,12 +914,14 @@ public class TreeGenerator {
 
                 double[] center_pos = new double[]{GameUtils.nbt.entity.getNumber(entity, "build_centerX"), GameUtils.nbt.entity.getNumber(entity, "build_centerY"), GameUtils.nbt.entity.getNumber(entity, "build_centerZ")};
                 boolean replace = GameUtils.nbt.entity.getLogic(entity, type + "_replace");
-                double sphere_area = radius * radius;
+                double sphere_area = (radius + 0.35) * (radius + 0.35);
                 double build_area = 0.0;
                 double build_saveX = 0;
                 double build_saveY = 0;
                 double build_saveZ = 0;
                 BlockPos pos = null;
+                double scan_start = radius + scan_change;
+                double scan_end = radius + scan_change;
 
                 while (true) {
 
@@ -930,11 +932,11 @@ public class TreeGenerator {
                         build_saveY = GameUtils.nbt.entity.getNumber(entity, "build_saveY");
                         build_saveZ = GameUtils.nbt.entity.getNumber(entity, "build_saveZ");
 
-                        if (build_saveY <= radius) {
+                        if (build_saveY <= scan_end) {
 
-                            if (build_saveX <= radius) {
+                            if (build_saveX <= scan_end) {
 
-                                if (build_saveZ <= radius) {
+                                if (build_saveZ <= scan_end) {
 
                                     GameUtils.nbt.entity.addNumber(entity, "build_saveZ", scan_change);
 
@@ -943,7 +945,7 @@ public class TreeGenerator {
 
                                         build_area = (build_saveX * build_saveX) + (build_saveY * build_saveY) + (build_saveZ * build_saveZ);
 
-                                        if (build_area > sphere_area + 1) {
+                                        if (build_area > sphere_area) {
 
                                             continue;
 
@@ -987,7 +989,7 @@ public class TreeGenerator {
 
                                                 if (buildTestKeep(level_accessor, pos, replace) == true) {
 
-                                                    String block_type = buildOuterInnerCore(level_accessor, entity, type, generator_type, radius, pos, build_area);
+                                                    String block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
 
                                                     if (block_type.equals("") == false) {
 
@@ -1060,14 +1062,14 @@ public class TreeGenerator {
 
                                 } else {
 
-                                    GameUtils.nbt.entity.setNumber(entity, "build_saveZ", -(radius));
+                                    GameUtils.nbt.entity.setNumber(entity, "build_saveZ", -(scan_start));
                                     GameUtils.nbt.entity.addNumber(entity, "build_saveX", scan_change);
 
                                 }
 
                             } else {
 
-                                GameUtils.nbt.entity.setNumber(entity, "build_saveX", -(radius));
+                                GameUtils.nbt.entity.setNumber(entity, "build_saveX", -(scan_start));
                                 GameUtils.nbt.entity.addNumber(entity, "build_saveY", scan_change);
 
                             }
@@ -1122,7 +1124,7 @@ public class TreeGenerator {
 
                             if (buildTestKeep(level_accessor, pos, replace) == true) {
 
-                                String block_type = buildOuterInnerCore(level_accessor, entity, type, generator_type, radius, pos, build_area);
+                                String block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
 
                                 if (block_type.equals("") == false) {
 
@@ -1150,7 +1152,7 @@ public class TreeGenerator {
 
                             if (buildTestKeep(level_accessor, pos, replace) == true) {
 
-                                String block_type = buildOuterInnerCore(level_accessor, entity, type, generator_type, radius, pos, build_area);
+                                String block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
 
                                 if (block_type.equals("") == false) {
 
@@ -1170,7 +1172,7 @@ public class TreeGenerator {
 
         }
 
-        private static String buildOuterInnerCore (LevelAccessor level_accessor, Entity entity, String type, String generator_type, double radius, BlockPos pos, double build_area) {
+        private static String buildOuterInnerCore (LevelAccessor level_accessor, Entity entity, String type, double radius, BlockPos pos, double build_area) {
 
             String block = "";
 
@@ -1202,10 +1204,10 @@ public class TreeGenerator {
 
                 }
 
-                double outer_area = radius - outer_level;
-                double inner_area = outer_area - inner_level;
+                double outer_area = radius - outer_level_area;
+                double inner_area = outer_area - inner_level_area;
 
-                // Outer and Inner Calculations
+                // Area Calculation
                 {
 
                     if (outer_area > 0) {
@@ -1254,17 +1256,9 @@ public class TreeGenerator {
 
                     } else {
 
-                        if (radius < 2) {
+                        if (inner_level >= 1 || Math.random() < inner_level) {
 
-                            if (inner_level >= 1 || Math.random() < inner_level) {
-
-                                block = "inner";
-
-                            } else {
-
-                                block = "core";
-
-                            }
+                            block = "inner";
 
                         }
 
