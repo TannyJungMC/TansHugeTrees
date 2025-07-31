@@ -154,9 +154,9 @@ public class ConfigMain {
 					| ###
 					| Default is [ true ]
 					
-					max_height_spawn = 140
+					max_height_spawn = 150
 					| Cancel the trees when their spawn center is above this Y level. As some world gen mods such as ReTerraForged, replacing mountain block and my trees can't detect those new block, make them spawn on blocks that not in the list. Set to 0 to disable this.
-					| Default is [ 140 ]
+					| Default is [ 150 ]
 					
 					----------------------------------------------------------------------------------------------------
 					Living Tree Mechanics
