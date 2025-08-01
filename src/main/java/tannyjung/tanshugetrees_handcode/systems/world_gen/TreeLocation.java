@@ -1046,12 +1046,14 @@ public class TreeLocation {
 
                 String data = from_chunkX + "/" + from_chunkZ + "/" + to_chunkX + "/" + to_chunkZ + "|" + id + "|" + chosen.getName() + "|" + center_posX + "/" + center_posZ + "|" + rotation + "/" + mirrored + "|" + other_data + "\n";
                 int size = 32 >> 2;
-                int to_chunkX_test = (int) ((Math.ceil((double) to_chunkX / (double) size) * size) + size);
-                int to_chunkZ_test = (int) ((Math.ceil((double) to_chunkZ / (double) size) * size) + size);
+                int from_chunkX_test = (int) (Math.floor((double) from_chunkX / (double) size) * size);
+                int from_chunkZ_test = (int) (Math.floor((double) from_chunkZ / (double) size) * size);
+                int to_chunkX_test = (int) (Math.floor((double) to_chunkX / (double) size) * size);
+                int to_chunkZ_test = (int) (Math.floor((double) to_chunkZ / (double) size) * size);
 
-                for (int scanX = from_chunkX; scanX < to_chunkX_test; scanX = scanX + size) {
+                for (int scanX = from_chunkX_test; scanX <= to_chunkX_test; scanX = scanX + size) {
 
-                    for (int scanZ = from_chunkZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
+                    for (int scanZ = from_chunkZ_test; scanZ <= to_chunkZ_test; scanZ = scanZ + size) {
 
                         String location = (scanX >> 5) + "," + (scanZ >> 5) + "/" + GameUtils.outside.quardtreeChunkToNode(scanX, scanZ);
                         String value_new = cache_write_place.getOrDefault(location, "") + data;
