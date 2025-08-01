@@ -343,7 +343,7 @@ public class TreePlacer {
 
                                 } else {
 
-                                    if (Math.random() < ConfigMain.mismatch_ecology_skip_chance) {
+                                    if (Math.random() < ConfigMain.unviable_ecology_skip_chance) {
 
                                         pass = false;
 
