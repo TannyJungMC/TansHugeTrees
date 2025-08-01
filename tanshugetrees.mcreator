@@ -1652,7 +1652,14 @@
       "CUSTOM:BlockPlacerFineRootOuter"
     ]
   },
-  "tab_element_order": {},
+  "tab_element_order": {
+    "CUSTOM:CreativeTabMain": [
+      "WaypointFlower",
+      "RandomTree",
+      "Halcyon",
+      "Yokai"
+    ]
+  },
   "language_map": {
     "en_us": {
       "block.tanshugetrees.waypoint_flower.description_1": "§8Place on ground to summon the sapling trader from Tan\u0027s Huge Trees mod, only available for saplings from TannyJung\u0027s Main Pack. Needed a minute to summon him.",
@@ -1660,7 +1667,7 @@
       "block.tanshugetrees.waypoint_flower.description_2": "§8--------------------------------------------------",
       "block.tanshugetrees.waypoint_flower.description_0": "§8--------------------------------------------------",
       "block.tanshugetrees.yokai.description_0": "§8--------------------------------------------------",
-      "block.tanshugetrees.yokai.description_2": "",
+      "block.tanshugetrees.yokai.description_2": "§8--------------------------------------------------",
       "block.tanshugetrees.yokai.description_1": "§8This is random tree sapling, it may take long time to generate!",
       "block.tanshugetrees.yokai": "Yokai",
       "block.tanshugetrees.yokai.description_4": "§8Blocks : Dark Oak / Stripped Dark Oak Wood / Pink Stained Glass",
@@ -1706,7 +1713,7 @@
       "block.tanshugetrees.random_tree": "Random Tree (Unset)",
       "block.tanshugetrees.halcyon.description_0": "§8--------------------------------------------------",
       "block.tanshugetrees.halcyon.description_1": "§8This is random tree sapling, it may take long time to generate!",
-      "block.tanshugetrees.halcyon.description_2": "",
+      "block.tanshugetrees.halcyon.description_2": "§8--------------------------------------------------",
       "block.tanshugetrees.halcyon.description_3": "§8Size : Realistic",
       "block.tanshugetrees.halcyon.description_4": "§8Blocks : Oak / Stripped Oak Wood / Oak Leaves",
       "block.tanshugetrees.halcyon": "Halcyon",

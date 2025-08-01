@@ -9,9 +9,9 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import tannyjung.core.GameUtils;
 
-public class WorldGenFeature extends Feature <NoneFeatureConfiguration> {
+public class WorldGen extends Feature <NoneFeatureConfiguration> {
 
-    public WorldGenFeature () {
+    public WorldGen() {
 
         super(NoneFeatureConfiguration.CODEC);
 

@@ -44,10 +44,6 @@ public class YokaiBlock extends Block implements EntityBlock {
 		list.add(Component.translatable("block.tanshugetrees.yokai.description_0"));
 		list.add(Component.translatable("block.tanshugetrees.yokai.description_1"));
 		list.add(Component.translatable("block.tanshugetrees.yokai.description_2"));
-		list.add(Component.translatable("block.tanshugetrees.yokai.description_3"));
-		list.add(Component.translatable("block.tanshugetrees.yokai.description_4"));
-		list.add(Component.translatable("block.tanshugetrees.yokai.description_5"));
-		list.add(Component.translatable("block.tanshugetrees.yokai.description_6"));
 	}
 
 	@Override

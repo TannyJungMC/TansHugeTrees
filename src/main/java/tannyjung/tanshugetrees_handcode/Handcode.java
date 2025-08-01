@@ -24,7 +24,7 @@ import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.Loop;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDetector;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.DataFolderCleaner;
-import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFeature;
+import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGen;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -59,7 +59,7 @@ public class Handcode {
 
 			IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 			DeferredRegister<Feature<?>> REGISTRY = DeferredRegister.create(Registries.FEATURE, TanshugetreesMod.MODID);
-			REGISTRY.register("world_gen_feature", WorldGenFeature::new);
+			REGISTRY.register("world_gen", WorldGen::new);
 			REGISTRY.register(bus);
 
 		}
