@@ -324,7 +324,7 @@ public class TreePlacer {
 
                     }
 
-                    // Dead Tree
+                    // Dead Tree and Tree Type
                     {
 
                         if (Math.random() >= dead_tree_chance) {
@@ -340,6 +340,14 @@ public class TreePlacer {
                                 if ((tree_type.equals("land") == true && (originalY == highestY)) || (tree_type.equals("water") == true && (originalY < highestY))) {
 
                                     dead_tree_level = 0;
+
+                                } else {
+
+                                    if (Math.random() < ConfigMain.mismatch_ecology_skip_chance) {
+
+                                        pass = false;
+
+                                    }
 
                                 }
 
