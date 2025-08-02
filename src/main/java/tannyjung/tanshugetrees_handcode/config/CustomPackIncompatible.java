@@ -23,13 +23,13 @@ public class CustomPackIncompatible {
 
                 if (testVersion(level_accessor, pack + "/version.txt") == false) {
 
-                    break;
+                    continue;
 
                 }
 
                 if (testDependencies(level_accessor, pack + "/dependencies.txt") == false) {
 
-                    break;
+                    continue;
 
                 }
 
