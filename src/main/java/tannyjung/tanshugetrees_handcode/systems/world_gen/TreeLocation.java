@@ -1050,14 +1050,14 @@ public class TreeLocation {
                 int from_chunkZ_test = (int) (Math.floor((double) from_chunkZ / (double) size) * size);
                 int to_chunkX_test = (int) (Math.floor((double) to_chunkX / (double) size) * size);
                 int to_chunkZ_test = (int) (Math.floor((double) to_chunkZ / (double) size) * size);
+                String location = "";
 
                 for (int scanX = from_chunkX_test; scanX <= to_chunkX_test; scanX = scanX + size) {
 
                     for (int scanZ = from_chunkZ_test; scanZ <= to_chunkZ_test; scanZ = scanZ + size) {
 
-                        String location = (scanX >> 5) + "," + (scanZ >> 5) + "/" + GameUtils.outside.quardtreeChunkToNode(scanX, scanZ);
-                        String value_new = cache_write_place.getOrDefault(location, "") + data;
-                        cache_write_place.put(location, value_new);
+                        location = (scanX >> 5) + "," + (scanZ >> 5) + "/" + GameUtils.outside.quardtreeChunkToNode(scanX, scanZ);
+                        cache_write_place.put(location, cache_write_place.getOrDefault(location, "") + data);
 
                         // TanshugetreesMod.LOGGER.debug("Debugging : Write Place File -> " + scanX + " " + scanZ);
 

@@ -389,12 +389,14 @@ public class TreePlacer {
                     }
 
                     int size = 32 >> 2;
-                    int to_chunkX_test = ((int) Math.ceil(to_chunkX / (double) size) * size) + size;
-                    int to_chunkZ_test = ((int) Math.ceil(to_chunkZ / (double) size) * size) + size;
+                    int from_chunkX_test = (int) (Math.floor((double) from_chunkX / (double) size) * size);
+                    int from_chunkZ_test = (int) (Math.floor((double) from_chunkZ / (double) size) * size);
+                    int to_chunkX_test = (int) (Math.floor((double) to_chunkX / (double) size) * size);
+                    int to_chunkZ_test = (int) (Math.floor((double) to_chunkZ / (double) size) * size);
 
-                    for (int scanX = from_chunkX; scanX < to_chunkX_test; scanX = scanX + size) {
+                    for (int scanX = from_chunkX_test; scanX <= to_chunkX_test; scanX = scanX + size) {
 
-                        for (int scanZ = from_chunkZ; scanZ < to_chunkZ_test; scanZ = scanZ + size) {
+                        for (int scanZ = from_chunkZ_test; scanZ <= to_chunkZ_test; scanZ = scanZ + size) {
 
                             FileManager.writeTXT(Handcode.directory_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + GameUtils.outside.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
 
