@@ -46,23 +46,27 @@ public class CustomPackIncompatible {
 
             File file = new File(Handcode.directory_config + "/custom_packs/.organized/world_gen");
 
-            {
+            if (file.exists() == true) {
 
-                try {
+                {
 
-                    Files.walk(file.toPath()).forEach(source -> {
+                    try {
 
-                        if (source.toFile().isDirectory() == false && source.toFile().getName().startsWith("[INCOMPATIBLE] ") == false) {
+                        Files.walk(file.toPath()).forEach(source -> {
 
-                            testTreeSettings(source.toFile());
+                            if (source.toFile().isDirectory() == false && source.toFile().getName().startsWith("[INCOMPATIBLE] ") == false) {
 
-                        }
+                                testTreeSettings(source.toFile());
 
-                    });
+                            }
 
-                } catch (Exception exception) {
+                        });
 
-                    OutsideUtils.exception(new Exception(), exception);
+                    } catch (Exception exception) {
+
+                        OutsideUtils.exception(new Exception(), exception);
+
+                    }
 
                 }
 

@@ -27,27 +27,31 @@ public class ConfigWorldGen {
         Path from = Paths.get(Handcode.directory_config + "/config_world_gen.txt");
         Path to = Paths.get(Handcode.directory_config + "/config_world_gen_temp.txt");
 
-        try {
+        if (from.toFile().exists() == true) {
 
-            Files.walk(from).forEach(source -> {
+            try {
 
-                Path copy = to.resolve(from.relativize(source));
+                Files.walk(from).forEach(source -> {
 
-                try {
+                    Path copy = to.resolve(from.relativize(source));
 
-                    Files.copy(source, copy, StandardCopyOption.REPLACE_EXISTING);
+                    try {
 
-                } catch (Exception exception) {
+                        Files.copy(source, copy, StandardCopyOption.REPLACE_EXISTING);
 
-                    OutsideUtils.exception(new Exception(), exception);
+                    } catch (Exception exception) {
 
-                }
+                        OutsideUtils.exception(new Exception(), exception);
 
-            });
+                    }
 
-        } catch (Exception exception) {
+                });
 
-            OutsideUtils.exception(new Exception(), exception);
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception);
+
+            }
 
         }
 
