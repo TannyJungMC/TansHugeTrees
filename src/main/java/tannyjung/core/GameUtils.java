@@ -56,9 +56,9 @@ public class GameUtils {
 				int localX = chunkX & 31;
 				int localZ = chunkZ & 31;
 
-				for (int level = 0; level < 2; level++) {
+				for (int level = 1; level <= 2; level++) {
 
-					int size = 32 >> (level + 1);
+					int size = 32 >> level;
 					int posX = (localX / size) % 2;
 					int posZ = (localZ / size) % 2;
 
