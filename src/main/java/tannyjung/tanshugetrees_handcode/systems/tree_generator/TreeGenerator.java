@@ -803,10 +803,17 @@ public class TreeGenerator {
 
             if (size > 0) {
 
-                String generator_type = GameUtils.nbt.entity.getText(entity, type + "_generator_type");
                 size = size - 1.0;
+
+                if (size < 0) {
+
+                    size = 0;
+
+                }
+
                 double radius = size * 0.5;
                 double radius_ceil = Math.ceil(radius);
+                String generator_type = GameUtils.nbt.entity.getText(entity, type + "_generator_type");
 
                 // First Settings
                 {
