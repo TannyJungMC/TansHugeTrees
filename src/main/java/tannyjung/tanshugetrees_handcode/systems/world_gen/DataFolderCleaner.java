@@ -60,7 +60,7 @@ public class DataFolderCleaner {
             // TanshugetreesMod.LOGGER.debug("Debugging : Delete Place File -> " + chunk_pos.x + " " + chunk_pos.z);
 
             // If finish placing all chunks in region
-            if (file_place.getParentFile().listFiles().length == 0) {
+            if (file_place.getParentFile().listFiles() == null || file_place.getParentFile().listFiles().length == 0) {
 
                 file_place.getParentFile().delete();
                 file_detailed_detection.getParentFile().delete();
