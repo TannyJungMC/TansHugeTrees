@@ -652,30 +652,38 @@ public class TreeLocation {
 
         {
 
-            if (ConfigMain.surrounding_area_detection == true && ConfigMain.waterside_detection == true) {
+            if (waterside_chance > 0) {
 
-                if (Math.random() < waterside_chance) {
+                if (ConfigMain.surrounding_area_detection == false || ConfigMain.waterside_detection == false) {
 
-                    boolean on_land = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX, level_accessor.getMaxBuildHeight(), center_posZ)), "forge:is_water") == false;
-                    int size = ConfigMain.surrounding_area_detection_size;
-                    boolean waterside_test1 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX + size, level_accessor.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
-                    boolean waterside_test2 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX + size, level_accessor.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
-                    boolean waterside_test3 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX - size, level_accessor.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
-                    boolean waterside_test4 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX - size, level_accessor.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
+                    return_logic = false;
 
-                    if (on_land == true) {
+                } else {
 
-                        if (waterside_test1 == false && waterside_test2 == false && waterside_test3 == false && waterside_test4 == false) {
+                    if (Math.random() < waterside_chance) {
 
-                            return_logic = false;
+                        boolean on_land = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX, level_accessor.getMaxBuildHeight(), center_posZ)), "forge:is_water") == false;
+                        int size = ConfigMain.surrounding_area_detection_size;
+                        boolean waterside_test1 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX + size, level_accessor.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
+                        boolean waterside_test2 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX + size, level_accessor.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
+                        boolean waterside_test3 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX - size, level_accessor.getMaxBuildHeight(), center_posZ + size)), "forge:is_water");
+                        boolean waterside_test4 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX - size, level_accessor.getMaxBuildHeight(), center_posZ - size)), "forge:is_water");
 
-                        }
+                        if (on_land == true) {
 
-                    } else {
+                            if (waterside_test1 == false && waterside_test2 == false && waterside_test3 == false && waterside_test4 == false) {
 
-                        if (waterside_test1 == true && waterside_test2 == true && waterside_test3 == true && waterside_test4 == true) {
+                                return_logic = false;
 
-                            return_logic = false;
+                            }
+
+                        } else {
+
+                            if (waterside_test1 == true && waterside_test2 == true && waterside_test3 == true && waterside_test4 == true) {
+
+                                return_logic = false;
+
+                            }
 
                         }
 
