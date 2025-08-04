@@ -114,7 +114,7 @@ public class ConfigMain {
 					multiply_group_size = 1.0
 					multiply_waterside_chance = 1.0
 					multiply_dead_tree_chance = 1.0
-					| These number will be multiplied to all tree config in their types
+					| These number will be multiplied to all tree config in these types
 					| Default is [ 1.0 For All ]
 					
 					tree_location = true
