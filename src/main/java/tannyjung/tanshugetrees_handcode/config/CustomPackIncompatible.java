@@ -237,10 +237,11 @@ public class CustomPackIncompatible {
 
         boolean pass = true;
         String message = "";
-        String tree_settings = "";
         String name_pack = file.getParentFile().getParentFile().getName().replace("[INCOMPATIBLE] ", "");
         String name_theme = file.getParentFile().getName();
         String name_tree = file.getName().replace("[INCOMPATIBLE] ", "");
+        String storage_directory = "";
+        String tree_settings = "";
 
         // Read "World Gen" File
         {
@@ -249,9 +250,16 @@ public class CustomPackIncompatible {
 
                 {
 
-                    if (read_all.startsWith("tree_settings = ")) {
+                    if (read_all.startsWith("storage_directory = ")) {
+
+                        storage_directory = read_all.replace("storage_directory = ", "");
+
+                    } else if (read_all.startsWith("tree_settings = ")) {
 
                         tree_settings = read_all.replace("tree_settings = ", "");
+
+                    } else {
+
                         break;
 
                     }
@@ -262,31 +270,59 @@ public class CustomPackIncompatible {
 
         }
 
-        File file_settings = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
-        File file_settings_incompatible = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + "[INCOMPATIBLE] " + tree_settings);
+        // Test Storage
+        {
 
-        if (file_settings_incompatible.exists() == false) {
+            File file_storage_directory = new File(Handcode.directory_config + "/custom_packs/" + storage_directory);
 
-            if (file_settings.exists() == true && file_settings.isDirectory() == false) {
+            if (file_storage_directory.exists() == true) {
 
-                // Read "Tree Settings" File
-                {
+                if (file_storage_directory.listFiles() != null && file_storage_directory.listFiles().length == 0) {
 
-                    for (String read_all : FileManager.fileToStringArray(file_settings.getPath())) {
+                    pass = false;
+                    message = "Detected incompatible tree. Caused by empty storage directory. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
 
-                        {
+                }
 
-                            if (read_all.startsWith("Block ")) {
+            } else {
 
-                                String id = read_all.substring(read_all.indexOf(" = ") + 3).replace(" keep", "");
+                pass = false;
+                message = "Detected incompatible tree. Caused by storage directory not found. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
 
-                                if (id.equals("") == false) {
+            }
 
-                                    if (GameUtils.block.fromText(id).getBlock() == Blocks.AIR) {
+        }
 
-                                        pass = false;
-                                        message = "Detected incompatible tree. Caused by unknown block ID. [ " + name_pack + " > " + name_tree + " > " + id + " ]";
-                                        break;
+        // Test Tree Settings
+        {
+
+            File file_tree_settings = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
+            File file_tree_settings_incompatible = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + "[INCOMPATIBLE] " + tree_settings);
+
+            if (file_tree_settings_incompatible.exists() == false) {
+
+                if (file_tree_settings.exists() == true && file_tree_settings.isDirectory() == false) {
+
+                    // Read "Tree Settings" File
+                    {
+
+                        for (String read_all : FileManager.fileToStringArray(file_tree_settings.getPath())) {
+
+                            {
+
+                                if (read_all.startsWith("Block ")) {
+
+                                    String id = read_all.substring(read_all.indexOf(" = ") + 3).replace(" keep", "");
+
+                                    if (id.equals("") == false) {
+
+                                        if (GameUtils.block.fromText(id).getBlock() == Blocks.AIR) {
+
+                                            pass = false;
+                                            message = "Detected incompatible tree. Caused by unknown block ID. [ " + name_pack + " > " + name_tree + " > " + id + " ]";
+                                            break;
+
+                                        }
 
                                     }
 
@@ -298,12 +334,12 @@ public class CustomPackIncompatible {
 
                     }
 
+                } else {
+
+                    pass = false;
+                    message = "Detected incompatible tree. Caused by tree settings not found. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
+
                 }
-
-            } else {
-
-                pass = false;
-                message = "Detected incompatible tree. Caused by tree settings not found. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
 
             }
 
