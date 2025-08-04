@@ -314,22 +314,22 @@ public class TreeGenerator {
 
             if (type.equals("leaves") == false) {
 
+                // Length and Thickness
+                {
+
+                    double length = Mth.nextInt(RandomSource.create(), (int) GameUtils.nbt.entity.getNumber(entity, type + "_length_min"), (int) GameUtils.nbt.entity.getNumber(entity, type + "_length_max"));
+                    length = Math.ceil(length * summonReduction(entity, type, "length_reduce"));
+                    GameUtils.nbt.entity.setNumber(entity, type + "_length", length);
+                    GameUtils.nbt.entity.setNumber(entity, type + "_length_save", length);
+
+                    double thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_start") - GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end");
+                    thickness = thickness * summonReduction(entity, type, "thickness_reduce");
+                    thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end") + thickness;
+                    GameUtils.nbt.entity.setNumber(entity, type + "_thickness", thickness);
+
+                }
+
                 if (type_pre_next[1].equals("leaves") == false) {
-
-                    // Length and Thickness
-                    {
-
-                        double length = Mth.nextInt(RandomSource.create(), (int) GameUtils.nbt.entity.getNumber(entity, type + "_length_min"), (int) GameUtils.nbt.entity.getNumber(entity, type + "_length_max"));
-                        length = Math.ceil(length * summonReduction(entity, type, "length_reduce"));
-                        GameUtils.nbt.entity.setNumber(entity, type + "_length", length);
-                        GameUtils.nbt.entity.setNumber(entity, type + "_length_save", length);
-
-                        double thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_start") - GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end");
-                        thickness = thickness * summonReduction(entity, type, "thickness_reduce");
-                        thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end") + thickness;
-                        GameUtils.nbt.entity.setNumber(entity, type + "_thickness", thickness);
-
-                    }
 
                     // Next Part Settings
                     {
