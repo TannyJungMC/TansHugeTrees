@@ -12,11 +12,11 @@ import tannyjung.tanshugetrees_handcode.config.PackUpdate;
 public class Loop {
 
     private static int second = 0;
-    private static int living_tree_mechanics_tick = 0;
     private static boolean loop_tree_generator = false;
     private static boolean loop_tree_location = false;
     private static boolean loop_living_tree_mechanics_leaf_drop = false;
     private static boolean loop_living_tree_mechanics_leaf_litter_remover = false;
+    private static int living_tree_mechanics_tick = 0;
 
     public static void start (LevelAccessor level_accessor, ServerLevel level_server) {
 

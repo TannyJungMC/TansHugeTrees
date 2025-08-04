@@ -111,7 +111,7 @@ public class CustomPackIncompatible {
 
                     if (read_all.startsWith("data_structure_version = ")) {
 
-                        if (Double.parseDouble(read_all.replace("data_structure_version = ", "")) != Handcode.data_structure_version_pack) {
+                        if (Double.parseDouble(read_all.replace("data_structure_version = ", "")) != Handcode.data_structure_version) {
 
                             pass = false;
                             message = "Detected incompatible pack. Caused by unsupported mod version. [ " + pack_name + " ]";

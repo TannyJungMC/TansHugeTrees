@@ -11,7 +11,7 @@ import tannyjung.core.GameUtils;
 
 public class WorldGen extends Feature <NoneFeatureConfiguration> {
 
-    public WorldGen() {
+    public WorldGen () {
 
         super(NoneFeatureConfiguration.CODEC);
 

@@ -33,7 +33,7 @@ public class Handcode {
 
 	// ----------------------------------------------------------------------------------------------------
 
-	public static double data_structure_version_pack = 1.4;
+	public static double data_structure_version = 1.4;
 	public static String tanny_pack_version = "Alpha";
 
 	public static boolean version_1192 = false;
@@ -54,12 +54,14 @@ public class Handcode {
 
 		TanshugetreesMod.LOGGER.info("Loading mod registries and config");
 
-		// // Basic Registries
+		// Basic Registries
 		{
 
 			IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+
 			DeferredRegister<Feature<?>> REGISTRY = DeferredRegister.create(Registries.FEATURE, TanshugetreesMod.MODID);
 			REGISTRY.register("world_gen", WorldGen::new);
+
 			REGISTRY.register(bus);
 
 		}

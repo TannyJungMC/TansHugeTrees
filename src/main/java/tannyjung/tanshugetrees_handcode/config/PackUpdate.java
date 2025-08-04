@@ -148,12 +148,12 @@ public class PackUpdate {
 
         }
 
-		if (Handcode.data_structure_version_pack > data_structure_version_url) {
+		if (Handcode.data_structure_version > data_structure_version_url) {
 
 			return_logic = false;
 			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to be available.");
 
-		} else if (Handcode.data_structure_version_pack < data_structure_version_url) {
+		} else if (Handcode.data_structure_version < data_structure_version_url) {
 
 			return_logic = false;
 			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : You're currently using mod version that does not support to new version of the pack. Try update the mod and do it again.");
@@ -162,7 +162,7 @@ public class PackUpdate {
 
 		if (return_logic == false) {
 
-			TanshugetreesMod.LOGGER.info("Your mod data structure version is " + Handcode.data_structure_version_pack + " but the pack is " + data_structure_version_url);
+			TanshugetreesMod.LOGGER.info("Your mod data structure version is " + Handcode.data_structure_version + " but the pack is " + data_structure_version_url);
 
 		}
 
