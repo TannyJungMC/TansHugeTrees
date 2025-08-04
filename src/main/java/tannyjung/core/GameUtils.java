@@ -29,7 +29,10 @@ import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -133,7 +136,7 @@ public class GameUtils {
 
 			{
 
-				String biome_centerID = GameUtils.biome.toID(biome_center);
+				String biome_centerID = biome.toID(biome_center);
 
 				for (String split : config_value.split(" / ")) {
 
@@ -155,7 +158,7 @@ public class GameUtils {
 
 							} else {
 
-								if (GameUtils.biome.isTaggedAs(biome_center, split_get) == false) {
+								if (biome.isTaggedAs(biome_center, split_get) == false) {
 
 									return_logic = false;
 
@@ -219,7 +222,7 @@ public class GameUtils {
 
 							} else {
 
-								if (GameUtils.block.isTaggedAs(ground_block, split_get) == false) {
+								if (block.isTaggedAs(ground_block, split_get) == false) {
 
 									return_logic = false;
 
@@ -522,9 +525,35 @@ public class GameUtils {
 
 			try {
 
+				String id = data;
+
+				// Get Block ID
+				{
+
+					if (data.endsWith("}") == true) {
+
+						id = data.substring(0, data.indexOf("{"));
+
+					}
+
+					if (data.endsWith("]") == true) {
+
+						id = data.substring(0, data.indexOf("["));
+
+					}
+
+					block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(id)).defaultBlockState();
+
+				}
+
+				if (data.endsWith("}") == true) {
+
+					data = data.substring(0, data.indexOf("{"));
+
+				}
+
 				if (data.endsWith("]") == true) {
 
-					block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(data.substring(0, data.indexOf("[")))).defaultBlockState();
 					String[] properties = data.substring(data.indexOf("[") + 1, data.length() - 1).split(",");
 
 					for (String property_data : properties) {
@@ -547,10 +576,6 @@ public class GameUtils {
 						}
 
 					}
-
-				} else {
-
-					block = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(data)).defaultBlockState();
 
 				}
 
@@ -1006,27 +1031,27 @@ public class GameUtils {
 
 			}
 
-			public static CompoundTag textToCompoundTag (String id) {
+		}
 
-				CompoundTag return_NBT = new CompoundTag();
+		public static CompoundTag textToCompoundTag (String id) {
 
-				{
+			CompoundTag return_NBT = new CompoundTag();
 
-					try {
+			{
 
-						return_NBT = TagParser.parseTag(id.substring(id.indexOf("{")));
+				try {
 
-					} catch (Exception ignored) {
+					return_NBT = TagParser.parseTag(id.substring(id.indexOf("{")));
+
+				} catch (Exception ignored) {
 
 
-
-					}
 
 				}
 
-				return return_NBT;
-
 			}
+
+			return return_NBT;
 
 		}
 
