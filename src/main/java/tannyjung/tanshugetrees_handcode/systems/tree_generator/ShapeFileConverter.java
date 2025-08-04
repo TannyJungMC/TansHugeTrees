@@ -149,7 +149,7 @@ public class ShapeFileConverter {
             {
 
                 GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension positioned 0 " + posY + " 0 run " + GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", GameUtils.outside.getForgeDataFromGiveFile(file.getPath())));
-                String data_modify = "debug_mode:false,global_tree_generator_speed:false,tree_generator_speed_tick:" + 1 + ",tree_generator_speed_repeat:" + 0;
+                String data_modify = "debug_mode:false,tree_generator_speed_global:false,tree_generator_speed_tick:" + 1 + ",tree_generator_speed_repeat:" + 0;
                 GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension positioned 0 " + posY + " 0 run data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
 
             }
