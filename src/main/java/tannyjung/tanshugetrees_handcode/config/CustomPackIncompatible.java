@@ -17,21 +17,25 @@ public class CustomPackIncompatible {
 
     public static void scanMain (LevelAccessor level_accessor) {
 
+        boolean pass = true;
+
         for (File pack : new File(Handcode.directory_config + "/custom_packs").listFiles()) {
 
             if (pack.getName().equals(".organized") == false) {
 
+                pass = true;
+
                 if (testVersion(level_accessor, pack + "/version.txt") == false) {
 
-                    continue;
+                    pass = false;
+
+                } else if (testDependencies(level_accessor, pack + "/dependencies.txt") == false) {
+
+                    pass = false;
 
                 }
 
-                if (testDependencies(level_accessor, pack + "/dependencies.txt") == false) {
-
-                    continue;
-
-                }
+                rename(pack.getPath(), pass);
 
             }
 
@@ -142,7 +146,6 @@ public class CustomPackIncompatible {
 
         }
 
-        rename(file.getParentFile().getPath(), pass);
         return pass;
 
     }
@@ -154,11 +157,18 @@ public class CustomPackIncompatible {
         File file = new File(path);
         String name_pack = file.getParentFile().getName().replace("[INCOMPATIBLE] ", "");
 
+        System.out.println("-----------------");
+        System.out.println(file.toPath());
+
         if (file.exists() == true && file.isDirectory() == false) {
+
+            System.out.println(1);
 
             String get = "";
 
             for (String read_all : FileManager.fileToStringArray(file.getPath())) {
+
+                System.out.println(read_all);
 
                 {
 
@@ -198,6 +208,8 @@ public class CustomPackIncompatible {
 
                                     if (ModList.get().isLoaded(test) == false) {
 
+                                        System.out.println("Not Found");
+
                                         pass = false;
                                         message = "Detected incompatible pack. Caused by required mod not found. [ " + name_pack + " > " + test + " ]";
                                         break;
@@ -228,7 +240,8 @@ public class CustomPackIncompatible {
 
         }
 
-        rename(file.getParentFile().getPath(), pass);
+        System.out.println(pass);
+
         return pass;
 
     }
