@@ -867,7 +867,7 @@ public class TreeGenerator {
                                 // Change Build Center
                                 {
 
-                                    distance = Math.ceil(distance - sphere_zone_size);
+                                    distance = (distance - sphere_zone_size);
                                     GameUtils.nbt.entity.addNumber(entity, "build_centerX", distance * Math.cos(pitch) * Math.cos(yaw));
                                     GameUtils.nbt.entity.addNumber(entity, "build_centerY", distance * Math.sin(pitch));
                                     GameUtils.nbt.entity.addNumber(entity, "build_centerZ", distance * Math.cos(pitch) * Math.sin(yaw));
