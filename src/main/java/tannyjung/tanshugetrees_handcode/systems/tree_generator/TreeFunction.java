@@ -69,7 +69,7 @@ public class TreeFunction {
 											get = read_all.replace("block = ", "").split(" \\| ");
 											chance = Double.parseDouble(get[0]);
 											block = GameUtils.block.fromText(get[3]);
-											keep = get[4].equals("true");
+											keep = Boolean.parseBoolean(get[4]);
 
 										} catch (Exception ignored) {
 

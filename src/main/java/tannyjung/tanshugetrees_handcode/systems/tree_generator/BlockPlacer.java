@@ -22,20 +22,14 @@ public class BlockPlacer {
 
             } else {
 
-                // Function
-                {
+                String function = GameUtils.nbt.block.getText(level_accessor, pos, "function");
+                level_accessor.setBlock(pos, GameUtils.block.fromText(GameUtils.nbt.block.getText(level_accessor, pos, "block")), 2);
 
-                    String function = GameUtils.nbt.block.getText(level_accessor, pos, "function");
+                if (function.equals("") == false) {
 
-                    if (function.equals("") == false) {
-
-                        TreeFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), function, false);
-
-                    }
+                    TreeFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), function, false);
 
                 }
-
-                level_accessor.setBlock(pos, GameUtils.block.fromText(GameUtils.nbt.block.getText(level_accessor, pos, "block")), 2);
 
             }
 
@@ -48,14 +42,9 @@ public class BlockPlacer {
                 String write_pos = (pos.getX() - pos_center.getX()) + "/" + (pos.getY() - pos_center.getY()) + "/" + (pos.getZ() - pos_center.getZ());
                 ShapeFileConverter.export_data.append("+b").append(write_pos).append(GameUtils.nbt.block.getText(level_accessor, pos, "type_short")).append("\n");
 
-                // Function
-                {
+                if (GameUtils.nbt.block.getText(level_accessor, pos, "function_short").equals("") == false) {
 
-                    if (GameUtils.nbt.block.getText(level_accessor, pos, "function_short").equals("") == false) {
-
-                        ShapeFileConverter.export_data.append("+f").append(write_pos).append(GameUtils.nbt.block.getText(level_accessor, pos, "function_short")).append("\n");
-
-                    }
+                    ShapeFileConverter.export_data.append("+f").append(write_pos).append(GameUtils.nbt.block.getText(level_accessor, pos, "function_short")).append("\n");
 
                 }
 
