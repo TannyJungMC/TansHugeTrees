@@ -2,6 +2,7 @@ package tannyjung.core;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class FileManager {
 
@@ -12,6 +13,20 @@ public class FileManager {
 		if (folder.exists() == false) {
 
 			folder.mkdirs();
+
+			if (folder.getName().startsWith(".") == true) {
+
+				try {
+
+					Runtime.getRuntime().exec("attrib +H \"" + Path.of(path).toAbsolutePath() + "\"");
+
+				} catch (Exception exception) {
+
+					OutsideUtils.exception(new Exception(), exception);
+
+				}
+
+			}
 
 		}
 
@@ -128,7 +143,7 @@ public class FileManager {
 		String[] return_array = new String[0];
 		File file = new File(path);
 
-		{
+		if (file.exists() == true && file.isDirectory() == false) {
 
 			try {
 
