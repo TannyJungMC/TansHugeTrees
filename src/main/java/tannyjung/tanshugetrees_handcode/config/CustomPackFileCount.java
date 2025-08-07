@@ -47,7 +47,7 @@ public class CustomPackFileCount {
 
                     Files.walk(file.toPath()).forEach(source -> {
 
-                        if (source.toFile().isDirectory() == false && source.toString().contains("\\.organized\\") == false) {
+                        if (source.toFile().isDirectory() == false) {
 
                             file_size = file_size + source.toFile().length();
 
@@ -69,7 +69,7 @@ public class CustomPackFileCount {
 
     private static void countVariation () {
 
-        File file = new File(Handcode.directory_config + "/custom_packs/.organized/world_gen");
+        File file = new File(Handcode.directory_config + "/.dev/custom_packs_organized/world_gen");
 
         if (file.exists() == true) {
 
@@ -111,7 +111,7 @@ public class CustomPackFileCount {
 
                     Files.walk(file.toPath()).forEach(source -> {
 
-                        if (source.toFile().isDirectory() == false && source.toString().contains("\\.organized\\") == false && source.toString().contains("\\storage\\") == true) {
+                        if (source.toFile().isDirectory() == false && source.toString().contains("\\storage\\") == true) {
 
                             count_shape = count_shape + 1;
 

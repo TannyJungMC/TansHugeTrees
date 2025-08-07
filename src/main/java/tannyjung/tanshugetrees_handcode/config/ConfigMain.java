@@ -401,16 +401,14 @@ public class ConfigMain {
 
 	public static void repairAll (LevelAccessor level_accessor) {
 
-		FileManager.createFolder(Handcode.directory_config + "/custom_packs/.organized");
+		FileManager.createFolder(Handcode.directory_config + "/.dev");
+		FileManager.createFolder(Handcode.directory_config + "/.dev/custom_packs_organized");
+		FileManager.createFolder(Handcode.directory_config + "/.dev/shape_file_converter");
+
 		CustomPackOrganized.start(level_accessor);
 		ConfigMain.repair();
 		ConfigWorldGen.start();
-
-		if (Handcode.world_active == true) {
-
-			ConfigShapeFileConverter.repair();
-
-		}
+		ConfigShapeFileConverter.repair();
 
 		if (level_accessor instanceof ServerLevel level_server) {
 
