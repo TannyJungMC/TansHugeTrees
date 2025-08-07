@@ -101,7 +101,7 @@ public class TreeLocation {
                                 chunk_posX = (region_posX * 32) + scanX;
                                 chunk_posZ = (region_posZ * 32) + scanZ;
 
-                                if (level_accessor.hasChunk(chunk_posX, chunk_posZ) == false || (level_accessor.hasChunk(chunk_posX, chunk_posZ) == true && level_accessor.getChunk(chunk_posX, chunk_posZ).getStatus().isOrAfter(ChunkStatus.FULL)) == false) {
+                                if (level_accessor.getChunk(chunk_posX, chunk_posZ, ChunkStatus.FEATURES, false) == null) {
 
                                     getData(level_accessor, dimension, chunk_posX, chunk_posZ, config_world_gen);
 
@@ -1027,7 +1027,7 @@ public class TreeLocation {
 
                     for (int scanZ = from_chunkZ; scanZ <= to_chunkZ; scanZ++) {
 
-                        if (level_accessor.hasChunk(scanX, scanZ) == true && level_accessor.getChunk(scanX, scanZ).getStatus().isOrAfter(ChunkStatus.FEATURES) == true) {
+                        if (level_accessor.getChunk(scanX, scanZ, ChunkStatus.FEATURES, false) != null) {
 
                             return;
 
@@ -1066,8 +1066,6 @@ public class TreeLocation {
 
                         location = (scanX >> 5) + "," + (scanZ >> 5) + "/" + GameUtils.outside.quardtreeChunkToNode(scanX, scanZ);
                         cache_write_place.put(location, cache_write_place.getOrDefault(location, "") + data);
-
-                        // TanshugetreesMod.LOGGER.debug("Debugging : Write Place File -> " + scanX + " " + scanZ);
 
                     }
 

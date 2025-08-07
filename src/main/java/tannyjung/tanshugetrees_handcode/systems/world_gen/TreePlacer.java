@@ -40,8 +40,6 @@ public class TreePlacer {
 
             if (file.exists() == true) {
 
-                // TanshugetreesMod.LOGGER.debug("Debugging : Place -> " + chunk_pos.x + " " + chunk_pos.z);
-
                 String[] array_text = null;
                 String[] from_to_chunk_get = null;
                 int[] from_to_chunk = new int[4];
@@ -216,28 +214,24 @@ public class TreePlacer {
                 test:
                 {
 
-                    if (level_accessor.hasChunk(center_chunkX, center_chunkZ) == true) {
+                    // Structure Area
+                    {
 
-                        ChunkAccess chunk = level_accessor.getChunk(center_chunkX, center_chunkZ);
+                        ChunkAccess chunk = level_accessor.getChunk(center_chunkX, center_chunkZ, ChunkStatus.STRUCTURE_REFERENCES, false);
 
-                        if (chunk.getStatus().isOrAfter(ChunkStatus.STRUCTURE_REFERENCES) == true) {
+                        if (chunk != null) {
 
-                            // Structure Area
-                            {
+                            Structure[] structures = chunk.getAllReferences().keySet().toArray(new Structure[0]);
 
-                                Structure[] structures = chunk.getAllReferences().keySet().toArray(new Structure[0]);
+                            for (Structure structure : structures) {
 
-                                for (Structure structure : structures) {
+                                // structure.type().equals(StructureType.MINESHAFT) == false
+                                // structure.terrainAdaptation().equals(TerrainAdjustment.NONE) == true
 
-                                    // structure.type().equals(StructureType.MINESHAFT) == false
-                                    // structure.terrainAdaptation().equals(TerrainAdjustment.NONE) == true
+                                if (structure.step().equals(GenerationStep.Decoration.SURFACE_STRUCTURES) == true) {
 
-                                    if (structure.step().equals(GenerationStep.Decoration.SURFACE_STRUCTURES) == true) {
-
-                                        pass = false;
-                                        break test;
-
-                                    }
+                                    pass = false;
+                                    break test;
 
                                 }
 
@@ -245,7 +239,14 @@ public class TreePlacer {
 
                         }
 
-                        if (chunk.getStatus().isOrAfter(ChunkStatus.CARVERS) == true) {
+                    }
+
+                    // Ground Level
+                    {
+
+                        ChunkAccess chunk = level_accessor.getChunk(center_chunkX, center_chunkZ, ChunkStatus.SURFACE, false);
+
+                        if (chunk != null) {
 
                             // Get Y Level
                             {
