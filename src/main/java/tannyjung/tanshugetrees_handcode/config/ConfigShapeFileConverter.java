@@ -18,7 +18,7 @@ public class ConfigShapeFileConverter {
 					
 					----------------------------------------------------------------------------------------------------
 					
-					file_location = TannyJung-Main-Pack/folder/file.txt
+					file_location = #TannyJung-Main-Pack/folder/file.txt
 					posY = 300
 					
 					----------------------------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ public class ConfigShapeFileConverter {
 
 		}
 
-		FileManager.writeConfigTXT(Handcode.directory_world_generated + "/.shape_file_converter.txt", write.toString());
+		FileManager.writeConfigTXT(Handcode.directory_config + "/.dev/shape_file_converter/#shape_file_converter.txt", write.toString());
 
 	}
 
