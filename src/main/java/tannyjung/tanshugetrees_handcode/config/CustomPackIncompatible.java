@@ -102,12 +102,14 @@ public class CustomPackIncompatible {
 
     private static boolean testVersion (LevelAccessor level_accessor, String path) {
 
-        boolean pass = false;
+        boolean pass = true;
         String message = "";
         File file = new File(path);
         String pack_name = file.getParentFile().getName().replace("[INCOMPATIBLE] ", "");
 
         if (file.exists() == true && file.isDirectory() == false) {
+
+            double data_structure_version = 0.0;
 
             for (String read_all : FileManager.fileToStringArray(file.getPath())) {
 
@@ -115,21 +117,19 @@ public class CustomPackIncompatible {
 
                     if (read_all.startsWith("data_structure_version = ")) {
 
-                        if (Double.parseDouble(read_all.replace("data_structure_version = ", "")) == Handcode.data_structure_version) {
-
-                            pass = true;
-
-                        } else {
-
-                            message = "Detected incompatible pack. Caused by unsupported mod version. [ " + pack_name + " ]";
-
-                        }
-
+                        data_structure_version = Double.parseDouble(read_all.replace("data_structure_version = ", ""));
                         break;
 
                     }
 
                 }
+
+            }
+
+            if (data_structure_version != Handcode.data_structure_version) {
+
+                pass = false;
+                message = "Detected incompatible pack. Caused by unsupported mod version. [ " + pack_name + " ]";
 
             }
 
@@ -144,6 +144,10 @@ public class CustomPackIncompatible {
             if (level_accessor instanceof ServerLevel level_server) {
 
                 GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + message);
+
+            } else {
+
+                TanshugetreesMod.LOGGER.error(message);
 
             }
 
@@ -229,6 +233,10 @@ public class CustomPackIncompatible {
             if (level_accessor instanceof ServerLevel level_server) {
 
                 GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + message);
+
+            } else {
+
+                TanshugetreesMod.LOGGER.error(message);
 
             }
 
