@@ -733,7 +733,7 @@ public class TreeLocation {
         // Scan "World Gen" File
         {
 
-            File file = new File(Handcode.directory_config + "/custom_packs/.organized/world_gen/" + id + ".txt");
+            File file = new File(Handcode.directory_config + "/.dev/custom_packs_organized/world_gen/" + id + ".txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -857,7 +857,7 @@ public class TreeLocation {
             // Scan Tree Settings File
             {
 
-                File file = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
+                File file = new File(Handcode.directory_config + "/.dev/custom_packs_organized/presets/" + tree_settings);
 
                 if (file.exists() == true && file.isDirectory() == false) {
 

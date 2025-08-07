@@ -43,7 +43,6 @@ public class Handcode {
 	public static String directory_game = FMLPaths.GAMEDIR.get().toString();
 	public static String directory_config = directory_game + "/config/tanshugetrees";
 	public static String directory_world_data = directory_game + "/saves/tanshugetrees-error/directory_world_data";
-	public static String directory_world_generated = directory_game + "/saves/tanshugetrees-error/directory_world_generated";
 	public static String tanny_pack_version_name = ""; // Make this because version can swap to "WIP" by config
 
 	public static boolean world_active = false;
@@ -83,7 +82,6 @@ public class Handcode {
 
 		String world_path = String.valueOf(event.getServer().getWorldPath(new LevelResource(".")));
 		directory_world_data = world_path + "/data/tanshugetrees";
-		directory_world_generated = world_path + "/generated/tanshugetrees";
 
 		ConfigMain.repairAll(null);
 		ConfigMain.apply(null);
