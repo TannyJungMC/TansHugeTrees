@@ -107,7 +107,7 @@ public class ShapeFileConverter {
         // Get data
         {
 
-            File file = new File(Handcode.directory_world_generated + "/.shape_file_converter.txt");
+            File file = new File(Handcode.directory_config + "/.dev/shape_file_converter/#shape_file_converter.txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -228,7 +228,7 @@ public class ShapeFileConverter {
 
             }
 
-            FileManager.writeTXT(Handcode.directory_world_generated + "/" + name + "_settings.txt", write.toString(), false);
+            FileManager.writeTXT(Handcode.directory_config + "/.dev/shape_file_converter/" + name + "_settings.txt", write.toString(), false);
 
         }
 
@@ -264,7 +264,7 @@ public class ShapeFileConverter {
 
             }
 
-            FileManager.writeTXT(Handcode.directory_world_generated + "/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), write.toString(), false);
+            FileManager.writeTXT(Handcode.directory_config + "/.dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), write.toString(), false);
 
         }
 
@@ -350,13 +350,13 @@ public class ShapeFileConverter {
         TanshugetreesMod.queueServerWork(40, () -> {
 
             export_data.append("+f0/0/0fe");
-            FileManager.writeTXT(Handcode.directory_world_generated + "/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), export_data.toString(), true);
+            FileManager.writeTXT(Handcode.directory_config + "/.dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), export_data.toString(), true);
             export_data = new StringBuilder();
 
             // Update Generated File
             {
 
-                File file = new File(Handcode.directory_world_generated + "/" + GameUtils.nbt.entity.getText(entity, "export_file_name"));
+                File file = new File(Handcode.directory_config + "/.dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "export_file_name"));
                 StringBuilder data = new StringBuilder();
 
                 int min_sizeX = 0;

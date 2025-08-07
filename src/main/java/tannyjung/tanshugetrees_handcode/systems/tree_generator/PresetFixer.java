@@ -19,21 +19,17 @@ public class PresetFixer {
 
         for (File pack : new File(Handcode.directory_config + "/custom_packs").listFiles()) {
 
-            if (pack.getName().equals(".organized") == false) {
+            list_preset = new File(Handcode.directory_config + "/custom_packs/" + pack.getName() + "/presets").listFiles();
 
-                list_preset = new File(Handcode.directory_config + "/custom_packs/" + pack.getName() + "/presets").listFiles();
+            if (list_preset != null && list_preset.length > 0) {
 
-                if (list_preset != null && list_preset.length > 0) {
+                for (File species : list_preset) {
 
-                    for (File species : list_preset) {
+                    for (File preset : species.listFiles()) {
 
-                        for (File preset : species.listFiles()) {
+                        if (preset.isDirectory() == false && preset.getName().endsWith("_settings.txt") == false) {
 
-                            if (preset.isDirectory() == false && preset.getName().endsWith("_settings.txt") == false) {
-
-                                fix(preset);
-
-                            }
+                            fix(preset);
 
                         }
 
@@ -51,7 +47,7 @@ public class PresetFixer {
 
     private static void fix (File file) {
 
-        File template = new File(Handcode.directory_config + "/custom_packs/TannyJung-Main-Pack/.dev/preset_template.txt");
+        File template = new File(Handcode.directory_config + "/custom_packs/#TannyJung-Main-Pack/.dev/preset_template.txt");
 
         if (template.exists() == true && template.isDirectory() == false) {
 
