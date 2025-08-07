@@ -17,11 +17,22 @@ public class CustomPackIncompatible {
 
     public static void scanMain (LevelAccessor level_accessor) {
 
+        // Rename all packs back to normal
+        {
+
+            for (File pack : new File(Handcode.directory_config + "/custom_packs").listFiles()) {
+
+                rename(pack.getPath(), true);
+
+            }
+
+        }
+
         boolean pass = true;
 
         for (File pack : new File(Handcode.directory_config + "/custom_packs").listFiles()) {
 
-            if (pack.getName().equals(".organized") == false) {
+            if (pack.getName().startsWith("[INCOMPATIBLE] ") == false) {
 
                 pass = true;
 
@@ -48,7 +59,7 @@ public class CustomPackIncompatible {
         // Tree Settings
         {
 
-            File file = new File(Handcode.directory_config + "/custom_packs/.organized/world_gen");
+            File file = new File(Handcode.directory_config + "/.dev/custom_packs_organized/world_gen");
 
             if (file.exists() == true) {
 
@@ -90,7 +101,7 @@ public class CustomPackIncompatible {
 
         } else {
 
-            if (file.getName().startsWith("[INCOMPATIBLE]") == false) {
+            if (file.getName().startsWith("[INCOMPATIBLE] ") == false) {
 
                 file.renameTo(new File(file.getParentFile().toPath() + "/[INCOMPATIBLE] " + file.getName()));
 
@@ -102,10 +113,9 @@ public class CustomPackIncompatible {
 
     private static boolean testVersion (LevelAccessor level_accessor, String path) {
 
-        boolean pass = true;
-        String message = "";
+        String error = "";
         File file = new File(path);
-        String pack_name = file.getParentFile().getName().replace("[INCOMPATIBLE] ", "");
+        String pack_name = file.getParentFile().getName();
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -128,41 +138,41 @@ public class CustomPackIncompatible {
 
             if (data_structure_version != Handcode.data_structure_version) {
 
-                pass = false;
-                message = "Detected incompatible pack. Caused by unsupported mod version. [ " + pack_name + " ]";
+                error = "Detected incompatible pack. Caused by unsupported mod version. [ " + pack_name + " ]";
 
             }
 
         } else {
 
-            message = "Detected incompatible pack. Caused by no version file. [ " + pack_name + " ]";
+            error = "Detected incompatible pack. Caused by no version file. [ " + pack_name + " ]";
 
         }
 
-        if (message.equals("") == false) {
+        if (error.equals("") == false) {
 
             if (level_accessor instanceof ServerLevel level_server) {
 
-                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + message);
+                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + error);
 
             } else {
 
-                TanshugetreesMod.LOGGER.error(message);
+                TanshugetreesMod.LOGGER.error(error);
 
             }
 
+            return false;
+
         }
 
-        return pass;
+        return true;
 
     }
 
     private static boolean testDependencies (LevelAccessor level_accessor, String path) {
 
-        boolean pass = true;
-        String message = "";
+        String error = "";
         File file = new File(path);
-        String name_pack = file.getParentFile().getName().replace("[INCOMPATIBLE] ", "");
+        String name_pack = file.getParentFile().getName();
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -184,8 +194,7 @@ public class CustomPackIncompatible {
 
                                     if (new File(Handcode.directory_config + "/custom_packs/" + test).exists() == false) {
 
-                                        pass = false;
-                                        message = "Detected incompatible pack. Caused by required pack not found. [ " + name_pack + " > " + test + " ]";
+                                        error = "Detected incompatible pack. Caused by required pack not found. [ " + name_pack + " > " + test + " ]";
                                         break;
 
                                     }
@@ -208,8 +217,7 @@ public class CustomPackIncompatible {
 
                                     if (ModList.get().isLoaded(test) == false) {
 
-                                        pass = false;
-                                        message = "Detected incompatible pack. Caused by required mod not found. [ " + name_pack + " > " + test + " ]";
+                                        error = "Detected incompatible pack. Caused by required mod not found. [ " + name_pack + " > " + test + " ]";
                                         break;
 
                                     }
@@ -228,28 +236,29 @@ public class CustomPackIncompatible {
 
         }
 
-        if (message.equals("") == false) {
+        if (error.equals("") == false) {
 
             if (level_accessor instanceof ServerLevel level_server) {
 
-                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + message);
+                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + error);
 
             } else {
 
-                TanshugetreesMod.LOGGER.error(message);
+                TanshugetreesMod.LOGGER.error(error);
 
             }
 
+            return false;
+
         }
 
-        return pass;
+        return true;
 
     }
 
     private static void testTreeSettings (File file) {
 
-        boolean pass = true;
-        String message = "";
+        String error = "";
         String name_pack = file.getParentFile().getParentFile().getName().replace("[INCOMPATIBLE] ", "");
         String name_theme = file.getParentFile().getName();
         String name_tree = file.getName().replace("[INCOMPATIBLE] ", "");
@@ -292,15 +301,13 @@ public class CustomPackIncompatible {
 
                 if (file_storage_directory.listFiles() != null && file_storage_directory.listFiles().length == 0) {
 
-                    pass = false;
-                    message = "Detected incompatible tree. Caused by empty storage directory. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
+                    error = "Detected incompatible tree. Caused by empty storage directory. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
 
                 }
 
             } else {
 
-                pass = false;
-                message = "Detected incompatible tree. Caused by storage directory not found. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
+                error = "Detected incompatible tree. Caused by storage directory not found. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
 
             }
 
@@ -309,8 +316,8 @@ public class CustomPackIncompatible {
         // Test Tree Settings
         {
 
-            File file_tree_settings = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + tree_settings);
-            File file_tree_settings_incompatible = new File(Handcode.directory_config + "/custom_packs/.organized/presets/" + "[INCOMPATIBLE] " + tree_settings);
+            File file_tree_settings = new File(Handcode.directory_config + "/.dev/custom_packs_organized/presets/" + tree_settings);
+            File file_tree_settings_incompatible = new File(Handcode.directory_config + "/.dev/custom_packs_organized/presets/" + "[INCOMPATIBLE] " + tree_settings);
 
             if (file_tree_settings_incompatible.exists() == false) {
 
@@ -331,8 +338,7 @@ public class CustomPackIncompatible {
 
                                         if (GameUtils.block.fromText(id).getBlock() == Blocks.AIR) {
 
-                                            pass = false;
-                                            message = "Detected incompatible tree. Caused by unknown block ID. [ " + name_pack + " > " + name_tree + " > " + id + " ]";
+                                            error = "Detected incompatible tree. Caused by unknown block ID. [ " + name_pack + " > " + name_tree + " > " + id + " ]";
                                             break;
 
                                         }
@@ -349,8 +355,7 @@ public class CustomPackIncompatible {
 
                 } else {
 
-                    pass = false;
-                    message = "Detected incompatible tree. Caused by tree settings not found. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
+                    error = "Detected incompatible tree. Caused by tree settings not found. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
 
                 }
 
@@ -358,13 +363,13 @@ public class CustomPackIncompatible {
 
         }
 
-        if (message.equals("") == false) {
+        if (error.equals("") == false) {
 
-            TanshugetreesMod.LOGGER.error(message);
+            TanshugetreesMod.LOGGER.error(error);
 
         }
 
-        rename(file.getPath(), pass);
+        rename(file.getPath(), error.equals("") == true);
 
     }
 

@@ -25,23 +25,19 @@ public class CustomPackOrganized {
 
     public static void clearFolder () {
 
-        Path delete = Path.of(Handcode.directory_config + "/custom_packs/.organized");
+        Path delete = Path.of(Handcode.directory_config + "/.dev/custom_packs_organized");
 
         try {
 
             Files.walk(delete).sorted(Comparator.reverseOrder()).forEach(source -> {
 
-                if (source.toFile().getName().equals(".organized") == false) {
+                try {
 
-                    try {
+                    Files.delete(source);
 
-                        Files.delete(source);
+                } catch (Exception exception) {
 
-                    } catch (Exception exception) {
-
-                        OutsideUtils.exception(new Exception(), exception);
-
-                    }
+                    OutsideUtils.exception(new Exception(), exception);
 
                 }
 
@@ -57,30 +53,13 @@ public class CustomPackOrganized {
 
     private static void organizing () {
 
-        boolean copy = false;
+        File[] list_packs = new File(Handcode.directory_config + "/custom_packs").listFiles();
 
-        for (File pack : new File(Handcode.directory_config + "/custom_packs").listFiles()) {
+        if (list_packs != null) {
 
-            // Make it scan the main pack first
-            {
+            boolean copy = false;
 
-                if (pack.getName().equals(".organized") == true) {
-
-                    pack = new File(Handcode.directory_config + "/custom_packs/TannyJung-Main-Pack");
-
-                } else {
-
-                    if (pack.getName().equals("TannyJung-Main-Pack") == true) {
-
-                        continue;
-
-                    }
-
-                }
-
-            }
-
-            if (pack.exists() == true) {
+            for (File pack : list_packs) {
 
                 for (File category : pack.listFiles()) {
 
@@ -94,11 +73,15 @@ public class CustomPackOrganized {
                             copy = true;
 
                             // If incompatible, don't copy these folders.
-                            if (pack.getName().startsWith("[INCOMPATIBLE]") == true) {
+                            {
 
-                                if (category.getName().equals("leaf_litter") == true) {
+                                if (pack.getName().startsWith("[INCOMPATIBLE]") == true) {
 
-                                    copy = false;
+                                    if (category.getName().equals("leaf_litter") == true) {
+
+                                        copy = false;
+
+                                    }
 
                                 }
 
@@ -124,7 +107,7 @@ public class CustomPackOrganized {
                                         // Not in Storage Folder
                                         if (source.getParent().toFile().getName().equals("storage") == false) {
 
-                                            String path = Handcode.directory_config + "/custom_packs/.organized/" + category.getName();
+                                            String path = Handcode.directory_config + "/.dev/custom_packs_organized/" + category.getName();
 
                                             // With Pack Name
                                             if (category.getName().equals("leaf_litter") == false) {
@@ -174,7 +157,7 @@ public class CustomPackOrganized {
 
         for (File pack : new File(Handcode.directory_config + "/custom_packs/").listFiles()) {
 
-            if (pack.getName().equals(".organized") == false && pack.getName().startsWith("[INCOMPATIBLE]") == false) {
+            if (pack.getName().startsWith("[INCOMPATIBLE]") == false) {
 
                 File replace = new File(Handcode.directory_config + "/custom_packs/" + pack.getName() + "/replace");
 
@@ -241,7 +224,7 @@ public class CustomPackOrganized {
 
         }
 
-        File file = Path.of(Handcode.directory_config + "/custom_packs/.organized").resolve(Path.of(pack.toPath() + "/replace").relativize(source)).toFile();
+        File file = Path.of(Handcode.directory_config + "/.dev/custom_packs_organized").resolve(Path.of(pack.toPath() + "/replace").relativize(source)).toFile();
         String[] data_old = FileManager.fileToStringArray(file.getPath());
         String[] data = new String[0];
 

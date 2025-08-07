@@ -24,10 +24,10 @@ public class ConfigWorldGen {
 
     private static void createTemp () {
 
-        Path from = Paths.get(Handcode.directory_config + "/config_world_gen.txt");
-        Path to = Paths.get(Handcode.directory_config + "/config_world_gen_temp.txt");
+        Path from = Path.of(Handcode.directory_config + "/config_world_gen.txt)");
+        Path to = Path.of(Handcode.directory_config + "/config_world_gen_temp.txt");
 
-        if (from.toFile().exists() == true) {
+        if (from.toFile().exists() == true && from.toFile().isDirectory() == false) {
 
             try {
 
@@ -59,8 +59,8 @@ public class ConfigWorldGen {
 
     private static void create () {
 
-        File file_organized = new File(Handcode.directory_config + "/custom_packs/.organized/world_gen");
         File file = new File(Handcode.directory_config + "/config_world_gen.txt");
+        File file_organized = new File(Handcode.directory_config + "/.dev/custom_packs_organized/world_gen");
 
         // Re-Create The File
         {
@@ -100,40 +100,7 @@ public class ConfigWorldGen {
 
         }
 
-        if (file_organized.exists() == true) {
-
-            if (file_organized.listFiles() != null && file_organized.listFiles().length > 0) {
-
-                // Scanning The Packs
-                {
-
-                    try {
-
-                        Files.walk(file_organized.toPath()).forEach(source -> {
-
-                            if (source.toFile().isDirectory() == false) {
-
-                                String name_pack = source.getParent().getParent().toFile().getName();
-                                String name_theme = source.getParent().toFile().getName();
-                                String name_tree = source.toFile().getName().replace(".txt", "");
-
-                                write(source, name_pack + " > " + name_theme + " > " + name_tree);
-
-                            }
-
-                        });
-
-                    } catch (Exception exception) {
-
-                        OutsideUtils.exception(new Exception(), exception);
-
-                    }
-
-                }
-
-            }
-
-        } else {
+        if (file_organized.exists() == false) {
 
             // Not found any pack installed
             {
@@ -152,6 +119,31 @@ public class ConfigWorldGen {
                 }
 
                 FileManager.writeTXT(file.toPath().toString(), write.toString(), true);
+
+            }
+
+        } else {
+
+            // Scan Packs
+            {
+
+                try {
+
+                    Files.walk(file_organized.toPath()).forEach(source -> {
+
+                        if (source.toFile().isDirectory() == false) {
+
+                            write(source);
+
+                        }
+
+                    });
+
+                } catch (Exception exception) {
+
+                    OutsideUtils.exception(new Exception(), exception);
+
+                }
 
             }
 
@@ -174,47 +166,41 @@ public class ConfigWorldGen {
 
     }
 
-    private static void write (Path source, String name) {
+    private static void write (Path source) {
+
+        String name_pack = source.getParent().getParent().toFile().getName();
+        String name_theme = source.getParent().toFile().getName();
+        String name_tree = source.toFile().getName().replace(".txt", "");
+        String name = name_pack + " > " + name_theme + " > " + name_tree;
+        boolean incompatible = false;
+
+        if (name.contains("[INCOMPATIBLE] ") == true) {
+
+            name = name.replace("[INCOMPATIBLE] ", "");
+            incompatible = true;
+
+        }
 
         boolean replace = true;
-        String name_fix = name.replace("[INCOMPATIBLE] ", "");
 
-        // Test Old File
+        // Test is it locked
         {
 
-            File file = new File(Handcode.directory_config + "/config_world_gen_temp.txt");
-
-            if (file.exists() == true && file.isDirectory() == false) {
-
-                String read_all_fix = "";
+            for (String read_all : FileManager.fileToStringArray(Handcode.directory_config + "/config_world_gen_temp.txt")) {
 
                 {
 
-                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                    if (read_all.startsWith("[") == true && read_all.endsWith("] " + name) == true) {
 
-                        {
+                        if (read_all.replace("[INCOMPATIBLE] ", "").startsWith("[LOCK] ") == true) {
 
-                            if (read_all.startsWith("[") == true) {
-
-                                if (read_all.endsWith("] " + name_fix) == true) {
-
-                                    read_all_fix = read_all.replace("[INCOMPATIBLE] ", "");
-
-                                    if (read_all_fix.startsWith("[LOCK]") == true) {
-
-                                        replace = false;
-
-                                    }
-
-                                    break;
-
-                                }
-
-                            }
+                            replace = false;
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                        break;
+
+                    }
 
                 }
 
@@ -222,109 +208,91 @@ public class ConfigWorldGen {
 
         }
 
-        File file = new File(Handcode.directory_config + "/config_world_gen.txt");
+        StringBuilder write = new StringBuilder();
 
-        if (file.exists() == true && file.isDirectory() == false) {
+        // Write
+        {
 
+            // Name
             {
 
-                StringBuilder write = new StringBuilder();
+                write.append("----------------------------------------------------------------------------------------------------");
+                write.append("\n");
+
+                if (incompatible == true) {
+
+                    write.append("[INCOMPATIBLE] ");
+
+                }
+
+                if (replace == false) {
+
+                    write.append("[LOCK] ");
+
+                } else {
+
+                    write.append("[] ");
+
+                }
+
+                write.append(name);
+                write.append("\n");
+                write.append("----------------------------------------------------------------------------------------------------");
+                write.append("\n");
+
+            }
+
+            String option = "";
+
+            for (String read_all : FileManager.fileToStringArray(source.toString())) {
 
                 {
 
-                    write.append("----------------------------------------------------------------------------------------------------");
-                    write.append("\n");
+                    if (read_all.equals("") == false) {
 
-                    // Incompatible and Lock
-                    {
+                        if (read_all.startsWith("storage_directory = ") == false && read_all.startsWith("tree_settings = ") == false) {
 
-                        if (name.startsWith("[INCOMPATIBLE] ") == true || source.toFile().getName().startsWith("[INCOMPATIBLE] ") == true) {
+                            if (replace == true) {
 
-                            write.append("[INCOMPATIBLE] ");
+                                write.append(read_all);
 
-                        }
+                            } else {
 
-                        if (replace == false) {
+                                // Get Old Value
+                                {
 
-                            write.append("[LOCK] ");
+                                    File file_temp = new File(Handcode.directory_config + "/config_world_gen_temp.txt");
+                                    boolean thisID = false;
+                                    option = read_all.substring(0, read_all.indexOf(" = "));
 
-                        } else {
+                                    for (String read_all_temp : FileManager.fileToStringArray(file_temp.getPath())) {
 
-                            write.append("[] ");
+                                        {
 
-                        }
+                                            if (thisID == false) {
 
-                    }
+                                                if (read_all_temp.startsWith("[") == true) {
 
-                    write.append(name_fix);
-                    write.append("\n");
-                    write.append("----------------------------------------------------------------------------------------------------");
-                    write.append("\n");
+                                                    if (read_all_temp.endsWith(name) == true) {
 
-                    // Read and Write
-                    {
+                                                        thisID = true;
 
-                        String option = "";
+                                                    }
 
-                        try { BufferedReader buffered_reader = new BufferedReader(new FileReader(source.toFile())); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                                                }
 
-                            {
+                                            } else {
 
-                                if (read_all.equals("") == false) {
+                                                if (read_all_temp.startsWith(option) == true) {
 
-                                    if (read_all.startsWith("storage_directory = ") == false && read_all.startsWith("tree_settings = ") == false) {
+                                                    write.append(read_all_temp);
+                                                    break;
 
-                                        if (replace == true) {
+                                                } else if (read_all_temp.startsWith("[") == true) {
 
-                                            write.append(read_all);
-
-                                        } else {
-
-                                            // Get Old Value
-                                            {
-
-                                                File file_temp = new File(Handcode.directory_config + "/config_world_gen_temp.txt");
-                                                boolean thisID = false;
-                                                option = read_all.substring(0, read_all.indexOf(" = "));
-
-                                                {
-
-                                                    try { BufferedReader buffered_reader2 = new BufferedReader(new FileReader(file_temp)); String read_all2 = ""; while ((read_all2 = buffered_reader2.readLine()) != null) {
-
-                                                        {
-
-                                                            if (thisID == false) {
-
-                                                                if (read_all2.startsWith("[") == true) {
-
-                                                                    if (read_all2.endsWith(name_fix) == true) {
-
-                                                                        thisID = true;
-
-                                                                    }
-
-                                                                }
-
-                                                            } else {
-
-                                                                if (read_all2.startsWith(option) == true) {
-
-                                                                    write.append(read_all2);
-                                                                    break;
-
-                                                                } else if (read_all2.startsWith("[") == true) {
-
-                                                                    // If not found this option in temp file
-                                                                    write.append(read_all);
-                                                                    break;
-
-                                                                }
-
-                                                            }
-
-                                                        }
-
-                                                    } buffered_reader2.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                                                    // If not found this option in temp file
+                                                    write.append(read_all_temp);
+                                                    break;
 
                                                 }
 
@@ -332,25 +300,25 @@ public class ConfigWorldGen {
 
                                         }
 
-                                        write.append("\n");
-
                                     }
 
                                 }
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                            write.append("\n");
+
+                        }
 
                     }
 
                 }
 
-                FileManager.writeTXT(file.toPath().toString(), write.toString(), true);
-
             }
 
         }
+
+        FileManager.writeTXT(Handcode.directory_config + "/config_world_gen.txt", write.toString(), true);
 
     }
 
