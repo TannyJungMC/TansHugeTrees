@@ -102,7 +102,7 @@ public class CustomPackIncompatible {
 
     private static boolean testVersion (LevelAccessor level_accessor, String path) {
 
-        boolean pass = true;
+        boolean pass = false;
         String message = "";
         File file = new File(path);
         String pack_name = file.getParentFile().getName().replace("[INCOMPATIBLE] ", "");
@@ -115,13 +115,17 @@ public class CustomPackIncompatible {
 
                     if (read_all.startsWith("data_structure_version = ")) {
 
-                        if (Double.parseDouble(read_all.replace("data_structure_version = ", "")) != Handcode.data_structure_version) {
+                        if (Double.parseDouble(read_all.replace("data_structure_version = ", "")) == Handcode.data_structure_version) {
 
-                            pass = false;
+                            pass = true;
+
+                        } else {
+
                             message = "Detected incompatible pack. Caused by unsupported mod version. [ " + pack_name + " ]";
-                            break;
 
                         }
+
+                        break;
 
                     }
 
@@ -131,7 +135,6 @@ public class CustomPackIncompatible {
 
         } else {
 
-            pass = false;
             message = "Detected incompatible pack. Caused by no version file. [ " + pack_name + " ]";
 
         }
