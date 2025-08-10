@@ -3,6 +3,6 @@
   "biomes": {
     "type": "forge:any"
   },
-  "features": "tanshugetrees:world_gen",
+  "features": "tanshugetrees:world_gen_before_plants",
   "step": "underground_decoration"
 }

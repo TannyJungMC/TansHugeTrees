@@ -2,7 +2,6 @@ package tannyjung.tanshugetrees_handcode;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.LevelResource;
@@ -23,8 +22,8 @@ import tannyjung.tanshugetrees_handcode.config.PackCheckUpdate;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.Loop;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDetector;
-import tannyjung.tanshugetrees_handcode.systems.world_gen.DataFolderCleaner;
-import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGen;
+import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFull;
+import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenBeforePlants;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -33,7 +32,7 @@ public class Handcode {
 
 	// ----------------------------------------------------------------------------------------------------
 
-	public static double data_structure_version = 1.4;
+	public static double data_structure_version = 1.5;
 	public static String tanny_pack_version = "Alpha";
 
 	public static boolean version_1192 = false;
@@ -59,7 +58,7 @@ public class Handcode {
 			IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
 			DeferredRegister<Feature<?>> REGISTRY = DeferredRegister.create(Registries.FEATURE, TanshugetreesMod.MODID);
-			REGISTRY.register("world_gen", WorldGen::new);
+			REGISTRY.register("world_gen_before_plants", WorldGenBeforePlants::new);
 
 			REGISTRY.register(bus);
 
@@ -148,12 +147,7 @@ public class Handcode {
 
 		if (event.isNewChunk() == true) {
 
-			LevelAccessor level_accessor = event.getLevel();
-			ServerLevel level_server = (ServerLevel) level_accessor;
-			String dimension = GameUtils.misc.getCurrentDimensionID(level_server).replace(":", "-");
-			ChunkPos chunk_pos = event.getChunk().getPos();
-
-			DataFolderCleaner.start(dimension, chunk_pos);
+			WorldGenFull.start(event);
 
 		}
 

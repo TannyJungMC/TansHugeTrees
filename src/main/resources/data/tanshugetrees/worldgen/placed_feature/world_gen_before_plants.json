@@ -1,5 +1,5 @@
 {
-  "feature": "tanshugetrees:world_gen",
+  "feature": "tanshugetrees:world_gen_before_plants",
   "placement": [
     {
       "type": "minecraft:count",

@@ -137,8 +137,6 @@ public class ShapeFileConverter {
 
         }
 
-        int index = file_location.indexOf("/");
-        file_location = file_location.substring(0, index) + "/presets/" + file_location.substring(index + 1);
         File file = new File(Handcode.directory_config + "/custom_packs/" + file_location);
 
         if (file.exists() == true && file.isDirectory() == false) {

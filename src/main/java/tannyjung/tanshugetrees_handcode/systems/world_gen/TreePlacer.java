@@ -17,6 +17,7 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import tannyjung.core.FileManager;
 import tannyjung.core.OutsideUtils;
 import tannyjung.core.GameUtils;
+import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
@@ -84,6 +85,8 @@ public class TreePlacer {
                                 }
 
                                 if ((from_to_chunk[0] <= chunk_pos.x && chunk_pos.x <= from_to_chunk[2]) && (from_to_chunk[1] <= chunk_pos.z && chunk_pos.z <= from_to_chunk[3])) {
+
+                                    TanshugetreesMod.LOGGER.debug("Place " + chunk_pos.x + "/" + chunk_pos.z);
 
                                     // Get Tree Data
                                     {
@@ -288,13 +291,29 @@ public class TreePlacer {
 
                         }
 
-                        // Max Height Spawn
+                        // Out of Build Height
                         {
 
-                            if (center_posY + sizeY > level_accessor.getMaxBuildHeight() || center_posY > ConfigMain.max_height_spawn) {
+                            if (center_posY + sizeY > level_accessor.getMaxBuildHeight()) {
 
                                 pass = false;
                                 break test;
+
+                            }
+
+                        }
+
+                        // Max Height Spawn
+                        {
+
+                            if (ConfigMain.max_height_spawn != 0) {
+
+                                if (center_posY > ConfigMain.max_height_spawn) {
+
+                                    pass = false;
+                                    break test;
+
+                                }
 
                             }
 
@@ -624,7 +643,7 @@ public class TreePlacer {
 
                                     if (dead_tree_level >= 60) {
 
-                                        if (read_all.startsWith("block_count_trunk = ")) {
+                                        if (read_all.startsWith("block_count_trunk = ") == true) {
 
                                             {
 
@@ -654,7 +673,7 @@ public class TreePlacer {
 
                                         multiply = 1.0;
 
-                                        if (read_all.startsWith("block_count_bough = ")) {
+                                        if (read_all.startsWith("block_count_bough = ") == true) {
 
                                             {
 
@@ -668,7 +687,7 @@ public class TreePlacer {
 
                                             }
 
-                                        } else if (read_all.startsWith("block_count_branch = ")) {
+                                        } else if (read_all.startsWith("block_count_branch = ") == true) {
 
                                             {
 
@@ -688,7 +707,7 @@ public class TreePlacer {
 
                                             }
 
-                                        } else if (read_all.startsWith("block_count_limb = ")) {
+                                        } else if (read_all.startsWith("block_count_limb = ") == true) {
 
                                             {
 
@@ -708,7 +727,7 @@ public class TreePlacer {
 
                                             }
 
-                                        } else if (read_all.startsWith("block_count_twig = ")) {
+                                        } else if (read_all.startsWith("block_count_twig = ") == true) {
 
                                             {
 
@@ -728,7 +747,7 @@ public class TreePlacer {
 
                                             }
 
-                                        } else if (read_all.startsWith("block_count_sprig = ")) {
+                                        } else if (read_all.startsWith("block_count_sprig = ") == true) {
 
                                             {
 
@@ -1142,7 +1161,7 @@ public class TreePlacer {
 
                                         if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
 
-                                            String marker_data = "ForgeData:{file:\"" + storage_directory + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
+                                            String marker_data = "ForgeData:{file:\"" + location + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
                                             GameUtils.command.run(level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
 
                                         }

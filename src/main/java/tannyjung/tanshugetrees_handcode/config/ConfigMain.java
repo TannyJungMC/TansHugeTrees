@@ -24,17 +24,18 @@ public class ConfigMain {
 	public static double multiply_dead_tree_chance = 0.0;
 	public static boolean tree_location = false;
 	public static boolean world_gen_roots = false;
+	public static int max_height_spawn = 0;
+	public static double unviable_ecology_skip_chance = 0.0;
+	public static boolean pre_leaf_litter = false;
+	public static double pre_leaf_litter_chance = 0.0;
+	public static double pre_leaf_litter_chance_coniferous = 0.0;
+	public static boolean abscission_world_gen = false;
+
 	public static boolean surrounding_area_detection = false;
 	public static int surrounding_area_detection_size = 0;
 	public static boolean waterside_detection = false;
 	public static boolean surface_smoothness_detection = false;
 	public static int surface_smoothness_detection_height = 0;
-	public static boolean pre_leaf_litter = false;
-	public static double pre_leaf_litter_chance = 0.0;
-	public static double pre_leaf_litter_chance_coniferous = 0.0;
-	public static boolean abscission_world_gen = false;
-	public static int max_height_spawn = 0;
-	public static double unviable_ecology_skip_chance = 0.0;
 
 	public static boolean living_tree_mechanics = false;
 	public static int living_tree_mechanics_tick = 0;
@@ -90,15 +91,15 @@ public class ConfigMain {
 					----------------------------------------------------------------------------------------------------
 					
 					auto_check_update = true
-					| Check for the new update from GitHub every time the world starts
+					| Check for new update from GitHub every time the world starts
 					| Default is [ true ]
 					
 					auto_update = false
-					| Auto update the pack every time the world starts, if there's a new update from GitHub. To use this feature, the "auto_check_update" config must be enable.
+					| Auto update the pack every time the world starts, if there's new update from GitHub. To use this feature, the "auto_check_update" config must be enable.
 					| Default is [ false ]
 					
 					wip_version = false
-					| Use WIP version instead of release version. Not recommended for game play, as it might contains new trees that still work in progress, also might needed development version of the mod.
+					| Use development version of the pack, instead of release version. Not recommended for game play, as it's still in development, it might unstable. Sometimes it needed development version of the mod.
 					| Default is [ false ]
 					
 					----------------------------------------------------------------------------------------------------
@@ -106,7 +107,7 @@ public class ConfigMain {
 					----------------------------------------------------------------------------------------------------
 					
 					region_scan_chance = 1.0
-					| Set chance of chunk scan per region, for region pre-location system. One region contains 32x32 chunks, or 1,024 chunks. Lower this can reduce scan time, also lower the chance of all trees.
+					| Set chance of chunk scan per region, from region pre-location system. One region contains 32x32 chunks, or 1,024 chunks. Lower this can reduce scan time, also lower the chance of all trees.
 					| Default is [ 1.0 ]
 					
 					multiply_rarity = 1.0
@@ -118,57 +119,61 @@ public class ConfigMain {
 					| Default is [ 1.0 For All ]
 					
 					tree_location = true
-					| Store some tree data and for some custom features. Disable this can reduce number of entities, but some features will not work such as living tree mechanics.
+					| Enable marker entity for tree location to store some tree data and for some custom features. Disable this can reduce number of entities, but some features will not work, such as living tree mechanics.
 					| Default is [ true ]
 					
 					world_gen_roots = true
-					| Enable tree roots in world gen. Note that disable this feature will not affect to some trees, because roots is important part for them. Also not affect to taproot part.
+					| Enable tree roots when generate in world gen. Note that disable this will no affect to some trees, because roots is important part for them. Also will no affect to taproot part.
 					| Default is [ true ]
+					
+					max_height_spawn = 0
+					| Cancel the trees when their spawn center is above this Y level. As some world gen mods such as ReTerraForged, replacing mountain block and my trees can't detect those new block, make them spawn on blocks that not in the list. Set to 0 to disable this.
+					| Default is [ 0 ]
+					
+					unviable_ecology_skip_chance = 0.75
+					| Skip trees that generate in unviable ecosystems. For example, land trees that generate in water.
+					| Default is [ 0.75 ]
+					
+					pre_leaf_litter = true
+					pre_leaf_litter_chance = 0.1
+					pre_leaf_litter_chance_coniferous = 0.05
+					| Create leaf litter on the ground and water, while in world gen. Leaf litter config must be enable to allow this.
+					| Default is [ true ] [ 0.1 ] [ 0.05 ]
+					
+					abscission_world_gen = true
+					| ###
+					| Default is [ true ]
+					
+					----------------------------------------------------------------------------------------------------
+					World Generation : Surrounding Area Detection
+					----------------------------------------------------------------------------------------------------
 					
 					surrounding_area_detection = true
 					| ###
 					| Default is [ true ]
 					
 					surrounding_area_detection_size = 8
-					| Set size of the detectors, for all detectors at 8 directions.
+					| Set size of detectors, for all detectors at 8 directions.
 					| Default is [ 8 ]
 					
 					waterside_detection = true
-					| ###
+					| Enable waterside system for trees that use this feature. If disable this, all waterside trees will be skipped and not spawn anywhere.
 					| Default is [ true ]
 					
 					surface_smoothness_detection = true
-					| Control the trees to only spawn on flat areas. Surrounding area detection must be enable to use this feature.
+					| Force the trees to only spawn on flat areas. Note that this system only detects 8 points around that tree, so it's not 100% perfect. Surrounding area detection must be enable to use this feature.
 					| Default is [ true ]
 					
 					surface_smoothness_detection_height = 8
-					| Set height of surface smoothness detection. This value for each up and down. If the detector detects that the surface is rough than this height, it will cancel that tree.
+					| Set height of surface smoothness. This value for each up and down. If the detector detects that the surface is rough than this height, it will cancel that tree.
 					| Default is [ 8 ]
-					
-					pre_leaf_litter = true
-					pre_leaf_litter_chance = 0.1
-					pre_leaf_litter_chance_coniferous = 0.05
-					| Create leaf litter on ground and water while on world generation. Leaf litter config must be enable to allow this.
-					| Default is [ true ] [ 0.25 ] [ 0.1 ]
-					
-					abscission_world_gen = true
-					| ###
-					| Default is [ true ]
-					
-					max_height_spawn = 150
-					| Cancel the trees when their spawn center is above this Y level. As some world gen mods such as ReTerraForged, replacing mountain block and my trees can't detect those new block, make them spawn on blocks that not in the list. Set to 0 to disable this.
-					| Default is [ 150 ]
-					
-					unviable_ecology_skip_chance = 0.75
-					| Skip trees that generate in unviable ecosystems. For example, land trees that generate in water.
-					| Default is [ 0.75 ]
 					
 					----------------------------------------------------------------------------------------------------
 					Living Tree Mechanics
 					----------------------------------------------------------------------------------------------------
 					
 					living_tree_mechanics = true
-					| Enable some special features such as leaf drop and regrowth, leaves litter, drop leaves if their twig is missing, and abscission.
+					| Enable some custom systems to make the trees from this mod feel more alive. Such as leaf drop and regrowth, leaf decay, leaf litter, and abscission.
 					| Default is [ true ]
 					
 					living_tree_mechanics_tick = 5
@@ -176,15 +181,15 @@ public class ConfigMain {
 					| Default is [ 5 ]
 					
 					living_tree_mechanics_process_limit = 100
-					| How many process for trees to run living tree mechanics system per time. Set to 0 for one time process.
+					| How many process for trees to run this system per time. Set to 0 for one time process.
 					| Default is [ 100 ]
 					
 					living_tree_mechanics_simulation = 100
-					| Simulate fake tree to slowdown tree process. For example, when I set tree speed for 100 trees. But it's only 1 tree in the area, it will drop and regrow leaves very fast because that's the speed for 100 trees. Set this config will simulate fake tree locations and make that 1 tree slowdown it process like it's 99 trees around it.
+					| Simulate fake trees to slowdown the process. For example, when I set tree speed for 100 trees. But there's only 1 tree in the area, it will drop and regrow leaves very fast because that's the speed for 100 trees. Set this config will simulate fake trees and make that 1 tree slowdown it process like there's 99 trees around it.
 					| Default is [ 100 ]
 					
 					leaf_litter = true
-					| Create leaves block on the ground and on water. Disable leaf drop animation to make this instantly create leaves litter instead of create when leaf drop animation touch the ground.
+					| Create leaf litter on the ground and water
 					| Default is [ true ]
 					
 					leaf_litter_classic = true
@@ -196,15 +201,15 @@ public class ConfigMain {
 					| Default is [ false ]
 					
 					leaf_litter_remover_chance = 0.001
-					| Chance of leaves block on ground to disappear per process
+					| Chance of leaf litter on the ground to disappear per process
 					| Default is [ 0.001 ]
 					
 					leaf_litter_remover_count_limit = 100
-					| Count limit of the leaves litter remover
+					| Count limit of the leaf litter remover
 					| Default is [ 100 ]
 					
 					leaf_drop_animation_chance = 1.0
-					| Chance of animation that will appear at leaf drop block on the trees. Other than this chance will be use fast drop without animation.
+					| Chance of animation that will appear on the trees. When this leaf animation touch the ground or water, it will create leaf litter there. Other than this chance will be use instant drop without animation.
 					| Default is [ 1.0 ]
 					
 					leaf_drop_animation_count_limit = 500
@@ -212,16 +217,16 @@ public class ConfigMain {
 					| Default is [ 500 ]
 					
 					leaf_light_level_detection = 7
-					| Minimum light level that tree leaves can survive, leaves will drop themselves if light level is under this value. Set to 15 for only full bright level. Set to 0 for no light level affect.
+					| Minimum light level of leaves can survive. Leaves will drop themselves if light level is under this value. Set to 15 for only full bright level. Set to 0 for no light level affect.
 					| Default is [ 7 ]
 					
 					leaf_light_level_detection_drop_chance = 0.1
-					| Chance of leaves to drop when light level is lower than config
+					| Chance of leaves to drop themselves when light level is under the config
 					| Default is [ 0.1 ]
 					
 					deciduous_leaves_list = minecraft:oak_leaves / minecraft:birch_leaves
 					coniferous_leaves_list = minecraft:spruce_leaves
-					| List of deciduous and coniferous leaves blocks. Deciduous is oak trees, and similar. They will drop their leaves before winter, but note that they won't do in tropical biomes. Coniferous is pine trees. They will drop their leaves only in summer, and almost rare.
+					| List of deciduous and coniferous leaves blocks. Deciduous is oak trees and similar. They will drop their leaves before winter, but note that they will not do that in tropical biomes. Coniferous is pine trees. They will drop their leaves only in summer and almost very rare.
 					| Default is [ minecraft:oak_leaves / minecraft:birch_leaves ] [ minecraft:spruce_leaves ]
 					
 					----------------------------------------------------------------------------------------------------
@@ -229,7 +234,7 @@ public class ConfigMain {
 					----------------------------------------------------------------------------------------------------
 					
 					serene_seasons_compatibility = true
-					| Sync the mod seasons with Serene Seasons mod. Using area at world spawn to detect current season.
+					| Sync the mod seasons to the same from Serene Seasons mod. Using area at world spawn to detect current season.
 					| Default is [ true ]
 					
 					leaf_drop_chance_spring = 0.0
@@ -240,7 +245,7 @@ public class ConfigMain {
 					leaf_regrowth_chance_summer = 0.1
 					leaf_regrowth_chance_autumn = 0.0
 					leaf_regrowth_chance_winter = 0.0
-					| Chance of deciduous leaves to drop and regrow based on seasons. But note that it will only use summer value when in tropical biomes. For general leaves that not marked as deciduous, will use summer value.
+					| Chance of deciduous leaves to drop and regrow based on seasons. But note that it will only use summer value when in tropical biomes, and for other leaves that not marked as deciduous and coniferous.
 					| Default is [ 0.0 ] [ 0.05 ] [ 0.1 ] [ 0.1 ] [ 0.05 ] [ 0.1 ] [ 0.0 ] [ 0.0 ]
 					
 					leaf_drop_chance_coniferous = 0.001
@@ -253,19 +258,19 @@ public class ConfigMain {
 					----------------------------------------------------------------------------------------------------
 					
 					tree_generator_speed_global = true
-					| When true, it will change generator speed of all trees from saplings to the same.
+					| When true, it will same speed for all generators.
 					| Default is [ true ]
 					
 					tree_generator_speed_tick = 1
-					| How fast of generator speed in tick. Increase this will make it slower. Set to 0 for temporary pause all trees.
+					| How fast of generators in tick. Increase this will make it slower. Set to 0 for temporary pause all generators.
 					| Default is [ 1 ]
 					
 					tree_generator_speed_repeat = 1000
-					| This make generator repeats it process in one time of it speed. Increase this will make it generate faster but also cause lag. Set to 0 for one time generation that can freeze the game.
+					| How many processes the generators run in a time. Increase this will make them generate faster but also can cause lag. Set to 0 for one time generation that can freeze the game.
 					| Default is [ 1000 ]
 					
 					tree_generator_count_limit = 1
-					| How many trees will generate in the same time. Set to 0 for no limit.
+					| How many generators will generate in the same time. Set to 0 for no limit.
 					| Default is [ 1 ]
 					
 					----------------------------------------------------------------------------------------------------
@@ -273,7 +278,7 @@ public class ConfigMain {
 					----------------------------------------------------------------------------------------------------
 					
 					developer_mode = false
-					| Enable some features for debugging
+					| Enable some features for debugging. Such as region pre-location info in-game, to see what tree slowdown the pre-location. Tracking the trees to see what tree running the living tree mechanics.
 					| Default is [ false ]
 					
 					----------------------------------------------------------------------------------------------------
@@ -329,17 +334,18 @@ public class ConfigMain {
 		multiply_dead_tree_chance = Double.parseDouble(data.get("multiply_dead_tree_chance"));
 		tree_location = Boolean.parseBoolean(data.get("tree_location"));
 		world_gen_roots = Boolean.parseBoolean(data.get("world_gen_roots"));
+		max_height_spawn = Integer.parseInt(data.get("max_height_spawn"));
+		unviable_ecology_skip_chance = Double.parseDouble(data.get("unviable_ecology_skip_chance"));
+		pre_leaf_litter = Boolean.parseBoolean(data.get("pre_leaf_litter"));
+		pre_leaf_litter_chance = Double.parseDouble(data.get("pre_leaf_litter_chance"));
+		pre_leaf_litter_chance_coniferous = Double.parseDouble(data.get("pre_leaf_litter_chance_coniferous"));
+		abscission_world_gen = Boolean.parseBoolean(data.get("abscission_world_gen"));
+
 		surrounding_area_detection = Boolean.parseBoolean(data.get("surrounding_area_detection"));
 		surrounding_area_detection_size = Integer.parseInt(data.get("surrounding_area_detection_size"));
 		waterside_detection = Boolean.parseBoolean(data.get("waterside_detection"));
 		surface_smoothness_detection = Boolean.parseBoolean(data.get("surface_smoothness_detection"));
 		surface_smoothness_detection_height = Integer.parseInt(data.get("surface_smoothness_detection_height"));
-		pre_leaf_litter = Boolean.parseBoolean(data.get("pre_leaf_litter"));
-		pre_leaf_litter_chance = Double.parseDouble(data.get("pre_leaf_litter_chance"));
-		pre_leaf_litter_chance_coniferous = Double.parseDouble(data.get("pre_leaf_litter_chance_coniferous"));
-		abscission_world_gen = Boolean.parseBoolean(data.get("abscission_world_gen"));
-		max_height_spawn = Integer.parseInt(data.get("max_height_spawn"));
-		unviable_ecology_skip_chance = Double.parseDouble(data.get("unviable_ecology_skip_chance"));
 
 		living_tree_mechanics = Boolean.parseBoolean(data.get("living_tree_mechanics"));
 		living_tree_mechanics_tick = Integer.parseInt(data.get("living_tree_mechanics_tick"));
