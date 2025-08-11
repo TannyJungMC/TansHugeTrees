@@ -795,7 +795,7 @@ public class TreePlacer {
             boolean can_run_function = false;
             BlockState block = Blocks.AIR.defaultBlockState();
             BlockPos pos = null;
-            double pre_leaf_litter_chance = 0.0;
+            double leaf_litter_world_gen_chance = 0.0;
             int height_motion_block = 0;
 
             // Read File
@@ -1054,7 +1054,7 @@ public class TreePlacer {
                                                     // Pre Leaves Drop
                                                     {
 
-                                                        if (ConfigMain.leaf_litter == true && ConfigMain.pre_leaf_litter == true) {
+                                                        if (ConfigMain.leaf_litter == true && ConfigMain.leaf_litter_world_gen == true) {
 
                                                             if (can_leaves_drop == true) {
 
@@ -1063,17 +1063,17 @@ public class TreePlacer {
 
                                                                     if ((get_short.endsWith("1") == true && leaves_type[0] == 2) || (get_short.endsWith("2") == true && leaves_type[1] == 2)) {
 
-                                                                        pre_leaf_litter_chance = ConfigMain.pre_leaf_litter_chance_coniferous;
+                                                                        leaf_litter_world_gen_chance = ConfigMain.leaf_litter_world_gen_chance_coniferous;
 
                                                                     } else {
 
-                                                                        pre_leaf_litter_chance = ConfigMain.pre_leaf_litter_chance;
+                                                                        leaf_litter_world_gen_chance = ConfigMain.leaf_litter_world_gen_chance;
 
                                                                     }
 
                                                                 }
 
-                                                                if (Math.random() < pre_leaf_litter_chance) {
+                                                                if (Math.random() < leaf_litter_world_gen_chance) {
 
                                                                     height_motion_block = level_accessor.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, testX, testZ);
 
