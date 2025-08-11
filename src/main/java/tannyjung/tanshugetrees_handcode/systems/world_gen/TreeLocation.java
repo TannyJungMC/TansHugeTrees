@@ -1052,10 +1052,10 @@ public class TreeLocation {
 
                 String data = from_chunkX + "/" + from_chunkZ + "/" + to_chunkX + "/" + to_chunkZ + "|" + id + "|" + chosen.getName() + "|" + center_posX + "/" + center_posZ + "|" + rotation + "/" + mirrored + "|" + other_data + "\n";
                 int size = 32 >> 2;
-                int from_chunkX_test = (int) (Math.floor((double) from_chunkX / (double) size) * size);
-                int from_chunkZ_test = (int) (Math.floor((double) from_chunkZ / (double) size) * size);
-                int to_chunkX_test = (int) (Math.floor((double) to_chunkX / (double) size) * size);
-                int to_chunkZ_test = (int) (Math.floor((double) to_chunkZ / (double) size) * size);
+                int from_chunkX_test = Math.floorDiv(from_chunkX, size) * size;
+                int from_chunkZ_test = Math.floorDiv(from_chunkZ, size) * size;
+                int to_chunkX_test = Math.floorDiv(to_chunkX, size) * size;
+                int to_chunkZ_test = Math.floorDiv(to_chunkZ, size) * size;
                 String location = "";
 
                 // from_chunkX_test = from_chunkX_test - 1;
