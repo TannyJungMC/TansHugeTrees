@@ -1013,10 +1013,10 @@ public class TreeLocation {
 
             int from_chunkX = center_posX - center_sizeX;
             int from_chunkZ = center_posZ - center_sizeZ;
-            int to_chunkX = (from_chunkX + sizeX) >> 4;
-            int to_chunkZ = (from_chunkZ + sizeZ) >> 4;
-            from_chunkX = from_chunkX >> 4;
-            from_chunkZ = from_chunkZ >> 4;
+            int to_chunkX = Math.floorDiv(from_chunkX + sizeX, 16);
+            int to_chunkZ = Math.floorDiv(from_chunkZ + sizeZ, 16);
+            from_chunkX = Math.floorDiv(from_chunkX, 16);
+            from_chunkZ = Math.floorDiv(from_chunkZ, 16);
 
             // Test Exist Chunk
             {
@@ -1052,11 +1052,16 @@ public class TreeLocation {
 
                 String data = from_chunkX + "/" + from_chunkZ + "/" + to_chunkX + "/" + to_chunkZ + "|" + id + "|" + chosen.getName() + "|" + center_posX + "/" + center_posZ + "|" + rotation + "/" + mirrored + "|" + other_data + "\n";
                 int size = 32 >> 2;
-                int from_chunkX_test = Math.floorDiv(from_chunkX, size) * size;
-                int from_chunkZ_test = Math.floorDiv(from_chunkZ, size) * size;
-                int to_chunkX_test = Math.floorDiv(to_chunkX, size) * size;
-                int to_chunkZ_test = Math.floorDiv(to_chunkZ, size) * size;
+                int from_chunkX_test = (int) (Math.floor((double) from_chunkX / (double) size) * size);
+                int from_chunkZ_test = (int) (Math.floor((double) from_chunkZ / (double) size) * size);
+                int to_chunkX_test = (int) (Math.floor((double) to_chunkX / (double) size) * size);
+                int to_chunkZ_test = (int) (Math.floor((double) to_chunkZ / (double) size) * size);
                 String location = "";
+
+                // from_chunkX_test = from_chunkX_test - 1;
+                // from_chunkZ_test = from_chunkZ_test - 1;
+                // to_chunkX_test = to_chunkX_test + 1;
+                // to_chunkZ_test = to_chunkZ_test + 1;
 
                 for (int scanX = from_chunkX_test; scanX <= to_chunkX_test; scanX = scanX + size) {
 
