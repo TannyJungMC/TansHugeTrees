@@ -116,11 +116,7 @@ public class Loop {
 
                             if (Math.random() < (double) GameUtils.score.get(level_server, "TANSHUGETREES", "tree_location") / (double) ConfigMain.living_tree_mechanics_simulation) {
 
-                                if (GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_location]") == true) {
-
-                                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_location,limit=1,sort=random] at @s run TANSHUGETREES dev living_tree_mechanics main");
-
-                                }
+                                GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_location,limit=1,sort=random] at @s run TANSHUGETREES dev living_tree_mechanics main");
 
                             }
 
@@ -161,25 +157,6 @@ public class Loop {
 
         }
 
-        // Tree Function
-        {
-
-            if (GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk]") == true) {
-
-                if (Handcode.version_1192 == false) {
-
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk] at @s if loaded ~ ~ ~ run TANSHUGETREES dev tree_function_in_loaded_chunk");
-
-                } else {
-
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk] at @s run TANSHUGETREES dev tree_function_in_loaded_chunk");
-
-                }
-
-            }
-
-        }
-
         loop_tree_generator = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_generator]");
         loop_tree_location = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_location]");
         loop_living_tree_mechanics_leaf_drop = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_drop]");
@@ -191,17 +168,7 @@ public class Loop {
             {
 
                 GameUtils.score.set(level_server, "TANSHUGETREES", "tree_location", 0);
-
-                if (Handcode.version_1192 == false) {
-
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] if loaded ~ ~ ~ run scoreboard players add tree_location TANSHUGETREES 1");
-
-                } else {
-
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] run scoreboard players add tree_location TANSHUGETREES 1");
-
-
-                }
+                GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] run scoreboard players add tree_location TANSHUGETREES 1");
 
             }
 
@@ -248,6 +215,25 @@ public class Loop {
 
 
                     }
+
+                }
+
+            }
+
+        }
+
+        // Tree Function
+        {
+
+            if (GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk]") == true) {
+
+                if (Handcode.version_1192 == false) {
+
+                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk] at @s if loaded ~ ~ ~ run TANSHUGETREES dev tree_function_in_loaded_chunk");
+
+                } else {
+
+                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk] at @s run TANSHUGETREES dev tree_function_in_loaded_chunk");
 
                 }
 

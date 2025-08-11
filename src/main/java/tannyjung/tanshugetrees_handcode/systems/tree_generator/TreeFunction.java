@@ -27,7 +27,7 @@ public class TreeFunction {
 
 			WorldGenLevel world_gen = (WorldGenLevel) level_accessor;
 			BlockPos pos = null;
-			boolean chunk_loaded = GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~");
+			boolean chunk_loaded = Handcode.version_1192 == true || GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~");
 			boolean function_in_loaded_chunk = false;
 
 			String[] get = new String[0];

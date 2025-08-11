@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.core.GameUtils;
+import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class LivingTreeMechanicsLeafLitterRemover {
 
@@ -20,7 +21,7 @@ public class LivingTreeMechanicsLeafLitterRemover {
         // If Area Loaded
         {
 
-            if (GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
+            if (Handcode.version_1192 == false && GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
 
                 return;
 

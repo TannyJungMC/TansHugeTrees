@@ -258,11 +258,11 @@ public class ConfigMain {
 					----------------------------------------------------------------------------------------------------
 					
 					tree_generator_speed_global = true
-					| When true, it will same speed for all generators.
+					| When true, it will use same speed for all generators.
 					| Default is [ true ]
 					
 					tree_generator_speed_tick = 1
-					| How fast of generators in tick. Increase this will make it slower. Set to 0 for temporary pause all generators.
+					| How fast of generators in tick. Increase this will make them slower. Set to 0 for temporary pause all generators.
 					| Default is [ 1 ]
 					
 					tree_generator_speed_repeat = 1000
