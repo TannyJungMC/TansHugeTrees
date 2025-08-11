@@ -203,10 +203,14 @@ public class LivingTreeMechanics {
 							// Out of Process Limit
 							{
 
-								if (GameUtils.nbt.entity.getNumber(entity, "process_save") + ConfigMain.living_tree_mechanics_process_limit <= process) {
+								if (ConfigMain.living_tree_mechanics_process_limit > 0) {
 
-									GameUtils.nbt.entity.setNumber(entity, "process_save", process);
-									return;
+									if (GameUtils.nbt.entity.getNumber(entity, "process_save") + ConfigMain.living_tree_mechanics_process_limit <= process) {
+
+										GameUtils.nbt.entity.setNumber(entity, "process_save", process);
+										return;
+
+									}
 
 								}
 
