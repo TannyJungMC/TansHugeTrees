@@ -28,17 +28,6 @@ public class LivingTreeMechanics {
 		LevelAccessor level_accessor = entity.level();
 		ServerLevel level_server = (ServerLevel) entity.level();
 
-		// If Area Loaded
-		{
-
-			if (GameUtils.command.result(level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), "execute if loaded ~ ~ ~") == false) {
-
-				return;
-
-			}
-
-		}
-
 		if (ConfigMain.developer_mode == true) {
 
 			GameUtils.command.runEntity(entity, "particle flash ~ ~ ~ 0 0 0 0 1 force");
@@ -150,11 +139,11 @@ public class LivingTreeMechanics {
 			// Biome Type Test
 			{
 
-				if (GameUtils.biome.isTaggedAs(level_accessor.getBiome(center_pos), "forge:is_snowy")) {
+				if (GameUtils.biome.isTaggedAs(level_accessor.getBiome(center_pos), "forge:is_snowy") == true) {
 
 					biome_type = 1;
 
-				} else if (GameUtils.biome.isTaggedAs(level_accessor.getBiome(center_pos), "tanshugetrees:tropical_biomes")) {
+				} else if (GameUtils.biome.isTaggedAs(level_accessor.getBiome(center_pos), "tanshugetrees:tropical_biomes") == true) {
 
 					biome_type = 2;
 
@@ -179,6 +168,8 @@ public class LivingTreeMechanics {
 				String pre_block_data = "";
 				BlockPos pos = new BlockPos(0, 0, 0);
 				BlockState block = Blocks.AIR.defaultBlockState();
+
+				boolean have_center_block = level_accessor.getBlockState(center_pos).isAir() == false;
 
 				for (String read_all : Cache.tree_shape(GameUtils.nbt.entity.getText(entity, "file"))) {
 
@@ -234,7 +225,7 @@ public class LivingTreeMechanics {
 									posY = entity.getBlockY() + get[1];
 									posZ = entity.getBlockZ() + get[2];
 
-									if (GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
+									if (Handcode.version_1192 == false && GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
 
 										return;
 
@@ -255,7 +246,7 @@ public class LivingTreeMechanics {
 									posY = entity.getBlockY() + get[1];
 									posZ = entity.getBlockZ() + get[2];
 
-									if (GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
+									if (Handcode.version_1192 == false && GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
 
 										return;
 
@@ -270,7 +261,7 @@ public class LivingTreeMechanics {
 
 									if (can_leaves_drop == true || can_leaves_regrow == true) {
 
-										run(level_accessor, level_server, entity, pos, map_block, block, leaves_type[Integer.parseInt(id.substring(2)) - 1], biome_type, current_season, can_leaves_drop, can_leaves_regrow);
+										run(level_accessor, level_server, entity, pos, map_block, block, leaves_type[Integer.parseInt(id.substring(2)) - 1], biome_type, current_season, have_center_block, can_leaves_drop, can_leaves_regrow);
 
 									}
 
@@ -307,28 +298,23 @@ public class LivingTreeMechanics {
 			// At the end of the file
 			{
 
-				if (GameUtils.nbt.entity.getLogic(entity, "dead_tree") == true) {
-
-					GameUtils.command.runEntity(entity, "kill @s");
-
-				} else {
+				if (GameUtils.nbt.entity.getLogic(entity, "dead_tree") == false) {
 
 					GameUtils.nbt.entity.setNumber(entity, "process_save", 0);
-
-					if (level_accessor.getBlockState(center_pos).isAir() == false) {
-
-						return;
-
-					}
 
 					if (GameUtils.nbt.entity.getLogic(entity, "still_alive") == true) {
 
 						GameUtils.nbt.entity.setLogic(entity, "still_alive", false);
-						return;
+
+					} else {
+
+						GameUtils.nbt.entity.setLogic(entity, "dead_tree", true);
 
 					}
 
-					GameUtils.nbt.entity.setLogic(entity, "dead_tree", true);
+				} else {
+
+					GameUtils.command.runEntity(entity, "kill @s");
 
 				}
 
@@ -338,9 +324,8 @@ public class LivingTreeMechanics {
 
 	}
 
-	private static void run (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, BlockPos pos, Map<String, BlockState> map_block, BlockState block, int leaves_type, int biome_type, String current_season, boolean can_leaves_drop, boolean can_leaves_regrow) {
+	private static void run (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, BlockPos pos, Map<String, BlockState> map_block, BlockState block, int leaves_type, int biome_type, String current_season, boolean have_center_block, boolean can_leaves_drop, boolean can_leaves_regrow) {
 
-		boolean have_leaves = false;
 		boolean straighten = false;
 		boolean can_pos_photosynthesis = false;
 
@@ -372,24 +357,9 @@ public class LivingTreeMechanics {
 
 		}
 
-		// Leaf Litter Remover
-		{
+		boolean have_leaves = level_accessor.getBlockState(pos).getBlock() == block.getBlock();
 
-			if (Math.random() < ConfigMain.leaf_litter_remover_chance) {
-
-				if (GameUtils.score.get(level_server, "TANSHUGETREES", "leaf_litter_remover") < ConfigMain.leaf_drop_animation_count_limit) {
-
-					GameUtils.score.add(level_server, "TANSHUGETREES", "leaf_litter_remover", 1);
-
-					GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-leaf_litter_remover", "Leaf Litter Remover", "ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}"));
-
-				}
-
-			}
-
-		}
-
-		if (level_accessor.getBlockState(pos).getBlock() == block.getBlock()) {
+		if (have_leaves == true || have_center_block == false) {
 
 			// Leaf Drop
 			{
@@ -511,8 +481,6 @@ public class LivingTreeMechanics {
 
 			}
 
-			have_leaves = true;
-
 		} else if (level_accessor.getBlockState(pos).isAir() == true) {
 
 			// Leaf Regrowth
@@ -587,6 +555,23 @@ public class LivingTreeMechanics {
 						level_accessor.setBlock(pos, block, 2);
 
 					}
+
+				}
+
+			}
+
+		}
+
+		// Leaf Litter Remover
+		{
+
+			if (Math.random() < ConfigMain.leaf_litter_remover_chance) {
+
+				if (GameUtils.score.get(level_server, "TANSHUGETREES", "leaf_litter_remover") < ConfigMain.leaf_drop_animation_count_limit) {
+
+					GameUtils.score.add(level_server, "TANSHUGETREES", "leaf_litter_remover", 1);
+
+					GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-leaf_litter_remover", "Leaf Litter Remover", "ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}"));
 
 				}
 
