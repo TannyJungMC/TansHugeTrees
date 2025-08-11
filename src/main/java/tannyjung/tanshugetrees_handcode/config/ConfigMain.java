@@ -26,9 +26,9 @@ public class ConfigMain {
 	public static boolean world_gen_roots = false;
 	public static int max_height_spawn = 0;
 	public static double unviable_ecology_skip_chance = 0.0;
-	public static boolean pre_leaf_litter = false;
-	public static double pre_leaf_litter_chance = 0.0;
-	public static double pre_leaf_litter_chance_coniferous = 0.0;
+	public static boolean leaf_litter_world_gen = false;
+	public static double leaf_litter_world_gen_chance = 0.0;
+	public static double leaf_litter_world_gen_chance_coniferous = 0.0;
 	public static boolean abscission_world_gen = false;
 
 	public static boolean surrounding_area_detection = false;
@@ -134,14 +134,14 @@ public class ConfigMain {
 					| Skip trees that generate in unviable ecosystems. For example, land trees that generate in water.
 					| Default is [ 0.75 ]
 					
-					pre_leaf_litter = true
-					pre_leaf_litter_chance = 0.1
-					pre_leaf_litter_chance_coniferous = 0.05
+					leaf_litter_world_gen = true
+					leaf_litter_world_gen_chance = 0.1
+					leaf_litter_world_gen_chance_coniferous = 0.05
 					| Create leaf litter on the ground and water, while in world gen. Leaf litter config must be enable to allow this.
 					| Default is [ true ] [ 0.1 ] [ 0.05 ]
 					
 					abscission_world_gen = true
-					| ###
+					| Make all deciduous trees generate with all leaves dropped to the ground, when they are in snowy biomes.
 					| Default is [ true ]
 					
 					----------------------------------------------------------------------------------------------------
@@ -149,7 +149,7 @@ public class ConfigMain {
 					----------------------------------------------------------------------------------------------------
 					
 					surrounding_area_detection = true
-					| ###
+					| Enable some custom systems to detect area around that tree before placing it. Such as smoothness surface and near water/land biomes.
 					| Default is [ true ]
 					
 					surrounding_area_detection_size = 8
@@ -193,11 +193,11 @@ public class ConfigMain {
 					| Default is [ true ]
 					
 					leaf_litter_classic = true
-					| ###
+					| Use classic style for leaf litter when that leaves block have no custom style. Classic style will use full leaves block, not like slab or carpet.
 					| Default is [ true ]
 					
 					leaf_litter_classic_only = false
-					| ###
+					| Only use classic style for all leaf litters
 					| Default is [ false ]
 					
 					leaf_litter_remover_chance = 0.001
@@ -336,9 +336,9 @@ public class ConfigMain {
 		world_gen_roots = Boolean.parseBoolean(data.get("world_gen_roots"));
 		max_height_spawn = Integer.parseInt(data.get("max_height_spawn"));
 		unviable_ecology_skip_chance = Double.parseDouble(data.get("unviable_ecology_skip_chance"));
-		pre_leaf_litter = Boolean.parseBoolean(data.get("pre_leaf_litter"));
-		pre_leaf_litter_chance = Double.parseDouble(data.get("pre_leaf_litter_chance"));
-		pre_leaf_litter_chance_coniferous = Double.parseDouble(data.get("pre_leaf_litter_chance_coniferous"));
+		leaf_litter_world_gen = Boolean.parseBoolean(data.get("leaf_litter_world_gen"));
+		leaf_litter_world_gen_chance = Double.parseDouble(data.get("leaf_litter_world_gen_chance"));
+		leaf_litter_world_gen_chance_coniferous = Double.parseDouble(data.get("leaf_litter_world_gen_chance_coniferous"));
 		abscission_world_gen = Boolean.parseBoolean(data.get("abscission_world_gen"));
 
 		surrounding_area_detection = Boolean.parseBoolean(data.get("surrounding_area_detection"));
