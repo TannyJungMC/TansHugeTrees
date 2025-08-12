@@ -21,7 +21,7 @@ public class PresetFixer {
 
             list_preset = new File(Handcode.directory_config + "/custom_packs/" + pack.getName() + "/presets").listFiles();
 
-            if (list_preset != null && list_preset.length > 0) {
+            if (list_preset != null) {
 
                 for (File species : list_preset) {
 

@@ -17,36 +17,42 @@ public class CustomPackIncompatible {
 
     public static void scanMain (LevelAccessor level_accessor) {
 
-        // Rename all packs back to normal
-        {
+        File[] packs = new File(Handcode.directory_config + "/custom_packs").listFiles();
 
-            for (File pack : new File(Handcode.directory_config + "/custom_packs").listFiles()) {
+        if (packs != null) {
 
-                rename(pack.getPath(), true);
+            // Rename all packs back to normal
+            {
 
-            }
+                for (File pack : packs) {
 
-        }
-
-        boolean pass = true;
-
-        for (File pack : new File(Handcode.directory_config + "/custom_packs").listFiles()) {
-
-            if (pack.getName().startsWith("[INCOMPATIBLE] ") == false) {
-
-                pass = true;
-
-                if (testVersion(level_accessor, pack + "/version.txt") == false) {
-
-                    pass = false;
-
-                } else if (testDependencies(level_accessor, pack + "/dependencies.txt") == false) {
-
-                    pass = false;
+                    rename(pack.getPath(), true);
 
                 }
 
-                rename(pack.getPath(), pass);
+            }
+
+            boolean pass = true;
+
+            for (File pack : packs) {
+
+                if (pack.getName().startsWith("[INCOMPATIBLE] ") == false) {
+
+                    pass = true;
+
+                    if (testVersion(level_accessor, pack + "/version.txt") == false) {
+
+                        pass = false;
+
+                    } else if (testDependencies(level_accessor, pack + "/dependencies.txt") == false) {
+
+                        pass = false;
+
+                    }
+
+                    rename(pack.getPath(), pass);
+
+                }
 
             }
 

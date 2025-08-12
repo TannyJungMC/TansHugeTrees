@@ -53,33 +53,40 @@ public class CustomPackOrganized {
 
     private static void organizing () {
 
-        File[] list_packs = new File(Handcode.directory_config + "/custom_packs").listFiles();
+        File[] packs = new File(Handcode.directory_config + "/custom_packs").listFiles();
+        File[] pack_files = new File[0];
 
-        if (list_packs != null) {
+        if (packs != null) {
 
             boolean copy = false;
 
-            for (File pack : list_packs) {
+            for (File pack : packs) {
 
-                for (File category : pack.listFiles()) {
+                pack_files = pack.listFiles();
 
-                    copy = false;
+                if (pack_files != null) {
 
-                    // Testing
-                    {
+                    for (File category : pack_files) {
 
-                        if (category.getName().equals("functions") == true || category.getName().equals("leaf_litter") == true || category.getName().equals("presets") == true || category.getName().equals("world_gen") == true) {
+                        copy = false;
 
-                            copy = true;
+                        // Testing
+                        {
 
-                            // If incompatible, don't copy these folders.
-                            {
+                            if (category.getName().equals("functions") == true || category.getName().equals("leaf_litter") == true || category.getName().equals("presets") == true || category.getName().equals("world_gen") == true) {
 
-                                if (pack.getName().startsWith("[INCOMPATIBLE]") == true) {
+                                copy = true;
 
-                                    if (category.getName().equals("leaf_litter") == true) {
+                                // If incompatible, don't copy these folders.
+                                {
 
-                                        copy = false;
+                                    if (pack.getName().startsWith("[INCOMPATIBLE]") == true) {
+
+                                        if (category.getName().equals("leaf_litter") == true) {
+
+                                            copy = false;
+
+                                        }
 
                                     }
 
@@ -89,55 +96,55 @@ public class CustomPackOrganized {
 
                         }
 
-                    }
+                        if (copy == true) {
 
-                    if (copy == true) {
+                            // Copying
+                            {
 
-                        // Copying
-                        {
+                                try {
 
-                            try {
+                                    File pack_final = pack;
 
-                                File pack_final = pack;
+                                    Files.walk(category.toPath()).forEach(source -> {
 
-                                Files.walk(category.toPath()).forEach(source -> {
+                                        if (source.toFile().isDirectory() == false) {
 
-                                    if (source.toFile().isDirectory() == false) {
+                                            // Not in Storage Folder
+                                            if (source.getParent().toFile().getName().equals("storage") == false) {
 
-                                        // Not in Storage Folder
-                                        if (source.getParent().toFile().getName().equals("storage") == false) {
+                                                String path = Handcode.directory_config + "/.dev/custom_packs_organized/" + category.getName();
 
-                                            String path = Handcode.directory_config + "/.dev/custom_packs_organized/" + category.getName();
+                                                // With Pack Name
+                                                if (category.getName().equals("leaf_litter") == false) {
 
-                                            // With Pack Name
-                                            if (category.getName().equals("leaf_litter") == false) {
+                                                    path = path + "/" + pack_final.getName();
 
-                                                path = path + "/" + pack_final.getName();
+                                                }
 
-                                            }
+                                                try {
 
-                                            try {
+                                                    Path to = Path.of(path);
+                                                    to = to.resolve(category.toPath().relativize(source));
+                                                    Files.createDirectories(to.getParent());
+                                                    Files.copy(source, to, StandardCopyOption.REPLACE_EXISTING);
 
-                                                Path to = Path.of(path);
-                                                to = to.resolve(category.toPath().relativize(source));
-                                                Files.createDirectories(to.getParent());
-                                                Files.copy(source, to, StandardCopyOption.REPLACE_EXISTING);
+                                                } catch (Exception exception) {
 
-                                            } catch (Exception exception) {
+                                                    OutsideUtils.exception(new Exception(), exception);
 
-                                                OutsideUtils.exception(new Exception(), exception);
+                                                }
 
                                             }
 
                                         }
 
-                                    }
+                                    });
 
-                                });
+                                } catch (Exception exception) {
 
-                            } catch (Exception exception) {
+                                    OutsideUtils.exception(new Exception(), exception);
 
-                                OutsideUtils.exception(new Exception(), exception);
+                                }
 
                             }
 
@@ -155,40 +162,46 @@ public class CustomPackOrganized {
 
     private static void replace () {
 
-        for (File pack : new File(Handcode.directory_config + "/custom_packs/").listFiles()) {
+        File[] packs = new File(Handcode.directory_config + "/custom_packs/").listFiles();
 
-            if (pack.getName().startsWith("[INCOMPATIBLE]") == false) {
+        if (packs != null) {
 
-                File replace = new File(Handcode.directory_config + "/custom_packs/" + pack.getName() + "/replace");
+            for (File pack : packs) {
 
-                if (replace.exists() == true) {
+                if (pack.getName().startsWith("[INCOMPATIBLE]") == false) {
 
-                    // Scan
-                    {
+                    File replace = new File(Handcode.directory_config + "/custom_packs/" + pack.getName() + "/replace");
 
-                        try {
+                    if (replace.exists() == true) {
 
-                            Files.walk(replace.toPath()).forEach(source -> {
+                        // Scan
+                        {
 
-                                if (source.toFile().isDirectory() == false) {
+                            try {
 
-                                    try {
+                                Files.walk(replace.toPath()).forEach(source -> {
 
-                                        replaceEachFile(pack, source);
+                                    if (source.toFile().isDirectory() == false) {
 
-                                    } catch (Exception exception) {
+                                        try {
 
-                                        OutsideUtils.exception(new Exception(), exception);
+                                            replaceEachFile(pack, source);
+
+                                        } catch (Exception exception) {
+
+                                            OutsideUtils.exception(new Exception(), exception);
+
+                                        }
 
                                     }
 
-                                }
+                                });
 
-                            });
+                            } catch (Exception exception) {
 
-                        } catch (Exception exception) {
+                                OutsideUtils.exception(new Exception(), exception);
 
-                            OutsideUtils.exception(new Exception(), exception);
+                            }
 
                         }
 

@@ -770,12 +770,11 @@ public class TreeLocation {
         // Random Select File
         {
 
-            File file = new File(Handcode.directory_config + "/custom_packs/" + storage_directory);
-            File[] list = file.listFiles();
+            File[] packs = new File(Handcode.directory_config + "/custom_packs/" + storage_directory).listFiles();
 
-            if (list != null && list.length > 0) {
+            if (packs != null) {
 
-                chosen_name = list[(int) (Math.random() * list.length)].getName();
+                chosen_name = packs[(int) (Math.random() * packs.length)].getName();
 
             }
 
