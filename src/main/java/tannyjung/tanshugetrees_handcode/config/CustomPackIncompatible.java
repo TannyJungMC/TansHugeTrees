@@ -17,12 +17,12 @@ public class CustomPackIncompatible {
 
     public static void scanMain (LevelAccessor level_accessor) {
 
-        File[] packs = new File(Handcode.directory_config + "/custom_packs").listFiles();
+        // Rename all packs back to normal
+        {
 
-        if (packs != null) {
+            File[] packs = new File(Handcode.directory_config + "/custom_packs").listFiles();
 
-            // Rename all packs back to normal
-            {
+            if (packs != null) {
 
                 for (File pack : packs) {
 
@@ -31,6 +31,12 @@ public class CustomPackIncompatible {
                 }
 
             }
+
+        }
+
+        File[] packs = new File(Handcode.directory_config + "/custom_packs").listFiles();
+
+        if (packs != null) {
 
             boolean pass = true;
 
