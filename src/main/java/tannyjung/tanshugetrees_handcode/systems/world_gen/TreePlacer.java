@@ -308,7 +308,7 @@ public class TreePlacer {
 
                             if (ConfigMain.max_height_spawn != 0) {
 
-                                if (center_posY > ConfigMain.max_height_spawn) {
+                                if (originalY > ConfigMain.max_height_spawn) {
 
                                     pass = false;
                                     break test;
