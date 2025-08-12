@@ -137,7 +137,7 @@ public class ConfigMain {
 					leaf_litter_world_gen = true
 					leaf_litter_world_gen_chance = 0.1
 					leaf_litter_world_gen_chance_coniferous = 0.05
-					| Create leaf litter on the ground and water, while in world gen. Leaf litter config must be enable to allow this.
+					| Create leaf litter on ground and water, while in world gen. Leaf litter config must be enable to allow this.
 					| Default is [ true ] [ 0.1 ] [ 0.05 ]
 					
 					abscission_world_gen = true
@@ -189,7 +189,7 @@ public class ConfigMain {
 					| Default is [ 100 ]
 					
 					leaf_litter = true
-					| Create leaf litter on the ground and water
+					| Create leaf litter on ground and water
 					| Default is [ true ]
 					
 					leaf_litter_classic = true
