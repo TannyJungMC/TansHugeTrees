@@ -1419,8 +1419,9 @@ public class TreeGenerator {
                 GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
 
                 String[] function = buildGetWayFunction(entity, type);
-                GameUtils.nbt.block.setText(level_accessor, pos, "function", function[1]);
                 GameUtils.nbt.block.setText(level_accessor, pos, "block", GameUtils.nbt.entity.getText(entity, block));
+                GameUtils.nbt.block.setText(level_accessor, pos, "function", function[1]);
+                GameUtils.nbt.block.setText(level_accessor, pos, "function_style", function[2]);
 
                 if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == true) {
 
@@ -1439,15 +1440,20 @@ public class TreeGenerator {
 
         private static String[] buildGetWayFunction (Entity entity, String type) {
 
-            String[] return_text = new String[]{"", ""};
+            String[] return_text = new String[]{"", "", ""};
+            String function = "";
+            String path = "";
+            String at_type = "";
+            String style = "";
 
             for (int number = 1; number <= 3; number++) {
 
-                String function = "function_way" + number;
-                String function_path = GameUtils.nbt.entity.getText(entity, function);
-                String at_type = GameUtils.nbt.entity.getText(entity, function + "_type");
+                function = "function_way" + number;
+                path = GameUtils.nbt.entity.getText(entity, function);
+                at_type = GameUtils.nbt.entity.getText(entity, function + "_type");
+                style = GameUtils.nbt.entity.getText(entity, function + "_style");
 
-                if (function_path.equals("") == false && at_type.equals(type)) {
+                if (path.equals("") == false && at_type.equals(type)) {
 
                     if (Math.random() < GameUtils.nbt.entity.getNumber(entity, function + "_chance")) {
 
@@ -1483,7 +1489,8 @@ public class TreeGenerator {
                                 }
 
                                 return_text[0] = "f" + number;
-                                return_text[1] = function_path;
+                                return_text[1] = path;
+                                return_text[2] = style;
                                 break;
 
                             }
