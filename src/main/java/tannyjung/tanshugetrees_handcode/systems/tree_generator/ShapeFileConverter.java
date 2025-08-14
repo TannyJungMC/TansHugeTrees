@@ -345,7 +345,7 @@ public class ShapeFileConverter {
 
         String complete_date = new java.text.SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + " at " + new java.text.SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
 
-        TanshugetreesMod.queueServerWork(5, () -> {
+        TanshugetreesMod.queueServerWork(20, () -> {
 
             export_data.append("+f0/0/0fe");
             FileManager.writeTXT(Handcode.directory_config + "/.dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), export_data.toString(), true);
@@ -603,24 +603,25 @@ public class ShapeFileConverter {
 
             GameUtils.misc.sendChatMessage(level_server, "@a", "green", "THT : Completed!");
 
-            TanshugetreesMod.queueServerWork(5, () -> {
+            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 
-                if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
+                GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
 
-                    GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
+                TanshugetreesMod.queueServerWork(20, () -> {
+
                     summon(level_accessor, level_server);
 
-                } else {
+                });
 
-                    TanshugetreesMod.queueServerWork(100, () -> {
+            } else {
 
-                        stop(level_accessor);
+                TanshugetreesMod.queueServerWork(100, () -> {
 
-                    });
+                    stop(level_accessor);
 
-                }
+                });
 
-            });
+            }
 
         });
 
