@@ -21,6 +21,7 @@ import tannyjung.tanshugetrees_handcode.config.CustomPackIncompatible;
 import tannyjung.tanshugetrees_handcode.config.PackCheckUpdate;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.Loop;
+import tannyjung.tanshugetrees_handcode.systems.world_gen.FeatureGrassArea;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDetector;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFull;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenBeforePlants;
@@ -59,6 +60,7 @@ public class Handcode {
 
 			DeferredRegister<Feature<?>> REGISTRY = DeferredRegister.create(Registries.FEATURE, TanshugetreesMod.MODID);
 			REGISTRY.register("world_gen_before_plants", WorldGenBeforePlants::new);
+			REGISTRY.register("grass_area", FeatureGrassArea::new);
 
 			REGISTRY.register(bus);
 

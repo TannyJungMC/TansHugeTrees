@@ -1,0 +1,9 @@
+{
+  "feature": "tanshugetrees:grass_area",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": 1
+    }
+  ]
+}
