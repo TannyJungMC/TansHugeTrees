@@ -24,28 +24,14 @@ public class ConfigWorldGen {
 
     private static void createTemp () {
 
-        Path from = Path.of(Handcode.directory_config + "/config_world_gen.txt)");
-        Path to = Path.of(Handcode.directory_config + "/config_world_gen_temp.txt");
+        File from = new File(Handcode.directory_config + "/config_world_gen.txt");
+        File to = new File(Handcode.directory_config + "/config_world_gen_temp.txt");
 
-        if (from.toFile().exists() == true && from.toFile().isDirectory() == false) {
+        if (from.exists() == true && from.isDirectory() == false) {
 
             try {
 
-                Files.walk(from).forEach(source -> {
-
-                    Path copy = to.resolve(from.relativize(source));
-
-                    try {
-
-                        Files.copy(source, copy, StandardCopyOption.REPLACE_EXISTING);
-
-                    } catch (Exception exception) {
-
-                        OutsideUtils.exception(new Exception(), exception);
-
-                    }
-
-                });
+                Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             } catch (Exception exception) {
 

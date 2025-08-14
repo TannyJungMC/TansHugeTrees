@@ -15,7 +15,7 @@
           "src/main/java/tannyjung/tanshugetrees/block/WaypointFlowerBlock.java"
         ]
       },
-      "path": "~/.Misc"
+      "path": "~/. Misc"
     },
     {
       "name": "WaypointFlowerPlace",
@@ -46,7 +46,7 @@
           }
         ]
       },
-      "path": "~/.Misc"
+      "path": "~/. Misc"
     },
     {
       "name": "WaypointFlowerRecipe",
@@ -59,7 +59,7 @@
           "src/main/resources/data/tanshugetrees/recipes/waypoint_flower_recipe.json"
         ]
       },
-      "path": "~/.Misc"
+      "path": "~/. Misc"
     },
     {
       "name": "Yokai",
@@ -524,7 +524,7 @@
           }
         ]
       },
-      "path": "~/.Misc"
+      "path": "~/. Misc"
     },
     {
       "name": "COMMANDConfigRepair",
@@ -555,7 +555,7 @@
           }
         ]
       },
-      "path": "~/.Misc/Commands"
+      "path": "~/. Misc/Commands"
     },
     {
       "name": "COMMANDSeasonGet",
@@ -665,19 +665,6 @@
       "path": "~/Living Tree Mechanics/Seasons"
     },
     {
-      "name": "DiskGrass",
-      "type": "feature",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "disk_grass",
-      "metadata": {
-        "files": [
-          "src/main/resources/data/tanshugetrees/worldgen/configured_feature/disk_grass.json"
-        ]
-      },
-      "path": "~/.Misc"
-    },
-    {
       "name": "COMMANDLivingTreeMechanics",
       "type": "command",
       "compiles": true,
@@ -719,7 +706,7 @@
           }
         ]
       },
-      "path": "~/.Misc/Commands"
+      "path": "~/. Misc/Commands"
     },
     {
       "name": "OVERLAYWorldGen",
@@ -1041,7 +1028,7 @@
           "src/main/java/tannyjung/tanshugetrees/command/COMMANDShapeFileConverterCommand.java"
         ]
       },
-      "path": "~/.Misc/Commands"
+      "path": "~/. Misc/Commands"
     },
     {
       "name": "COMMANDShapeFileConverterStart",
@@ -1080,7 +1067,7 @@
           }
         ]
       },
-      "path": "~/.Misc/Commands"
+      "path": "~/. Misc/Commands"
     },
     {
       "name": "COMMANDShapeFileConverterStop",
@@ -1115,7 +1102,7 @@
           }
         ]
       },
-      "path": "~/.Misc/Commands"
+      "path": "~/. Misc/Commands"
     },
     {
       "name": "COMMANDLivingTreeMechanicsLeafDrop",
@@ -1335,7 +1322,7 @@
           "src/main/java/tannyjung/tanshugetrees/command/COMMANDConfigCommand.java"
         ]
       },
-      "path": "~/.Misc/Commands"
+      "path": "~/. Misc/Commands"
     },
     {
       "name": "CreativeTabMain",
@@ -1346,7 +1333,7 @@
       "metadata": {
         "files": []
       },
-      "path": "~/.Misc"
+      "path": "~/. Misc"
     },
     {
       "name": "COMMANDPack",
@@ -1359,7 +1346,7 @@
           "src/main/java/tannyjung/tanshugetrees/command/COMMANDPackCommand.java"
         ]
       },
-      "path": "~/.Misc/Commands"
+      "path": "~/. Misc/Commands"
     },
     {
       "name": "COMMANDPackCheckUpdate",
@@ -1390,7 +1377,7 @@
           "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDPackCheckUpdateProcedure.java"
         ]
       },
-      "path": "~/.Misc/Commands"
+      "path": "~/. Misc/Commands"
     },
     {
       "name": "COMMANDPackUpdate",
@@ -1421,7 +1408,7 @@
           "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDPackUpdateProcedure.java"
         ]
       },
-      "path": "~/.Misc/Commands"
+      "path": "~/. Misc/Commands"
     },
     {
       "name": "COMMANDTreeFunctionInLoadedChunk",
@@ -1434,7 +1421,7 @@
           "src/main/java/tannyjung/tanshugetrees/command/COMMANDTreeFunctionInLoadedChunkCommand.java"
         ]
       },
-      "path": "~/.Misc/Commands"
+      "path": "~/. Misc/Commands"
     },
     {
       "name": "COMMANDTreeFunctionInLoadedChunkRun",
@@ -1453,7 +1440,7 @@
           "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDTreeFunctionInLoadedChunkRunProcedure.java"
         ]
       },
-      "path": "~/.Misc/Commands"
+      "path": "~/. Misc/Commands"
     },
     {
       "name": "COMMANDPresetFixer",
@@ -1466,7 +1453,7 @@
           "src/main/java/tannyjung/tanshugetrees/command/COMMANDPresetFixerCommand.java"
         ]
       },
-      "path": "~/.Misc/Commands"
+      "path": "~/. Misc/Commands"
     },
     {
       "name": "COMMANDPresetFixerRun",
@@ -1480,7 +1467,7 @@
           "src/main/java/tannyjung/tanshugetrees/procedures/COMMANDPresetFixerRunProcedure.java"
         ]
       },
-      "path": "~/.Misc/Commands"
+      "path": "~/. Misc/Commands"
     }
   ],
   "variable_elements": [
@@ -1724,7 +1711,6 @@
   },
   "metadata": {
     "files": [
-      "src/main/resources/META-INF/accesstransformer.cfg",
       "src/main/resources/META-INF/mods.toml",
       "src/main/resources/pack.mcmeta",
       "src/main/java/tannyjung/tanshugetrees/TanshugetreesMod.java",
@@ -1748,7 +1734,7 @@
         ]
       },
       {
-        "name": ".Misc",
+        "name": ". Misc",
         "children": [
           {
             "name": "Commands",
@@ -1783,7 +1769,7 @@
   "workspaceSettings": {
     "modid": "tanshugetrees",
     "modName": "Tan\u0027s Huge Trees",
-    "version": "1.5.1",
+    "version": "1.5.2",
     "description": "Generate trees and nature stuffs around the world",
     "author": "TannyJung",
     "websiteURL": "https://legacy.curseforge.com/minecraft/mc-mods/tans-huge-trees",
