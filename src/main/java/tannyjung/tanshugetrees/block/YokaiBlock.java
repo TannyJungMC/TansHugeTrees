@@ -69,7 +69,7 @@ public class YokaiBlock extends Block implements EntityBlock {
 	@Override
 	public void onPlace(BlockState blockstate, Level world, BlockPos pos, BlockState oldState, boolean moving) {
 		super.onPlace(blockstate, world, pos, oldState, moving);
-		world.scheduleTick(pos, this, 1);
+		world.scheduleTick(pos, this, 5);
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class YokaiBlock extends Block implements EntityBlock {
 		int y = pos.getY();
 		int z = pos.getZ();
 		SaplingTickProcedure.execute(world, x, y, z);
-		world.scheduleTick(pos, this, 1);
+		world.scheduleTick(pos, this, 5);
 	}
 
 	@Override
