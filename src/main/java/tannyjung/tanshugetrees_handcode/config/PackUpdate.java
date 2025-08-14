@@ -223,6 +223,7 @@ public class PackUpdate {
 
 		try {
 
+			TanshugetreesMod.LOGGER.info("Downloading ZIP from " + download_from);
 			BufferedInputStream URL_read_all = new BufferedInputStream(new URI(download_from).toURL().openStream());
 
 			try (FileOutputStream fileOutputStream = new FileOutputStream(download_to)) {
@@ -238,7 +239,7 @@ public class PackUpdate {
 
 			}
 
-			TanshugetreesMod.LOGGER.info("Downloaded " + download_from);
+			TanshugetreesMod.LOGGER.info("Download Completed!");
 
 		} catch (Exception ignored) {
 

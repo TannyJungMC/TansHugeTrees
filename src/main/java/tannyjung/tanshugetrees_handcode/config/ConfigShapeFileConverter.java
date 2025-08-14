@@ -13,7 +13,7 @@ public class ConfigShapeFileConverter {
 
 			write.append("""
 					- This only for convert tree presets into tree shapes, to use in custom packs.
-					- To use this. First, install dimension for tree generator. Then write correct file location below, then use command [ /TANSHUGETREES shape_file_converter start <loop> ].
+					- To use this. First, install dimension for tree generator. Set render distance and simulation distance to 32. Then write correct file location below and use command [ /TANSHUGETREES shape_file_converter start <loop> ].
 					- Warning! This dimension Y height is only between 0 to 1024 blocks, so be careful about trees cut by world height. You can change Y position of it using [ posY ] option below.
 					
 					----------------------------------------------------------------------------------------------------
