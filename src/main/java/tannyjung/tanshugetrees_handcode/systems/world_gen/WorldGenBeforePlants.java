@@ -26,7 +26,10 @@ public class WorldGenBeforePlants extends Feature <NoneFeatureConfiguration> {
         String dimension = GameUtils.misc.getCurrentDimensionID(level_server).replace(":", "-");
         ChunkPos chunk_pos = new ChunkPos(context.origin().getX() >> 4, context.origin().getZ() >> 4);
 
-        TreeLocation.start(level_accessor, dimension, chunk_pos);
+        TreeLocation.start(level_accessor, dimension, new ChunkPos(chunk_pos.x + 4, chunk_pos.z + 4));
+        TreeLocation.start(level_accessor, dimension, new ChunkPos(chunk_pos.x + 4, chunk_pos.z - 4));
+        TreeLocation.start(level_accessor, dimension, new ChunkPos(chunk_pos.x - 4, chunk_pos.z + 4));
+        TreeLocation.start(level_accessor, dimension, new ChunkPos(chunk_pos.x - 4, chunk_pos.z - 4));
         TreePlacer.start(level_accessor, level_server, chunk_generator, dimension, chunk_pos);
 
         return true;

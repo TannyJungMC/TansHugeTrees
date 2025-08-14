@@ -24,7 +24,6 @@ public class TreeLocation {
 
     private static final Map<String, List<String>> cache_write_tree_location = new HashMap<>();
     private static final Map<String, String> cache_write_place = new HashMap<>();
-
     public static int world_gen_overlay_animation = 0;
     public static int world_gen_overlay_bar = 0;
     public static String world_gen_overlay_details_biome = "";
@@ -85,9 +84,6 @@ public class TreeLocation {
                 // Region Scanning
                 {
 
-                    int chunk_posX = 0;
-                    int chunk_posZ = 0;
-
                     for (int scanX = 0; scanX < 32; scanX++) {
 
                         for (int scanZ = 0; scanZ < 32; scanZ++) {
@@ -96,14 +92,7 @@ public class TreeLocation {
 
                             if (Math.random() < ConfigMain.region_scan_chance) {
 
-                                chunk_posX = (region_posX * 32) + scanX;
-                                chunk_posZ = (region_posZ * 32) + scanZ;
-
-                                if (level_accessor.getChunk(chunk_posX, chunk_posZ, ChunkStatus.FEATURES, false) == null) {
-
-                                    getData(level_accessor, dimension, chunk_posX, chunk_posZ, config_world_gen);
-
-                                }
+                                getData(level_accessor, dimension, (region_posX * 32) + scanX, (region_posZ * 32) + scanZ, config_world_gen);
 
                             }
 
@@ -1020,9 +1009,14 @@ public class TreeLocation {
             // Test Exist Chunk
             {
 
-                for (int scanX = from_chunkX; scanX <= to_chunkX; scanX++) {
+                int scan_fromX = from_chunkX - 4;
+                int scan_fromZ = from_chunkZ - 4;
+                int scan_toX = to_chunkX + 4;
+                int scan_toZ = to_chunkZ + 4;
 
-                    for (int scanZ = from_chunkZ; scanZ <= to_chunkZ; scanZ++) {
+                for (int scanX = scan_fromX ; scanX <= scan_toX; scanX++) {
+
+                    for (int scanZ = scan_fromZ; scanZ <= scan_toZ; scanZ++) {
 
                         if (level_accessor.getChunk(scanX, scanZ, ChunkStatus.FEATURES, false) != null) {
 
@@ -1051,10 +1045,10 @@ public class TreeLocation {
 
                 String data = from_chunkX + "/" + from_chunkZ + "/" + to_chunkX + "/" + to_chunkZ + "|" + id + "|" + chosen.getName() + "|" + center_posX + "/" + center_posZ + "|" + rotation + "/" + mirrored + "|" + other_data + "\n";
                 int size = 32 >> 2;
-                int from_chunkX_test = (int) (Math.floor((double) (from_chunkX - 1) / (double) size) * (double) size);
-                int from_chunkZ_test = (int) (Math.floor((double) (from_chunkZ - 1) / (double) size) * (double) size);
-                int to_chunkX_test = (int) (Math.floor((double) (to_chunkX + 1) / (double) size) * (double) size);
-                int to_chunkZ_test = (int) (Math.floor((double) (to_chunkZ + 1) / (double) size) * (double) size);
+                int from_chunkX_test = (int) (Math.floor((double) from_chunkX / (double) size) * (double) size);
+                int from_chunkZ_test = (int) (Math.floor((double) from_chunkZ / (double) size) * (double) size);
+                int to_chunkX_test = (int) (Math.floor((double) to_chunkX / (double) size) * (double) size);
+                int to_chunkZ_test = (int) (Math.floor((double) to_chunkZ / (double) size) * (double) size);
                 String location = "";
 
                 for (int scanX = from_chunkX_test; scanX <= to_chunkX_test; scanX = scanX + size) {
