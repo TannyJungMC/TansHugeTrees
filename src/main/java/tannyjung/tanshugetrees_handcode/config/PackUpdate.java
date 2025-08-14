@@ -127,7 +127,7 @@ public class PackUpdate {
 	private static boolean checkModVersion (ServerLevel level_server, String url) {
 
 		boolean return_logic = true;
-		double data_structure_version_url = 0.0;
+		int data_structure_version_url = 0;
 
 		// Read URL
 		{
@@ -138,7 +138,7 @@ public class PackUpdate {
 
 					if (read_all.startsWith("data_structure_version = ")) {
 
-						data_structure_version_url = Double.parseDouble(read_all.replace("data_structure_version = ", ""));
+						data_structure_version_url = Integer.parseInt(read_all.replace("data_structure_version = ", ""));
 
 					}
 

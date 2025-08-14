@@ -10,7 +10,10 @@ import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.GameUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 
 public class CustomPackIncompatible {
@@ -131,20 +134,25 @@ public class CustomPackIncompatible {
 
         if (file.exists() == true && file.isDirectory() == false) {
 
-            double data_structure_version = 0.0;
+            int data_structure_version = 0;
 
-            for (String read_all : FileManager.fileToStringArray(file.getPath())) {
+            // Read File
+            {
 
-                {
+                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-                    if (read_all.startsWith("data_structure_version = ")) {
+                    {
 
-                        data_structure_version = Double.parseDouble(read_all.replace("data_structure_version = ", ""));
-                        break;
+                        if (read_all.startsWith("data_structure_version = ")) {
+
+                            data_structure_version = Integer.parseInt(read_all.replace("data_structure_version = ", ""));
+                            break;
+
+                        }
 
                     }
 
-                }
+                } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
             }
 

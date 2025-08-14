@@ -57,7 +57,7 @@ public class PackCheckUpdate {
 
 						URL url_convert = new URI(url).toURL();
 						int url_pack_version = 0;
-						double url_data_structure_version = 0.0;
+						int url_data_structure_version = 0;
 						int pack_version = 0;
 
 						// Get Your Version
@@ -88,7 +88,7 @@ public class PackCheckUpdate {
 
 									if (read_all.startsWith("data_structure_version = ")) {
 
-										url_data_structure_version = Double.parseDouble(read_all.replace("data_structure_version = ", ""));
+										url_data_structure_version = Integer.parseInt(read_all.replace("data_structure_version = ", ""));
 
 									} else if (read_all.startsWith("pack_version = ")) {
 

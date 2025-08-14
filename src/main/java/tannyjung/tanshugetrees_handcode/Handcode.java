@@ -33,7 +33,7 @@ public class Handcode {
 
 	// ----------------------------------------------------------------------------------------------------
 
-	public static double data_structure_version = 1.5;
+	public static int data_structure_version = 20250814;
 	public static String tanny_pack_version = "Alpha";
 
 	public static boolean version_1192 = false;
@@ -44,8 +44,9 @@ public class Handcode {
 	public static String directory_config = directory_game + "/config/tanshugetrees";
 	public static String directory_world_data = directory_game + "/saves/tanshugetrees-error/directory_world_data";
 	public static String tanny_pack_version_name = ""; // Make this because version can swap to "WIP" by config
-
 	public static boolean world_active = false;
+
+	// ----------------------------------------------------------------------------------------------------
 
 	public Handcode () {}
 
