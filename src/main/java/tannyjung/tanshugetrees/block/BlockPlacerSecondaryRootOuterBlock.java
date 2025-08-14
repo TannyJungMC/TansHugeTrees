@@ -96,7 +96,7 @@ public class BlockPlacerSecondaryRootOuterBlock extends Block implements SimpleW
 	@Override
 	public void onPlace(BlockState blockstate, Level world, BlockPos pos, BlockState oldState, boolean moving) {
 		super.onPlace(blockstate, world, pos, oldState, moving);
-		world.scheduleTick(pos, this, 20);
+		world.scheduleTick(pos, this, 1);
 	}
 
 	@Override
@@ -106,7 +106,7 @@ public class BlockPlacerSecondaryRootOuterBlock extends Block implements SimpleW
 		int y = pos.getY();
 		int z = pos.getZ();
 		BlockPlacerTickProcedure.execute(world, x, y, z);
-		world.scheduleTick(pos, this, 20);
+		world.scheduleTick(pos, this, 1);
 	}
 
 	@Override
