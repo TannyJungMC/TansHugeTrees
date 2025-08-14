@@ -21,8 +21,6 @@ public class ShapeFileConverter {
 
     public static void start (LevelAccessor level_accessor, Entity entity, int count) {
 
-        level_accessor = level_accessor.getServer().overworld();
-
         if (level_accessor instanceof ServerLevel level_server) {
 
             if (Handcode.version_1192 == true) {
@@ -52,11 +50,15 @@ public class ShapeFileConverter {
 
                         export_data = new StringBuilder();
                         TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position = entity.position().x + " " + entity.position().y + " " + entity.position().z;
-                        GameUtils.command.runEntity(entity, "execute in tanshugetrees:tanshugetrees_dimension run tp @s 0 300 0");
+                        GameUtils.command.runEntity(entity, "execute in tanshugetrees:tanshugetrees_dimension run tp @a 0 300 0");
                         GameUtils.command.runEntity(entity, "gamemode spectator");
                         GameUtils.command.runEntity(entity, "gamemode creative");
 
-                        summon(level_accessor, level_server);
+                        TanshugetreesMod.queueServerWork(100, () -> {
+
+                            summon(level_accessor, level_server);
+
+                        });
 
                     }
 
@@ -70,8 +72,6 @@ public class ShapeFileConverter {
 
     public static void stop (LevelAccessor level_accessor) {
 
-        level_accessor = level_accessor.getServer().overworld();
-
         if (level_accessor instanceof ServerLevel level_server) {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == true) {
@@ -83,9 +83,9 @@ public class ShapeFileConverter {
 
                 } else {
 
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @a at @s if dimension tanshugetrees:tanshugetrees_dimension in minecraft:overworld run tp @s " + TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position);
-                    TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = false;
                     GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned OFF");
+                    GameUtils.command.run(level_server, 0, 0, 0, "execute in minecraft:overworld run tp @a " + TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position);
+                    TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = false;
 
                 }
 
@@ -147,7 +147,7 @@ public class ShapeFileConverter {
             {
 
                 GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension positioned 0 " + posY + " 0 run " + GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", GameUtils.outside.getForgeDataFromGiveFile(file.getPath())));
-                String data_modify = "debug_mode:false,tree_generator_speed_global:false,tree_generator_speed_tick:" + 1 + ",tree_generator_speed_repeat:" + 0;
+                String data_modify = "debug_mode:false,tree_generator_speed_global:false,tree_generator_speed_tick:1,tree_generator_speed_repeat:0";
                 GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension positioned 0 " + posY + " 0 run data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
 
             }
@@ -345,7 +345,7 @@ public class ShapeFileConverter {
 
         String complete_date = new java.text.SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + " at " + new java.text.SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
 
-        TanshugetreesMod.queueServerWork(40, () -> {
+        TanshugetreesMod.queueServerWork(5, () -> {
 
             export_data.append("+f0/0/0fe");
             FileManager.writeTXT(Handcode.directory_config + "/.dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), export_data.toString(), true);
@@ -389,7 +389,7 @@ public class ShapeFileConverter {
 
                     {
 
-                        try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                        for (String read_all : FileManager.fileToStringArray(file.getPath())) {
 
                             {
 
@@ -497,7 +497,7 @@ public class ShapeFileConverter {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                        }
 
                     }
 
@@ -603,7 +603,7 @@ public class ShapeFileConverter {
 
             GameUtils.misc.sendChatMessage(level_server, "@a", "green", "THT : Completed!");
 
-            TanshugetreesMod.queueServerWork(40, () -> {
+            TanshugetreesMod.queueServerWork(5, () -> {
 
                 if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 
@@ -612,7 +612,11 @@ public class ShapeFileConverter {
 
                 } else {
 
-                    stop(level_accessor);
+                    TanshugetreesMod.queueServerWork(100, () -> {
+
+                        stop(level_accessor);
+
+                    });
 
                 }
 

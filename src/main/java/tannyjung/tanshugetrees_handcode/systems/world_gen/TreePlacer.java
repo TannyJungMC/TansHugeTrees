@@ -86,8 +86,6 @@ public class TreePlacer {
 
                                 if ((from_to_chunk[0] <= chunk_pos.x && chunk_pos.x <= from_to_chunk[2]) && (from_to_chunk[1] <= chunk_pos.z && chunk_pos.z <= from_to_chunk[3])) {
 
-                                    TanshugetreesMod.LOGGER.debug("Place " + chunk_pos.x + "/" + chunk_pos.z);
-
                                     // Get Tree Data
                                     {
 
