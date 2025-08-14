@@ -170,8 +170,16 @@ public class TreeFunction {
 
 										if (Math.random() < chance) {
 
-											pos = new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ);
-											world_gen.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(feature)).value().place(world_gen, world_gen.getLevel().getChunkSource().getGenerator(), world_gen.getRandom(), pos);
+											try {
+
+												pos = new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ);
+												world_gen.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(feature)).value().place(world_gen, world_gen.getLevel().getChunkSource().getGenerator(), world_gen.getRandom(), pos);
+
+											} catch (Exception ignored) {
+
+
+
+											}
 
 										}
 
