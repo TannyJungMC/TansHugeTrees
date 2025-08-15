@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import tannyjung.core.GameUtils;
+import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 
 public class BlockPlacer {
@@ -107,7 +108,11 @@ public class BlockPlacer {
 
                         if (function.equals("") == false) {
 
-                            TreeFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), function, false);
+                            TanshugetreesMod.queueServerWork(20, () -> {
+
+                                TreeFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), function, false);
+
+                            });
 
                         }
 
