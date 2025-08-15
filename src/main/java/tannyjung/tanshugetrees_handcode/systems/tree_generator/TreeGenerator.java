@@ -640,8 +640,6 @@ public class TreeGenerator {
                 // Continue
                 {
 
-                    GameUtils.nbt.entity.setText(entity, "step", "build");
-
                     if (type.equals("leaves") == false) {
 
                         // Curvature
@@ -718,6 +716,8 @@ public class TreeGenerator {
                     }
 
                     GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ^ ^ ^1");
+                    GameUtils.nbt.entity.addNumber(entity, type + "_length", -1);
+                    GameUtils.nbt.entity.setText(entity, "step", "build");
 
                 }
 
@@ -984,13 +984,9 @@ public class TreeGenerator {
                                             // General
                                             {
 
-                                                if (size < 1) {
+                                                if (size < 1 && build_saveX == 0 && build_saveY == 0 && build_saveZ == 0) {
 
-                                                    if (build_saveX == 0 && build_saveY == 0 && build_saveZ == 0) {
-
-                                                        buildBlockConnector(level_accessor, level_server, entity, center_pos, pos, type, generator_type, radius, build_area, replace);
-
-                                                    }
+                                                    buildBlockConnector(level_accessor, level_server, entity, center_pos, pos, type, generator_type, radius, build_area, replace);
 
                                                 }
 
@@ -1096,7 +1092,6 @@ public class TreeGenerator {
             // If it builds to the end without any break
             GameUtils.nbt.entity.setLogic(entity, "still_building", false);
             GameUtils.nbt.entity.setText(entity, "step", "calculation");
-            GameUtils.nbt.entity.addNumber(entity, type + "_length", -1);
 
         }
 
@@ -1449,13 +1444,14 @@ public class TreeGenerator {
             for (int number = 1; number <= 3; number++) {
 
                 function = "function_way" + number;
-                path = GameUtils.nbt.entity.getText(entity, function);
-                at_type = GameUtils.nbt.entity.getText(entity, function + "_type");
-                style = GameUtils.nbt.entity.getText(entity, function + "_style");
 
-                if (path.equals("") == false && at_type.equals(type)) {
+                if (Math.random() < GameUtils.nbt.entity.getNumber(entity, function + "_chance")) {
 
-                    if (Math.random() < GameUtils.nbt.entity.getNumber(entity, function + "_chance")) {
+                    path = GameUtils.nbt.entity.getText(entity, function);
+                    at_type = GameUtils.nbt.entity.getText(entity, function + "_type");
+                    style = GameUtils.nbt.entity.getText(entity, function + "_style");
+
+                    if (path.equals("") == false && at_type.equals(type) == true) {
 
                         if (GameUtils.nbt.entity.getNumber(entity, function + "_max") >= 0) {
 
