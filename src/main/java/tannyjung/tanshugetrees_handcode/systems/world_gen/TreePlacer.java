@@ -479,9 +479,9 @@ public class TreePlacer {
         }
 
         String location = storage_directory + "/" + chosen;
-        File file_chosen = new File(Handcode.directory_config + "/custom_packs/" + location);
+        String[] shape = Cache.tree_shape(location);
 
-        if (file_chosen.exists() == true && file_chosen.isDirectory() == false) {
+        if (shape != null) {
 
             Map<String, String> map_block = new HashMap<>();
             boolean can_disable_roots = false;
@@ -629,7 +629,7 @@ public class TreePlacer {
                     // Get Block Count
                     {
 
-                        try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file_chosen)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                        for (String read_all : shape) {
 
                             {
 
@@ -773,7 +773,7 @@ public class TreePlacer {
 
                             }
 
-                        } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                        }
 
                     }
 
@@ -799,7 +799,7 @@ public class TreePlacer {
             // Read File
             {
 
-                for (String read_all : Cache.tree_shape(location)) {
+                for (String read_all : shape) {
 
                     {
 
