@@ -43,7 +43,7 @@ public class LivingTreeMechanics {
 		// Read Settings
 		{
 
-			File file = new File(Handcode.directory_config + "/.dev/custom_packs_organized/presets/" + GameUtils.nbt.entity.getText(entity, "settings"));
+			File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + GameUtils.nbt.entity.getText(entity, "settings"));
 			String get_short = "";
 			String get = "";
 

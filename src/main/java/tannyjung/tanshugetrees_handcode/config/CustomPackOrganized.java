@@ -25,7 +25,7 @@ public class CustomPackOrganized {
 
     public static void clearFolder () {
 
-        Path delete = Path.of(Handcode.directory_config + "/.dev/custom_packs_organized");
+        Path delete = Path.of(Handcode.directory_config + "/#dev/custom_packs_organized");
 
         try {
 
@@ -112,7 +112,7 @@ public class CustomPackOrganized {
                                             // Not in Storage Folder
                                             if (source.getParent().toFile().getName().equals("storage") == false) {
 
-                                                String path = Handcode.directory_config + "/.dev/custom_packs_organized/" + category.getName();
+                                                String path = Handcode.directory_config + "/#dev/custom_packs_organized/" + category.getName();
 
                                                 // With Pack Name
                                                 if (category.getName().equals("leaf_litter") == false) {
@@ -237,7 +237,7 @@ public class CustomPackOrganized {
 
         }
 
-        File file = Path.of(Handcode.directory_config + "/.dev/custom_packs_organized").resolve(Path.of(pack.toPath() + "/replace").relativize(source)).toFile();
+        File file = Path.of(Handcode.directory_config + "/#dev/custom_packs_organized").resolve(Path.of(pack.toPath() + "/replace").relativize(source)).toFile();
         String[] data_old = FileManager.fileToStringArray(file.getPath());
         String[] data = new String[0];
 

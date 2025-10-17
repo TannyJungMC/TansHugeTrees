@@ -17,7 +17,7 @@ public class LeafLitter {
 
     public static void start (LevelAccessor level_accessor, int posX, int posY, int posZ, BlockState block, boolean remove) {
 
-        File file = new File(Handcode.directory_config + "/.dev/custom_packs_organized/leaf_litter/" + GameUtils.block.toTextID(block).replace(":", "-") + ".txt");
+        File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/leaf_litter/" + GameUtils.block.toTextID(block).replace(":", "-") + ".txt");
 
         if (ConfigMain.leaf_litter_classic_only == false && (file.exists() == true && file.isDirectory() == false)) {
 

@@ -407,9 +407,9 @@ public class ConfigMain {
 
 	public static void repairAll (LevelAccessor level_accessor) {
 
-		FileManager.createFolder(Handcode.directory_config + "/.dev");
-		FileManager.createFolder(Handcode.directory_config + "/.dev/custom_packs_organized");
-		FileManager.createFolder(Handcode.directory_config + "/.dev/shape_file_converter");
+		FileManager.createFolder(Handcode.directory_config + "/#dev");
+		FileManager.createFolder(Handcode.directory_config + "/#dev/custom_packs_organized");
+		FileManager.createFolder(Handcode.directory_config + "/#dev/shape_file_converter");
 		FileManager.createFolder(Handcode.directory_config + "/custom_packs");
 
 		CustomPackOrganized.start(level_accessor);

@@ -74,7 +74,7 @@ public class CustomPackIncompatible {
         // Tree Settings
         {
 
-            File file = new File(Handcode.directory_config + "/.dev/custom_packs_organized/world_gen");
+            File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/world_gen");
 
             if (file.exists() == true) {
 
@@ -336,8 +336,8 @@ public class CustomPackIncompatible {
         // Test Tree Settings
         {
 
-            File file_tree_settings = new File(Handcode.directory_config + "/.dev/custom_packs_organized/presets/" + tree_settings);
-            File file_tree_settings_incompatible = new File(Handcode.directory_config + "/.dev/custom_packs_organized/presets/" + "[INCOMPATIBLE] " + tree_settings);
+            File file_tree_settings = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + tree_settings);
+            File file_tree_settings_incompatible = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + "[INCOMPATIBLE] " + tree_settings);
 
             if (file_tree_settings_incompatible.exists() == false) {
 

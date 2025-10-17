@@ -46,7 +46,7 @@ public class ConfigWorldGen {
     private static void create () {
 
         File file = new File(Handcode.directory_config + "/config_world_gen.txt");
-        File file_organized = new File(Handcode.directory_config + "/.dev/custom_packs_organized/world_gen");
+        File file_organized = new File(Handcode.directory_config + "/#dev/custom_packs_organized/world_gen");
 
         // Re-Create The File
         {
