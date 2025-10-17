@@ -3,6 +3,8 @@ package tannyjung.core;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileManager {
 
@@ -138,7 +140,7 @@ public class FileManager {
 
 	}
 
-	public static String[] fileToStringArray (String path) {
+	public static String[] readTXT (String path) {
 
 		String[] return_array = new String[0];
 		File file = new File(path);
@@ -160,5 +162,57 @@ public class FileManager {
 		return return_array;
 
 	}
+
+    public static void writeBIN (String path, short[] write, boolean append) {
+
+        try {
+
+            DataOutputStream file_bin = new DataOutputStream(new FileOutputStream(path, append));
+
+            for (short read_all : write) {
+
+                file_bin.writeShort(read_all);
+
+            }
+
+            file_bin.close();
+
+        } catch (Exception exception) {
+
+            OutsideUtils.exception(new Exception(), exception);
+
+        }
+
+    }
+
+    public static short[] readBIN (String path) {
+
+        List<Short> get_list = new ArrayList<>();
+
+        {
+
+            try {
+
+                DataInputStream file_bin = new DataInputStream(new FileInputStream(path));
+
+                while (file_bin.available() > 0) {
+
+                    get_list.add(file_bin.readShort());
+
+                }
+
+                file_bin.close();
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception);
+
+            }
+
+        }
+
+        return OutsideUtils.shortListToArray(get_list);
+
+    }
 
 }

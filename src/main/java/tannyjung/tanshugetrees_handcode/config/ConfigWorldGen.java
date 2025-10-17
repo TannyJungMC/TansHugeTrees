@@ -4,12 +4,9 @@ import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.FileManager;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class ConfigWorldGen {
@@ -172,7 +169,7 @@ public class ConfigWorldGen {
         // Test is it locked
         {
 
-            for (String read_all : FileManager.fileToStringArray(Handcode.directory_config + "/config_world_gen_temp.txt")) {
+            for (String read_all : FileManager.readTXT(Handcode.directory_config + "/config_world_gen_temp.txt")) {
 
                 {
 
@@ -230,7 +227,7 @@ public class ConfigWorldGen {
 
             String option = "";
 
-            for (String read_all : FileManager.fileToStringArray(source.toString())) {
+            for (String read_all : FileManager.readTXT(source.toString())) {
 
                 {
 
@@ -251,7 +248,7 @@ public class ConfigWorldGen {
                                     boolean thisID = false;
                                     option = read_all.substring(0, read_all.indexOf(" = "));
 
-                                    for (String read_all_temp : FileManager.fileToStringArray(file_temp.getPath())) {
+                                    for (String read_all_temp : FileManager.readTXT(file_temp.getPath())) {
 
                                         {
 

@@ -6,63 +6,34 @@ import net.minecraft.world.level.LevelAccessor;
 import tannyjung.core.FileManager;
 import tannyjung.core.GameUtils;
 import tannyjung.core.OutsideUtils;
-import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.Calendar;
+import java.io.*;
+import java.util.*;
 
 public class ShapeFileConverter {
 
-    public static StringBuilder export_data = new StringBuilder();
+    public static LinkedHashMap<String, String> export_data = new LinkedHashMap<>();
 
     public static void start (LevelAccessor level_accessor, Entity entity, int count) {
 
         if (level_accessor instanceof ServerLevel level_server) {
 
-            if (Handcode.version_1192 == true) {
+            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Auto gen is not available on 1.19.2");
+                GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned ON");
 
-            } else {
+            }
 
-                if (GameUtils.command.result(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension if dimension tanshugetrees:tanshugetrees_dimension") == false) {
+            TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = count;
+            GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
 
-                    GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Dimension not found. Please install the shape file converter datapack, then try again.");
+            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                } else {
-
-                    if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
-
-                        GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned ON");
-
-                    }
-
-                    TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = count;
-                    GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
-
-                    if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
-
-                        TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = true;
-
-                        export_data = new StringBuilder();
-                        TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position = entity.position().x + " " + entity.position().y + " " + entity.position().z;
-                        GameUtils.command.runEntity(entity, "execute in tanshugetrees:tanshugetrees_dimension run tp @a 0 300 0");
-                        GameUtils.command.runEntity(entity, "gamemode spectator");
-                        GameUtils.command.runEntity(entity, "gamemode creative");
-
-                        TanshugetreesMod.queueServerWork(100, () -> {
-
-                            summon(level_accessor, level_server);
-
-                        });
-
-                    }
-
-                }
+                TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = true;
+                export_data.clear();
+                summon(level_accessor, level_server);
 
             }
 
@@ -84,7 +55,6 @@ public class ShapeFileConverter {
                 } else {
 
                     GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned OFF");
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute in minecraft:overworld run tp @a " + TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_back_position);
                     TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = false;
 
                 }
@@ -102,7 +72,6 @@ public class ShapeFileConverter {
     private static void summon (LevelAccessor level_accessor, ServerLevel level_server) {
 
         String file_location = "";
-        int posY = 0;
 
         // Get data
         {
@@ -120,10 +89,6 @@ public class ShapeFileConverter {
                             if (read_all.startsWith("file_location = ") == true) {
 
                                 file_location = read_all.replace("file_location = ", "");
-
-                            } else if (read_all.startsWith("posY = ") == true) {
-
-                                posY = Integer.parseInt(read_all.replace("posY = ", ""));
 
                             }
 
@@ -146,9 +111,9 @@ public class ShapeFileConverter {
             // Summon
             {
 
-                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension positioned 0 " + posY + " 0 run " + GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", GameUtils.outside.getForgeDataFromGiveFile(file.getPath())));
+                GameUtils.command.run(level_server, 0, 0, 0, "execute at @p positioned ~ 1000 ~ run " + GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", GameUtils.outside.getForgeDataFromGiveFile(file.getPath())));
                 String data_modify = "debug_mode:false,tree_generator_speed_global:false,tree_generator_speed_tick:1,tree_generator_speed_repeat:0";
-                GameUtils.command.run(level_server, 0, 0, 0, "execute in tanshugetrees:tanshugetrees_dimension positioned 0 " + posY + " 0 run data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
+                GameUtils.command.run(level_server, 0, 0, 0, "execute at @p positioned ~ 1000 ~ run data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
 
             }
 
@@ -166,7 +131,7 @@ public class ShapeFileConverter {
 
         String name = GameUtils.nbt.entity.getText(entity, "name").toLowerCase();
         String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss").format(Calendar.getInstance().getTime());
-        GameUtils.nbt.entity.setText(entity, "export_file_name", name + "_" + time + " (generating).txt");
+        GameUtils.nbt.entity.setText(entity, "export_file_name", name + "_" + time + ".bin");
         GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [\"\",{\"text\":\"THT : Generating \",\"color\":\"aqua\"},{\"text\":\"" + GameUtils.nbt.entity.getText(entity, "export_file_name").replace(" (generating)", "") + "\",\"color\":\"white\"}]");
 
         // Write Settings
@@ -227,42 +192,6 @@ public class ShapeFileConverter {
             }
 
             FileManager.writeTXT(Handcode.directory_config + "/#dev/shape_file_converter/" + name + "_settings.txt", write.toString(), false);
-
-        }
-
-        // Write Shape File
-        {
-
-            StringBuilder write = new StringBuilder();
-
-            {
-
-                write
-                        .append("Start Date : ").append(new java.text.SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime())).append(" at ").append(new java.text.SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime())).append("\n")
-                        .append("Complete Date : ###").append("\n")
-                        .append("\n")
-                        .append("sizeX = ###").append("\n")
-                        .append("sizeY = ###").append("\n")
-                        .append("sizeZ = ###").append("\n")
-                        .append("center_sizeX = ###").append("\n")
-                        .append("center_sizeY = ###").append("\n")
-                        .append("center_sizeZ = ###").append("\n")
-                        .append("\n")
-                        .append("block_count_trunk = ###").append("\n")
-                        .append("block_count_bough = ###").append("\n")
-                        .append("block_count_branch = ###").append("\n")
-                        .append("block_count_limb = ###").append("\n")
-                        .append("block_count_twig = ###").append("\n")
-                        .append("block_count_sprig = ###").append("\n")
-                        .append("\n")
-                        .append("----------------------------------------------------------------------------------------------------").append("\n")
-                        .append("\n")
-                        .append("+f0/0/0fs").append("\n")
-                ;
-
-            }
-
-            FileManager.writeTXT(Handcode.directory_config + "/#dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), write.toString(), false);
 
         }
 
@@ -343,53 +272,170 @@ public class ShapeFileConverter {
 
     public static void whenTreeEnd (LevelAccessor level_accessor, ServerLevel level_server, Entity entity) {
 
-        String complete_date = new java.text.SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + " at " + new java.text.SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
+        List<Short> short_converted = new ArrayList<>();
 
-        TanshugetreesMod.queueServerWork(20, () -> {
+        {
 
-            export_data.append("+f0/0/0fe");
-            FileManager.writeTXT(Handcode.directory_config + "/#dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), export_data.toString(), true);
-            export_data = new StringBuilder();
+            // Start Function
+            short_converted.add((short) 21000);
+            short_converted.add((short) 0);
+            short_converted.add((short) 0);
+            short_converted.add((short) 0);
 
-            // Update Generated File
+            // Blocks and Way Functions
             {
 
-                File file = new File(Handcode.directory_config + "/#dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "export_file_name"));
-                StringBuilder data = new StringBuilder();
+                String[] pos = new String[0];
+                int type = 0;
 
-                int min_sizeX = 0;
-                int min_sizeY = 0;
-                int min_sizeZ = 0;
-                int max_sizeX = 0;
-                int max_sizeY = 0;
-                int max_sizeZ = 0;
-                int sizeX = 0;
-                int sizeY = 0;
-                int sizeZ = 0;
-                int center_sizeX = 0;
-                int center_sizeY = 0;
-                int center_sizeZ = 0;
+                for (Map.Entry<String, String> entry : ShapeFileConverter.export_data.entrySet()) {
 
-                int block_count_trunk = 0;
-                int block_count_bough = 0;
-                int block_count_branch = 0;
-                int block_count_limb = 0;
-                int block_count_twig = 0;
-                int block_count_sprig = 0;
+                    if (entry.getKey().startsWith("B") == true) {
 
-                // Scanning
+                        {
+
+                            if (entry.getValue().startsWith("le") == true) {
+
+                                type = 1200;
+
+                            } else {
+
+                                if (entry.getValue().startsWith("ta") == true) {
+
+                                    type = 1100;
+
+                                } else if (entry.getValue().startsWith("se") == true) {
+
+                                    type = 1110;
+
+                                } else if (entry.getValue().startsWith("tr") == true) {
+
+                                    type = 1120;
+
+                                } else if (entry.getValue().startsWith("fi") == true) {
+
+                                    type = 1130;
+
+                                } else if (entry.getValue().startsWith("tr") == true) {
+
+                                    type = 1140;
+
+                                } else if (entry.getValue().startsWith("bo") == true) {
+
+                                    type = 1150;
+
+                                } else if (entry.getValue().startsWith("br") == true) {
+
+                                    type = 1160;
+
+                                } else if (entry.getValue().startsWith("li") == true) {
+
+                                    type = 1170;
+
+                                } else if (entry.getValue().startsWith("tw") == true) {
+
+                                    type = 1180;
+
+                                } else if (entry.getValue().startsWith("sp") == true) {
+
+                                    type = 1190;
+
+                                }
+
+                            }
+
+                            if (entry.getValue().endsWith("o") == true) {
+
+                                type = type + 1;
+
+                            } else if (entry.getValue().endsWith("i") == true) {
+
+                                type = type + 2;
+
+                            } else if (entry.getValue().endsWith("c") == true) {
+
+                                type = type + 3;
+
+                            }
+
+                        }
+
+                    }
+
+                    short_converted.add((short) type);
+                    pos = entry.getKey().substring(1).split("/");
+                    short_converted.add(Short.parseShort(pos[0]));
+                    short_converted.add(Short.parseShort(pos[1]));
+                    short_converted.add(Short.parseShort(pos[2]));
+
+                }
+
+            }
+
+            // End Function
+            short_converted.add((short) 22000);
+            short_converted.add((short) 0);
+            short_converted.add((short) 0);
+            short_converted.add((short) 0);
+
+        }
+
+        FileManager.writeBIN(Handcode.directory_config + "/#dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), OutsideUtils.shortListToArray(short_converted), true);
+        export_data.clear();
+
+
+
+
+
+
+
+
+
+
+        /*
+
+        // Update Generated File
+        {
+
+            StringBuilder data = new StringBuilder();
+
+            int min_sizeX = 0;
+            int min_sizeY = 0;
+            int min_sizeZ = 0;
+            int max_sizeX = 0;
+            int max_sizeY = 0;
+            int max_sizeZ = 0;
+            int sizeX = 0;
+            int sizeY = 0;
+            int sizeZ = 0;
+            int center_sizeX = 0;
+            int center_sizeY = 0;
+            int center_sizeZ = 0;
+
+            int block_count_trunk = 0;
+            int block_count_bough = 0;
+            int block_count_branch = 0;
+            int block_count_limb = 0;
+            int block_count_twig = 0;
+            int block_count_sprig = 0;
+
+            // Scanning
+            {
+
+                boolean start = false;
+                String type_short = "";
+                String[] pos = new String[0];
+                int posX = 0;
+                int posY = 0;
+                int posZ = 0;
+
                 {
 
-                    boolean start = false;
-                    String type_short = "";
-                    String[] pos = new String[0];
-                    int posX = 0;
-                    int posY = 0;
-                    int posZ = 0;
+                    try {
 
-                    {
+                        DataOutputStream file_bin = new DataOutputStream(new FileOutputStream(Handcode.directory_config + "/#dev/shape_file_converter/test.bin", false));
 
-                        for (String read_all : FileManager.fileToStringArray(file.getPath())) {
+                        for (String read_all : FileManager.readTXT(file.getPath())) {
 
                             {
 
@@ -491,6 +537,23 @@ public class ShapeFileConverter {
 
                                         }
 
+
+
+
+
+
+
+
+                                        String[] get = read_all.substring(2, read_all.length() - 3).split("/");
+                                        int x = Integer.parseInt(get[0]);
+                                        int y = Integer.parseInt(get[1]);
+                                        int z = Integer.parseInt(get[2]);
+
+                                        file_bin.writeShort(122);
+                                        file_bin.writeShort(x);
+                                        file_bin.writeShort(y);
+                                        file_bin.writeShort(z);
+
                                     }
 
                                 }
@@ -499,131 +562,137 @@ public class ShapeFileConverter {
 
                         }
 
+                        file_bin.close();
+
+                    } catch (Exception exception) {
+
+                        OutsideUtils.exception(new Exception(), exception);
+
                     }
 
                 }
 
-                // Size Calculation
-                {
+            }
 
-                    sizeX = max_sizeX - min_sizeX;
-                    sizeY = max_sizeY - min_sizeY;
-                    sizeZ = max_sizeZ - min_sizeZ;
-                    center_sizeX = -(min_sizeX);
-                    center_sizeY = -(min_sizeY);
-                    center_sizeZ = -(min_sizeZ);
+            // Size Calculation
+            {
 
-                }
+                sizeX = max_sizeX - min_sizeX;
+                sizeY = max_sizeY - min_sizeY;
+                sizeZ = max_sizeZ - min_sizeZ;
+                center_sizeX = -(min_sizeX);
+                center_sizeY = -(min_sizeY);
+                center_sizeZ = -(min_sizeZ);
 
-                String file_new = file.getParentFile().getPath() + "/" + file.getName().replace(" (generating)", " (updating)");
+            }
 
-                // Updating
-                {
+            String file_new = file.getParentFile().getPath() + "/" + file.getName().replace(" (generating)", " (updating)");
 
-                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+            // Updating
+            {
 
-                        {
+                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-                            if (read_all.startsWith("---") == false) {
+                    {
 
-                                if (read_all.startsWith("Complete Date : ") == true) {
+                        if (read_all.startsWith("---") == false) {
 
-                                    read_all = read_all.replace("###", complete_date);
+                            if (read_all.startsWith("Complete Date : ") == true) {
 
-                                } else if (read_all.startsWith("sizeX = ") == true) {
+                                read_all = read_all.replace("###", complete_date);
 
-                                    read_all = read_all.replace("###", "" + sizeX);
+                            } else if (read_all.startsWith("sizeX = ") == true) {
 
-                                } else if (read_all.startsWith("sizeY = ") == true) {
+                                read_all = read_all.replace("###", "" + sizeX);
 
-                                    read_all = read_all.replace("###", "" + sizeY);
+                            } else if (read_all.startsWith("sizeY = ") == true) {
 
-                                } else if (read_all.startsWith("sizeZ = ") == true) {
+                                read_all = read_all.replace("###", "" + sizeY);
 
-                                    read_all = read_all.replace("###", "" + sizeZ);
+                            } else if (read_all.startsWith("sizeZ = ") == true) {
 
-                                } else if (read_all.startsWith("center_sizeX = ") == true) {
+                                read_all = read_all.replace("###", "" + sizeZ);
 
-                                    read_all = read_all.replace("###", "" + center_sizeX);
+                            } else if (read_all.startsWith("center_sizeX = ") == true) {
 
-                                } else if (read_all.startsWith("center_sizeY = ") == true) {
+                                read_all = read_all.replace("###", "" + center_sizeX);
 
-                                    read_all = read_all.replace("###", "" + center_sizeY);
+                            } else if (read_all.startsWith("center_sizeY = ") == true) {
 
-                                } else if (read_all.startsWith("center_sizeZ = ") == true) {
+                                read_all = read_all.replace("###", "" + center_sizeY);
 
-                                    read_all = read_all.replace("###", "" + center_sizeZ);
+                            } else if (read_all.startsWith("center_sizeZ = ") == true) {
 
-                                } else if (read_all.startsWith("block_count_trunk = ") == true) {
+                                read_all = read_all.replace("###", "" + center_sizeZ);
 
-                                    read_all = read_all.replace("###", "" + block_count_trunk);
+                            } else if (read_all.startsWith("block_count_trunk = ") == true) {
 
-                                } else if (read_all.startsWith("block_count_bough = ") == true) {
+                                read_all = read_all.replace("###", "" + block_count_trunk);
 
-                                    read_all = read_all.replace("###", "" + block_count_bough);
+                            } else if (read_all.startsWith("block_count_bough = ") == true) {
 
-                                } else if (read_all.startsWith("block_count_branch = ") == true) {
+                                read_all = read_all.replace("###", "" + block_count_bough);
 
-                                    read_all = read_all.replace("###", "" + block_count_branch);
+                            } else if (read_all.startsWith("block_count_branch = ") == true) {
 
-                                } else if (read_all.startsWith("block_count_limb = ") == true) {
+                                read_all = read_all.replace("###", "" + block_count_branch);
 
-                                    read_all = read_all.replace("###", "" + block_count_limb);
+                            } else if (read_all.startsWith("block_count_limb = ") == true) {
 
-                                } else if (read_all.startsWith("block_count_twig = ") == true) {
+                                read_all = read_all.replace("###", "" + block_count_limb);
 
-                                    read_all = read_all.replace("###", "" + block_count_twig);
+                            } else if (read_all.startsWith("block_count_twig = ") == true) {
 
-                                } else if (read_all.startsWith("block_count_sprig = ") == true) {
+                                read_all = read_all.replace("###", "" + block_count_twig);
 
-                                    read_all = read_all.replace("###", "" + block_count_sprig);
+                            } else if (read_all.startsWith("block_count_sprig = ") == true) {
 
-                                }
-
-                                FileManager.writeTXT(file_new, read_all + "\n", true);
-
-                            } else {
-
-                                FileManager.writeTXT(file_new, read_all + "\n" + "\n", true);
-                                break;
+                                read_all = read_all.replace("###", "" + block_count_sprig);
 
                             }
 
+                            FileManager.writeTXT(file_new, read_all + "\n", true);
+
+                        } else {
+
+                            FileManager.writeTXT(file_new, read_all + "\n" + "\n", true);
+                            break;
+
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                    }
 
-                }
-
-                FileManager.writeTXT(file_new, data.toString(), true);
-                file.delete();
-                new File(file_new).renameTo(new File(file.getParentFile().getPath() + "/" + file.getName().replace(" (generating)", "")));
+                } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
             }
 
-            GameUtils.misc.sendChatMessage(level_server, "@a", "green", "THT : Completed!");
+            FileManager.writeTXT(file_new, data.toString(), true);
+            file.delete();
+            new File(file_new).renameTo(new File(file.getParentFile().getPath() + "/" + file.getName().replace(" (generating)", "")));
 
-            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
+        }
 
-                GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
+         */
 
-                TanshugetreesMod.queueServerWork(20, () -> {
 
-                    summon(level_accessor, level_server);
 
-                });
 
-            } else {
 
-                TanshugetreesMod.queueServerWork(100, () -> {
 
-                    stop(level_accessor);
 
-                });
 
-            }
+        GameUtils.misc.sendChatMessage(level_server, "@a", "green", "THT : Completed!");
 
-        });
+        if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
+
+            GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
+            summon(level_accessor, level_server);
+
+        } else {
+
+                stop(level_accessor);
+
+        }
 
     }
 

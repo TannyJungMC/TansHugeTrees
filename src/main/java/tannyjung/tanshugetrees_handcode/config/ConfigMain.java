@@ -301,7 +301,7 @@ public class ConfigMain {
 
 			int index = 0;
 
-			for (String read_all : FileManager.fileToStringArray(Handcode.directory_config + "/config.txt")) {
+			for (String read_all : FileManager.readTXT(Handcode.directory_config + "/config.txt")) {
 
 				{
 

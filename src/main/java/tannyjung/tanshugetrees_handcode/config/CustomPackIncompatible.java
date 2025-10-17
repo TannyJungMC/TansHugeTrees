@@ -13,7 +13,6 @@ import tannyjung.core.GameUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 
 public class CustomPackIncompatible {
@@ -198,7 +197,7 @@ public class CustomPackIncompatible {
 
             String get = "";
 
-            for (String read_all : FileManager.fileToStringArray(file.getPath())) {
+            for (String read_all : FileManager.readTXT(file.getPath())) {
 
                 {
 
@@ -288,7 +287,7 @@ public class CustomPackIncompatible {
         // Read "World Gen" File
         {
 
-            for (String read_all : FileManager.fileToStringArray(file.getPath())) {
+            for (String read_all : FileManager.readTXT(file.getPath())) {
 
                 {
 
@@ -346,7 +345,7 @@ public class CustomPackIncompatible {
                     // Read "Tree Settings" File
                     {
 
-                        for (String read_all : FileManager.fileToStringArray(file_tree_settings.getPath())) {
+                        for (String read_all : FileManager.readTXT(file_tree_settings.getPath())) {
 
                             {
 

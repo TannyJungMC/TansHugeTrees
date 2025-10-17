@@ -171,6 +171,8 @@ public class LivingTreeMechanics {
 
 				boolean have_center_block = level_accessor.getBlockState(center_pos).isAir() == false;
 
+                /*
+
 				for (String read_all : Cache.tree_shape(GameUtils.nbt.entity.getText(entity, "file"))) {
 
 					{
@@ -292,6 +294,8 @@ public class LivingTreeMechanics {
 					}
 
 				}
+
+                 */
 
 			}
 

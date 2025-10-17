@@ -217,7 +217,7 @@ public class CustomPackOrganized {
 
     private static void replaceEachFile (File pack, Path source) {
 
-        String[] data_new = FileManager.fileToStringArray(source.toString());
+        String[] data_new = FileManager.readTXT(source.toString());
         boolean specific = false;
 
         // Get Mode
@@ -238,7 +238,7 @@ public class CustomPackOrganized {
         }
 
         File file = Path.of(Handcode.directory_config + "/#dev/custom_packs_organized").resolve(Path.of(pack.toPath() + "/replace").relativize(source)).toFile();
-        String[] data_old = FileManager.fileToStringArray(file.getPath());
+        String[] data_old = FileManager.readTXT(file.getPath());
         String[] data = new String[0];
 
         if (specific == false) {

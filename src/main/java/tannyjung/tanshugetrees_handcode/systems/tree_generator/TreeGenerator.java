@@ -7,6 +7,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
@@ -1273,7 +1274,29 @@ public class TreeGenerator {
             // Replace
             {
 
-                Block previous_block = level_accessor.getBlockState(pos).getBlock();
+                Block previous_block = Blocks.AIR;
+
+                // Get Previous Block
+                {
+
+                    if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
+
+                        previous_block = level_accessor.getBlockState(pos).getBlock();
+
+                    } else {
+
+                        String key = "B" + pos.getX() + "/" + (pos.getY() - 1000) + "/" + pos.getZ();
+
+                        if (ShapeFileConverter.export_data.containsKey(key) == true) {
+
+                            previous_block = GameUtils.block.fromText(ShapeFileConverter.export_data.get(key)).getBlock();
+
+                        }
+
+                    }
+
+                }
+
                 String previous_blockID = GameUtils.block.toTextID(previous_block.defaultBlockState());
                 boolean is_block_placer = previous_blockID.startsWith("tanshugetrees:block_placer");
 
@@ -1410,22 +1433,27 @@ public class TreeGenerator {
 
             if (GameUtils.nbt.entity.getText(entity, block).equals("") == false) {
 
-                level_accessor.setBlock(pos, GameUtils.block.fromText("tanshugetrees:block_placer_" + block_placer), 2);
-                GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
-
                 String[] function = buildGetWayFunction(entity, type);
-                GameUtils.nbt.block.setText(level_accessor, pos, "block", GameUtils.nbt.entity.getText(entity, block));
-                GameUtils.nbt.block.setText(level_accessor, pos, "function", function[1]);
-                GameUtils.nbt.block.setText(level_accessor, pos, "function_style", function[2]);
 
-                if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == true) {
+                if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                    GameUtils.nbt.block.setText(level_accessor, pos, "export_file_name", GameUtils.nbt.entity.getText(entity, "export_file_name"));
-                    GameUtils.nbt.block.setNumber(level_accessor, pos, "center_posX", entity.getBlockX());
-                    GameUtils.nbt.block.setNumber(level_accessor, pos, "center_posY", entity.getBlockY());
-                    GameUtils.nbt.block.setNumber(level_accessor, pos, "center_posZ", entity.getBlockZ());
-                    GameUtils.nbt.block.setText(level_accessor, pos, "type_short", type_short);
-                    GameUtils.nbt.block.setText(level_accessor, pos, "function_short", function[0]);
+                    GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
+                    level_accessor.setBlock(pos, GameUtils.block.fromText("tanshugetrees:block_placer_" + block_placer), 2);
+
+                    GameUtils.nbt.block.setText(level_accessor, pos, "block", GameUtils.nbt.entity.getText(entity, block));
+                    GameUtils.nbt.block.setText(level_accessor, pos, "function", function[1]);
+                    GameUtils.nbt.block.setText(level_accessor, pos, "function_style", function[2]);
+
+                } else {
+
+                    String key = pos.getX() + "/" + (pos.getY() - 1000) + "/" + pos.getZ();
+                    ShapeFileConverter.export_data.put("B" + key, type_short);
+
+                    if (function[0].equals("") == false) {
+
+                        ShapeFileConverter.export_data.put("F" + key, type_short);
+
+                    }
 
                 }
 

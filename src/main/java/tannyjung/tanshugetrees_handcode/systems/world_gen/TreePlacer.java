@@ -24,9 +24,7 @@ import tannyjung.tanshugetrees_handcode.systems.Cache;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LeafLitter;
 import tannyjung.tanshugetrees_handcode.systems.tree_generator.TreeFunction;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -479,7 +477,7 @@ public class TreePlacer {
         }
 
         String location = storage_directory + "/" + chosen;
-        String[] shape = Cache.tree_shape(location);
+        short[] shape = Cache.tree_shape(location);
 
         if (shape != null) {
 
@@ -625,6 +623,8 @@ public class TreePlacer {
 
                     int seed = center_posX + center_posY + center_posZ;
                     double multiply = 0.0;
+
+                    /*
 
                     // Get Block Count
                     {
@@ -777,6 +777,8 @@ public class TreePlacer {
 
                     }
 
+                     */
+
                 }
 
             }
@@ -799,7 +801,52 @@ public class TreePlacer {
             // Read File
             {
 
-                for (String read_all : shape) {
+
+
+
+
+                try {
+
+                    DataInputStream file_bin = new DataInputStream(new FileInputStream(Handcode.directory_config + "/#dev/shape_file_converter/test.bin"));
+
+                    {
+
+                        while (file_bin.available() > 0) {
+
+                            // get_pos = read_all.substring(2, read_all.length() - 3);
+
+                            get_pos_array = GameUtils.outside.textPosConverter(get_pos, rotation, mirrored);
+                            testX = center_posX + get_pos_array[0];
+                            testY = center_posY + get_pos_array[1];
+                            testZ = center_posZ + get_pos_array[2];
+
+                            if (chunk_pos.equals(new ChunkPos(testX >> 4, testZ >> 4)) == true) {
+
+                                pos = new BlockPos(testX, testY, testZ);
+
+                            }
+
+                        }
+
+                    }
+
+                    file_bin.close();
+
+                } catch (Exception exception) {
+
+                    OutsideUtils.exception(new Exception(), exception);
+
+                }
+
+
+
+
+
+
+                /*
+
+
+                for (short read_all : shape) {
 
                     {
 
@@ -1175,6 +1222,8 @@ public class TreePlacer {
                     }
 
                 }
+
+                 */
 
             }
 

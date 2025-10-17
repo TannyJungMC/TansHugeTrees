@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 public class OutsideUtils {
 
@@ -48,5 +49,19 @@ public class OutsideUtils {
 		}
 
 	}
+
+    public static short[] shortListToArray (List<Short> list) {
+
+        short[] return_number = new short[list.size()];
+
+        for (int count = 0; count < list.size(); count++) {
+
+            return_number[count] = list.get(count);
+
+        }
+
+        return return_number;
+
+    }
 
 }

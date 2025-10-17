@@ -5,26 +5,25 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import tannyjung.core.GameUtils;
+import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
+import tannyjung.tanshugetrees_handcode.Handcode;
+
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 
 public class BlockPlacer {
 
     public static void start (LevelAccessor level_accessor, BlockPos pos) {
 
         ServerLevel level_server = (ServerLevel) level_accessor;
-        boolean is_shape_file_converter = TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter;
         String function = GameUtils.nbt.block.getText(level_accessor, pos, "function");
 
         if (GameUtils.nbt.block.getLogic(level_accessor, pos, "delay1") == false) {
 
             GameUtils.nbt.block.setLogic(level_accessor, pos, "delay1", true);
-
-            if (is_shape_file_converter == false) {
-
-                level_server.scheduleTick(pos, level_server.getBlockState(pos).getBlock(), 100);
-
-            }
+            level_server.scheduleTick(pos, level_server.getBlockState(pos).getBlock(), 100);
 
             // Test Function
             {
@@ -92,50 +91,27 @@ public class BlockPlacer {
 
         } else {
 
-            if (is_shape_file_converter == false) {
+            // Normal
+            {
 
-                // Normal
-                {
+                if (GameUtils.nbt.block.getLogic(level_accessor, pos, "delay2") == false) {
 
-                    if (GameUtils.nbt.block.getLogic(level_accessor, pos, "delay2") == false) {
+                    GameUtils.nbt.block.setLogic(level_accessor, pos, "delay2", true);
+                    level_server.scheduleTick(pos, level_server.getBlockState(pos).getBlock(), 100);
 
-                        GameUtils.nbt.block.setLogic(level_accessor, pos, "delay2", true);
-                        level_server.scheduleTick(pos, level_server.getBlockState(pos).getBlock(), 100);
+                } else {
 
-                    } else {
-
-                        level_accessor.setBlock(pos, GameUtils.block.fromText(GameUtils.nbt.block.getText(level_accessor, pos, "block")), 2);
-
-                        if (function.equals("") == false) {
-
-                            TanshugetreesMod.queueServerWork(20, () -> {
-
-                                TreeFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), function, false);
-
-                            });
-
-                        }
-
-                    }
-
-                }
-
-            } else {
-
-                // Shape File Converter
-                {
-
-                    BlockPos pos_center = new BlockPos((int) GameUtils.nbt.block.getNumber(level_accessor, pos, "center_posX"), (int) GameUtils.nbt.block.getNumber(level_accessor, pos, "center_posY"), (int) GameUtils.nbt.block.getNumber(level_accessor, pos, "center_posZ"));
-                    String write_pos = (pos.getX() - pos_center.getX()) + "/" + (pos.getY() - pos_center.getY()) + "/" + (pos.getZ() - pos_center.getZ());
-                    ShapeFileConverter.export_data.append("+b").append(write_pos).append(GameUtils.nbt.block.getText(level_accessor, pos, "type_short")).append("\n");
+                    level_accessor.setBlock(pos, GameUtils.block.fromText(GameUtils.nbt.block.getText(level_accessor, pos, "block")), 2);
 
                     if (function.equals("") == false) {
 
-                        ShapeFileConverter.export_data.append("+f").append(write_pos).append(GameUtils.nbt.block.getText(level_accessor, pos, "function_short")).append("\n");
+                        TanshugetreesMod.queueServerWork(20, () -> {
+
+                            TreeFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), function, false);
+
+                        });
 
                     }
-
-                    level_accessor.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 
                 }
 

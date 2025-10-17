@@ -14,7 +14,6 @@ import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
-import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 import java.io.*;
 import java.util.*;
@@ -43,7 +42,7 @@ public class TreeLocation {
             if (file.exists() == true && file.isDirectory() == false) {
 
                 TanshugetreesMod.LOGGER.info("Generating tree locations for a new region ({} -> {}/{})", dimension.replace("-", ":"), region_posX, region_posZ);
-                String[] config_world_gen = FileManager.fileToStringArray(file.getPath());
+                String[] config_world_gen = FileManager.readTXT(file.getPath());
 
                 // Overlay Loading Loop
                 {
@@ -783,6 +782,8 @@ public class TreeLocation {
             // Scan Shape File
             {
 
+                /*
+
                 for (String read_all : Cache.tree_shape(storage_directory + "/" + chosen_name)) {
 
                     {
@@ -832,6 +833,8 @@ public class TreeLocation {
                     }
 
                 }
+
+                 */
 
             }
 

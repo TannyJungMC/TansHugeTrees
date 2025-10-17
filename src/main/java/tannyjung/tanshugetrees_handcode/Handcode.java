@@ -1,7 +1,9 @@
 package tannyjung.tanshugetrees_handcode;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.LevelResource;
@@ -10,12 +12,15 @@ import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.server.*;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ISystemReportExtender;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
+import tannyjung.core.FileManager;
 import tannyjung.core.GameUtils;
+import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.config.CustomPackIncompatible;
 import tannyjung.tanshugetrees_handcode.config.PackCheckUpdate;
@@ -26,6 +31,8 @@ import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDete
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFull;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenBeforePlants;
 
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.util.concurrent.CompletableFuture;
 
 @Mod.EventBusSubscriber
