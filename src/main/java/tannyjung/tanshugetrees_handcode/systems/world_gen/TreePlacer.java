@@ -278,6 +278,13 @@ public class TreePlacer {
 
                             }
 
+                            if (center_posY < level_accessor.getMinBuildHeight()) {
+
+                                pass = false;
+                                break test;
+
+                            }
+
                         }
 
                         // Max Height Spawn
