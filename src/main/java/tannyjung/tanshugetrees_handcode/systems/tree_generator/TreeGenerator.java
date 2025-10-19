@@ -748,11 +748,22 @@ public class TreeGenerator {
 
                             if (type.equals("taproot") == true) {
 
-                                GameUtils.nbt.entity.setText(entity, "step", "summon");
+                                if (GameUtils.nbt.entity.getNumber(entity, type + "_count") > 0) {
 
-                                if (GameUtils.nbt.entity.getNumber(entity, type + "_count") == 0) {
+                                    GameUtils.nbt.entity.setText(entity, "step", "summon");
 
-                                    GameUtils.nbt.entity.setText(entity, "type", type_pre_next[0]);
+                                } else {
+
+                                    if (GameUtils.nbt.entity.getNumber(entity, type_pre_next[0] + "_count") > 0) {
+
+                                        GameUtils.nbt.entity.setText(entity, "step", "summon");
+                                        GameUtils.nbt.entity.setText(entity, "type", type_pre_next[0]);
+
+                                    } else {
+
+                                        GameUtils.nbt.entity.setText(entity, "step", "end");
+
+                                    }
 
                                 }
 
@@ -1181,7 +1192,7 @@ public class TreeGenerator {
 
             String block = "";
 
-            // Get Type
+            // Get Block Type
             {
 
                 double outer_level = GameUtils.nbt.entity.getNumber(entity, type + "_outer_level");
@@ -1273,22 +1284,50 @@ public class TreeGenerator {
             // Replace
             {
 
-                Block previous_block = Blocks.AIR;
+                String previous_block = "";
+                String previous_block_type = "";
+                boolean is_block_placer = false;
 
                 // Get Previous Block
                 {
 
                     if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                        previous_block = level_accessor.getBlockState(pos).getBlock();
+                        previous_block = GameUtils.block.toTextID(level_accessor.getBlockState(pos));
+
+                        if (previous_block.startsWith("tanshugetrees:block_placer_") == true) {
+
+                            is_block_placer = true;
+                            previous_block = previous_block.substring("tanshugetrees:block_placer_".length());
+
+                            if (previous_block.endsWith("outer") == true) {
+
+                                previous_block_type = "o";
+
+                            } else if (previous_block.endsWith("inner") == true) {
+
+                                previous_block_type = "i";
+
+                            } else {
+
+                                previous_block_type = "c";
+
+                            }
+
+                            previous_block = previous_block.substring(0, 2);
+
+                        }
 
                     } else {
 
                         String key = "B" + (pos.getX() - entity.getBlockX()) + "/" + (pos.getY() - 1000) + "/" + (pos.getZ() - entity.getBlockZ());
+                        previous_block = ShapeFileConverter.export_data.getOrDefault(key, "");
 
-                        if (ShapeFileConverter.export_data.containsKey(key) == true) {
+                        if (previous_block.equals("") == false) {
 
-                            previous_block = GameUtils.block.fromText(ShapeFileConverter.export_data.getOrDefault(key, "")).getBlock();
+                            is_block_placer = true;
+                            previous_block_type = previous_block.substring(2);
+                            previous_block = previous_block.substring(0, 2);
 
                         }
 
@@ -1296,14 +1335,84 @@ public class TreeGenerator {
 
                 }
 
-                String previous_blockID = GameUtils.block.toTextID(previous_block.defaultBlockState());
-                boolean is_block_placer = previous_blockID.startsWith("tanshugetrees:block_placer");
-
                 if (is_block_placer == true) {
 
-                    boolean is_blacklist = GameUtils.block.isTaggedAs(previous_block.defaultBlockState(), "tanshugetrees:block_placer_blacklist_" + type);
-                    boolean is_same_type = previous_blockID.startsWith("tanshugetrees:block_placer_" + type);
-                    boolean is_core = previous_blockID.endsWith("_core");
+                    String type_short = type.substring(0, 2);
+                    boolean is_blacklist = false;
+
+                    // Test Blacklist
+                    {
+
+                        if (type_short.equals("se") == true) {
+
+                            if ("ta".contains(previous_block) == true) {
+
+                                is_blacklist = true;
+
+                            }
+
+                        } else if (type_short.equals("te") == true) {
+
+                            if ("ta/se".contains(previous_block) == true) {
+
+                                is_blacklist = true;
+
+                            }
+
+                        } else if (type_short.equals("fi") == true) {
+
+                            if ("ta/se/te".contains(previous_block) == true) {
+
+                                is_blacklist = true;
+
+                            }
+
+                        } else if (type_short.equals("bo") == true) {
+
+                            if ("tr".contains(previous_block) == true) {
+
+                                is_blacklist = true;
+
+                            }
+
+                        } else if (type_short.equals("br") == true) {
+
+                            if ("tr/bo".contains(previous_block) == true) {
+
+                                is_blacklist = true;
+
+                            }
+
+                        } else if (type_short.equals("li") == true) {
+
+                            if ("tr/bo/br".contains(previous_block) == true) {
+
+                                is_blacklist = true;
+
+                            }
+
+                        } else if (type_short.equals("tw") == true) {
+
+                            if ("tr/bo/br/li".contains(previous_block) == true) {
+
+                                is_blacklist = true;
+
+                            }
+
+                        } else if (type_short.equals("sp") == true) {
+
+                            if ("tr/bo/br/li/tw".contains(previous_block) == true) {
+
+                                is_blacklist = true;
+
+                            }
+
+                        }
+
+                    }
+
+                    boolean is_same_type = type_short.equals(previous_block);
+                    boolean is_core = previous_block_type.endsWith("c");
 
                     if (block.equals("core") == true) {
 
@@ -1341,8 +1450,8 @@ public class TreeGenerator {
 
                                     {
 
-                                        boolean is_same_type_outer = previous_blockID.equals("tanshugetrees:block_placer_" + type + "_outer");
-                                        boolean is_same_type_inner = previous_blockID.equals("tanshugetrees:block_placer_" + type + "_inner");
+                                        boolean is_same_type_outer = previous_block_type.equals("o");
+                                        boolean is_same_type_inner = previous_block_type.equals("i");
 
                                         if (block.equals("outer") == true) {
 
@@ -1368,19 +1477,9 @@ public class TreeGenerator {
 
                             } else {
 
-                                boolean is_roots = GameUtils.block.isTaggedAs(previous_block.defaultBlockState(), "tanshugetrees:block_placer_roots");
-
                                 if (is_blacklist == true) {
 
                                     block = "";
-
-                                } else if (false && is_roots == true) {
-
-                                    if (type.endsWith("root") == false) {
-
-                                        block = "";
-
-                                    }
 
                                 }
 
@@ -1404,21 +1503,12 @@ public class TreeGenerator {
 
                 if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                    if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false) {
-
-                        return false;
-
-                    }
+                    return GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks");
 
                 } else {
 
                     String block = ShapeFileConverter.export_data.getOrDefault("B" + (pos.getX() - entity.getBlockX()) + "/" + (pos.getY() - 1000) + "/" + (pos.getZ() - entity.getBlockZ()), "");
-
-                    if (block.equals("") == false) {
-
-                        return false;
-
-                    }
+                    return block.isEmpty();
 
                 }
 
@@ -1550,10 +1640,7 @@ public class TreeGenerator {
 
         private static void end (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, String id) {
 
-            GameUtils.command.runEntity(entity, "summon firework_rocket ~20 ~10 ~20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
-            GameUtils.command.runEntity(entity, "summon firework_rocket ~20 ~10 ~-20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
-            GameUtils.command.runEntity(entity, "summon firework_rocket ~-20 ~10 ~20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
-            GameUtils.command.runEntity(entity, "summon firework_rocket ~-20 ~10 ~-20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
+            String firework_position = "";
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
@@ -1562,9 +1649,14 @@ public class TreeGenerator {
             } else {
 
                 ShapeFileConverter.whenTreeEnd(level_accessor, level_server, entity);
+                firework_position = "execute at @p run ";
 
             }
 
+            GameUtils.command.runEntity(entity, firework_position + "summon firework_rocket ~20 ~10 ~20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
+            GameUtils.command.runEntity(entity, firework_position + "summon firework_rocket ~20 ~10 ~-20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
+            GameUtils.command.runEntity(entity, firework_position + "summon firework_rocket ~-20 ~10 ~20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
+            GameUtils.command.runEntity(entity, firework_position + "summon firework_rocket ~-20 ~10 ~-20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
             GameUtils.command.run(level_server, 0, 0, 0, "kill @e[tag=TANSHUGETREES-" + id + "]");
 
         }

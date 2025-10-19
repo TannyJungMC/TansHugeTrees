@@ -130,7 +130,7 @@ public class ShapeFileConverter {
 
     public static void whenTreeStart (ServerLevel level_server, Entity entity) {
 
-        String name = GameUtils.nbt.entity.getText(entity, "name").toLowerCase();
+        String name = GameUtils.nbt.entity.getText(entity, "name");
         String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss-SSS").format(Calendar.getInstance().getTime());
         GameUtils.nbt.entity.setText(entity, "export_file_name", name + "_" + time + ".bin");
         GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [\"\",{\"text\":\"THT : Generating \",\"color\":\"aqua\"},{\"text\":\"" + GameUtils.nbt.entity.getText(entity, "export_file_name").replace(" (generating)", "") + "\",\"color\":\"white\"}]");
@@ -183,18 +183,20 @@ public class ShapeFileConverter {
                 {
 
                     write
-                            .append("Function fs 2001 = ").append(GameUtils.nbt.entity.getText(entity, "function_start")).append("\n")
-                            .append("Function fe 2002 = ").append(GameUtils.nbt.entity.getText(entity, "function_end")).append("\n")
-                            .append("Function f1 2011 = ").append(GameUtils.nbt.entity.getText(entity, "function_way1")).append("\n")
-                            .append("Function f2 2012 = ").append(GameUtils.nbt.entity.getText(entity, "function_way2")).append("\n")
-                            .append("Function f3 2013 = ").append(GameUtils.nbt.entity.getText(entity, "function_way3")).append("\n")
+                            .append("Function fs 210 = ").append(GameUtils.nbt.entity.getText(entity, "function_start")).append("\n")
+                            .append("Function fe 220 = ").append(GameUtils.nbt.entity.getText(entity, "function_end")).append("\n")
+                            .append("Function f1 201 = ").append(GameUtils.nbt.entity.getText(entity, "function_way1")).append("\n")
+                            .append("Function f2 202 = ").append(GameUtils.nbt.entity.getText(entity, "function_way2")).append("\n")
+                            .append("Function f3 203 = ").append(GameUtils.nbt.entity.getText(entity, "function_way3")).append("\n")
+                            .append("Function f4 204 = ").append(GameUtils.nbt.entity.getText(entity, "function_way4")).append("\n")
+                            .append("Function f5 205 = ").append(GameUtils.nbt.entity.getText(entity, "function_way5")).append("\n")
                     ;
 
                 }
 
             }
 
-            FileManager.writeTXT(Handcode.directory_config + "/#dev/shape_file_converter/" + name + "_settings.txt", write.toString(), false);
+            FileManager.writeTXT(Handcode.directory_config + "/#dev/shape_file_converter/" + name + "/" + name + "_settings.txt", write.toString(), false);
 
         }
 
@@ -297,7 +299,7 @@ public class ShapeFileConverter {
         {
 
             // Start Function
-            short_converted.add((short) 2001);
+            short_converted.add((short) 210);
             short_converted.add((short) 0);
             short_converted.add((short) 0);
             short_converted.add((short) 0);
@@ -350,7 +352,7 @@ public class ShapeFileConverter {
 
                                     type = 1110;
 
-                                } else if (type_short.startsWith("tr") == true) {
+                                } else if (type_short.startsWith("te") == true) {
 
                                     type = 1120;
 
@@ -474,6 +476,10 @@ public class ShapeFileConverter {
 
                         }
 
+                    } else if (entry.getKey().startsWith("F") == true) {
+
+                        type = 200 + Integer.parseInt(type_short.substring(1));
+
                     }
 
                     short_converted.add((short) type);
@@ -486,17 +492,18 @@ public class ShapeFileConverter {
             }
 
             // End Function
-            short_converted.add((short) 2002);
+            short_converted.add((short) 220);
             short_converted.add((short) 0);
             short_converted.add((short) 0);
             short_converted.add((short) 0);
 
         }
 
+        List<Short> start_data = new ArrayList<>();
+
         // Start Data
         {
 
-            List<Short> start_data = new ArrayList<>();
             start_data.add((short) (max_sizeX - min_sizeX));
             start_data.add((short) (max_sizeY - min_sizeY));
             start_data.add((short) (max_sizeZ - min_sizeZ));
@@ -509,11 +516,12 @@ public class ShapeFileConverter {
             start_data.add((short) block_count_limb);
             start_data.add((short) block_count_twig);
             start_data.add((short) block_count_sprig);
-            FileManager.writeBIN(Handcode.directory_config + "/#dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), OutsideUtils.shortListToArray(start_data), true);
 
         }
 
-        FileManager.writeBIN(Handcode.directory_config + "/#dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), OutsideUtils.shortListToArray(short_converted), true);
+        String path = Handcode.directory_config + "/#dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "name") + "/storage/" + GameUtils.nbt.entity.getText(entity, "export_file_name");
+        FileManager.writeBIN(path, OutsideUtils.shortListToArray(start_data), false);
+        FileManager.writeBIN(path, OutsideUtils.shortListToArray(short_converted), true);
         GameUtils.misc.sendChatMessage(level_server, "@a", "green", "THT : Completed!");
         export_data.clear();
 
@@ -527,181 +535,6 @@ public class ShapeFileConverter {
             stop(level_accessor);
 
         }
-
-    }
-
-    private static int typeTextToNumber (String type_short) {
-
-        int return_number = 0;
-
-        // Blocks
-        {
-
-            if (type_short.startsWith("le") == true) {
-
-                return_number = 1200;
-
-                if (type_short.endsWith("1") == true) {
-
-                    return_number = return_number + 1;
-
-                } else if (type_short.endsWith("2") == true) {
-
-                    return_number = return_number + 2;
-
-                }
-
-            } else {
-
-                if (type_short.startsWith("ta") == true) {
-
-                    return_number = 1100;
-
-                } else if (type_short.startsWith("se") == true) {
-
-                    return_number = 1110;
-
-                } else if (type_short.startsWith("tr") == true) {
-
-                    return_number = 1120;
-
-                } else if (type_short.startsWith("fi") == true) {
-
-                    return_number = 1130;
-
-                } else if (type_short.startsWith("tr") == true) {
-
-                    return_number = 1140;
-
-                } else if (type_short.startsWith("bo") == true) {
-
-                    return_number = 1150;
-
-                } else if (type_short.startsWith("br") == true) {
-
-                    return_number = 1160;
-
-                } else if (type_short.startsWith("li") == true) {
-
-                    return_number = 1170;
-
-                } else if (type_short.startsWith("tw") == true) {
-
-                    return_number = 1180;
-
-                } else if (type_short.startsWith("sp") == true) {
-
-                    return_number = 1190;
-
-                }
-
-                if (type_short.endsWith("o") == true) {
-
-                    return_number = return_number + 1;
-
-                } else if (type_short.endsWith("i") == true) {
-
-                    return_number = return_number + 2;
-
-                } else if (type_short.endsWith("c") == true) {
-
-                    return_number = return_number + 3;
-
-                }
-
-            }
-
-        }
-
-        return return_number;
-
-    }
-
-    private static String typeNumberToText (int number) {
-
-        String return_text = "";
-        String number_text = String.valueOf(number);
-
-        // Blocks
-        {
-
-            if (number_text.startsWith("120")) {
-
-                return_text = "le";
-
-                if (number_text.endsWith("1") == true) {
-
-                    return_text = return_text + "1";
-
-                } else if (number_text.endsWith("2") == true) {
-
-                    return_text = return_text + "2";
-
-                }
-
-            } else {
-
-                if (number_text.startsWith("110") == true) {
-
-                    return_text = "ta";
-
-                } else if (number_text.startsWith("111") == true) {
-
-                    return_text = "se";
-
-                } else if (number_text.startsWith("112") == true) {
-
-                    return_text = "tr";
-
-                } else if (number_text.startsWith("113") == true) {
-
-                    return_text = "fi";
-
-                } else if (number_text.startsWith("114") == true) {
-
-                    return_text = "tr";
-
-                } else if (number_text.startsWith("115") == true) {
-
-                    return_text = "bo";
-
-                } else if (number_text.startsWith("116") == true) {
-
-                    return_text = "br";
-
-                } else if (number_text.startsWith("117") == true) {
-
-                    return_text = "li";
-
-                } else if (number_text.startsWith("118") == true) {
-
-                    return_text = "tw";
-
-                } else if (number_text.startsWith("119") == true) {
-
-                    return_text = "sp";
-
-                }
-
-                if (number_text.endsWith("1") == true) {
-
-                    return_text = return_text + "o";
-
-                } else if (number_text.endsWith("2") == true) {
-
-                    return_text = return_text + "i";
-
-                } else if (number_text.endsWith("3") == true) {
-
-                    return_text = return_text + "c";
-
-                }
-
-            }
-
-        }
-
-        return return_text;
 
     }
 

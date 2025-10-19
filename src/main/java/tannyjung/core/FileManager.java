@@ -167,6 +167,29 @@ public class FileManager {
 
     public static void writeBIN (String path, short[] write, boolean append) {
 
+        File file = new File(path);
+
+        // Create a File
+        {
+
+            if (file.exists() == false) {
+
+                FileManager.createFolder(file.getParent());
+
+                try {
+
+                    file.createNewFile();
+
+                } catch (Exception exception) {
+
+                    OutsideUtils.exception(new Exception(), exception);
+
+                }
+
+            }
+
+        }
+
         try {
 
             DataOutputStream file_bin = new DataOutputStream(new FileOutputStream(path, append));
