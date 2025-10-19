@@ -59,42 +59,28 @@ public class Loop {
             // Tree Generator
             {
 
+                if (ConfigMain.tree_generator_speed_tick > 0) {
+
+                    StringBuilder custom = new StringBuilder();
+
                     if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                        // From Saplings
-                        {
+                        if (ConfigMain.tree_generator_count_limit > 0) {
 
-                            if (ConfigMain.tree_generator_speed_tick > 0) {
-
-                                StringBuilder custom = new StringBuilder();
-
-                                if (ConfigMain.tree_generator_count_limit > 0) {
-
-                                    custom
-                                            .append(",sort=nearest,limit=")
-                                            .append(ConfigMain.tree_generator_count_limit)
-                                    ;
-
-                                }
-
-                                GameUtils.command.run(level_server, 0, 0, 0, "execute at @p as @e[tag=TANSHUGETREES-tree_generator" + custom + "] at @s run TANSHUGETREES dev tree_generator");
-
-                            }
-
-                        }
-
-                    } else {
-
-                        // From Converter
-                        {
-
-                            GameUtils.command.run(level_server, 0, 0, 0, "execute at @p in tanshugetrees:tanshugetrees_dimension positioned 0 0 0 as @e[tag=TANSHUGETREES-tree_generator,limit=1,sort=nearest] at @s run TANSHUGETREES dev tree_generator");
+                            custom
+                                    .append(",sort=nearest,limit=")
+                                    .append(ConfigMain.tree_generator_count_limit)
+                            ;
 
                         }
 
                     }
 
+                    GameUtils.command.run(level_server, 0, 0, 0, "execute at @p as @e[tag=TANSHUGETREES-tree_generator" + custom + "] at @s run TANSHUGETREES dev tree_generator");
+
                 }
+
+            }
 
         }
 

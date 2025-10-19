@@ -75,55 +75,39 @@ public class GameUtils {
 
 		}
 
-		public static int[] textPosConverter (String pos, int rotation, boolean mirrored) {
+		public static int[] posRotationMirrored (int posX, int posZ, int rotation, boolean mirrored) {
 
-			int[] return_number = new int[3];
+            {
 
-			{
+                if (mirrored == true) {
 
-				String[] get = pos.split("/");
-				int posX = Integer.parseInt(get[0]);
-				int posY = Integer.parseInt(get[1]);
-				int posZ = Integer.parseInt(get[2]);
+                    posX = posX * (-1);
 
-				// Rotation & Mirrored
-				{
+                }
 
-					if (mirrored == true) {
+                if (rotation == 2) {
 
-						posX = posX * (-1);
+                    int posX_save = posX;
+                    posX = posZ;
+                    posZ = posX_save * (-1);
 
-					}
+                } else if (rotation == 3) {
 
-					if (rotation == 2) {
+                    posX = posX * (-1);
+                    posZ = posZ * (-1);
 
-						int posX_save = posX;
-						posX = posZ;
-						posZ = posX_save * (-1);
+                } else if (rotation == 4) {
 
-					} else if (rotation == 3) {
+                    int posX_save = posX;
+                    int posZ_save = posZ;
+                    posX = posZ_save * (-1);
+                    posZ = posX_save;
 
-						posX = posX * (-1);
-						posZ = posZ * (-1);
+                }
 
-					} else if (rotation == 4) {
+            }
 
-						int posX_save = posX;
-						int posZ_save = posZ;
-						posX = posZ_save * (-1);
-						posZ = posX_save;
-
-					}
-
-				}
-
-				return_number[0] = posX;
-				return_number[1] = posY;
-				return_number[2] = posZ;
-
-			}
-
-			return return_number;
+			return new int[]{posX, posZ};
 
 		}
 

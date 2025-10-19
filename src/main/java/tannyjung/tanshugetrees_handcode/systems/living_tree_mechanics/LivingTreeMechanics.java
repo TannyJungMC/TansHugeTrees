@@ -222,7 +222,7 @@ public class LivingTreeMechanics {
 								// Get Leave Data
 								{
 
-									get = GameUtils.outside.textPosConverter(read_all.substring(2, read_all.length() - 3), rotation, mirrored);
+									get = GameUtils.outside.posRotationMirrored(read_all.substring(2, read_all.length() - 3), rotation, mirrored);
 									posX = entity.getBlockX() + get[0];
 									posY = entity.getBlockY() + get[1];
 									posZ = entity.getBlockZ() + get[2];
@@ -243,7 +243,7 @@ public class LivingTreeMechanics {
 								{
 
 									pre_block_data = GameUtils.nbt.entity.getText(entity, "pre_block");
-									get = GameUtils.outside.textPosConverter(pre_block_data.substring(2, pre_block_data.length() - 3), rotation, mirrored);
+									get = GameUtils.outside.posRotationMirrored(pre_block_data.substring(2, pre_block_data.length() - 3), rotation, mirrored);
 									posX = entity.getBlockX() + get[0];
 									posY = entity.getBlockY() + get[1];
 									posZ = entity.getBlockZ() + get[2];

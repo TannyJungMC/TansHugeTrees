@@ -8,6 +8,7 @@ import tannyjung.core.GameUtils;
 import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
+import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 
 import java.io.*;
 import java.util.*;
@@ -130,7 +131,7 @@ public class ShapeFileConverter {
     public static void whenTreeStart (ServerLevel level_server, Entity entity) {
 
         String name = GameUtils.nbt.entity.getText(entity, "name").toLowerCase();
-        String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss").format(Calendar.getInstance().getTime());
+        String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss-SSS").format(Calendar.getInstance().getTime());
         GameUtils.nbt.entity.setText(entity, "export_file_name", name + "_" + time + ".bin");
         GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [\"\",{\"text\":\"THT : Generating \",\"color\":\"aqua\"},{\"text\":\"" + GameUtils.nbt.entity.getText(entity, "export_file_name").replace(" (generating)", "") + "\",\"color\":\"white\"}]");
 
@@ -160,17 +161,19 @@ public class ShapeFileConverter {
                 // Blocks
                 {
 
-                    write.append(settingsWriteBlock(entity, "taproot"));
-                    write.append(settingsWriteBlock(entity, "secondary_root"));
-                    write.append(settingsWriteBlock(entity, "tertiary_root"));
-                    write.append(settingsWriteBlock(entity, "fine_root"));
-                    write.append(settingsWriteBlock(entity, "trunk"));
-                    write.append(settingsWriteBlock(entity, "bough"));
-                    write.append(settingsWriteBlock(entity, "branch"));
-                    write.append(settingsWriteBlock(entity, "limb"));
-                    write.append(settingsWriteBlock(entity, "twig"));
-                    write.append(settingsWriteBlock(entity, "sprig"));
-                    write.append(settingsWriteBlock(entity, "leaves"));
+                    write
+                            .append(settingsWriteBlock(entity, 110, "taproot"))
+                            .append(settingsWriteBlock(entity, 111, "secondary_root"))
+                            .append(settingsWriteBlock(entity, 112, "tertiary_root"))
+                            .append(settingsWriteBlock(entity, 113, "fine_root"))
+                            .append(settingsWriteBlock(entity, 114, "trunk"))
+                            .append(settingsWriteBlock(entity, 115, "bough"))
+                            .append(settingsWriteBlock(entity, 116, "branch"))
+                            .append(settingsWriteBlock(entity, 117, "limb"))
+                            .append(settingsWriteBlock(entity, 118, "twig"))
+                            .append(settingsWriteBlock(entity, 119, "sprig"))
+                            .append(settingsWriteBlock(entity, 120, "leaves"))
+                    ;
 
                 }
 
@@ -180,11 +183,11 @@ public class ShapeFileConverter {
                 {
 
                     write
-                            .append("Function fs = ").append(GameUtils.nbt.entity.getText(entity, "function_start")).append("\n")
-                            .append("Function fe = ").append(GameUtils.nbt.entity.getText(entity, "function_end")).append("\n")
-                            .append("Function f1 = ").append(GameUtils.nbt.entity.getText(entity, "function_way1")).append("\n")
-                            .append("Function f2 = ").append(GameUtils.nbt.entity.getText(entity, "function_way2")).append("\n")
-                            .append("Function f3 = ").append(GameUtils.nbt.entity.getText(entity, "function_way3")).append("\n")
+                            .append("Function fs 2001 = ").append(GameUtils.nbt.entity.getText(entity, "function_start")).append("\n")
+                            .append("Function fe 2002 = ").append(GameUtils.nbt.entity.getText(entity, "function_end")).append("\n")
+                            .append("Function f1 2011 = ").append(GameUtils.nbt.entity.getText(entity, "function_way1")).append("\n")
+                            .append("Function f2 2012 = ").append(GameUtils.nbt.entity.getText(entity, "function_way2")).append("\n")
+                            .append("Function f3 2013 = ").append(GameUtils.nbt.entity.getText(entity, "function_way3")).append("\n")
                     ;
 
                 }
@@ -197,9 +200,9 @@ public class ShapeFileConverter {
 
     }
 
-    private static String settingsWriteBlock (Entity entity, String type) {
+    private static String settingsWriteBlock (Entity entity, int id, String type) {
 
-        String retuen_text = "";
+        String retuen_text = type.substring(0, 2);
         String keep = "";
 
         if (GameUtils.nbt.entity.getLogic(entity, type + "_replace") == false) {
@@ -213,7 +216,6 @@ public class ShapeFileConverter {
             // General Blocks
             {
 
-                String type_short = type.substring(0, 2);
                 String outer = GameUtils.nbt.entity.getText(entity, type + "_outer") + keep;
                 String inner = GameUtils.nbt.entity.getText(entity, type + "_inner") + keep;
                 String core = GameUtils.nbt.entity.getText(entity, type + "_core") + keep;
@@ -236,7 +238,10 @@ public class ShapeFileConverter {
 
                 }
 
-                retuen_text = "Block " + type_short + "o = " + outer + "\n" + "Block " + type_short + "i = " + inner + "\n" + "Block " + type_short + "c = " + core + "\n";
+                outer = "Block " + retuen_text + "o " + id + "1 = " + outer + "\n";
+                inner = "Block " + retuen_text + "i " + id + "2 = " + inner + "\n";
+                core = "Block " + retuen_text + "c " + id + "3 = " + core + "\n";
+                retuen_text = outer + inner + core;
 
             }
 
@@ -260,7 +265,9 @@ public class ShapeFileConverter {
 
                 }
 
-                retuen_text = "Block le1 = " + leaves1 + "\n" + "Block le2 = " + leaves2 + "\n";
+                leaves1 = "Block " + retuen_text + "1 " + id + "1 = " + leaves1 + "\n";
+                leaves2 = "Block " + retuen_text + "2 " + id + "2 = " + leaves2 + "\n";
+                retuen_text = leaves1 + leaves2;
 
             }
 
@@ -273,11 +280,24 @@ public class ShapeFileConverter {
     public static void whenTreeEnd (LevelAccessor level_accessor, ServerLevel level_server, Entity entity) {
 
         List<Short> short_converted = new ArrayList<>();
+        int min_sizeX = 0;
+        int min_sizeY = 0;
+        int min_sizeZ = 0;
+        int max_sizeX = 0;
+        int max_sizeY = 0;
+        int max_sizeZ = 0;
+        int block_count_trunk = 0;
+        int block_count_bough = 0;
+        int block_count_branch = 0;
+        int block_count_limb = 0;
+        int block_count_twig = 0;
+        int block_count_sprig = 0;
 
+        // Scan and Convert
         {
 
             // Start Function
-            short_converted.add((short) 21000);
+            short_converted.add((short) 2001);
             short_converted.add((short) 0);
             short_converted.add((short) 0);
             short_converted.add((short) 0);
@@ -286,75 +306,169 @@ public class ShapeFileConverter {
             {
 
                 String[] pos = new String[0];
+                int posX = 0;
+                int posY = 0;
+                int posZ = 0;
+                String type_short = "";
                 int type = 0;
 
                 for (Map.Entry<String, String> entry : ShapeFileConverter.export_data.entrySet()) {
 
+                    pos = entry.getKey().substring(1).split("/");
+                    posX = Integer.parseInt(pos[0]);
+                    posY = Integer.parseInt(pos[1]);
+                    posZ = Integer.parseInt(pos[2]);
+
                     if (entry.getKey().startsWith("B") == true) {
 
+                        type_short = entry.getValue();
+
+                        // Blocks
                         {
 
-                            if (entry.getValue().startsWith("le") == true) {
+                            if (type_short.startsWith("le") == true) {
 
                                 type = 1200;
 
+                                if (type_short.endsWith("1") == true) {
+
+                                    type = type + 1;
+
+                                } else if (type_short.endsWith("2") == true) {
+
+                                    type = type + 2;
+
+                                }
+
                             } else {
 
-                                if (entry.getValue().startsWith("ta") == true) {
+                                if (type_short.startsWith("ta") == true) {
 
                                     type = 1100;
 
-                                } else if (entry.getValue().startsWith("se") == true) {
+                                } else if (type_short.startsWith("se") == true) {
 
                                     type = 1110;
 
-                                } else if (entry.getValue().startsWith("tr") == true) {
+                                } else if (type_short.startsWith("tr") == true) {
 
                                     type = 1120;
 
-                                } else if (entry.getValue().startsWith("fi") == true) {
+                                } else if (type_short.startsWith("fi") == true) {
 
                                     type = 1130;
 
-                                } else if (entry.getValue().startsWith("tr") == true) {
+                                } else if (type_short.startsWith("tr") == true) {
 
                                     type = 1140;
 
-                                } else if (entry.getValue().startsWith("bo") == true) {
+                                } else if (type_short.startsWith("bo") == true) {
 
                                     type = 1150;
 
-                                } else if (entry.getValue().startsWith("br") == true) {
+                                } else if (type_short.startsWith("br") == true) {
 
                                     type = 1160;
 
-                                } else if (entry.getValue().startsWith("li") == true) {
+                                } else if (type_short.startsWith("li") == true) {
 
                                     type = 1170;
 
-                                } else if (entry.getValue().startsWith("tw") == true) {
+                                } else if (type_short.startsWith("tw") == true) {
 
                                     type = 1180;
 
-                                } else if (entry.getValue().startsWith("sp") == true) {
+                                } else if (type_short.startsWith("sp") == true) {
 
                                     type = 1190;
 
                                 }
 
+                                if (type_short.endsWith("o") == true) {
+
+                                    type = type + 1;
+
+                                } else if (type_short.endsWith("i") == true) {
+
+                                    type = type + 2;
+
+                                } else if (type_short.endsWith("c") == true) {
+
+                                    type = type + 3;
+
+                                }
+
                             }
 
-                            if (entry.getValue().endsWith("o") == true) {
+                        }
 
-                                type = type + 1;
+                        // Get Size
+                        {
 
-                            } else if (entry.getValue().endsWith("i") == true) {
+                            if (min_sizeX > posX) {
 
-                                type = type + 2;
+                                min_sizeX = posX;
 
-                            } else if (entry.getValue().endsWith("c") == true) {
+                            }
 
-                                type = type + 3;
+                            if (min_sizeY > posY) {
+
+                                min_sizeY = posY;
+
+                            }
+
+                            if (min_sizeZ > posZ) {
+
+                                min_sizeZ = posZ;
+
+                            }
+
+                            if (max_sizeX < posX) {
+
+                                max_sizeX = posX;
+
+                            }
+
+                            if (max_sizeY < posY) {
+
+                                max_sizeY = posY;
+
+                            }
+
+                            if (max_sizeZ < posZ) {
+
+                                max_sizeZ = posZ;
+
+                            }
+
+                        }
+
+                        // Get Block Count
+                        {
+
+                            if (type_short.startsWith("tr") == true) {
+
+                                block_count_trunk = block_count_trunk + 1;
+
+                            } else if (type_short.startsWith("bo") == true) {
+
+                                block_count_bough = block_count_bough + 1;
+
+                            } else if (type_short.startsWith("br") == true) {
+
+                                block_count_branch = block_count_branch + 1;
+
+                            } else if (type_short.startsWith("li") == true) {
+
+                                block_count_limb = block_count_limb + 1;
+
+                            } else if (type_short.startsWith("tw") == true) {
+
+                                block_count_twig = block_count_twig + 1;
+
+                            } else if (type_short.startsWith("sp") == true) {
+
+                                block_count_sprig = block_count_sprig + 1;
 
                             }
 
@@ -363,325 +477,45 @@ public class ShapeFileConverter {
                     }
 
                     short_converted.add((short) type);
-                    pos = entry.getKey().substring(1).split("/");
-                    short_converted.add(Short.parseShort(pos[0]));
-                    short_converted.add(Short.parseShort(pos[1]));
-                    short_converted.add(Short.parseShort(pos[2]));
+                    short_converted.add((short) posX);
+                    short_converted.add((short) posY);
+                    short_converted.add((short) posZ);
 
                 }
 
             }
 
             // End Function
-            short_converted.add((short) 22000);
+            short_converted.add((short) 2002);
             short_converted.add((short) 0);
             short_converted.add((short) 0);
             short_converted.add((short) 0);
+
+        }
+
+        // Start Data
+        {
+
+            List<Short> start_data = new ArrayList<>();
+            start_data.add((short) (max_sizeX - min_sizeX));
+            start_data.add((short) (max_sizeY - min_sizeY));
+            start_data.add((short) (max_sizeZ - min_sizeZ));
+            start_data.add((short) -(min_sizeX));
+            start_data.add((short) -(min_sizeY));
+            start_data.add((short) -(min_sizeZ));
+            start_data.add((short) block_count_trunk);
+            start_data.add((short) block_count_bough);
+            start_data.add((short) block_count_branch);
+            start_data.add((short) block_count_limb);
+            start_data.add((short) block_count_twig);
+            start_data.add((short) block_count_sprig);
+            FileManager.writeBIN(Handcode.directory_config + "/#dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), OutsideUtils.shortListToArray(start_data), true);
 
         }
 
         FileManager.writeBIN(Handcode.directory_config + "/#dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "export_file_name"), OutsideUtils.shortListToArray(short_converted), true);
-        export_data.clear();
-
-
-
-
-
-
-
-
-
-
-        /*
-
-        // Update Generated File
-        {
-
-            StringBuilder data = new StringBuilder();
-
-            int min_sizeX = 0;
-            int min_sizeY = 0;
-            int min_sizeZ = 0;
-            int max_sizeX = 0;
-            int max_sizeY = 0;
-            int max_sizeZ = 0;
-            int sizeX = 0;
-            int sizeY = 0;
-            int sizeZ = 0;
-            int center_sizeX = 0;
-            int center_sizeY = 0;
-            int center_sizeZ = 0;
-
-            int block_count_trunk = 0;
-            int block_count_bough = 0;
-            int block_count_branch = 0;
-            int block_count_limb = 0;
-            int block_count_twig = 0;
-            int block_count_sprig = 0;
-
-            // Scanning
-            {
-
-                boolean start = false;
-                String type_short = "";
-                String[] pos = new String[0];
-                int posX = 0;
-                int posY = 0;
-                int posZ = 0;
-
-                {
-
-                    try {
-
-                        DataOutputStream file_bin = new DataOutputStream(new FileOutputStream(Handcode.directory_config + "/#dev/shape_file_converter/test.bin", false));
-
-                        for (String read_all : FileManager.readTXT(file.getPath())) {
-
-                            {
-
-                                if (start == false) {
-
-                                    if (read_all.startsWith("---") == true) {
-
-                                        start = true;
-
-                                    }
-
-                                } else {
-
-                                    data.append(read_all).append("\n");
-
-                                    if (read_all.startsWith("+b") == true) {
-
-                                        // Size
-                                        {
-
-                                            pos = read_all.substring(2, read_all.length() - 3).split("/");
-                                            posX = Integer.parseInt(pos[0]);
-                                            posY = Integer.parseInt(pos[1]);
-                                            posZ = Integer.parseInt(pos[2]);
-
-                                            // Get Min and Max
-                                            {
-
-                                                if (min_sizeX > posX) {
-
-                                                    min_sizeX = posX;
-
-                                                }
-
-                                                if (min_sizeY > posY) {
-
-                                                    min_sizeY = posY;
-
-                                                }
-
-                                                if (min_sizeZ > posZ) {
-
-                                                    min_sizeZ = posZ;
-
-                                                }
-
-                                                if (max_sizeX < posX) {
-
-                                                    max_sizeX = posX;
-
-                                                }
-
-                                                if (max_sizeY < posY) {
-
-                                                    max_sizeY = posY;
-
-                                                }
-
-                                                if (max_sizeZ < posZ) {
-
-                                                    max_sizeZ = posZ;
-
-                                                }
-
-                                            }
-
-                                        }
-
-                                        // Block Count
-                                        {
-
-                                            type_short = read_all.substring(read_all.length() - 3);
-
-                                            if (type_short.startsWith("tr") == true) {
-
-                                                block_count_trunk = block_count_trunk + 1;
-
-                                            } else if (type_short.startsWith("bo") == true) {
-
-                                                block_count_bough = block_count_bough + 1;
-
-                                            } else if (type_short.startsWith("br") == true) {
-
-                                                block_count_branch = block_count_branch + 1;
-
-                                            } else if (type_short.startsWith("li") == true) {
-
-                                                block_count_limb = block_count_limb + 1;
-
-                                            } else if (type_short.startsWith("tw") == true) {
-
-                                                block_count_twig = block_count_twig + 1;
-
-                                            } else if (type_short.startsWith("sp") == true) {
-
-                                                block_count_sprig = block_count_sprig + 1;
-
-                                            }
-
-                                        }
-
-
-
-
-
-
-
-
-                                        String[] get = read_all.substring(2, read_all.length() - 3).split("/");
-                                        int x = Integer.parseInt(get[0]);
-                                        int y = Integer.parseInt(get[1]);
-                                        int z = Integer.parseInt(get[2]);
-
-                                        file_bin.writeShort(122);
-                                        file_bin.writeShort(x);
-                                        file_bin.writeShort(y);
-                                        file_bin.writeShort(z);
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-
-                        file_bin.close();
-
-                    } catch (Exception exception) {
-
-                        OutsideUtils.exception(new Exception(), exception);
-
-                    }
-
-                }
-
-            }
-
-            // Size Calculation
-            {
-
-                sizeX = max_sizeX - min_sizeX;
-                sizeY = max_sizeY - min_sizeY;
-                sizeZ = max_sizeZ - min_sizeZ;
-                center_sizeX = -(min_sizeX);
-                center_sizeY = -(min_sizeY);
-                center_sizeZ = -(min_sizeZ);
-
-            }
-
-            String file_new = file.getParentFile().getPath() + "/" + file.getName().replace(" (generating)", " (updating)");
-
-            // Updating
-            {
-
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
-
-                    {
-
-                        if (read_all.startsWith("---") == false) {
-
-                            if (read_all.startsWith("Complete Date : ") == true) {
-
-                                read_all = read_all.replace("###", complete_date);
-
-                            } else if (read_all.startsWith("sizeX = ") == true) {
-
-                                read_all = read_all.replace("###", "" + sizeX);
-
-                            } else if (read_all.startsWith("sizeY = ") == true) {
-
-                                read_all = read_all.replace("###", "" + sizeY);
-
-                            } else if (read_all.startsWith("sizeZ = ") == true) {
-
-                                read_all = read_all.replace("###", "" + sizeZ);
-
-                            } else if (read_all.startsWith("center_sizeX = ") == true) {
-
-                                read_all = read_all.replace("###", "" + center_sizeX);
-
-                            } else if (read_all.startsWith("center_sizeY = ") == true) {
-
-                                read_all = read_all.replace("###", "" + center_sizeY);
-
-                            } else if (read_all.startsWith("center_sizeZ = ") == true) {
-
-                                read_all = read_all.replace("###", "" + center_sizeZ);
-
-                            } else if (read_all.startsWith("block_count_trunk = ") == true) {
-
-                                read_all = read_all.replace("###", "" + block_count_trunk);
-
-                            } else if (read_all.startsWith("block_count_bough = ") == true) {
-
-                                read_all = read_all.replace("###", "" + block_count_bough);
-
-                            } else if (read_all.startsWith("block_count_branch = ") == true) {
-
-                                read_all = read_all.replace("###", "" + block_count_branch);
-
-                            } else if (read_all.startsWith("block_count_limb = ") == true) {
-
-                                read_all = read_all.replace("###", "" + block_count_limb);
-
-                            } else if (read_all.startsWith("block_count_twig = ") == true) {
-
-                                read_all = read_all.replace("###", "" + block_count_twig);
-
-                            } else if (read_all.startsWith("block_count_sprig = ") == true) {
-
-                                read_all = read_all.replace("###", "" + block_count_sprig);
-
-                            }
-
-                            FileManager.writeTXT(file_new, read_all + "\n", true);
-
-                        } else {
-
-                            FileManager.writeTXT(file_new, read_all + "\n" + "\n", true);
-                            break;
-
-                        }
-
-                    }
-
-                } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
-
-            }
-
-            FileManager.writeTXT(file_new, data.toString(), true);
-            file.delete();
-            new File(file_new).renameTo(new File(file.getParentFile().getPath() + "/" + file.getName().replace(" (generating)", "")));
-
-        }
-
-         */
-
-
-
-
-
-
-
-
         GameUtils.misc.sendChatMessage(level_server, "@a", "green", "THT : Completed!");
+        export_data.clear();
 
         if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 
@@ -690,9 +524,184 @@ public class ShapeFileConverter {
 
         } else {
 
-                stop(level_accessor);
+            stop(level_accessor);
 
         }
+
+    }
+
+    private static int typeTextToNumber (String type_short) {
+
+        int return_number = 0;
+
+        // Blocks
+        {
+
+            if (type_short.startsWith("le") == true) {
+
+                return_number = 1200;
+
+                if (type_short.endsWith("1") == true) {
+
+                    return_number = return_number + 1;
+
+                } else if (type_short.endsWith("2") == true) {
+
+                    return_number = return_number + 2;
+
+                }
+
+            } else {
+
+                if (type_short.startsWith("ta") == true) {
+
+                    return_number = 1100;
+
+                } else if (type_short.startsWith("se") == true) {
+
+                    return_number = 1110;
+
+                } else if (type_short.startsWith("tr") == true) {
+
+                    return_number = 1120;
+
+                } else if (type_short.startsWith("fi") == true) {
+
+                    return_number = 1130;
+
+                } else if (type_short.startsWith("tr") == true) {
+
+                    return_number = 1140;
+
+                } else if (type_short.startsWith("bo") == true) {
+
+                    return_number = 1150;
+
+                } else if (type_short.startsWith("br") == true) {
+
+                    return_number = 1160;
+
+                } else if (type_short.startsWith("li") == true) {
+
+                    return_number = 1170;
+
+                } else if (type_short.startsWith("tw") == true) {
+
+                    return_number = 1180;
+
+                } else if (type_short.startsWith("sp") == true) {
+
+                    return_number = 1190;
+
+                }
+
+                if (type_short.endsWith("o") == true) {
+
+                    return_number = return_number + 1;
+
+                } else if (type_short.endsWith("i") == true) {
+
+                    return_number = return_number + 2;
+
+                } else if (type_short.endsWith("c") == true) {
+
+                    return_number = return_number + 3;
+
+                }
+
+            }
+
+        }
+
+        return return_number;
+
+    }
+
+    private static String typeNumberToText (int number) {
+
+        String return_text = "";
+        String number_text = String.valueOf(number);
+
+        // Blocks
+        {
+
+            if (number_text.startsWith("120")) {
+
+                return_text = "le";
+
+                if (number_text.endsWith("1") == true) {
+
+                    return_text = return_text + "1";
+
+                } else if (number_text.endsWith("2") == true) {
+
+                    return_text = return_text + "2";
+
+                }
+
+            } else {
+
+                if (number_text.startsWith("110") == true) {
+
+                    return_text = "ta";
+
+                } else if (number_text.startsWith("111") == true) {
+
+                    return_text = "se";
+
+                } else if (number_text.startsWith("112") == true) {
+
+                    return_text = "tr";
+
+                } else if (number_text.startsWith("113") == true) {
+
+                    return_text = "fi";
+
+                } else if (number_text.startsWith("114") == true) {
+
+                    return_text = "tr";
+
+                } else if (number_text.startsWith("115") == true) {
+
+                    return_text = "bo";
+
+                } else if (number_text.startsWith("116") == true) {
+
+                    return_text = "br";
+
+                } else if (number_text.startsWith("117") == true) {
+
+                    return_text = "li";
+
+                } else if (number_text.startsWith("118") == true) {
+
+                    return_text = "tw";
+
+                } else if (number_text.startsWith("119") == true) {
+
+                    return_text = "sp";
+
+                }
+
+                if (number_text.endsWith("1") == true) {
+
+                    return_text = return_text + "o";
+
+                } else if (number_text.endsWith("2") == true) {
+
+                    return_text = return_text + "i";
+
+                } else if (number_text.endsWith("3") == true) {
+
+                    return_text = return_text + "c";
+
+                }
+
+            }
+
+        }
+
+        return return_text;
 
     }
 

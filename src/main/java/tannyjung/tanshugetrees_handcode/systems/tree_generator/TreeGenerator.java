@@ -1,6 +1,7 @@
 package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockSource;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -8,6 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
@@ -991,7 +993,7 @@ public class TreeGenerator {
 
                                                 }
 
-                                                if (buildTestKeep(level_accessor, pos, replace) == true) {
+                                                if (buildTestKeep(level_accessor, entity, pos, replace) == true) {
 
                                                     String block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
 
@@ -1029,7 +1031,7 @@ public class TreeGenerator {
 
                                                         if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos_leaves), "tanshugetrees:block_placer_blacklist_leaves") == false && GameUtils.block.toTextID(level_accessor.getBlockState(pos_leaves)).startsWith("tanshugetrees:block_placer_leaves") == false) {
 
-                                                            if (buildTestKeep(level_accessor, pos_leaves, replace) == true) {
+                                                            if (buildTestKeep(level_accessor, entity, pos_leaves, replace) == true) {
 
                                                                 // Get Block
                                                                 {
@@ -1125,7 +1127,7 @@ public class TreeGenerator {
                         // Place Block
                         {
 
-                            if (buildTestKeep(level_accessor, pos, replace) == true) {
+                            if (buildTestKeep(level_accessor, entity, pos, replace) == true) {
 
                                 String block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
 
@@ -1153,7 +1155,7 @@ public class TreeGenerator {
                         // Place Block
                         {
 
-                            if (buildTestKeep(level_accessor, pos, replace) == true) {
+                            if (buildTestKeep(level_accessor, entity, pos, replace) == true) {
 
                                 String block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
 
@@ -1181,9 +1183,6 @@ public class TreeGenerator {
 
             // Get Type
             {
-
-                // radius = Math.floor(radius);
-                // build_area = Math.ceil(build_area);
 
                 double outer_level = GameUtils.nbt.entity.getNumber(entity, type + "_outer_level");
                 double inner_level = GameUtils.nbt.entity.getNumber(entity, type + "_inner_level");
@@ -1285,11 +1284,11 @@ public class TreeGenerator {
 
                     } else {
 
-                        String key = "B" + pos.getX() + "/" + (pos.getY() - 1000) + "/" + pos.getZ();
+                        String key = "B" + (pos.getX() - entity.getBlockX()) + "/" + (pos.getY() - 1000) + "/" + (pos.getZ() - entity.getBlockZ());
 
                         if (ShapeFileConverter.export_data.containsKey(key) == true) {
 
-                            previous_block = GameUtils.block.fromText(ShapeFileConverter.export_data.get(key)).getBlock();
+                            previous_block = GameUtils.block.fromText(ShapeFileConverter.export_data.getOrDefault(key, "")).getBlock();
 
                         }
 
@@ -1399,11 +1398,29 @@ public class TreeGenerator {
 
         }
 
-        private static boolean buildTestKeep (LevelAccessor level_accessor, BlockPos pos, boolean replace) {
+        private static boolean buildTestKeep (LevelAccessor level_accessor, Entity entity, BlockPos pos, boolean replace) {
 
-            if (replace == false && GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false) {
+            if (replace == false) {
 
-                return false;
+                if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
+
+                    if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false) {
+
+                        return false;
+
+                    }
+
+                } else {
+
+                    String block = ShapeFileConverter.export_data.getOrDefault("B" + (pos.getX() - entity.getBlockX()) + "/" + (pos.getY() - 1000) + "/" + (pos.getZ() - entity.getBlockZ()), "");
+
+                    if (block.equals("") == false) {
+
+                        return false;
+
+                    }
+
+                }
 
             }
 
@@ -1446,7 +1463,7 @@ public class TreeGenerator {
 
                 } else {
 
-                    String key = pos.getX() + "/" + (pos.getY() - 1000) + "/" + pos.getZ();
+                    String key = (pos.getX() - entity.getBlockX()) + "/" + (pos.getY() - 1000) + "/" + (pos.getZ() - entity.getBlockZ());
                     ShapeFileConverter.export_data.put("B" + key, type_short);
 
                     if (function[0].equals("") == false) {

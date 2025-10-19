@@ -1,5 +1,7 @@
 package tannyjung.core;
 
+import tannyjung.tanshugetrees_handcode.Handcode;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -185,7 +187,7 @@ public class FileManager {
 
     }
 
-    public static short[] readBIN (String path) {
+    public static short[] readBIN (String path, int start, int end) {
 
         List<Short> get_list = new ArrayList<>();
 
@@ -193,11 +195,24 @@ public class FileManager {
 
             try {
 
-                DataInputStream file_bin = new DataInputStream(new FileInputStream(path));
+                DataInputStream file_bin = new DataInputStream(new BufferedInputStream(new FileInputStream(path), 65536));
+                int loop = 0;
 
                 while (file_bin.available() > 0) {
 
-                    get_list.add(file_bin.readShort());
+                    loop = loop + 1;
+
+                    if (loop >= start) {
+
+                        get_list.add(file_bin.readShort());
+
+                        if (end != 0 && loop >= end) {
+
+                            break;
+
+                        }
+
+                    }
 
                 }
 

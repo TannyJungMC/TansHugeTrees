@@ -16,33 +16,7 @@ public class Cache {
 
         if (cache_tree_shape.containsKey(location) == false) {
 
-            File file = new File(Handcode.directory_config + "/custom_packs/" + location);
-
-            if (file.exists() == true && file.isDirectory() == false) {
-
-                try {
-
-                    DataInputStream file_bin = new DataInputStream(new FileInputStream(Handcode.directory_config + "/#dev/shape_file_converter/test.bin"));
-
-                    {
-
-                        // while (file_bin.available() > 0) {
-
-                            // cache_tree_shape.put(location, ) file_bin.readShort();
-
-                        // }
-
-                    }
-
-                    file_bin.close();
-
-                } catch (Exception exception) {
-
-                    OutsideUtils.exception(new Exception(), exception);
-
-                }
-
-            }
+            cache_tree_shape.put(location, FileManager.readBIN(Handcode.directory_config + "/custom_packs/" + location, 13, 0));
 
         }
 

@@ -772,71 +772,13 @@ public class TreeLocation {
 
         if (chosen.exists() == true && chosen.isDirectory() == false) {
 
-            int sizeX = 0;
-            int sizeY = 0;
-            int sizeZ = 0;
-            int center_sizeX = 0;
-            int center_sizeY = 0;
-            int center_sizeZ = 0;
-
-            // Scan Shape File
-            {
-
-                /*
-
-                for (String read_all : Cache.tree_shape(storage_directory + "/" + chosen_name)) {
-
-                    {
-
-                        if (read_all.equals("") == false) {
-
-                            if (read_all.startsWith("---") == true) {
-
-                                break;
-
-                            } else {
-
-                                {
-
-                                    if (read_all.startsWith("sizeX = ")) {
-
-                                        sizeX = Integer.parseInt(read_all.replace("sizeX = ", ""));
-
-                                    } else if (read_all.startsWith("sizeY = ")) {
-
-                                        sizeY = Integer.parseInt(read_all.replace("sizeY = ", ""));
-
-                                    } else if (read_all.startsWith("sizeZ = ")) {
-
-                                        sizeZ = Integer.parseInt(read_all.replace("sizeZ = ", ""));
-
-                                    } else if (read_all.startsWith("center_sizeX = ")) {
-
-                                        center_sizeX = Integer.parseInt(read_all.replace("center_sizeX = ", ""));
-
-                                    } else if (read_all.startsWith("center_sizeY = ")) {
-
-                                        center_sizeY = Integer.parseInt(read_all.replace("center_sizeY = ", ""));
-
-                                    } else if (read_all.startsWith("center_sizeZ = ")) {
-
-                                        center_sizeZ = Integer.parseInt(read_all.replace("center_sizeZ = ", ""));
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-                 */
-
-            }
+            short[] get = FileManager.readBIN(chosen.getPath(), 1, 6);
+            int sizeX = get[0];
+            int sizeY = get[1];
+            int sizeZ = get[2];
+            int center_sizeX = get[3];
+            int center_sizeY = get[4];
+            int center_sizeZ = get[5];
 
             sizeY = sizeY - center_sizeY;
             String tree_type = "";
