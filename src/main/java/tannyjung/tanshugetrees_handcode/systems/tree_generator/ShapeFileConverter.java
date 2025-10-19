@@ -314,16 +314,15 @@ public class ShapeFileConverter {
                 String type_short = "";
                 int type = 0;
 
-                for (Map.Entry<String, String> entry : ShapeFileConverter.export_data.entrySet()) {
+                for (Map.Entry<String, String> entry : export_data.entrySet()) {
 
                     pos = entry.getKey().substring(1).split("/");
                     posX = Integer.parseInt(pos[0]);
                     posY = Integer.parseInt(pos[1]);
                     posZ = Integer.parseInt(pos[2]);
+                    type_short = entry.getValue();
 
                     if (entry.getKey().startsWith("B") == true) {
-
-                        type_short = entry.getValue();
 
                         // Blocks
                         {
@@ -500,6 +499,8 @@ public class ShapeFileConverter {
         }
 
         List<Short> start_data = new ArrayList<>();
+
+        System.out.println(3);
 
         // Start Data
         {

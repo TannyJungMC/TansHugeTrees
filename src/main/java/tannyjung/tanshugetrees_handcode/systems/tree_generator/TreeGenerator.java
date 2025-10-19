@@ -1558,7 +1558,7 @@ public class TreeGenerator {
 
                     if (function[0].equals("") == false) {
 
-                        ShapeFileConverter.export_data.put("F" + key, type_short);
+                        ShapeFileConverter.export_data.put("F" + key, function[0]);
 
                     }
 
