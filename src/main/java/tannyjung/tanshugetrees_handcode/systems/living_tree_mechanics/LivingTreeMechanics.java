@@ -43,11 +43,12 @@ public class LivingTreeMechanics {
 		// Read Settings
 		{
 
-			File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + GameUtils.nbt.entity.getText(entity, "settings"));
-			String get_short = "";
-			String get = "";
+			File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + GameUtils.nbt.entity.getText(entity, "tree_settings") + "_settings.txt");
 
 			if (file.exists() == true && file.isDirectory() == false) {
+
+                String get_short = "";
+                String get = "";
 
 				{
 
@@ -492,7 +493,7 @@ public class LivingTreeMechanics {
 
 								int height_motion = level_accessor.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
 
-								if (height_motion < pos.getY()) {
+								if (height_motion != level_accessor.getMinBuildHeight() && height_motion < pos.getY()) {
 
 									LeafLitter.start(level_server, pos.getX(), height_motion, pos.getZ(), block, false);
 

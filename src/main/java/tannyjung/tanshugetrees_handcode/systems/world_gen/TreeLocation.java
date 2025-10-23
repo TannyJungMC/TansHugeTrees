@@ -713,8 +713,8 @@ public class TreeLocation {
 
         }
 
-        String storage_directory = "";
-        String tree_settings = "";
+        String path_storage = "";
+        String path_tree_settings = "";
 
         // Scan "World Gen" File
         {
@@ -729,13 +729,13 @@ public class TreeLocation {
 
                         {
 
-                            if (read_all.startsWith("storage_directory = ") == true) {
+                            if (read_all.startsWith("path_storage = ") == true) {
 
-                                storage_directory = read_all.replace("storage_directory = ", "");
+                                path_storage = read_all.replace("path_storage = ", "");
 
-                            } else if (read_all.startsWith("tree_settings = ") == true) {
+                            } else if (read_all.startsWith("path_tree_settings = ") == true) {
 
-                                tree_settings = read_all.replace("tree_settings = ", "");
+                                path_tree_settings = read_all.replace("path_tree_settings = ", "");
 
                             } else {
 
@@ -753,22 +753,21 @@ public class TreeLocation {
 
         }
 
-        String chosen_name = "";
+        File chosen = null;
 
         // Random Select File
         {
 
-            File[] packs = new File(Handcode.directory_config + "/custom_packs/" + storage_directory).listFiles();
+            String storage = Handcode.directory_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage";
+            File[] list = new File(storage).listFiles();
 
-            if (packs != null) {
+            if (list != null) {
 
-                chosen_name = packs[(int) (Math.random() * packs.length)].getName();
+                chosen = new File(storage + "/" + list[(int) (Math.random() * list.length)].getName());
 
             }
 
         }
-
-        File chosen = new File(Handcode.directory_config + "/custom_packs/" + storage_directory + "/" + chosen_name);
 
         if (chosen.exists() == true && chosen.isDirectory() == false) {
 
@@ -788,7 +787,7 @@ public class TreeLocation {
             // Scan Tree Settings File
             {
 
-                File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + tree_settings);
+                File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + path_tree_settings + "_settings.txt");
 
                 if (file.exists() == true && file.isDirectory() == false) {
 
@@ -846,13 +845,13 @@ public class TreeLocation {
 
                         dead_tree_level = dead_tree_level * 10;
 
-                    } else if (dead_tree_level >= 10) {
+                    } else if (dead_tree_level < 10) {
 
-                        dead_tree_level = dead_tree_level + 1;
+                        dead_tree_level = dead_tree_level * 10;
 
                     } else {
 
-                        dead_tree_level = dead_tree_level * 10;
+                        dead_tree_level = dead_tree_level + 1;
 
                     }
 

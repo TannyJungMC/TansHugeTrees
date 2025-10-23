@@ -220,14 +220,16 @@ public class FileManager {
 
                 DataInputStream file_bin = new DataInputStream(new BufferedInputStream(new FileInputStream(path), 65536));
                 int loop = 0;
+                short read_all = 0;
 
                 while (file_bin.available() > 0) {
 
                     loop = loop + 1;
+                    read_all = file_bin.readShort();
 
                     if (loop >= start) {
 
-                        get_list.add(file_bin.readShort());
+                        get_list.add(read_all);
 
                         if (end != 0 && loop >= end) {
 

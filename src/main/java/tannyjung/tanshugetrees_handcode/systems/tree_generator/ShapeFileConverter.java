@@ -72,7 +72,7 @@ public class ShapeFileConverter {
 
     private static void summon (LevelAccessor level_accessor, ServerLevel level_server) {
 
-        String file_location = "";
+        String[] file_location = new String[0];
 
         // Get data
         {
@@ -89,7 +89,7 @@ public class ShapeFileConverter {
 
                             if (read_all.startsWith("file_location = ") == true) {
 
-                                file_location = read_all.replace("file_location = ", "");
+                                file_location = read_all.replace("file_location = ", "").split("/");
 
                             }
 
@@ -103,7 +103,7 @@ public class ShapeFileConverter {
 
         }
 
-        File file = new File(Handcode.directory_config + "/custom_packs/" + file_location);
+        File file = new File(Handcode.directory_config + "/custom_packs/" + file_location[0] + "/presets/" + file_location[1] + "/" + file_location[1] + ".txt");
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -499,8 +499,6 @@ public class ShapeFileConverter {
         }
 
         List<Short> start_data = new ArrayList<>();
-
-        System.out.println(3);
 
         // Start Data
         {

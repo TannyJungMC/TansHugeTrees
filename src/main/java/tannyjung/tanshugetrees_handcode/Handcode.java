@@ -26,7 +26,6 @@ import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDete
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFull;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenBeforePlants;
 
-import java.util.Calendar;
 import java.util.concurrent.CompletableFuture;
 
 @Mod.EventBusSubscriber
@@ -34,7 +33,7 @@ public class Handcode {
 
 	// ----------------------------------------------------------------------------------------------------
 
-	public static int data_structure_version = 20250814;
+	public static int data_structure_version = 20251023;
 	public static String tanny_pack_version = "Alpha";
 
 	public static boolean version_1192 = false;

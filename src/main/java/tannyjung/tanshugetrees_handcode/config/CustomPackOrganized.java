@@ -19,7 +19,7 @@ public class CustomPackOrganized {
         clearFolder();
         organizing();
         replace();
-        CustomPackIncompatible.scanOrganized();
+        CustomPackIncompatible.scanWorldGenFile();
 
     }
 

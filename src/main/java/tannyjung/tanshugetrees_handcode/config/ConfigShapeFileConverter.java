@@ -12,12 +12,12 @@ public class ConfigShapeFileConverter {
 		{
 
 			write.append("""
-					- This only for convert tree presets into tree shapes, to use in custom packs.
-					- To use this. Set render distance and simulation distance to 32. Then write correct file location below and use command [ /TANSHUGETREES command shape_file_converter start <loop> ].
+					- This only for convert tree presets into tree shapes, for use in custom packs.
+					- To use this. Set render distance to 32. Then write correct file location below and use command [ /TANSHUGETREES command shape_file_converter start <loop> ].
 					
 					----------------------------------------------------------------------------------------------------
 					
-					file_location = #TannyJung-Main-Pack/presets/folder/file.txt
+					file_location = pack/preset
 					
 					----------------------------------------------------------------------------------------------------
 					"""

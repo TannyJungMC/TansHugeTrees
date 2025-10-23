@@ -1554,10 +1554,12 @@ public class TreeGenerator {
                 } else {
 
                     String key = (pos.getX() - entity.getBlockX()) + "/" + (pos.getY() - 1000) + "/" + (pos.getZ() - entity.getBlockZ());
+                    ShapeFileConverter.export_data.remove("B" + key);
                     ShapeFileConverter.export_data.put("B" + key, type_short);
 
                     if (function[0].equals("") == false) {
 
+                        ShapeFileConverter.export_data.remove("F" + key);
                         ShapeFileConverter.export_data.put("F" + key, function[0]);
 
                     }

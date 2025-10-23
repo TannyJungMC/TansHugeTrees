@@ -241,11 +241,7 @@ public class TreePlacer {
                         if (chunk != null) {
 
                             // Get Y Level
-                            {
-
-                                center_posY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, center_posX, center_posZ) + 1;
-
-                            }
+                            center_posY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, center_posX, center_posZ) + 1;
 
                             // Ground Block
                             {
@@ -268,17 +264,17 @@ public class TreePlacer {
                     // Y Level Test
                     {
 
-                        // Max Build Limit
+                        // Build Height Limit
                         {
 
-                            if (center_posY + sizeY > level_accessor.getMaxBuildHeight()) {
+                            if (center_posY + sizeY >= level_accessor.getMaxBuildHeight()) {
 
                                 pass = false;
                                 break test;
 
                             }
 
-                            if (center_posY < level_accessor.getMinBuildHeight()) {
+                            if (originalY == level_accessor.getMinBuildHeight()) {
 
                                 pass = false;
                                 break test;
@@ -424,8 +420,8 @@ public class TreePlacer {
 
     private static void getData (LevelAccessor level_accessor, ServerLevel level_server, ChunkPos chunk_pos, String id, String chosen, int center_posX, int center_posY, int center_posZ, int rotation, boolean mirrored, int dead_tree_level) {
 
-        String storage_directory = "";
-        String tree_settings = "";
+        String path_storage = "";
+        String path_tree_settings = "";
 
         // Scan "World Gen" File
         {
@@ -440,13 +436,13 @@ public class TreePlacer {
 
                         {
 
-                            if (read_all.startsWith("storage_directory = ") == true) {
+                            if (read_all.startsWith("path_storage = ") == true) {
 
-                                storage_directory = read_all.replace("storage_directory = ", "");
+                                path_storage = read_all.replace("path_storage = ", "");
 
-                            } else if (read_all.startsWith("tree_settings = ") == true) {
+                            } else if (read_all.startsWith("path_tree_settings = ") == true) {
 
-                                tree_settings = read_all.replace("tree_settings = ", "");
+                                path_tree_settings = read_all.replace("path_tree_settings = ", "");
 
                             } else {
 
@@ -464,12 +460,11 @@ public class TreePlacer {
 
         }
 
-        String location = storage_directory + "/" + chosen;
-        File file = new File(Handcode.directory_config + "/custom_packs/" + location);
+        File file = new File(Handcode.directory_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage/" + chosen);
 
         if (file.exists() == true && file.isDirectory() == false) {
 
-            short[] shape = Cache.tree_shape(location);
+            short[] shape = Cache.tree_shape(path_storage + "/" + chosen);
 
             if (shape != null) {
 
@@ -483,9 +478,9 @@ public class TreePlacer {
                 // Get Tree Settings
                 {
 
-                    File file_settings = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + tree_settings);
+                    File file_test = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + path_tree_settings + "_settings.txt");
 
-                    if (file_settings.exists() == true && file_settings.isDirectory() == false) {
+                    if (file_test.exists() == true && file_test.isDirectory() == false) {
 
                         String type_id = "";
                         String value = "";
@@ -493,7 +488,7 @@ public class TreePlacer {
                         // Scan
                         {
 
-                            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file_settings), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file_test), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
                                 {
 
@@ -637,7 +632,7 @@ public class TreePlacer {
 
                                 if (dead_tree_level == 50) {
 
-                                    block_count_bough = (int) (block_count_bough * Mth.nextDouble(RandomSource.create(seed + 1), 0.1, 0.9));
+                                    block_count_bough = (int) ((double) block_count_bough * Mth.nextDouble(RandomSource.create(seed + 1), 0.1, 0.9));
 
                                 }
 
@@ -647,7 +642,7 @@ public class TreePlacer {
 
                                     if (dead_tree_level == 40) {
 
-                                        block_count_branch = (int) (block_count_branch * Mth.nextDouble(RandomSource.create(seed + 2), 0.1, 0.9));
+                                        block_count_branch = (int) ((double) block_count_branch * Mth.nextDouble(RandomSource.create(seed + 2), 0.1, 0.9));
 
                                     }
 
@@ -659,7 +654,7 @@ public class TreePlacer {
 
                                     if (dead_tree_level == 30) {
 
-                                        block_count_limb = (int) (block_count_limb * Mth.nextDouble(RandomSource.create(seed + 3), 0.1, 0.9));
+                                        block_count_limb = (int) ((double) block_count_limb * Mth.nextDouble(RandomSource.create(seed + 3), 0.1, 0.9));
 
                                     }
 
@@ -671,7 +666,7 @@ public class TreePlacer {
 
                                     if (dead_tree_level == 20) {
 
-                                        block_count_twig = (int) (block_count_twig * Mth.nextDouble(RandomSource.create(seed + 4), 0.1, 0.9));
+                                        block_count_twig = (int) ((double) block_count_twig * Mth.nextDouble(RandomSource.create(seed + 4), 0.1, 0.9));
 
                                     }
 
@@ -683,7 +678,7 @@ public class TreePlacer {
 
                                     if (dead_tree_level == 10) {
 
-                                        block_count_sprig = (int) (block_count_sprig * Mth.nextDouble(RandomSource.create(seed + 5), 0.1, 0.9));
+                                        block_count_sprig = (int) ((double) block_count_sprig * Mth.nextDouble(RandomSource.create(seed + 5), 0.1, 0.9));
 
                                     }
 
@@ -713,7 +708,7 @@ public class TreePlacer {
                     BlockState block = Blocks.AIR.defaultBlockState();
                     BlockPos pos = null;
                     double leaf_litter_world_gen_chance = 0.0;
-                    int height_motion_block = 0;
+                    int height_motion = 0;
 
                     for (short read_all : shape) {
 
@@ -855,7 +850,7 @@ public class TreePlacer {
 
                                                     if (hollowed == true) {
 
-                                                        if (type.startsWith("1143") == true) {
+                                                        if (type.equals("1143") == true) {
 
                                                             continue;
 
@@ -961,11 +956,11 @@ public class TreePlacer {
 
                                                                     if (Math.random() < leaf_litter_world_gen_chance) {
 
-                                                                        height_motion_block = level_accessor.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
+                                                                        height_motion = level_accessor.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
 
-                                                                        if (height_motion_block < pos.getY()) {
+                                                                        if (height_motion != level_accessor.getMinBuildHeight() && height_motion < pos.getY()) {
 
-                                                                            LeafLitter.start(level_accessor, pos.getX(), height_motion_block, pos.getZ(), block, false);
+                                                                            LeafLitter.start(level_accessor, pos.getX(), height_motion, pos.getZ(), block, false);
 
                                                                         }
 
@@ -1025,7 +1020,7 @@ public class TreePlacer {
 
                                                         if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
 
-                                                            String marker_data = "ForgeData:{file:\"" + location + "\",settings:\"" + tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
+                                                            String marker_data = "ForgeData:{file:\"" + path_storage + "/" + chosen + "\",tree_settings:\"" + path_tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
                                                             GameUtils.command.run(level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
 
                                                         }

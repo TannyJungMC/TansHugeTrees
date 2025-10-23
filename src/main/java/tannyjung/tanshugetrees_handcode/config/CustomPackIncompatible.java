@@ -68,9 +68,46 @@ public class CustomPackIncompatible {
 
     }
 
-    public static void scanOrganized () {
+    public static void scanWorldGenFile () {
 
-        // Tree Settings
+        // Tree Settings File
+        {
+
+            File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets");
+
+            if (file.exists() == true) {
+
+                {
+
+                    try {
+
+                        Files.walk(file.toPath()).forEach(source -> {
+
+                            if (source.toFile().getName().startsWith("[INCOMPATIBLE] ") == false && source.toFile().isDirectory() == false) {
+
+                                if (source.toFile().getName().endsWith("_settings.txt") == true) {
+
+                                    testTreeSettingsFile(source.toFile());
+
+                                }
+
+                            }
+
+                        });
+
+                    } catch (Exception exception) {
+
+                        OutsideUtils.exception(new Exception(), exception);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        // World Gen File
         {
 
             File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/world_gen");
@@ -83,9 +120,9 @@ public class CustomPackIncompatible {
 
                         Files.walk(file.toPath()).forEach(source -> {
 
-                            if (source.toFile().isDirectory() == false && source.toFile().getName().startsWith("[INCOMPATIBLE] ") == false) {
+                            if (source.toFile().getName().startsWith("[INCOMPATIBLE] ") == false && source.toFile().isDirectory() == false) {
 
-                                testTreeSettings(source.toFile());
+                                testWorldGenFile(source.toFile());
 
                             }
 
@@ -275,14 +312,63 @@ public class CustomPackIncompatible {
 
     }
 
-    private static void testTreeSettings (File file) {
+    private static void testTreeSettingsFile (File file) {
 
         String error = "";
         String name_pack = file.getParentFile().getParentFile().getName().replace("[INCOMPATIBLE] ", "");
         String name_theme = file.getParentFile().getName();
         String name_tree = file.getName().replace("[INCOMPATIBLE] ", "");
-        String storage_directory = "";
-        String tree_settings = "";
+
+        // Test
+        {
+
+            for (String read_all : FileManager.readTXT(file.getPath())) {
+
+                {
+
+                    if (read_all.startsWith("Block ")) {
+
+                        String id = read_all.substring("Block ### #### = ".length());
+
+                        if (id.equals("") == false) {
+
+                            id = id.replace(" keep", "");
+
+                            if (GameUtils.block.fromText(id).getBlock() == Blocks.AIR) {
+
+                                error = "Detected incompatible tree. Caused by unknown block ID. [ " + name_pack + ">" + name_theme + " > " + name_tree + " > " + id + " ]";
+                                break;
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        if (error.equals("") == false) {
+
+            TanshugetreesMod.LOGGER.error(error);
+
+        }
+
+        rename(file.getPath(), error.equals("") == true);
+
+    }
+
+    private static void testWorldGenFile (File file) {
+
+        String error = "";
+        String name_pack = file.getParentFile().getParentFile().getName().replace("[INCOMPATIBLE] ", "");
+        String name_theme = file.getParentFile().getName();
+        String name_tree = file.getName().replace("[INCOMPATIBLE] ", "");
+        String path_storage = "";
+        String path_tree_settings = "";
 
         // Read "World Gen" File
         {
@@ -291,13 +377,13 @@ public class CustomPackIncompatible {
 
                 {
 
-                    if (read_all.startsWith("storage_directory = ")) {
+                    if (read_all.startsWith("path_storage = ")) {
 
-                        storage_directory = read_all.replace("storage_directory = ", "");
+                        path_storage = read_all.replace("path_storage = ", "");
 
-                    } else if (read_all.startsWith("tree_settings = ")) {
+                    } else if (read_all.startsWith("path_tree_settings = ")) {
 
-                        tree_settings = read_all.replace("tree_settings = ", "");
+                        path_tree_settings = read_all.replace("path_tree_settings = ", "");
 
                     } else {
 
@@ -314,11 +400,11 @@ public class CustomPackIncompatible {
         // Test Storage
         {
 
-            File file_storage_directory = new File(Handcode.directory_config + "/custom_packs/" + storage_directory);
+            File file_test = new File(Handcode.directory_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage");
 
-            if (file_storage_directory.exists() == true) {
+            if (file_test.exists() == true) {
 
-                if (file_storage_directory.listFiles() != null && file_storage_directory.listFiles().length == 0) {
+                if (file_test.listFiles() != null && file_test.listFiles().length == 0) {
 
                     error = "Detected incompatible tree. Caused by empty storage directory. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
 
@@ -335,48 +421,11 @@ public class CustomPackIncompatible {
         // Test Tree Settings
         {
 
-            File file_tree_settings = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + tree_settings);
-            File file_tree_settings_incompatible = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + "[INCOMPATIBLE] " + tree_settings);
+            File file_test = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + path_tree_settings + "_settings.txt");
 
-            if (file_tree_settings_incompatible.exists() == false) {
+            if (file_test.exists() == false) {
 
-                if (file_tree_settings.exists() == true && file_tree_settings.isDirectory() == false) {
-
-                    // Read "Tree Settings" File
-                    {
-
-                        for (String read_all : FileManager.readTXT(file_tree_settings.getPath())) {
-
-                            {
-
-                                if (read_all.startsWith("Block ")) {
-
-                                    String id = read_all.substring(read_all.indexOf(" = ") + 3).replace(" keep", "");
-
-                                    if (id.equals("") == false) {
-
-                                        if (GameUtils.block.fromText(id).getBlock() == Blocks.AIR) {
-
-                                            error = "Detected incompatible tree. Caused by unknown block ID. [ " + name_pack + " > " + name_tree + " > " + id + " ]";
-                                            break;
-
-                                        }
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                } else {
-
-                    error = "Detected incompatible tree. Caused by tree settings not found. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
-
-                }
+                error = "Detected incompatible tree. Caused by tree settings not found. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
 
             }
 

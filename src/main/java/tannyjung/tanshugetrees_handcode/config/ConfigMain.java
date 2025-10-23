@@ -130,9 +130,9 @@ public class ConfigMain {
 					| Cancel the trees when their spawn center is above this Y level. As some world gen mods such as ReTerraForged, replacing mountain block and my trees can't detect those new block, make them spawn on blocks that not in the list. Set to 0 to disable this.
 					| Default is [ 0 ]
 					
-					unviable_ecology_skip_chance = 0.75
+					unviable_ecology_skip_chance = 0.9
 					| Skip trees that generate in unviable ecosystems. For example, land trees that generate in water.
-					| Default is [ 0.75 ]
+					| Default is [ 0.9 ]
 					
 					leaf_litter_world_gen = true
 					leaf_litter_world_gen_chance = 0.1
@@ -152,9 +152,9 @@ public class ConfigMain {
 					| Enable some custom systems to detect area around that tree before placing it. Such as smoothness surface and near water/land biomes.
 					| Default is [ true ]
 					
-					surrounding_area_detection_size = 8
+					surrounding_area_detection_size = 16
 					| Set size of detectors, for all detectors at 8 directions.
-					| Default is [ 8 ]
+					| Default is [ 16 ]
 					
 					waterside_detection = true
 					| Enable waterside system for trees that use this feature. If disable this, all waterside trees will be skipped and not spawn anywhere.
