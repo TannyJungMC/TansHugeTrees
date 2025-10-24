@@ -24,7 +24,6 @@ import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LeafLitter
 import tannyjung.tanshugetrees_handcode.systems.tree_generator.TreeFunction;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -206,24 +205,35 @@ public class TreePlacer {
                 test:
                 {
 
-                    // Structure Area
+                    // Structure Detection
                     {
 
-                        ChunkAccess chunk = level_accessor.getChunk(center_chunkX, center_chunkZ, ChunkStatus.STRUCTURE_REFERENCES, false);
+                        int radius = ConfigMain.structure_detection_size;
 
-                        if (chunk != null) {
+                        if (radius > 0) {
 
-                            Structure[] structures = chunk.getAllReferences().keySet().toArray(new Structure[0]);
+                            for (int scanX = -radius; scanX < radius; scanX++) {
 
-                            for (Structure structure : structures) {
+                                for (int scanZ = -radius; scanZ < radius; scanZ++) {
 
-                                // structure.type().equals(StructureType.MINESHAFT) == false
-                                // structure.terrainAdaptation().equals(TerrainAdjustment.NONE) == true
+                                    ChunkAccess chunk = level_accessor.getChunk(center_chunkX + scanX, center_chunkZ + scanZ, ChunkStatus.STRUCTURE_REFERENCES, false);
 
-                                if (structure.step().equals(GenerationStep.Decoration.SURFACE_STRUCTURES) == true) {
+                                    if (chunk != null) {
 
-                                    pass = false;
-                                    break test;
+                                        for (Structure structure : chunk.getAllReferences().keySet().toArray(new Structure[0])) {
+
+                                            // structure.type().equals(StructureType.MINESHAFT) == false
+
+                                            if (structure.step().equals(GenerationStep.Decoration.SURFACE_STRUCTURES) == true || structure.step().equals(GenerationStep.Decoration.STRONGHOLDS) == true) {
+
+                                                pass = false;
+                                                break test;
+
+                                            }
+
+                                        }
+
+                                    }
 
                                 }
 
@@ -304,9 +314,9 @@ public class TreePlacer {
                     // Surface Smoothness
                     {
 
-                        if (ConfigMain.surrounding_area_detection == true && ConfigMain.surface_smoothness_detection == true) {
+                        if (ConfigMain.surface_smoothness_detection == true) {
 
-                            int size = ConfigMain.surrounding_area_detection_size;
+                            int size = ConfigMain.surface_detection_size;
                             int height = ConfigMain.surface_smoothness_detection_height;
                             int pos1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
                             int pos2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
@@ -1020,7 +1030,7 @@ public class TreePlacer {
 
                                                         if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
 
-                                                            String marker_data = "ForgeData:{file:\"" + path_storage + "/" + chosen + "\",tree_settings:\"" + path_tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
+                                                            String marker_data = "ForgeData:{file:\"" + path_storage + "|" + chosen + "\",tree_settings:\"" + path_tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
                                                             GameUtils.command.run(level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
 
                                                         }

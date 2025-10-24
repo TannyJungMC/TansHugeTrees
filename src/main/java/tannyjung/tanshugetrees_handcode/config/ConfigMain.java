@@ -31,11 +31,11 @@ public class ConfigMain {
 	public static double leaf_litter_world_gen_chance_coniferous = 0.0;
 	public static boolean abscission_world_gen = false;
 
-	public static boolean surrounding_area_detection = false;
-	public static int surrounding_area_detection_size = 0;
+	public static int surface_detection_size = 0;
 	public static boolean waterside_detection = false;
 	public static boolean surface_smoothness_detection = false;
 	public static int surface_smoothness_detection_height = 0;
+	public static int structure_detection_size = 0;
 
 	public static boolean living_tree_mechanics = false;
 	public static int living_tree_mechanics_tick = 0;
@@ -148,12 +148,8 @@ public class ConfigMain {
 					World Generation : Surrounding Area Detection
 					----------------------------------------------------------------------------------------------------
 					
-					surrounding_area_detection = true
-					| Enable some custom systems to detect area around that tree before placing it. Such as smoothness surface and near water/land biomes.
-					| Default is [ true ]
-					
-					surrounding_area_detection_size = 16
-					| Set size of detectors, for all detectors at 8 directions.
+					surface_detection_size = 16
+					| Set size of surface detectors, for all detectors at 8 directions.
 					| Default is [ 16 ]
 					
 					waterside_detection = true
@@ -161,12 +157,16 @@ public class ConfigMain {
 					| Default is [ true ]
 					
 					surface_smoothness_detection = true
-					| Force the trees to only spawn on flat areas. Note that this system only detects 8 points around that tree, so it's not 100% perfect. Surrounding area detection must be enable to use this feature.
+					| Force the trees to only spawn on flat areas. Note that this system only detects 8 points around that tree, so it's not 100% perfect.
 					| Default is [ true ]
 					
 					surface_smoothness_detection_height = 8
 					| Set height of surface smoothness. This value for each up and down. If the detector detects that the surface is rough than this height, it will cancel that tree.
 					| Default is [ 8 ]
+					
+					structure_detection_size = 4
+					| Cancel trees if they detect structure around them. This size is radius, min and max is 0 to 9. Set to 1 for only chunks that marked as having structures. Set to 0 to disable this feature.
+					| Default is [ 4 ]
 					
 					----------------------------------------------------------------------------------------------------
 					Living Tree Mechanics
@@ -341,11 +341,11 @@ public class ConfigMain {
 		leaf_litter_world_gen_chance_coniferous = Double.parseDouble(data.get("leaf_litter_world_gen_chance_coniferous"));
 		abscission_world_gen = Boolean.parseBoolean(data.get("abscission_world_gen"));
 
-		surrounding_area_detection = Boolean.parseBoolean(data.get("surrounding_area_detection"));
-		surrounding_area_detection_size = Integer.parseInt(data.get("surrounding_area_detection_size"));
+        surface_detection_size = Integer.parseInt(data.get("surface_detection_size"));
 		waterside_detection = Boolean.parseBoolean(data.get("waterside_detection"));
 		surface_smoothness_detection = Boolean.parseBoolean(data.get("surface_smoothness_detection"));
 		surface_smoothness_detection_height = Integer.parseInt(data.get("surface_smoothness_detection_height"));
+        structure_detection_size = Integer.parseInt(data.get("structure_detection_size"));
 
 		living_tree_mechanics = Boolean.parseBoolean(data.get("living_tree_mechanics"));
 		living_tree_mechanics_tick = Integer.parseInt(data.get("living_tree_mechanics_tick"));

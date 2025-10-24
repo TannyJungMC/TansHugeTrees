@@ -18,6 +18,7 @@ import tannyjung.tanshugetrees_handcode.systems.Cache;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,71 +71,47 @@ public class LivingTreeMechanics {
 
 							} else if (read_all.startsWith("Block ") == true) {
 
-								get_short = read_all.substring(("Block ").length(), ("Block ###").length());
-								get = read_all.substring(("Block ### = ").length());
+                                {
 
-								// Get ID
-								{
+                                    get_short = read_all.substring(("Block ### ").length(), ("Block ### ####").length());
+                                    get = read_all.substring(("Block ### #### = ").length());
 
-									if (get.endsWith(" keep") == true) {
+                                    if (get.endsWith(" keep") == true) {
 
-										get = get.substring(0, get.length() - (" keep").length());
+                                        get = get.substring(0, get.length() - (" keep").length());
 
-									}
+                                    }
 
-								}
+                                    if (get.endsWith("]") == true) {
 
+                                        get = get.substring(0, get.indexOf("["));
 
+                                    }
 
+                                    map_block.put(get_short, GameUtils.block.fromText(get));
 
+                                    if (get_short.startsWith("120") == true) {
 
+                                        // Leaves Types
+                                        {
 
+                                            int number = Integer.parseInt(get_short.substring(3)) - 1;
 
+                                            if (ConfigMain.deciduous_leaves_list.contains(get) == true) {
 
+                                                leaves_type[number] = 1;
 
+                                            } else if (ConfigMain.coniferous_leaves_list.contains(get) == true) {
 
+                                                leaves_type[number] = 2;
 
+                                            }
 
-                                if (true) {
+                                        }
 
-                                   return;
+                                    }
 
                                 }
-
-
-
-
-
-
-
-								map_block.put(get_short, GameUtils.block.fromText(get));
-
-								if (get_short.startsWith("le") == true) {
-
-									// Leaves Types
-									{
-
-										if (get.endsWith("]") == true) {
-
-											get = get.substring(0, get.indexOf("["));
-
-										}
-
-										int number = Integer.parseInt(get_short.substring(2)) - 1;
-
-										if (ConfigMain.deciduous_leaves_list.contains(get) == true) {
-
-											leaves_type[number] = 1;
-
-										} else if (ConfigMain.coniferous_leaves_list.contains(get) == true) {
-
-											leaves_type[number] = 2;
-
-										}
-
-									}
-
-								}
 
 							}
 
@@ -152,7 +129,10 @@ public class LivingTreeMechanics {
 
 		}
 
-		File file = new File(Handcode.directory_config + "/custom_packs/" + GameUtils.nbt.entity.getText(entity, "file"));
+        String[] file_path_data = GameUtils.nbt.entity.getText(entity, "file").split("\\|");
+        String path_storage = file_path_data[0];
+        String chosen = file_path_data[1];
+		File file = new File(Handcode.directory_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage/" + chosen);
 
 		if (file.exists() == true && file.isDirectory() == false) {
 
@@ -178,148 +158,175 @@ public class LivingTreeMechanics {
 			// Read Tree Shape
 			{
 
-				int process = 0;
-				int rotation = (int) GameUtils.nbt.entity.getNumber(entity, "rotation");
-				boolean mirrored = GameUtils.nbt.entity.getLogic(entity, "mirrored");
+                int process = 0;
+                int loop = 0;
+                String type = "";
+                int posX = 0;
+                int posY = 0;
+                int posZ = 0;
+                int[] pos_converted = new int[0];
+                String get = "";
 
-				String id = "";
-				int[] get = null;
-				int posX = 0;
-				int posY = 0;
-				int posZ = 0;
+                int rotation = (int) GameUtils.nbt.entity.getNumber(entity, "rotation");
+                boolean mirrored = GameUtils.nbt.entity.getLogic(entity, "mirrored");
+                String[] pre_block_data = new String[0];
+
 				BlockPos pre_pos = new BlockPos(0, 0, 0);
 				BlockState pre_block = Blocks.AIR.defaultBlockState();
-				String pre_block_data = "";
 				BlockPos pos = new BlockPos(0, 0, 0);
 				BlockState block = Blocks.AIR.defaultBlockState();
 
 				boolean have_center_block = level_accessor.getBlockState(center_pos).isAir() == false;
 
-                /*
+                for (short read_all : Cache.tree_shape(path_storage + "/" + chosen)) {
 
-				for (String read_all : Cache.tree_shape(GameUtils.nbt.entity.getText(entity, "file"))) {
+                    // Loop and Get Data
+                    {
 
-					{
+                        loop = loop + 1;
 
-						process = process + 1;
+                        if (loop > 4) {
 
-						// Skipping Conditions
-						{
+                            loop = 1;
 
-							// Out of Save
-							{
+                        }
 
-								if (process < GameUtils.nbt.entity.getNumber(entity, "process_save")) {
+                        if (loop == 1) {
 
-									continue;
+                            type = String.valueOf(read_all);
 
-								}
+                        } else if (loop == 2) {
 
-							}
+                            posX = read_all;
 
-							// Out of Process Limit
-							{
+                        } else if (loop == 3) {
 
-								if (ConfigMain.living_tree_mechanics_process_limit > 0) {
+                            posY = read_all;
 
-									if (GameUtils.nbt.entity.getNumber(entity, "process_save") + ConfigMain.living_tree_mechanics_process_limit <= process) {
+                        } else {
 
-										GameUtils.nbt.entity.setNumber(entity, "process_save", process);
-										return;
+                            posZ = read_all;
 
-									}
+                        }
 
-								}
+                    }
 
-							}
+                    if (loop == 4) {
 
-						}
+                        process = process + 1;
 
-						if (read_all.startsWith("+b") == true) {
+                        // Skipping Conditions
+                        {
 
-							if (read_all.endsWith("le1") == false && read_all.endsWith("le2") == false) {
+                            // Out of Save
+                            {
 
-								GameUtils.nbt.entity.setText(entity, "pre_block", read_all);
+                                if (process < GameUtils.nbt.entity.getNumber(entity, "process_save")) {
 
-							} else {
+                                    continue;
 
-								// Get Leave Data
-								{
+                                }
 
-									get = GameUtils.outside.posRotationMirrored(read_all.substring(2, read_all.length() - 3), rotation, mirrored);
-									posX = entity.getBlockX() + get[0];
-									posY = entity.getBlockY() + get[1];
-									posZ = entity.getBlockZ() + get[2];
+                            }
 
-									if (Handcode.version_1192 == false && GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
+                            // Out of Process Limit
+                            {
 
-										return;
+                                if (ConfigMain.living_tree_mechanics_process_limit > 0) {
 
-									}
+                                    if (GameUtils.nbt.entity.getNumber(entity, "process_save") + ConfigMain.living_tree_mechanics_process_limit <= process) {
 
-									pos = new BlockPos(posX, posY, posZ);
-									id = read_all.substring(read_all.length() - 3);
-									block = map_block.get(id);
+                                        GameUtils.nbt.entity.setNumber(entity, "process_save", process);
+                                        return;
 
-								}
+                                    }
 
-								// Get Previous Block Data
-								{
+                                }
 
-									pre_block_data = GameUtils.nbt.entity.getText(entity, "pre_block");
-									get = GameUtils.outside.posRotationMirrored(pre_block_data.substring(2, pre_block_data.length() - 3), rotation, mirrored);
-									posX = entity.getBlockX() + get[0];
-									posY = entity.getBlockY() + get[1];
-									posZ = entity.getBlockZ() + get[2];
+                            }
 
-									if (Handcode.version_1192 == false && GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
+                        }
 
-										return;
+                        if (type.startsWith("1") == true) {
 
-									}
+                            if (type.startsWith("120") == false) {
 
-									pre_pos = new BlockPos(posX, posY, posZ);
-									pre_block = map_block.get(pre_block_data.substring(pre_block_data.length() - 3));
+                                GameUtils.nbt.entity.setText(entity, "pre_block", type + "/" + posX + "/" + posY + "/" + posZ);
 
-								}
+                            } else {
 
-								if (level_accessor.getBlockState(pre_pos).getBlock() == pre_block.getBlock()) {
+                                // Get Previous Block Data
+                                {
 
-									if (can_leaves_drop == true || can_leaves_regrow == true) {
+                                    pre_block_data = GameUtils.nbt.entity.getText(entity, "pre_block").split("/");
+                                    pos_converted = GameUtils.outside.posRotationMirrored(Integer.parseInt(pre_block_data[1]), Integer.parseInt(pre_block_data[3]), rotation, mirrored);
+                                    pre_pos = new BlockPos(entity.getBlockX() + pos_converted[0], entity.getBlockY() + Integer.parseInt(pre_block_data[2]), entity.getBlockZ() + pos_converted[1]);
 
-										run(level_accessor, level_server, entity, pos, map_block, block, leaves_type[Integer.parseInt(id.substring(2)) - 1], biome_type, current_season, have_center_block, can_leaves_drop, can_leaves_regrow);
+                                    // Only Loaded Chunks
+                                    {
 
-									}
+                                        if (Handcode.version_1192 == false && GameUtils.command.result(level_server, pre_pos.getX(), pre_pos.getY(), pre_pos.getZ(), "execute if loaded ~ ~ ~") == false) {
 
-								} else {
+                                            return;
 
-									// Missing Twig
-									{
+                                        }
 
-										if (can_leaves_decay == true) {
+                                    }
 
-											if (level_accessor.getBlockState(pos).getBlock() == block.getBlock()) {
+                                    pre_block = map_block.getOrDefault(pre_block_data[0], Blocks.AIR.defaultBlockState());
 
-												block = GameUtils.block.propertyBooleanSet(block, "persistent", false);
-												level_accessor.setBlock(pos, block, 2);
+                                }
 
-											}
+                                pos_converted = GameUtils.outside.posRotationMirrored(posX, posZ, rotation, mirrored);
+                                pos = new BlockPos(entity.getBlockX() + pos_converted[0], entity.getBlockY() + posY, entity.getBlockZ() + pos_converted[1]);
+                                block = map_block.get(type);
 
-										}
+                                // Only Loaded Chunks
+                                {
 
-									}
+                                    if (Handcode.version_1192 == false && GameUtils.command.result(level_server, pos.getX(), pos.getY(), pos.getZ(), "execute if loaded ~ ~ ~") == false) {
 
-								}
+                                        return;
 
-							}
+                                    }
 
-						}
+                                }
 
-					}
+                                if (level_accessor.getBlockState(pre_pos).getBlock() == pre_block.getBlock()) {
 
-				}
+                                    if (can_leaves_drop == true || can_leaves_regrow == true) {
 
-                 */
+                                        run(level_accessor, level_server, entity, pos, map_block, block, leaves_type[Integer.parseInt(type.substring(3)) - 1], biome_type, current_season, have_center_block, can_leaves_drop, can_leaves_regrow);
+
+                                    }
+
+                                } else {
+
+                                    // Missing Twig
+                                    {
+
+                                        if (can_leaves_decay == true) {
+
+                                            if (level_accessor.getBlockState(pos).getBlock() == block.getBlock()) {
+
+                                                block = GameUtils.block.propertyBooleanSet(block, "persistent", false);
+                                                level_accessor.setBlock(pos, block, 2);
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
 
 			}
 
@@ -400,7 +407,7 @@ public class LivingTreeMechanics {
 
 						BlockState test = level_accessor.getBlockState(new BlockPos(pos.getX(), (int) GameUtils.nbt.entity.getNumber(entity, "straighten_highestY"), pos.getZ()));
 
-						if (map_block.get("le1").getBlock() != test.getBlock() && map_block.get("le2").getBlock() != test.getBlock()) {
+						if (map_block.get("1201").getBlock() != test.getBlock() && map_block.get("1202").getBlock() != test.getBlock()) {
 
 							chance = 1.0;
 
@@ -525,7 +532,7 @@ public class LivingTreeMechanics {
 
 							BlockState test = level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ()));
 
-							if (map_block.get("le1").getBlock() != test.getBlock() && map_block.get("le2").getBlock() != test.getBlock()) {
+							if (map_block.get("1201").getBlock() != test.getBlock() && map_block.get("1202").getBlock() != test.getBlock()) {
 
 								return;
 
