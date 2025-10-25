@@ -1041,7 +1041,7 @@ public class TreePlacer {
 
                                             }
 
-                                        } else {
+                                        } else if (type.startsWith("2") == true) {
 
                                             // Function
                                             {

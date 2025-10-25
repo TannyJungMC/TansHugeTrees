@@ -164,9 +164,9 @@ public class ConfigMain {
 					| Set height of surface smoothness. This value for each up and down. If the detector detects that the surface is rough than this height, it will cancel that tree.
 					| Default is [ 8 ]
 					
-					structure_detection_size = 4
+					structure_detection_size = 3
 					| Cancel trees if they detect structure around them. This size is radius, min and max is 0 to 9. Set to 1 for only chunks that marked as having structures. Set to 0 to disable this feature.
-					| Default is [ 4 ]
+					| Default is [ 3 ]
 					
 					----------------------------------------------------------------------------------------------------
 					Living Tree Mechanics

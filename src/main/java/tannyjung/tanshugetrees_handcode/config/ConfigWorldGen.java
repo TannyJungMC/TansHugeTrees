@@ -233,7 +233,7 @@ public class ConfigWorldGen {
 
                     if (read_all.equals("") == false) {
 
-                        if (read_all.startsWith("storage_directory = ") == false && read_all.startsWith("tree_settings = ") == false) {
+                        if (read_all.startsWith("path_") == false) {
 
                             if (replace == true) {
 
