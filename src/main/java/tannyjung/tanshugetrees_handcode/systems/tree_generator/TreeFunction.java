@@ -21,7 +21,7 @@ public class TreeFunction {
 
 	public static void start (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String path, boolean only_loaded_chunk) {
 
-		File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/functions/" + path);
+		File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/functions/" + path + ".txt");
 
 		if (file.exists() == true && file.isDirectory() == false) {
 
