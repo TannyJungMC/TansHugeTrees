@@ -63,7 +63,7 @@ public class SeasonDetector {
 
                 if (season.equals("") == false) {
 
-                    GameUtils.command.run(level_server, posX, posY, posZ, "setblock ~ ~ ~ command_block[facing=up]{command:\"TANSHUGETREES command season set " + season + "\"}");
+                    GameUtils.command.run(level_server, posX, posY, posZ, "setblock ~ ~ ~ command_block{Command:\"TANSHUGETREES command season set " + season + "\"}");
                     GameUtils.command.run(level_server, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
 
                 }
