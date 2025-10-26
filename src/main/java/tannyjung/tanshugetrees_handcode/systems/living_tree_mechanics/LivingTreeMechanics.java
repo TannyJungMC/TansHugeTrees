@@ -18,13 +18,26 @@ import tannyjung.tanshugetrees_handcode.systems.Cache;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class LivingTreeMechanics {
 
-	public static void start (Entity entity) {
+    private static final ExecutorService executor = Executors.newFixedThreadPool(1, name -> {
+        Thread thread = new Thread(name);
+        thread.setName("TannyJung | Tan's Huge Trees | Living Tree Mechanics");
+        return thread;
+    });
+
+    public static void start (Entity entity) {
+
+        executor.submit(() -> getData(entity));
+
+    }
+
+	public static void getData (Entity entity) {
 
 		LevelAccessor level_accessor = entity.level();
 		ServerLevel level_server = (ServerLevel) entity.level();
@@ -137,7 +150,6 @@ public class LivingTreeMechanics {
 		if (file.exists() == true && file.isDirectory() == false) {
 
 			BlockPos center_pos = new BlockPos(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
-			String current_season = TanshugetreesModVariables.MapVariables.get(level_accessor).season;
 			int biome_type = 0;
 
 			// Biome Type Test
@@ -265,7 +277,7 @@ public class LivingTreeMechanics {
                                     // Only Loaded Chunks
                                     {
 
-                                        if (Handcode.version_1192 == false && GameUtils.command.result(level_server, pre_pos.getX(), pre_pos.getY(), pre_pos.getZ(), "execute if loaded ~ ~ ~") == false) {
+                                        if (level_server.isLoaded(pre_pos) == false) {
 
                                             return;
 
@@ -284,7 +296,7 @@ public class LivingTreeMechanics {
                                 // Only Loaded Chunks
                                 {
 
-                                    if (Handcode.version_1192 == false && GameUtils.command.result(level_server, pos.getX(), pos.getY(), pos.getZ(), "execute if loaded ~ ~ ~") == false) {
+                                    if (level_server.isLoaded(pos) == false) {
 
                                         return;
 
@@ -296,7 +308,7 @@ public class LivingTreeMechanics {
 
                                     if (can_leaves_drop == true || can_leaves_regrow == true) {
 
-                                        run(level_accessor, level_server, entity, pos, map_block, block, leaves_type[Integer.parseInt(type.substring(3)) - 1], biome_type, current_season, have_center_block, can_leaves_drop, can_leaves_regrow);
+                                        run(level_accessor, level_server, entity, pos, map_block, block, leaves_type[Integer.parseInt(type.substring(3)) - 1], biome_type, have_center_block, can_leaves_drop, can_leaves_regrow);
 
                                     }
 
@@ -333,25 +345,40 @@ public class LivingTreeMechanics {
 			// At the end of the file
 			{
 
-				if (GameUtils.nbt.entity.getLogic(entity, "dead_tree") == false) {
+                GameUtils.nbt.entity.setNumber(entity, "process_save", 0);
 
-					GameUtils.nbt.entity.setNumber(entity, "process_save", 0);
+				if (GameUtils.nbt.entity.getLogic(entity, "dead_tree") == true) {
 
-					if (GameUtils.nbt.entity.getLogic(entity, "still_alive") == true) {
+                    GameUtils.command.runEntity(entity, "kill @s");
 
-						GameUtils.nbt.entity.setLogic(entity, "still_alive", false);
+				} else if (GameUtils.nbt.entity.getLogic(entity, "still_alive") == true) {
 
-					} else {
+                    GameUtils.nbt.entity.setLogic(entity, "still_alive", false);
+                    GameUtils.nbt.entity.setLogic(entity, "have_leaves", false);
 
-						GameUtils.nbt.entity.setLogic(entity, "dead_tree", true);
+                } else if (GameUtils.nbt.entity.getLogic(entity, "have_leaves") == false) {
 
-					}
+                    if (leaves_type[0] == 1 || leaves_type[1] == 1) {
 
-				} else {
+                        String current_season = TanshugetreesModVariables.MapVariables.get(level_accessor).season;
 
-					GameUtils.command.runEntity(entity, "kill @s");
+                        if (current_season.equals("Spring") == true || current_season.equals("Autumn") == true || current_season.equals("Winter") == true) {
 
-				}
+                            GameUtils.nbt.entity.setLogic(entity, "dormancy", true);
+
+                        }
+
+                    }
+
+                } else {
+
+                    if (Math.random() < 0.1) {
+
+                        GameUtils.nbt.entity.setLogic(entity, "dead_tree", true);
+
+                    }
+
+                }
 
 			}
 
@@ -359,10 +386,12 @@ public class LivingTreeMechanics {
 
 	}
 
-	private static void run (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, BlockPos pos, Map<String, BlockState> map_block, BlockState block, int leaves_type, int biome_type, String current_season, boolean have_center_block, boolean can_leaves_drop, boolean can_leaves_regrow) {
+	private static void run (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, BlockPos pos, Map<String, BlockState> map_block, BlockState block, int leaves_type, int biome_type, boolean have_center_block, boolean can_leaves_drop, boolean can_leaves_regrow) {
 
-		boolean straighten = false;
-		boolean can_pos_photosynthesis = false;
+        boolean is_leaves = level_accessor.getBlockState(pos).getBlock() == block.getBlock();
+        String current_season = TanshugetreesModVariables.MapVariables.get(level_accessor).season;
+        boolean straighten = false;
+        boolean can_pos_photosynthesis = false;
 
 		// Leaves Straighten Test
 		{
@@ -392,9 +421,7 @@ public class LivingTreeMechanics {
 
 		}
 
-		boolean have_leaves = level_accessor.getBlockState(pos).getBlock() == block.getBlock();
-
-		if (have_leaves == true || have_center_block == false) {
+		if (is_leaves == true || have_center_block == false) {
 
 			// Leaf Drop
 			{
@@ -471,7 +498,7 @@ public class LivingTreeMechanics {
 
 						level_accessor.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 
-						if (ConfigMain.leaf_drop_animation_chance > 0 && Math.random() < ConfigMain.leaf_drop_animation_chance) {
+						if (Math.random() < ConfigMain.leaf_drop_animation_chance) {
 
 							// Animation
 							{
@@ -587,7 +614,9 @@ public class LivingTreeMechanics {
 
 					if (Math.random() < chance) {
 
+                        block = GameUtils.block.propertyBooleanSet(block, "persistent", true);
 						level_accessor.setBlock(pos, block, 2);
+                        GameUtils.nbt.entity.setLogic(entity, "dormancy", false);
 
 					}
 
@@ -602,7 +631,7 @@ public class LivingTreeMechanics {
 
 			if (Math.random() < ConfigMain.leaf_litter_remover_chance) {
 
-				if (GameUtils.score.get(level_server, "TANSHUGETREES", "leaf_litter_remover") < ConfigMain.leaf_drop_animation_count_limit) {
+				if (GameUtils.score.get(level_server, "TANSHUGETREES", "leaf_litter_remover") < ConfigMain.leaf_litter_remover_count_limit) {
 
 					GameUtils.score.add(level_server, "TANSHUGETREES", "leaf_litter_remover", 1);
 
@@ -617,15 +646,24 @@ public class LivingTreeMechanics {
 		// Still Alive
 		{
 
-			if (have_leaves == true || leaves_type == 1 && biome_type == 1) {
+            if (GameUtils.nbt.entity.getLogic(entity, "still_alive") == false) {
 
-				if (GameUtils.nbt.entity.getLogic(entity, "still_alive") == false) {
+                if (is_leaves == true) {
 
-					GameUtils.nbt.entity.setLogic(entity, "still_alive", true);
+                    GameUtils.nbt.entity.setLogic(entity, "still_alive", true);
+                    GameUtils.nbt.entity.setLogic(entity, "have_leaves", true);
 
-				}
+                } else if (leaves_type == 1 && biome_type == 1) {
 
-			}
+                    GameUtils.nbt.entity.setLogic(entity, "still_alive", true);
+
+                } else if (GameUtils.nbt.entity.getLogic(entity, "dormancy") == true) {
+
+                    GameUtils.nbt.entity.setLogic(entity, "still_alive", true);
+
+                }
+
+            }
 
 		}
 

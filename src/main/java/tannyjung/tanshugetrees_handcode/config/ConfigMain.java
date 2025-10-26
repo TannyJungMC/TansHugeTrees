@@ -176,13 +176,13 @@ public class ConfigMain {
 					| Enable some custom systems to make the trees from this mod feel more alive. Such as leaf drop and regrowth, leaf decay, leaf litter, and abscission.
 					| Default is [ true ]
 					
-					living_tree_mechanics_tick = 5
+					living_tree_mechanics_tick = 1
 					| How fast in tick of living tree mechanics system. Set to 0 to temporary pause the tick.
-					| Default is [ 5 ]
+					| Default is [ 1 ]
 					
-					living_tree_mechanics_process_limit = 100
+					living_tree_mechanics_process_limit = 500
 					| How many process for trees to run this system per time. Set to 0 for one time process.
-					| Default is [ 100 ]
+					| Default is [ 500 ]
 					
 					living_tree_mechanics_simulation = 100
 					| Simulate fake trees to slowdown the process. For example, when I set tree speed for 100 trees. But there's only 1 tree in the area, it will drop and regrow leaves very fast because that's the speed for 100 trees. Set this config will simulate fake trees and make that 1 tree slowdown it process like there's 99 trees around it.
@@ -193,16 +193,16 @@ public class ConfigMain {
 					| Default is [ true ]
 					
 					leaf_litter_classic = true
-					| Use classic style for leaf litter when that leaves block have no custom style. Classic style will use full leaves block, not like slab or carpet.
+					| Use classic style for leaf litter when that leaves block have no custom style. Classic style will use block of itself as litter block.
 					| Default is [ true ]
 					
 					leaf_litter_classic_only = false
 					| Only use classic style for all leaf litters
 					| Default is [ false ]
 					
-					leaf_litter_remover_chance = 0.001
+					leaf_litter_remover_chance = 0.0001
 					| Chance of leaf litter on the ground to disappear per process
-					| Default is [ 0.001 ]
+					| Default is [ 0.0001 ]
 					
 					leaf_litter_remover_count_limit = 100
 					| Count limit of the leaf litter remover
@@ -220,9 +220,9 @@ public class ConfigMain {
 					| Minimum light level of leaves can survive. Leaves will drop themselves if light level is under this value. Set to 15 for only full bright level. Set to 0 for no light level affect.
 					| Default is [ 7 ]
 					
-					leaf_light_level_detection_drop_chance = 0.1
+					leaf_light_level_detection_drop_chance = 0.001
 					| Chance of leaves to drop themselves when light level is under the config
-					| Default is [ 0.1 ]
+					| Default is [ 0.001 ]
 					
 					deciduous_leaves_list = minecraft:oak_leaves / minecraft:birch_leaves
 					coniferous_leaves_list = minecraft:spruce_leaves
@@ -230,7 +230,7 @@ public class ConfigMain {
 					| Default is [ minecraft:oak_leaves / minecraft:birch_leaves ] [ minecraft:spruce_leaves ]
 					
 					----------------------------------------------------------------------------------------------------
-					Living Tree Mechanics : Season Settings
+					Living Tree Mechanics : Leaf Cycle and Seasons
 					----------------------------------------------------------------------------------------------------
 					
 					serene_seasons_compatibility = true
@@ -238,20 +238,20 @@ public class ConfigMain {
 					| Default is [ true ]
 					
 					leaf_drop_chance_spring = 0.0
-					leaf_drop_chance_summer = 0.05
-					leaf_drop_chance_autumn = 0.1
-					leaf_drop_chance_winter = 0.1
-					leaf_regrowth_chance_spring = 0.05
-					leaf_regrowth_chance_summer = 0.1
+					leaf_drop_chance_summer = 0.001
+					leaf_drop_chance_autumn = 0.005
+					leaf_drop_chance_winter = 0.005
+					leaf_regrowth_chance_spring = 0.005
+					leaf_regrowth_chance_summer = 0.005
 					leaf_regrowth_chance_autumn = 0.0
 					leaf_regrowth_chance_winter = 0.0
 					| Chance of deciduous leaves to drop and regrow based on seasons. But note that it will only use summer value when in tropical biomes, and for other leaves that not marked as deciduous and coniferous.
-					| Default is [ 0.0 ] [ 0.05 ] [ 0.1 ] [ 0.1 ] [ 0.05 ] [ 0.1 ] [ 0.0 ] [ 0.0 ]
+					| Default is [ 0.0 ] [ 0.001 ] [ 0.005 ] [ 0.005 ] [ 0.005 ] [ 0.005 ] [ 0.0 ] [ 0.0 ]
 					
-					leaf_drop_chance_coniferous = 0.001
+					leaf_drop_chance_coniferous = 0.0001
 					leaf_regrowth_chance_coniferous = 0.005
 					| Chance of coniferous leaves to drop in summer and regrow in any season
-					| Default is [ 0.005 ] [ 0.001 ]
+					| Default is [ 0.0001 ] [ 0.005 ]
 					
 					----------------------------------------------------------------------------------------------------
 					Tree Generator

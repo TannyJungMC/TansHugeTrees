@@ -21,7 +21,7 @@ public class LivingTreeMechanicsLeafLitterRemover {
         // If Area Loaded
         {
 
-            if (Handcode.version_1192 == false && GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~") == false) {
+            if (level_server.isLoaded(entity.blockPosition()) == false) {
 
                 return;
 

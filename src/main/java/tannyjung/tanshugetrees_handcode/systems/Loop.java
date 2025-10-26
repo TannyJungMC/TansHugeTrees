@@ -179,7 +179,6 @@ public class Loop {
 
                         GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_drop] run scoreboard players add leaf_drop TANSHUGETREES 1");
 
-
                     }
 
                 }
@@ -198,7 +197,6 @@ public class Loop {
                     } else {
 
                         GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_litter_remover] run scoreboard players add leaf_litter_remover TANSHUGETREES 1");
-
 
                     }
 
