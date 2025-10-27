@@ -26,7 +26,8 @@ import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDete
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFull;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenBeforePlants;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Mod.EventBusSubscriber
 public class Handcode {
@@ -45,8 +46,10 @@ public class Handcode {
 	public static String directory_world_data = directory_game + "/saves/tanshugetrees-error/directory_world_data";
 	public static String tanny_pack_version_name = ""; // Make this because version can swap to "WIP" by config
 	public static boolean world_active = false;
+    private static int thread_count_name = 1;
+    public static ExecutorService thread = Executors.newFixedThreadPool(1);
 
-	// ----------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------
 
 	public Handcode () {}
 
@@ -67,7 +70,7 @@ public class Handcode {
 
 		}
 
-		CompletableFuture.runAsync(() -> {
+        Handcode.thread.submit(() -> {
 
 			ConfigMain.repairAll(null);
 			ConfigMain.apply(null);
@@ -82,9 +85,22 @@ public class Handcode {
 		world_active = true;
 		TanshugetreesMod.LOGGER.info("Turned ON world systems");
 
+        // Thread Start
+        {
+
+            thread_count_name = 1;
+
+            thread = Executors.newFixedThreadPool(4, name -> {
+                Thread thread = new Thread(name);
+                thread.setName("Tan's Huge Trees (" + thread_count_name + ")");
+                thread_count_name = thread_count_name + 1;
+                return thread;
+            });
+
+        }
+
 		String world_path = String.valueOf(event.getServer().getWorldPath(new LevelResource(".")));
 		directory_world_data = world_path + "/data/tanshugetrees";
-
 		ConfigMain.repairAll(null);
 		ConfigMain.apply(null);
 
@@ -121,6 +137,7 @@ public class Handcode {
 
 		world_active = false;
 		TanshugetreesMod.LOGGER.info("Turned OFF world systems");
+        thread.shutdownNow();
 
 	}
 

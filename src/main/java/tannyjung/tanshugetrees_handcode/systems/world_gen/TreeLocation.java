@@ -50,7 +50,7 @@ public class TreeLocation {
                     world_gen_overlay_animation = 4;
                     world_gen_overlay_bar = 0;
 
-                    CompletableFuture.runAsync(() -> {
+                    Handcode.thread.submit(() -> {
 
                         while (world_gen_overlay_animation != 0) {
 

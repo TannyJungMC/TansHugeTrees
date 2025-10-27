@@ -92,7 +92,7 @@ public class Loop {
                 // Main
                 {
 
-                    if (ConfigMain.living_tree_mechanics_tick > 0) {
+                    if (ConfigMain.living_tree_mechanics == true && ConfigMain.living_tree_mechanics_tick > 0) {
 
                         living_tree_mechanics_tick = living_tree_mechanics_tick + 1;
 

@@ -173,7 +173,7 @@ public class ConfigMain {
 					----------------------------------------------------------------------------------------------------
 					
 					living_tree_mechanics = true
-					| Enable some custom systems to make the trees from this mod feel more alive. Such as leaf drop and regrowth, leaf decay, leaf litter, and abscission.
+					| Enable some custom systems to make the trees from this mod feel more alive. Such as leaf drop and regrowth, leaf decay, leaf litter, and abscission. Most processes will be running in multi-threads, so it's very low performance impact.
 					| Default is [ true ]
 					
 					living_tree_mechanics_tick = 1
@@ -238,15 +238,15 @@ public class ConfigMain {
 					| Default is [ true ]
 					
 					leaf_drop_chance_spring = 0.0
-					leaf_drop_chance_summer = 0.001
-					leaf_drop_chance_autumn = 0.005
-					leaf_drop_chance_winter = 0.005
-					leaf_regrowth_chance_spring = 0.005
-					leaf_regrowth_chance_summer = 0.005
+					leaf_drop_chance_summer = 0.005
+					leaf_drop_chance_autumn = 0.01
+					leaf_drop_chance_winter = 0.01
+					leaf_regrowth_chance_spring = 0.01
+					leaf_regrowth_chance_summer = 0.01
 					leaf_regrowth_chance_autumn = 0.0
 					leaf_regrowth_chance_winter = 0.0
 					| Chance of deciduous leaves to drop and regrow based on seasons. But note that it will only use summer value when in tropical biomes, and for other leaves that not marked as deciduous and coniferous.
-					| Default is [ 0.0 ] [ 0.001 ] [ 0.005 ] [ 0.005 ] [ 0.005 ] [ 0.005 ] [ 0.0 ] [ 0.0 ]
+					| Default is [ 0.0 ] [ 0.005 ] [ 0.01 ] [ 0.01 ] [ 0.01 ] [ 0.01 ] [ 0.0 ] [ 0.0 ]
 					
 					leaf_drop_chance_coniferous = 0.0001
 					leaf_regrowth_chance_coniferous = 0.005

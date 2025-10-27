@@ -25,15 +25,9 @@ import java.util.concurrent.Executors;
 
 public class LivingTreeMechanics {
 
-    private static final ExecutorService executor = Executors.newFixedThreadPool(1, name -> {
-        Thread thread = new Thread(name);
-        thread.setName("TannyJung | Tan's Huge Trees | Living Tree Mechanics");
-        return thread;
-    });
-
     public static void start (Entity entity) {
 
-        executor.submit(() -> getData(entity));
+        Handcode.thread.submit(() -> getData(entity));
 
     }
 
@@ -44,7 +38,11 @@ public class LivingTreeMechanics {
 
 		if (ConfigMain.developer_mode == true) {
 
-			GameUtils.command.runEntity(entity, "particle flash ~ ~ ~ 0 0 0 0 1 force");
+			level_server.getServer().execute(() -> {
+
+                GameUtils.command.runEntity(entity, "particle flash ~ ~ ~ 0 0 0 0 1 force");
+
+            });
 
 		}
 
@@ -149,24 +147,6 @@ public class LivingTreeMechanics {
 
 		if (file.exists() == true && file.isDirectory() == false) {
 
-			BlockPos center_pos = new BlockPos(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
-			int biome_type = 0;
-
-			// Biome Type Test
-			{
-
-				if (GameUtils.biome.isTaggedAs(level_accessor.getBiome(center_pos), "forge:is_snowy") == true) {
-
-					biome_type = 1;
-
-				} else if (GameUtils.biome.isTaggedAs(level_accessor.getBiome(center_pos), "tanshugetrees:tropical_biomes") == true) {
-
-					biome_type = 2;
-
-				}
-
-			}
-
 			// Read Tree Shape
 			{
 
@@ -179,16 +159,32 @@ public class LivingTreeMechanics {
                 int[] pos_converted = new int[0];
                 String get = "";
 
+                BlockPos pre_pos = new BlockPos(0, 0, 0);
+                BlockState pre_block = Blocks.AIR.defaultBlockState();
+                BlockPos pos = new BlockPos(0, 0, 0);
+                BlockState block = Blocks.AIR.defaultBlockState();
+
                 int rotation = (int) GameUtils.nbt.entity.getNumber(entity, "rotation");
                 boolean mirrored = GameUtils.nbt.entity.getLogic(entity, "mirrored");
                 String[] pre_block_data = new String[0];
+                BlockPos center_pos = new BlockPos(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
+                boolean have_center_block = level_accessor.getBlockState(center_pos).isAir() == false;
+                int biome_type = 0;
 
-				BlockPos pre_pos = new BlockPos(0, 0, 0);
-				BlockState pre_block = Blocks.AIR.defaultBlockState();
-				BlockPos pos = new BlockPos(0, 0, 0);
-				BlockState block = Blocks.AIR.defaultBlockState();
+                // Biome Type Test
+                {
 
-				boolean have_center_block = level_accessor.getBlockState(center_pos).isAir() == false;
+                    if (GameUtils.biome.isTaggedAs(level_accessor.getBiome(center_pos), "forge:is_snowy") == true) {
+
+                        biome_type = 1;
+
+                    } else if (GameUtils.biome.isTaggedAs(level_accessor.getBiome(center_pos), "tanshugetrees:tropical_biomes") == true) {
+
+                        biome_type = 2;
+
+                    }
+
+                }
 
                 for (short read_all : Cache.tree_shape(path_storage + "/" + chosen)) {
 
@@ -321,8 +317,14 @@ public class LivingTreeMechanics {
 
                                             if (level_accessor.getBlockState(pos).getBlock() == block.getBlock()) {
 
-                                                block = GameUtils.block.propertyBooleanSet(block, "persistent", false);
-                                                level_accessor.setBlock(pos, block, 2);
+                                                BlockPos pos_final = pos;
+                                                BlockState block_final = GameUtils.block.propertyBooleanSet(block, "persistent", false);
+
+                                                level_server.getServer().execute(() -> {
+
+                                                    level_accessor.setBlock(pos_final, block_final, 2);
+
+                                                });
 
                                             }
 
@@ -349,7 +351,11 @@ public class LivingTreeMechanics {
 
 				if (GameUtils.nbt.entity.getLogic(entity, "dead_tree") == true) {
 
-                    GameUtils.command.runEntity(entity, "kill @s");
+                    level_server.getServer().execute(() -> {
+
+                        GameUtils.command.runEntity(entity, "kill @s");
+
+                    });
 
 				} else if (GameUtils.nbt.entity.getLogic(entity, "still_alive") == true) {
 
@@ -496,7 +502,11 @@ public class LivingTreeMechanics {
 
 					if (Math.random() < chance) {
 
-						level_accessor.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+                        level_server.getServer().execute(() -> {
+
+                            level_accessor.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+
+                        });
 
 						if (Math.random() < ConfigMain.leaf_drop_animation_chance) {
 
@@ -509,10 +519,13 @@ public class LivingTreeMechanics {
 									if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())), "tanshugetrees:passable_blocks") == true) {
 
 										GameUtils.score.add(level_server, "TANSHUGETREES", "leaf_drop", 1);
+										String command_final = GameUtils.entity.summonCommand("block_display", "TANSHUGETREES / TANSHUGETREES-leaf_drop", "Falling Leaf", "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.block.toTextID(block) + "\"},ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}");
 
-										String command = "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.block.toTextID(block) + "\"},ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}";
-										command = GameUtils.entity.summonCommand("block_display", "TANSHUGETREES / TANSHUGETREES-leaf_drop", "Falling Leaf", command);
-										GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), command);
+                                        level_server.getServer().execute(() -> {
+
+                                            GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), command_final);
+
+                                        });
 
 									}
 
@@ -613,10 +626,18 @@ public class LivingTreeMechanics {
 					}
 
 					if (Math.random() < chance) {
-
-                        block = GameUtils.block.propertyBooleanSet(block, "persistent", true);
-						level_accessor.setBlock(pos, block, 2);
+                        
                         GameUtils.nbt.entity.setLogic(entity, "dormancy", false);
+                        block = GameUtils.block.propertyBooleanSet(block, "persistent", true);
+                        // level_accessor.setBlock(pos, block, 2);
+
+                        BlockState block_final = block;
+
+                        level_server.getServer().execute(() -> {
+
+                            level_accessor.setBlock(pos, block_final, 2);
+
+                        });
 
 					}
 
@@ -635,7 +656,15 @@ public class LivingTreeMechanics {
 
 					GameUtils.score.add(level_server, "TANSHUGETREES", "leaf_litter_remover", 1);
 
-					GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-leaf_litter_remover", "Leaf Litter Remover", "ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}"));
+					// GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-leaf_litter_remover", "Leaf Litter Remover", "ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}"));
+
+                    BlockState block_fianl = block;
+
+                    level_server.getServer().execute(() -> {
+
+                        GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-leaf_litter_remover", "Leaf Litter Remover", "ForgeData:{block:\"" + GameUtils.block.toText(block_fianl) + "\"}"));
+
+                    });
 
 				}
 
