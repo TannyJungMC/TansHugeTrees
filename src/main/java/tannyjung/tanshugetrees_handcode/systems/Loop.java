@@ -20,7 +20,7 @@ public class Loop {
 
     public static void start (LevelAccessor level_accessor, ServerLevel level_server) {
 
-        Handcode.thread.submit(() -> {
+        Handcode.thread_main.submit(() -> {
 
             run(level_accessor, level_server);
 
