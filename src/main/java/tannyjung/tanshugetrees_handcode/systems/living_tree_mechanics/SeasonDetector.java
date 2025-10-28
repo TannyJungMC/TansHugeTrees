@@ -12,7 +12,7 @@ public class SeasonDetector {
 
     public static void start (LevelAccessor level_accessor) {
 
-        Handcode.thread_main.submit(() -> {
+        Handcode.thread.submit(() -> {
 
             run(level_accessor);
 
