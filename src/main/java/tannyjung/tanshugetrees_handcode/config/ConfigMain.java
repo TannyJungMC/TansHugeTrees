@@ -173,12 +173,12 @@ public class ConfigMain {
 					----------------------------------------------------------------------------------------------------
 					
 					living_tree_mechanics = true
-					| Enable some custom systems to make the trees from this mod feel more alive. Such as leaf drop and regrowth, leaf decay, leaf litter, and abscission. Most processes will be running in multi-threads, so it's very low performance impact.
+					| Enable some custom systems to make the trees from this mod feel more alive. Such as leaf drop and regrowth, leaf decay, leaf litter, and abscission.
 					| Default is [ true ]
 					
-					living_tree_mechanics_tick = 1
+					living_tree_mechanics_tick = 5
 					| How fast in tick of living tree mechanics system. Set to 0 to temporary pause the tick.
-					| Default is [ 1 ]
+					| Default is [ 5 ]
 					
 					living_tree_mechanics_process_limit = 500
 					| How many process for trees to run this system per time. Set to 0 for one time process.

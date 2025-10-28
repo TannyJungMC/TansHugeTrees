@@ -45,9 +45,10 @@ public class Handcode {
 	public static String directory_config = directory_game + "/config/tanshugetrees";
 	public static String directory_world_data = directory_game + "/saves/tanshugetrees-error/directory_world_data";
 	public static String tanny_pack_version_name = ""; // Make this because version can swap to "WIP" by config
-	public static boolean world_active = false;
-    private static int thread_count_name = 1;
-    public static ExecutorService thread = Executors.newFixedThreadPool(1);
+
+    public static ExecutorService thread_main = Executors.newFixedThreadPool(1);
+    public static ExecutorService thread_living_tree_mechanics = Executors.newFixedThreadPool(1);
+    private static int thread_number = 0;
 
     // ----------------------------------------------------------------------------------------------------
 
@@ -70,7 +71,7 @@ public class Handcode {
 
 		}
 
-        Handcode.thread.submit(() -> {
+        Handcode.thread_main.submit(() -> {
 
 			ConfigMain.repairAll(null);
 			ConfigMain.apply(null);
@@ -82,18 +83,24 @@ public class Handcode {
 	@SubscribeEvent
 	public static void worldAboutToStart (ServerAboutToStartEvent event) {
 
-		world_active = true;
-		TanshugetreesMod.LOGGER.info("Turned ON world systems");
+        TanshugetreesMod.LOGGER.info("Turned ON world systems");
 
         // Thread Start
         {
 
-            thread_count_name = 1;
+            thread_number = 1;
 
-            thread = Executors.newFixedThreadPool(4, name -> {
+            thread_main = Executors.newFixedThreadPool(1, name -> {
                 Thread thread = new Thread(name);
-                thread.setName("Tan's Huge Trees (" + thread_count_name + ")");
-                thread_count_name = thread_count_name + 1;
+                thread.setName("Tan's Huge Trees - Main (" + thread_number + "/" + 1 + ")");
+                return thread;
+            });
+
+            thread_number = 1;
+
+            thread_living_tree_mechanics = Executors.newFixedThreadPool(4, name -> {
+                Thread thread = new Thread(name);
+                thread.setName("Tan's Huge Trees - Living Tree Mechanics (" + thread_number + "/" + 4 + ")");
                 return thread;
             });
 
@@ -135,9 +142,15 @@ public class Handcode {
 	@SubscribeEvent
 	public static void worldStopped (ServerStoppingEvent event) {
 
-		world_active = false;
 		TanshugetreesMod.LOGGER.info("Turned OFF world systems");
-        thread.shutdownNow();
+
+        // Thread Stop
+        {
+
+            thread_main.shutdownNow();
+            thread_living_tree_mechanics.shutdownNow();
+
+        }
 
 	}
 

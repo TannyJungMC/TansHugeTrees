@@ -45,6 +45,22 @@ import java.util.List;
 
 public class GameUtils {
 
+    public static class GroupPosBlockCommand {
+
+        public final BlockPos pos;
+        public final BlockState block;
+        public final String command;
+
+        public GroupPosBlockCommand (BlockPos pos, BlockState block, String command) {
+
+            this.pos = pos;
+            this.block = block;
+            this.command = command;
+
+        }
+
+    }
+
 	public static class outside {
 
 		public static String quardtreeChunkToNode (int chunkX, int chunkZ) {

@@ -225,15 +225,19 @@ public class LeafLitter {
 
                             if (level_accessor.getBlockState(pos).getBlock().equals(block.getBlock()) == true) {
 
+                                BlockState block_to = Blocks.AIR.defaultBlockState();
+
                                 if (GameUtils.block.propertyBooleanGet(level_accessor.getBlockState(pos), "waterlogged") == true) {
 
-                                    level_accessor.setBlock(pos, Blocks.WATER.defaultBlockState(), 2);
+                                    block_to = Blocks.WATER.defaultBlockState();
 
                                 } else {
 
-                                    level_accessor.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+                                    block_to = Blocks.AIR.defaultBlockState();
 
                                 }
+
+                                level_accessor.setBlock(pos, block_to, 2);
 
                             }
 

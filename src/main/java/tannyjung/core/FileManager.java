@@ -93,7 +93,7 @@ public class FileManager {
 			// Read New
 			{
 
-				try { BufferedReader buffered_reader = new BufferedReader(new StringReader(write_get)); String read_new = ""; while ((read_new = buffered_reader.readLine()) != null) {
+				try { BufferedReader buffered_reader = new BufferedReader(new StringReader(write_get), 65536); String read_new = ""; while ((read_new = buffered_reader.readLine()) != null) {
 
 					{
 

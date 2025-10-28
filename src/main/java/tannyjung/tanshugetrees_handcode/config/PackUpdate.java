@@ -132,7 +132,7 @@ public class PackUpdate {
 		// Read URL
 		{
 
-			try { BufferedReader buffered_reader = new BufferedReader(new InputStreamReader(new URI(url).toURL().openStream())); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+			try { BufferedReader buffered_reader = new BufferedReader(new InputStreamReader(new URI(url).toURL().openStream()), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
 				{
 

@@ -14,16 +14,6 @@ public class DataFolderCleaner {
 
     public static void start (String dimension, ChunkPos chunk_pos) {
 
-        Handcode.thread.submit(() -> {
-
-            run(dimension, chunk_pos);
-
-        });
-
-    }
-
-    public static void run (String dimension, ChunkPos chunk_pos) {
-
         String region = (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5);
         String node = GameUtils.outside.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z);
         String file_path = dimension + "/" + region + "/" + node + ".txt";
@@ -35,7 +25,7 @@ public class DataFolderCleaner {
         // Read to get text length
         {
 
-            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file_region)); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file_region), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
                 {
 

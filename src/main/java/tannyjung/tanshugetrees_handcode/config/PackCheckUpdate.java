@@ -82,7 +82,7 @@ public class PackCheckUpdate {
 						// Read File From GitHub
 						{
 
-							try { BufferedReader buffered_reader = new BufferedReader(new InputStreamReader(url_convert.openStream())); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+							try { BufferedReader buffered_reader = new BufferedReader(new InputStreamReader(url_convert.openStream()), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
 								{
 

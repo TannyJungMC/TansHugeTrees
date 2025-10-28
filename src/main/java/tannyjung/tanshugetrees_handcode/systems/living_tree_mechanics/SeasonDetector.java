@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.core.GameUtils;
+import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class SeasonDetector {
 
@@ -11,13 +12,23 @@ public class SeasonDetector {
 
     public static void start (LevelAccessor level_accessor) {
 
+        Handcode.thread_main.submit(() -> {
+
+            run(level_accessor);
+
+        });
+
+    }
+
+    private static void run (LevelAccessor level_accessor) {
+
+        TanshugetreesMod.queueServerWork(200, () -> {
+
+            run(level_accessor);
+
+        });
+
         if (level_accessor instanceof ServerLevel level_server) {
-
-            TanshugetreesMod.queueServerWork(20, () -> {
-
-                start(level_server);
-
-            });
 
             int posX = level_server.getLevelData().getXSpawn();
             int posZ = level_server.getLevelData().getZSpawn();

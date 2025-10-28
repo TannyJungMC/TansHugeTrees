@@ -20,29 +20,35 @@ public class Loop {
 
     public static void start (LevelAccessor level_accessor, ServerLevel level_server) {
 
-        if (Handcode.world_active == true) {
+        Handcode.thread_main.submit(() -> {
 
-            TanshugetreesMod.queueServerWork(1, () -> {
+            run(level_accessor, level_server);
 
-                start(level_accessor, level_server);
+        });
 
-            });
+    }
 
-            if (PackUpdate.install_pause_systems == false) {
+    private static void run (LevelAccessor level_accessor, ServerLevel level_server) {
 
-                tick(level_accessor, level_server);
+        TanshugetreesMod.queueServerWork(1, () -> {
 
-                // Second Loop
-                {
+            run(level_accessor, level_server);
 
-                    second = second + 1;
+        });
 
-                    if (second > 20) {
+        if (PackUpdate.install_pause_systems == false) {
 
-                        second = 0;
-                        second(level_server);
+            tick(level_accessor, level_server);
 
-                    }
+            // Second Loop
+            {
+
+                second = second + 1;
+
+                if (second > 20) {
+
+                    second = 0;
+                    second(level_server);
 
                 }
 

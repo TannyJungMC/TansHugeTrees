@@ -50,7 +50,7 @@ public class TreeLocation {
                     world_gen_overlay_animation = 4;
                     world_gen_overlay_bar = 0;
 
-                    Handcode.thread.submit(() -> {
+                    Handcode.thread_main.submit(() -> {
 
                         while (world_gen_overlay_animation != 0) {
 
