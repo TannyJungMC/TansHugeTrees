@@ -600,7 +600,7 @@ public class TreePlacer {
                 int block_count_sprig = 0;
                 boolean hollowed = false;
 
-                // Dead Tree Calculation
+                // Get Block Count and Dead Tree Calculation
                 {
 
                     if (dead_tree_level > 0) {
