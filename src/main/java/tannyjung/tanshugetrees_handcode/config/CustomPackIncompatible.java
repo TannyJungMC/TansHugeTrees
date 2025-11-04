@@ -336,7 +336,7 @@ public class CustomPackIncompatible {
 
                             if (GameUtils.block.fromText(id).getBlock() == Blocks.AIR) {
 
-                                error = "Detected incompatible tree. Caused by unknown block ID. [ " + name_pack + ">" + name_theme + " > " + name_tree + " > " + id + " ]";
+                                error = "Detected incompatible tree. Caused by unknown block ID. [ " + name_pack + " > " + name_theme + " > " + name_tree + " > " + id + " ]";
                                 break;
 
                             }
