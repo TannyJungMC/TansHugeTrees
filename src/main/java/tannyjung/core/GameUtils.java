@@ -16,6 +16,8 @@ import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,6 +44,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class GameUtils {
 
@@ -91,39 +94,80 @@ public class GameUtils {
 
 		}
 
-		public static int[] posRotationMirrored (int posX, int posZ, int rotation, boolean mirrored) {
+		public static int[] convertRotationMirrored (int seed, int posX, int posY, int posZ, int rotation, boolean mirrored, boolean coarse_woody_debris) {
 
             {
 
-                if (mirrored == true) {
+                // General
+                {
 
-                    posX = posX * (-1);
+                    if (mirrored == true) {
+
+                        posX = posX * (-1);
+
+                    }
+
+                    if (rotation == 2) {
+
+                        int posX_save = posX;
+                        posX = posZ;
+                        posZ = posX_save * (-1);
+
+                    } else if (rotation == 3) {
+
+                        posX = posX * (-1);
+                        posZ = posZ * (-1);
+
+                    } else if (rotation == 4) {
+
+                        int posX_save = posX;
+                        int posZ_save = posZ;
+                        posX = posZ_save * (-1);
+                        posZ = posX_save;
+
+                    }
 
                 }
 
-                if (rotation == 2) {
+                if (coarse_woody_debris == true) {
 
-                    int posX_save = posX;
-                    posX = posZ;
-                    posZ = posX_save * (-1);
+                    // Coarse Woody Debris
+                    {
 
-                } else if (rotation == 3) {
+                        int posX_save = posX;
+                        int posY_save = posY;
+                        int posZ_save = posZ;
+                        int fall_direction = Mth.nextInt(RandomSource.create(seed), 1, 4);
 
-                    posX = posX * (-1);
-                    posZ = posZ * (-1);
+                        if (fall_direction == 1) {
 
-                } else if (rotation == 4) {
+                            posY = posX_save;
+                            posX = posY_save;
 
-                    int posX_save = posX;
-                    int posZ_save = posZ;
-                    posX = posZ_save * (-1);
-                    posZ = posX_save;
+                        } else if (fall_direction == 2) {
+
+                            posY = posZ_save;
+                            posZ = posY_save;
+
+                        } else if (fall_direction == 3) {
+
+                            posY = posX_save;
+                            posX = -posY_save;
+
+                        } else if (fall_direction == 4) {
+
+                            posY = posZ_save;
+                            posZ = -posY_save;
+
+                        }
+
+                    }
 
                 }
 
             }
 
-			return new int[]{posX, posZ};
+			return new int[]{posX, posY, posZ};
 
 		}
 

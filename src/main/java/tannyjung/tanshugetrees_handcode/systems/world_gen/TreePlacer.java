@@ -35,18 +35,10 @@ public class TreePlacer {
 
         if (file.exists() == true && file.isDirectory() == false) {
 
-            String[] array_text = null;
+            String[] split = null;
             String[] from_to_chunk_get = null;
             int[] from_to_chunk = new int[4];
-            String id = "";
-            String chosen = "";
-            String[] center_pos = null;
-            int center_posX = 0;
-            int center_posZ = 0;
-            String[] rotation_mirrored = null;
-            int rotation = 0;
-            boolean mirrored = false;
-            String[] other_data = null;
+            String data = "";
 
             // Reading
             {
@@ -57,14 +49,14 @@ public class TreePlacer {
 
                         if (read_all.equals("") == false) {
 
-                            array_text = read_all.split("\\|");
+                            split = read_all.split("\\|");
 
                             // Get Tree Chunk Pos
                             {
 
                                 try {
 
-                                    from_to_chunk_get = array_text[0].split("/");
+                                    from_to_chunk_get = split[0].split("/");
                                     from_to_chunk[0] = Integer.parseInt(from_to_chunk_get[0]);
                                     from_to_chunk[1] = Integer.parseInt(from_to_chunk_get[1]);
                                     from_to_chunk[2] = Integer.parseInt(from_to_chunk_get[2]);
@@ -80,30 +72,7 @@ public class TreePlacer {
 
                             if ((from_to_chunk[0] <= chunk_pos.x && chunk_pos.x <= from_to_chunk[2]) && (from_to_chunk[1] <= chunk_pos.z && chunk_pos.z <= from_to_chunk[3])) {
 
-                                // Get Tree Data
-                                {
-
-                                    try {
-
-                                        id = array_text[1];
-                                        chosen = array_text[2];
-                                        center_pos = array_text[3].split("/");
-                                        center_posX = Integer.parseInt(center_pos[0]);
-                                        center_posZ = Integer.parseInt(center_pos[1]);
-                                        rotation_mirrored = array_text[4].split("/");
-                                        rotation = Integer.parseInt(rotation_mirrored[0]);
-                                        mirrored = Boolean.parseBoolean(rotation_mirrored[1]);
-                                        other_data = array_text[5].split("(?<! )/(?! )");
-
-                                    } catch (Exception ignored) {
-
-                                        return;
-
-                                    }
-
-                                }
-
-                                detailed_detection(level_accessor, level_server, chunk_generator, dimension, chunk_pos, from_to_chunk, id, chosen, center_posX, center_posZ, rotation, mirrored, other_data);
+                                detailed_detection(level_accessor, level_server, chunk_generator, dimension, chunk_pos, from_to_chunk, read_all);
 
                             }
 
@@ -119,7 +88,42 @@ public class TreePlacer {
 
     }
 
-    private static void detailed_detection (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos, int[] from_to_chunk, String id, String chosen, int center_posX, int center_posZ, int rotation, boolean mirrored, String[] other_data) {
+    private static void detailed_detection (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos, int[] from_to_chunk, String data) {
+
+        String id = "";
+        String chosen = "";
+        String[] center_pos = null;
+        int center_posX = 0;
+        int center_posZ = 0;
+        String[] rotation_mirrored = null;
+        int rotation = 0;
+        boolean mirrored = false;
+        String[] other_data = null;
+
+        // Get Data
+        {
+
+            String[] split = data.split("\\|");
+
+            try {
+
+                id = split[1];
+                chosen = split[2];
+                center_pos = split[3].split("/");
+                center_posX = Integer.parseInt(center_pos[0]);
+                center_posZ = Integer.parseInt(center_pos[1]);
+                rotation_mirrored = split[4].split("/");
+                rotation = Integer.parseInt(rotation_mirrored[0]);
+                mirrored = Boolean.parseBoolean(rotation_mirrored[1]);
+                other_data = split[5].split("(?<! )/(?! )");
+
+            } catch (Exception ignored) {
+
+                return;
+
+            }
+
+        }
 
         boolean already_tested = false;
         boolean pass = true;
@@ -199,8 +203,6 @@ public class TreePlacer {
 
                 int center_chunkX = center_posX >> 4;
                 int center_chunkZ = center_posZ >> 4;
-                int originalY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
-                center_posY = originalY;
 
                 test:
                 {
@@ -222,7 +224,7 @@ public class TreePlacer {
 
                                         for (Structure structure : chunk.getAllReferences().keySet().toArray(new Structure[0])) {
 
-                                            // structure.type().equals(StructureType.MINESHAFT) == false
+                                            // structure.type().equals(StructureType.MINESHAFT);
 
                                             if (structure.step().equals(GenerationStep.Decoration.SURFACE_STRUCTURES) == true || structure.step().equals(GenerationStep.Decoration.STRONGHOLDS) == true) {
 
@@ -242,6 +244,9 @@ public class TreePlacer {
                         }
 
                     }
+
+                    int originalY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
+                    center_posY = originalY;
 
                     // Ground Level
                     {
@@ -269,7 +274,11 @@ public class TreePlacer {
 
                     }
 
-                    center_posY = center_posY + start_height;
+                    if (dead_tree_level < 200) {
+
+                        center_posY = center_posY + start_height;
+
+                    }
 
                     // Y Level Test
                     {
@@ -592,6 +601,7 @@ public class TreePlacer {
 
                 }
 
+                int seed = center_posX + center_posY + center_posZ;
                 int block_count_trunk = 0;
                 int block_count_bough = 0;
                 int block_count_branch = 0;
@@ -599,13 +609,24 @@ public class TreePlacer {
                 int block_count_twig = 0;
                 int block_count_sprig = 0;
                 boolean hollowed = false;
+                boolean coarse_woody_debris = false;
 
-                // Get Block Count and Dead Tree Calculation
+                // Block Count and Dead Tree
                 {
 
                     if (dead_tree_level > 0) {
 
-                        int seed = center_posX + center_posY + center_posZ;
+                        if (dead_tree_level > 200) {
+
+                            dead_tree_level = dead_tree_level - 200;
+                            coarse_woody_debris = true;
+
+                        } else {
+
+                            dead_tree_level = dead_tree_level - 100;
+
+                        }
+
                         short[] block_count = FileManager.readBIN(file.getPath(), 7, 12);
 
                         if (dead_tree_level >= 60) {
@@ -755,6 +776,31 @@ public class TreePlacer {
 
                         if (loop == 4) {
 
+
+
+
+
+
+
+
+                            if (coarse_woody_debris == true) {
+
+                                int posY_save = posY;
+                                posY = posX;
+                                posX = posY_save;
+
+                            }
+
+
+
+
+
+
+
+
+
+
+
                             // Dead Tree Reduction
                             {
 
@@ -887,8 +933,8 @@ public class TreePlacer {
                             // Placing
                             {
 
-                                pos_converted = GameUtils.outside.posRotationMirrored(posX, posZ, rotation, mirrored);
-                                pos = new BlockPos(center_posX + pos_converted[0], center_posY + posY, center_posZ + pos_converted[1]);
+                                pos_converted = GameUtils.outside.convertRotationMirrored(seed, posX, posY, posZ, rotation, mirrored, coarse_woody_debris);
+                                pos = new BlockPos(center_posX + pos_converted[0], center_posY + pos_converted[1], center_posZ + pos_converted[2]);
 
                                 if (chunk_pos.x == pos.getX() >> 4 && chunk_pos.z == pos.getZ() >> 4) {
 
@@ -906,9 +952,21 @@ public class TreePlacer {
                                                 // No Roots
                                                 {
 
-                                                    if (ConfigMain.world_gen_roots == false && can_disable_roots == true) {
+                                                    if (coarse_woody_debris == false) {
 
-                                                        if (type.startsWith("110") == true || type.startsWith("111") == true || type.startsWith("112") == true) {
+                                                        if (ConfigMain.world_gen_roots == false && can_disable_roots == true) {
+
+                                                            if (type.startsWith("111") == true || type.startsWith("112") == true || type.startsWith("113") == true) {
+
+                                                                continue;
+
+                                                            }
+
+                                                        }
+
+                                                    } else {
+
+                                                        if (type.startsWith("112") == true || type.startsWith("113") == true) {
 
                                                             continue;
 

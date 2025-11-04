@@ -253,8 +253,8 @@ public class LivingTreeMechanics {
                             {
 
                                 pre_block_data = GameUtils.nbt.entity.getText(entity, "pre_block").split("/");
-                                pos_converted = GameUtils.outside.posRotationMirrored(Integer.parseInt(pre_block_data[1]), Integer.parseInt(pre_block_data[3]), rotation, mirrored);
-                                pre_pos = new BlockPos(entity.getBlockX() + pos_converted[0], entity.getBlockY() + Integer.parseInt(pre_block_data[2]), entity.getBlockZ() + pos_converted[1]);
+                                pos_converted = GameUtils.outside.convertRotationMirrored(0, Integer.parseInt(pre_block_data[1]), Integer.parseInt(pre_block_data[2]), Integer.parseInt(pre_block_data[3]), rotation, mirrored, false);
+                                pre_pos = new BlockPos(entity.getBlockX() + pos_converted[0], entity.getBlockY() + pos_converted[1], entity.getBlockZ() + pos_converted[2]);
 
                                 // Only Loaded Chunks
                                 {
@@ -271,8 +271,8 @@ public class LivingTreeMechanics {
 
                             }
 
-                            pos_converted = GameUtils.outside.posRotationMirrored(posX, posZ, rotation, mirrored);
-                            pos = new BlockPos(entity.getBlockX() + pos_converted[0], entity.getBlockY() + posY, entity.getBlockZ() + pos_converted[1]);
+                            pos_converted = GameUtils.outside.convertRotationMirrored(0, posX, posY, posZ, rotation, mirrored, false);
+                            pos = new BlockPos(entity.getBlockX() + pos_converted[0], entity.getBlockY() + pos_converted[1], entity.getBlockZ() + pos_converted[2]);
                             block = map_block.get(type);
 
                             // Only Loaded Chunks
