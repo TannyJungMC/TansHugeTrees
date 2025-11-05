@@ -125,6 +125,7 @@ public class TreePlacer {
 
         }
 
+        int seed = center_posX * center_posZ;
         boolean already_tested = false;
         boolean pass = true;
         int center_posY = 0;
@@ -182,7 +183,7 @@ public class TreePlacer {
 
                 String tree_type = "";
                 int start_height = 0;
-                int sizeY = 0;
+                int up_sizeY = 0;
                 String ground_block = "";
                 double dead_tree_chance = 0.0;
 
@@ -190,7 +191,7 @@ public class TreePlacer {
 
                     tree_type = other_data[0];
                     start_height = Integer.parseInt(other_data[1]);
-                    sizeY = Integer.parseInt(other_data[2]);
+                    up_sizeY = Integer.parseInt(other_data[2]);
                     ground_block = other_data[3];
                     dead_tree_chance = Double.parseDouble(other_data[4]);
                     dead_tree_level = Integer.parseInt(other_data[5]);
@@ -203,6 +204,7 @@ public class TreePlacer {
 
                 int center_chunkX = center_posX >> 4;
                 int center_chunkZ = center_posZ >> 4;
+                boolean coarse_woody_debris = dead_tree_level > 200;
 
                 test:
                 {
@@ -274,7 +276,7 @@ public class TreePlacer {
 
                     }
 
-                    if (dead_tree_level < 200) {
+                    if (coarse_woody_debris == false) {
 
                         center_posY = center_posY + start_height;
 
@@ -286,7 +288,7 @@ public class TreePlacer {
                         // Build Height Limit
                         {
 
-                            if (center_posY + sizeY >= level_accessor.getMaxBuildHeight()) {
+                            if (center_posY + up_sizeY >= level_accessor.getMaxBuildHeight()) {
 
                                 pass = false;
                                 break test;
@@ -431,13 +433,13 @@ public class TreePlacer {
 
         if (pass == true) {
 
-            getData(level_accessor, level_server, chunk_pos, id, chosen, center_posX, center_posY, center_posZ, rotation, mirrored, dead_tree_level);
+            getData(level_accessor, level_server, seed, chunk_pos, id, chosen, center_posX, center_posY, center_posZ, rotation, mirrored, dead_tree_level);
 
         }
 
     }
 
-    private static void getData (LevelAccessor level_accessor, ServerLevel level_server, ChunkPos chunk_pos, String id, String chosen, int center_posX, int center_posY, int center_posZ, int rotation, boolean mirrored, int dead_tree_level) {
+    private static void getData (LevelAccessor level_accessor, ServerLevel level_server, int seed, ChunkPos chunk_pos, String id, String chosen, int center_posX, int center_posY, int center_posZ, int rotation, boolean mirrored, int dead_tree_level) {
 
         String path_storage = "";
         String path_tree_settings = "";
@@ -601,7 +603,6 @@ public class TreePlacer {
 
                 }
 
-                int seed = center_posX + center_posY + center_posZ;
                 int block_count_trunk = 0;
                 int block_count_bough = 0;
                 int block_count_branch = 0;
@@ -775,31 +776,6 @@ public class TreePlacer {
                         }
 
                         if (loop == 4) {
-
-
-
-
-
-
-
-
-                            if (coarse_woody_debris == true) {
-
-                                int posY_save = posY;
-                                posY = posX;
-                                posX = posY_save;
-
-                            }
-
-
-
-
-
-
-
-
-
-
 
                             // Dead Tree Reduction
                             {
