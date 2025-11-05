@@ -129,15 +129,15 @@ public class GameUtils {
 
                 }
 
-                if (coarse_woody_debris == true) {
+                // Coarse Woody Debris
+                {
 
-                    // Coarse Woody Debris
-                    {
+                    if (coarse_woody_debris == true) {
 
+                        int fall_direction = Mth.nextInt(RandomSource.create(seed), 1, 4);
                         int posX_save = posX;
                         int posY_save = posY;
                         int posZ_save = posZ;
-                        int fall_direction = Mth.nextInt(RandomSource.create(seed), 1, 4);
 
                         if (fall_direction == 1) {
 
