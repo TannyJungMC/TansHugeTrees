@@ -23,16 +23,13 @@ public class TreeLocation {
     private static final Map<String, List<String>> cache_write_tree_location = new HashMap<>();
     private static final Map<String, String> cache_write_place = new HashMap<>();
     private static final Map<String, String> cache_dead_tree_auto_level = new HashMap<>();
+    private static final Map<String, Boolean> cache_biome_test = new HashMap<>();
     public static int world_gen_overlay_animation = 0;
     public static int world_gen_overlay_bar = 0;
     public static String world_gen_overlay_details_biome = "";
     public static String world_gen_overlay_details_tree = "";
 
     public static void start (LevelAccessor level_accessor, String dimension, ChunkPos chunk_pos) {
-
-        cache_write_tree_location.clear();
-        cache_write_place.clear();
-        cache_dead_tree_auto_level.clear();
 
         int region_posX = chunk_pos.x >> 5;
         int region_posZ = chunk_pos.z >> 5;
@@ -141,11 +138,12 @@ public class TreeLocation {
 
             }
 
-        }
+            cache_write_tree_location.clear();
+            cache_write_place.clear();
+            cache_dead_tree_auto_level.clear();
+            cache_biome_test.clear();
 
-        cache_write_tree_location.clear();
-        cache_write_place.clear();
-        cache_dead_tree_auto_level.clear();
+        }
 
     }
 
@@ -158,11 +156,12 @@ public class TreeLocation {
         Holder<Biome> biome_center = null;
 
         String id = "";
+        boolean world_gen = false;
         String biome = "";
         String ground_block = "";
         double rarity = 0.0;
         int min_distance = 0;
-        int group_size = 0;
+        String group_size = "";
         double waterside_chance = 0.0;
         double dead_tree_chance = 0.0;
         String[] dead_tree_levels = new String[0];
@@ -204,7 +203,6 @@ public class TreeLocation {
                                     center_posX = (chunk_posX * 16) + (int) (Math.random() * 16);
                                     center_posZ = (chunk_posZ * 16) + (int) (Math.random() * 16);
                                     biome_center = level_accessor.getBiome(new BlockPos(center_posX, level_accessor.getMaxBuildHeight(), center_posZ));
-
                                     world_gen_overlay_details_biome = GameUtils.biome.toID(biome_center);
 
                                 }
@@ -217,157 +215,154 @@ public class TreeLocation {
 
                                 if (read_all.startsWith("world_gen = ") == true) {
 
-                                    {
-
-                                        if (read_all.replace("world_gen = ", "").equals("true") == false) {
-
-                                            skip = true;
-
-                                        }
-
-                                    }
+                                    world_gen = Boolean.parseBoolean(read_all.replace("world_gen = ", ""));
 
                                 } else if (read_all.startsWith("biome = ") == true) {
 
-                                    {
-
-                                        biome = read_all.replace("biome = ", "");
-
-                                        if (GameUtils.outside.configTestBiome(biome_center, biome) == false) {
-
-                                            skip = true;
-
-                                        }
-
-                                    }
+                                    biome = read_all.replace("biome = ", "");
 
                                 } else if (read_all.startsWith("ground_block = ") == true) {
 
-                                    {
-
-                                        ground_block = read_all.replace("ground_block = ", "");
-
-                                    }
+                                    ground_block = read_all.replace("ground_block = ", "");
 
                                 } else if (read_all.startsWith("rarity = ") == true) {
 
-                                    {
-
-                                        rarity = Double.parseDouble(read_all.replace("rarity = ", ""));
-                                        rarity = (rarity * 0.01) * ConfigMain.multiply_rarity;
-
-                                        if (Math.random() >= rarity) {
-
-                                            skip = true;
-
-                                        }
-
-                                    }
+                                    rarity = Double.parseDouble(read_all.replace("rarity = ", ""));
 
                                 } else if (read_all.startsWith("min_distance = ") == true) {
 
-                                    {
-
-                                        min_distance = Integer.parseInt(read_all.replace("min_distance = ", ""));
-                                        min_distance = (int) Math.ceil(min_distance * ConfigMain.multiply_min_distance);
-
-                                        if (min_distance > 0) {
-
-                                            if (testDistance(dimension, id, center_posX, center_posZ, min_distance) == false) {
-
-                                                skip = true;
-
-                                            }
-
-                                        }
-
-                                    }
+                                    min_distance = Integer.parseInt(read_all.replace("min_distance = ", ""));
 
                                 } else if (read_all.startsWith("group_size = ") == true) {
 
+                                    group_size = read_all.replace("group_size = ", "");
+
+                                } else if (read_all.startsWith("waterside_chance = ") == true) {
+
+                                    waterside_chance = Double.parseDouble(read_all.replace("waterside_chance = ", "")) * ConfigMain.multiply_waterside_chance;
+
+                                } else if (read_all.startsWith("dead_tree_chance = ") == true) {
+
+                                    dead_tree_chance = Double.parseDouble(read_all.replace("dead_tree_chance = ", "")) * ConfigMain.multiply_dead_tree_chance;
+
+                                } else if (read_all.startsWith("dead_tree_level = ") == true) {
+
+                                    dead_tree_levels = read_all.replace("dead_tree_level = ", "").split(" / ");
+
+                                } else if (read_all.startsWith("start_height_offset = ") == true) {
+
+                                    start_height_offset = read_all.replace("start_height_offset = ", "");
+
+                                } else if (read_all.startsWith("rotation = ") == true) {
+
+                                    rotation = read_all.replace("rotation = ", "");
+
+                                } else if (read_all.startsWith("mirrored = ") == true) {
+
+                                    mirrored = read_all.replace("mirrored = ", "");
+
+                                    // End of ID
                                     {
 
-                                        String[] get = read_all.replace("group_size = ", "").split(" <> ");
-                                        int min = Integer.parseInt(get[0]);
-                                        int max = Integer.parseInt(get[1]);
-                                        min = (int) Math.ceil(min * ConfigMain.multiply_group_size);
-                                        max = (int) Math.ceil(max * ConfigMain.multiply_group_size);
+                                        world_gen_overlay_details_tree = id;
+                                        int group_size_get = 0;
 
-                                        // Round if lower than 0
+                                        // Test All Data
                                         {
 
-                                            if (min < 1) {
+                                            if (world_gen == false) {
 
-                                                min = 1;
+                                                continue;
 
                                             }
 
-                                            if (max < 1) {
+                                            // Rarity
+                                            {
 
-                                                max = 1;
+                                                rarity = (rarity * 0.01) * ConfigMain.multiply_rarity;
+
+                                                if (Math.random() >= rarity) {
+
+                                                    continue;
+
+                                                }
+
+                                            }
+
+                                            // Biome
+                                            {
+
+                                                if (cache_biome_test.containsKey(GameUtils.biome.toID(biome_center) + "|" + id) == true) {
+
+                                                    if (cache_biome_test.get(GameUtils.biome.toID(biome_center) + "|" + id) == false) {
+
+                                                        continue;
+
+                                                    }
+
+                                                } else {
+
+                                                    boolean result = GameUtils.outside.configTestBiome(biome_center, biome);
+                                                    cache_biome_test.put(GameUtils.biome.toID(biome_center) + "|" + id, result);
+
+                                                    if (result == false) {
+
+                                                        continue;
+
+                                                    }
+
+                                                }
+
+                                            }
+
+                                            // Min Distance
+                                            {
+
+                                                min_distance = (int) Math.ceil(min_distance * ConfigMain.multiply_min_distance);
+
+                                                if (min_distance > 0) {
+
+                                                    if (testDistance(dimension, id, center_posX, center_posZ, min_distance) == false) {
+
+                                                        continue;
+
+                                                    }
+
+                                                }
+
+                                            }
+
+                                            // Group Size
+                                            {
+
+                                                String[] get = group_size.split(" <> ");
+                                                int min = Integer.parseInt(get[0]);
+                                                int max = Integer.parseInt(get[1]);
+                                                min = (int) Math.ceil(min * ConfigMain.multiply_group_size);
+                                                max = (int) Math.ceil(max * ConfigMain.multiply_group_size);
+
+                                                // Round if lower than 0
+                                                {
+
+                                                    if (min < 1) {
+
+                                                        min = 1;
+
+                                                    }
+
+                                                    if (max < 1) {
+
+                                                        max = 1;
+
+                                                    }
+
+                                                }
+
+                                                group_size_get = Mth.nextInt(RandomSource.create(), min, max);
 
                                             }
 
                                         }
-
-                                        group_size = Mth.nextInt(RandomSource.create(), min, max);
-
-                                    }
-
-                                } else if (read_all.startsWith("waterside_chance = ") == true) {
-
-                                    {
-
-                                        waterside_chance = Double.parseDouble(read_all.replace("waterside_chance = ", ""));
-                                        waterside_chance = waterside_chance * ConfigMain.multiply_waterside_chance;
-
-                                    }
-
-                                } else if (read_all.startsWith("dead_tree_chance = ") == true) {
-
-                                    {
-
-                                        dead_tree_chance = Double.parseDouble(read_all.replace("dead_tree_chance = ", ""));
-                                        dead_tree_chance = dead_tree_chance * ConfigMain.multiply_dead_tree_chance;
-
-                                    }
-
-                                } else if (read_all.startsWith("dead_tree_level = ") == true) {
-
-                                    {
-
-                                        dead_tree_levels = read_all.replace("dead_tree_level = ", "").split("/");
-
-                                    }
-
-                                } else if (read_all.startsWith("start_height_offset = ") == true) {
-
-                                    {
-
-                                        start_height_offset = read_all.replace("start_height_offset = ", "");
-
-                                    }
-
-                                } else if (read_all.startsWith("rotation = ") == true) {
-
-                                    {
-
-                                        rotation = read_all.replace("rotation = ", "");
-
-                                    }
-
-                                } else if (read_all.startsWith("mirrored = ") == true) {
-
-                                    {
-
-                                        mirrored = read_all.replace("mirrored = ", "");
-
-                                    }
-
-                                    // If it not skips that tree to the end of test, it will run this.
-                                    if (skip == false) {
-
-                                        world_gen_overlay_details_tree = id;
 
                                         // Waterside Detection
                                         {
@@ -387,11 +382,11 @@ public class TreeLocation {
                                         // Group Spawning
                                         {
 
-                                            if (group_size > 1) {
+                                            if (group_size_get > 1) {
 
-                                                while (group_size > 0) {
+                                                while (group_size_get > 0) {
 
-                                                    group_size = group_size - 1;
+                                                    group_size_get = group_size_get - 1;
                                                     center_posX = center_posX + Mth.nextInt(RandomSource.create(), -(min_distance + 1), (min_distance + 1));
                                                     center_posZ = center_posZ + Mth.nextInt(RandomSource.create(), -(min_distance + 1), (min_distance + 1));
 
@@ -792,139 +787,107 @@ public class TreeLocation {
             int count_twig = get[9];
             int count_sprig = get[10];
 
-            // Dead Tree
+            // Dead Tree Auto Level Selection
             {
 
                 if (dead_tree_level.startsWith("auto") == true) {
 
-                    // Auto Level Selection
-                    {
+                    StringBuilder write = new StringBuilder();
 
-                        StringBuilder write = new StringBuilder();
+                    if (cache_dead_tree_auto_level.containsKey(id) == true) {
 
-                        if (cache_dead_tree_auto_level.containsKey(id) == true) {
+                        write.append(cache_dead_tree_auto_level.get(id));
 
-                            write.append(cache_dead_tree_auto_level.get(id));
+                    } else {
 
-                        } else {
+                        String is_pine = "0";
 
-                            String is_pine = "0";
+                        if (dead_tree_level.endsWith("pine") == true) {
 
-                            if (dead_tree_level.endsWith("pine") == true) {
+                            is_pine = "1";
 
-                                is_pine = "1";
+                        }
+
+                        // Write Data
+                        {
+
+                            if (count_trunk > 0) {
+
+                                write.append("180 / 190 / 280 / 290");
 
                             }
 
-                            // Write Data
-                            {
+                            if (count_bough > 0) {
 
-                                if (count_trunk > 0) {
+                                if (dead_tree_level.equals("") == false) {
 
-                                    write.append("180 / 190 / 280 / 290");
-
-                                }
-
-                                if (count_bough > 0) {
-
-                                    if (dead_tree_level.equals("") == false) {
-
-                                        write.append(" / 160 / 170 / 260 / 270");
-
-                                    }
-
-                                    write.append("1").append("5").append(is_pine).append(" / ").append("2").append("5").append(is_pine);
+                                    write.append(" / 160 / 170 / 260 / 270");
 
                                 }
 
-                                if (count_branch > 0) {
+                                write.append("1").append("5").append(is_pine).append(" / ").append("2").append("5").append(is_pine);
 
-                                    if (dead_tree_level.equals("") == false) {
+                            }
 
-                                        write.append(" / ");
+                            if (count_branch > 0) {
 
-                                    }
+                                if (dead_tree_level.equals("") == false) {
 
-                                    write.append("1").append("4").append(is_pine).append(" / ").append("2").append("4").append(is_pine);
-
-                                }
-
-                                if (count_limb > 0) {
-
-                                    if (dead_tree_level.equals("") == false) {
-
-                                        write.append(" / ");
-
-                                    }
-
-                                    write.append("1").append("3").append(is_pine).append(" / ").append("2").append("3").append(is_pine);
+                                    write.append(" / ");
 
                                 }
 
-                                if (count_twig > 0) {
+                                write.append("1").append("4").append(is_pine).append(" / ").append("2").append("4").append(is_pine);
 
-                                    if (dead_tree_level.equals("") == false) {
+                            }
 
-                                        write.append(" / ");
+                            if (count_limb > 0) {
 
-                                    }
+                                if (dead_tree_level.equals("") == false) {
 
-                                    write.append("1").append("2").append(is_pine).append(" / ").append("2").append("2").append(is_pine);
+                                    write.append(" / ");
+
+                                }
+
+                                write.append("1").append("3").append(is_pine).append(" / ").append("2").append("3").append(is_pine);
+
+                            }
+
+                            if (count_twig > 0) {
+
+                                if (dead_tree_level.equals("") == false) {
+
+                                    write.append(" / ");
 
                                 }
 
-                                if (count_sprig > 0) {
+                                write.append("1").append("2").append(is_pine).append(" / ").append("2").append("2").append(is_pine);
 
-                                    if (dead_tree_level.equals("") == false) {
+                            }
 
-                                        write.append(" / ");
+                            if (count_sprig > 0) {
 
-                                    }
+                                if (dead_tree_level.equals("") == false) {
 
-                                    write.append("1").append("1").append(is_pine).append(" / ").append("2").append("1").append(is_pine);
+                                    write.append(" / ");
 
                                 }
+
+                                write.append("1").append("1").append(is_pine).append(" / ").append("2").append("1").append(is_pine);
 
                             }
 
                         }
 
-                        String[] split = write.toString().split(" / ");
-                        dead_tree_level = split[(int) (Math.random() * (split.length - 1))];
-
                     }
 
-                }
-
-                if (dead_tree_level.startsWith("2") == true) {
-
-
-
-
-
-
-
-
-                    sizeY = get[0];
-                    sizeX = get[1];
-                    center_sizeY = get[3];
-                    center_sizeX = get[4];
-
-
-
-
-
-
-
-
-
-
+                    String[] split = write.toString().split(" / ");
+                    dead_tree_level = split[(int) (Math.random() * (split.length - 1))];
 
                 }
 
             }
 
-            sizeY = sizeY - center_sizeY;
             String tree_type = "";
             int start_height = 0;
 
@@ -1062,6 +1025,53 @@ public class TreeLocation {
 
             }
 
+            // Coarse Woody Debris
+            {
+
+                if (dead_tree_level.startsWith("2") == true) {
+
+                    int fall_direction = Mth.nextInt(RandomSource.create(center_posX * center_posZ), 1, 4);
+                    int sizeX_save = sizeX;
+                    int sizeY_save = sizeY;
+                    int sizeZ_save = sizeZ;
+                    int center_sizeX_save = center_sizeX;
+                    int center_sizeY_save = center_sizeY;
+                    int center_sizeZ_save = center_sizeZ;
+
+                    if (fall_direction == 1) {
+
+                        sizeY = sizeX_save;
+                        sizeX = sizeY_save;
+                        center_sizeY = sizeX_save - center_sizeX_save;
+                        center_sizeX = center_sizeY_save;
+
+                    } else if (fall_direction == 2) {
+
+                        sizeY = sizeZ_save;
+                        sizeZ = sizeY_save;
+                        center_sizeY = sizeZ_save - center_sizeZ_save;
+                        center_sizeZ = center_sizeY_save;
+
+                    } else if (fall_direction == 3) {
+
+                        sizeY = sizeX_save;
+                        sizeX = sizeY_save;
+                        center_sizeY = center_sizeX_save;
+                        center_sizeX = sizeY_save - center_sizeY_save;
+
+                    } else if (fall_direction == 4) {
+
+                        sizeY = sizeZ_save;
+                        sizeZ = sizeY_save;
+                        center_sizeY = center_sizeZ_save;
+                        center_sizeZ = sizeY_save - center_sizeY_save;
+
+                    }
+
+                }
+
+            }
+
             int from_chunkX = center_posX - center_sizeX;
             int from_chunkZ = center_posZ - center_sizeZ;
             int to_chunkX = (from_chunkX + sizeX) >> 4;
@@ -1093,7 +1103,7 @@ public class TreeLocation {
 
             }
 
-            String other_data = tree_type + "/" + start_height + "/" + sizeY + "/" + ground_block + "/" + dead_tree_chance + "/" + dead_tree_level;
+            String other_data = tree_type + "/" + start_height + "/" + (sizeY - center_sizeY) + "/" + ground_block + "/" + dead_tree_chance + "/" + dead_tree_level;
 
             // Write Tree Location
             {
