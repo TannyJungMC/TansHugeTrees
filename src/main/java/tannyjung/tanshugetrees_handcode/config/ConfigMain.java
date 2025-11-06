@@ -34,8 +34,9 @@ public class ConfigMain {
 	public static int surface_detection_size = 0;
 	public static boolean waterside_detection = false;
 	public static boolean surface_smoothness_detection = false;
-	public static int surface_smoothness_detection_height = 0;
-	public static int structure_detection_size = 0;
+	public static int surface_smoothness_detection_height_up = 0;
+	public static int surface_smoothness_detection_height_down = 0;
+    public static int structure_detection_size = 0;
 
 	public static boolean living_tree_mechanics = false;
 	public static int living_tree_mechanics_tick = 0;
@@ -160,9 +161,13 @@ public class ConfigMain {
 					| Force the trees to only spawn on flat areas. Note that this system only detects 8 points around that tree, so it's not 100% perfect.
 					| Default is [ true ]
 					
-					surface_smoothness_detection_height = 8
-					| Set height of surface smoothness. This value for each up and down. If the detector detects that the surface is rough than this height, it will cancel that tree.
-					| Default is [ 8 ]
+					surface_smoothness_detection_height_up = 16
+					| Set height up of surface smoothness. If the detector detects that the surface is upper than this height, it will cancel that tree.
+					| Default is [ 16 ]
+					
+					surface_smoothness_detection_height_down = 6
+					| Set height down of surface smoothness. If the detector detects that the surface is lower than this height, it will cancel that tree.
+					| Default is [ 6 ]
 					
 					structure_detection_size = 3
 					| Cancel trees if they detect structure around them. This size is radius, min and max is 0 to 9. Set to 1 for only chunks that marked as having structures. Set to 0 to disable this feature.
@@ -288,7 +293,7 @@ public class ConfigMain {
 
 		}
 
-		FileManager.writeConfigTXT(Handcode.directory_config + "/config.txt", write.toString());
+		FileManager.writeConfigTXT(Handcode.path_config + "/config.txt", write.toString());
 
 	}
 
@@ -301,7 +306,7 @@ public class ConfigMain {
 
 			int index = 0;
 
-			for (String read_all : FileManager.readTXT(Handcode.directory_config + "/config.txt")) {
+			for (String read_all : FileManager.readTXT(Handcode.path_config + "/config.txt")) {
 
 				{
 
@@ -344,7 +349,8 @@ public class ConfigMain {
         surface_detection_size = Integer.parseInt(data.get("surface_detection_size"));
 		waterside_detection = Boolean.parseBoolean(data.get("waterside_detection"));
 		surface_smoothness_detection = Boolean.parseBoolean(data.get("surface_smoothness_detection"));
-		surface_smoothness_detection_height = Integer.parseInt(data.get("surface_smoothness_detection_height"));
+        surface_smoothness_detection_height_up = Integer.parseInt(data.get("surface_smoothness_detection_height_up"));
+        surface_smoothness_detection_height_down = Integer.parseInt(data.get("surface_smoothness_detection_height_down"));
         structure_detection_size = Integer.parseInt(data.get("structure_detection_size"));
 
 		living_tree_mechanics = Boolean.parseBoolean(data.get("living_tree_mechanics"));
@@ -407,10 +413,10 @@ public class ConfigMain {
 
 	public static void repairAll (LevelAccessor level_accessor) {
 
-		FileManager.createFolder(Handcode.directory_config + "/#dev");
-		FileManager.createFolder(Handcode.directory_config + "/#dev/custom_packs_organized");
-		FileManager.createFolder(Handcode.directory_config + "/#dev/shape_file_converter");
-		FileManager.createFolder(Handcode.directory_config + "/custom_packs");
+		FileManager.createFolder(Handcode.path_config + "/#dev");
+		FileManager.createFolder(Handcode.path_config + "/#dev/custom_packs_organized");
+		FileManager.createFolder(Handcode.path_config + "/#dev/shape_file_converter");
+		FileManager.createFolder(Handcode.path_config + "/custom_packs");
 
 		CustomPackOrganized.start(level_accessor);
 		ConfigMain.repair();
