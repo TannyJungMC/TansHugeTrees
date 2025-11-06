@@ -10,9 +10,9 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import tannyjung.core.GameUtils;
 
-public class FeatureGrassArea extends Feature <NoneFeatureConfiguration> {
+public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
 
-    public FeatureGrassArea () {
+    public FeatureAreaGrass () {
 
         super(NoneFeatureConfiguration.CODEC);
 
@@ -22,8 +22,6 @@ public class FeatureGrassArea extends Feature <NoneFeatureConfiguration> {
     public boolean place (FeaturePlaceContext <NoneFeatureConfiguration> context) {
 
         LevelAccessor level_accessor = context.level();
-        ChunkPos chunk_pos = new ChunkPos(context.origin().getX() >> 4, context.origin().getZ() >> 4);
-
         BlockPos center_pos = context.origin();
         int startX = -16;
         int startY = -16;
@@ -52,7 +50,7 @@ public class FeatureGrassArea extends Feature <NoneFeatureConfiguration> {
                             pos = new BlockPos(center_pos.getX() + scanX, center_pos.getY() + scanY, center_pos.getZ() + scanZ);
                             previous_block = level_accessor.getBlockState(pos);
 
-                            if (GameUtils.block.isTaggedAs(previous_block, "minecraft:base_stone_overworld") == true || GameUtils.block.isTaggedAs(previous_block, "minecraft:sand") == true) {
+                            if (GameUtils.block.isTaggedAs(previous_block, "minecraft:sand") == true || GameUtils.block.isTaggedAs(previous_block, "minecraft:base_stone_overworld") == true) {
 
                                 if (Math.random() < 0.5 && level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ())).isAir() == true) {
 
@@ -60,15 +58,7 @@ public class FeatureGrassArea extends Feature <NoneFeatureConfiguration> {
 
                                 } else {
 
-                                    if (Math.random() < 0.5) {
-
-                                        block = Blocks.DIRT.defaultBlockState();
-
-                                    } else {
-
-                                        block = Blocks.COARSE_DIRT.defaultBlockState();
-
-                                    }
+                                    block = Blocks.COARSE_DIRT.defaultBlockState();
 
                                 }
 
