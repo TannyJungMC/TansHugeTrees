@@ -25,7 +25,7 @@ public class CustomPackOrganized {
 
     public static void clearFolder () {
 
-        Path delete = Path.of(Handcode.directory_config + "/#dev/custom_packs_organized");
+        Path delete = Path.of(Handcode.path_config + "/#dev/custom_packs_organized");
 
         try {
 
@@ -53,7 +53,7 @@ public class CustomPackOrganized {
 
     private static void organizing () {
 
-        File[] packs = new File(Handcode.directory_config + "/custom_packs").listFiles();
+        File[] packs = new File(Handcode.path_config + "/custom_packs").listFiles();
         File[] pack_files = new File[0];
 
         if (packs != null) {
@@ -112,7 +112,7 @@ public class CustomPackOrganized {
                                             // Not in Storage Folder
                                             if (source.getParent().toFile().getName().equals("storage") == false) {
 
-                                                String path = Handcode.directory_config + "/#dev/custom_packs_organized/" + category.getName();
+                                                String path = Handcode.path_config + "/#dev/custom_packs_organized/" + category.getName();
 
                                                 // With Pack Name
                                                 if (category.getName().equals("leaf_litter") == false) {
@@ -162,7 +162,7 @@ public class CustomPackOrganized {
 
     private static void replace () {
 
-        File[] packs = new File(Handcode.directory_config + "/custom_packs/").listFiles();
+        File[] packs = new File(Handcode.path_config + "/custom_packs/").listFiles();
 
         if (packs != null) {
 
@@ -170,7 +170,7 @@ public class CustomPackOrganized {
 
                 if (pack.getName().startsWith("[INCOMPATIBLE]") == false) {
 
-                    File replace = new File(Handcode.directory_config + "/custom_packs/" + pack.getName() + "/replace");
+                    File replace = new File(Handcode.path_config + "/custom_packs/" + pack.getName() + "/replace");
 
                     if (replace.exists() == true) {
 
@@ -237,7 +237,7 @@ public class CustomPackOrganized {
 
         }
 
-        File file = Path.of(Handcode.directory_config + "/#dev/custom_packs_organized").resolve(Path.of(pack.toPath() + "/replace").relativize(source)).toFile();
+        File file = Path.of(Handcode.path_config + "/#dev/custom_packs_organized").resolve(Path.of(pack.toPath() + "/replace").relativize(source)).toFile();
         String[] data_old = FileManager.readTXT(file.getPath());
         String[] data = new String[0];
 

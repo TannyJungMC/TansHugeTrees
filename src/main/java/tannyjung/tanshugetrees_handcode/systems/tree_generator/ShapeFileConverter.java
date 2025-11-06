@@ -77,7 +77,7 @@ public class ShapeFileConverter {
         // Get data
         {
 
-            File file = new File(Handcode.directory_config + "/#dev/shape_file_converter/#shape_file_converter.txt");
+            File file = new File(Handcode.path_config + "/#dev/shape_file_converter/#shape_file_converter.txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -103,7 +103,7 @@ public class ShapeFileConverter {
 
         }
 
-        File file = new File(Handcode.directory_config + "/custom_packs/" + file_location[0] + "/presets/" + file_location[1] + "/" + file_location[1] + ".txt");
+        File file = new File(Handcode.path_config + "/custom_packs/" + file_location[0] + "/presets/" + file_location[1] + "/" + file_location[1] + ".txt");
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -196,7 +196,7 @@ public class ShapeFileConverter {
 
             }
 
-            FileManager.writeTXT(Handcode.directory_config + "/#dev/shape_file_converter/" + name + "/" + name + "_settings.txt", write.toString(), false);
+            FileManager.writeTXT(Handcode.path_config + "/#dev/shape_file_converter/" + name + "/" + name + "_settings.txt", write.toString(), false);
 
         }
 
@@ -518,7 +518,7 @@ public class ShapeFileConverter {
 
         }
 
-        String path = Handcode.directory_config + "/#dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "name") + "/storage/" + GameUtils.nbt.entity.getText(entity, "export_file_name");
+        String path = Handcode.path_config + "/#dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "name") + "/storage/" + GameUtils.nbt.entity.getText(entity, "export_file_name");
         FileManager.writeBIN(path, OutsideUtils.shortListToArray(start_data), false);
         FileManager.writeBIN(path, OutsideUtils.shortListToArray(short_converted), true);
         GameUtils.misc.sendChatMessage(level_server, "@a", "green", "THT : Completed!");

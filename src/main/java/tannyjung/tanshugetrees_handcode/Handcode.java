@@ -16,12 +16,14 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
 import tannyjung.core.GameUtils;
+import tannyjung.core.TXTFunction;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.config.CustomPackIncompatible;
 import tannyjung.tanshugetrees_handcode.config.PackCheckUpdate;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.Loop;
-import tannyjung.tanshugetrees_handcode.systems.world_gen.FeatureGrassArea;
+import tannyjung.tanshugetrees_handcode.systems.world_gen.FeatureAreaDirt;
+import tannyjung.tanshugetrees_handcode.systems.world_gen.FeatureAreaGrass;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDetector;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFull;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenBeforePlants;
@@ -41,9 +43,9 @@ public class Handcode {
 
 	// ----------------------------------------------------------------------------------------------------
 
-	public static String directory_game = FMLPaths.GAMEDIR.get().toString();
-	public static String directory_config = directory_game + "/config/tanshugetrees";
-	public static String directory_world_data = directory_game + "/saves/tanshugetrees-error/directory_world_data";
+	public static String path_game = FMLPaths.GAMEDIR.get().toString();
+	public static String path_config = path_game + "/config/tanshugetrees";
+	public static String path_world_data = path_game + "/saves/tanshugetrees-error/path_world_data";
 	public static String tanny_pack_version_name = ""; // Make this because version can swap to "WIP" by config
 
     public static ExecutorService thread_main = Executors.newFixedThreadPool(1);
@@ -56,7 +58,15 @@ public class Handcode {
 
 	public static void startGame () {
 
-		TanshugetreesMod.LOGGER.info("Loading mod registries and config");
+        TanshugetreesMod.LOGGER.info("Loading mod registries, config, and variables.");
+
+        // Core Code Syncing
+        {
+
+            TXTFunction.path_config = path_config;
+            TXTFunction.version_1192 = version_1192;
+
+        }
 
 		// Basic Registries
 		{
@@ -65,7 +75,8 @@ public class Handcode {
 
 			DeferredRegister<Feature<?>> REGISTRY = DeferredRegister.create(Registries.FEATURE, TanshugetreesMod.MODID);
 			REGISTRY.register("world_gen_before_plants", WorldGenBeforePlants::new);
-			REGISTRY.register("grass_area", FeatureGrassArea::new);
+			REGISTRY.register("area_grass", FeatureAreaGrass::new);
+			REGISTRY.register("area_dirt", FeatureAreaDirt::new);
 
 			REGISTRY.register(bus);
 
@@ -107,7 +118,7 @@ public class Handcode {
         }
 
 		String world_path = String.valueOf(event.getServer().getWorldPath(new LevelResource(".")));
-		directory_world_data = world_path + "/data/tanshugetrees";
+		path_world_data = world_path + "/data/tanshugetrees";
 		ConfigMain.repairAll(null);
 		ConfigMain.apply(null);
 

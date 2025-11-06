@@ -3,15 +3,9 @@ package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Blocks;
 import tannyjung.core.GameUtils;
-import tannyjung.core.OutsideUtils;
+import tannyjung.core.TXTFunction;
 import tannyjung.tanshugetrees.TanshugetreesMod;
-import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
-import tannyjung.tanshugetrees_handcode.Handcode;
-
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
 
 public class BlockPlacer {
 
@@ -107,7 +101,7 @@ public class BlockPlacer {
 
                         TanshugetreesMod.queueServerWork(20, () -> {
 
-                            TreeFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), function, false);
+                            TXTFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), function, false);
 
                         });
 

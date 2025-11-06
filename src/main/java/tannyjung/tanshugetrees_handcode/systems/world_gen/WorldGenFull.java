@@ -15,7 +15,7 @@ public class WorldGenFull {
         String dimension = GameUtils.misc.getCurrentDimensionID(level_server).replace(":", "-");
         ChunkPos chunk_pos = event.getChunk().getPos();
 
-        DataFolderCleaner.start(dimension, chunk_pos);
+        DataFolderWorldGenCleaner.start(dimension, chunk_pos);
 
     }
 

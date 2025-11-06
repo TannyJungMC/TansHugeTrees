@@ -62,7 +62,7 @@ public class Sapling {
 
                                     String block = GameUtils.block.toTextID(level_accessor.getBlockState(pos));
                                     block = block.substring(block.indexOf(":") + 1);
-                                    File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/#TannyJung-Main-Pack/" + block + "/" + block + ".txt");
+                                    File file = new File(Handcode.path_config + "/#dev/custom_packs_organized/presets/#TannyJung-Main-Pack/" + block + "/" + block + ".txt");
 
                                     if (file.exists() == false) {
 

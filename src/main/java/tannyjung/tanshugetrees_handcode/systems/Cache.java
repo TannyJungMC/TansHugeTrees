@@ -16,7 +16,7 @@ public class Cache {
         if (cache_tree_shape.containsKey(location) == false) {
 
             String[] split = location.split("/");
-            cache_tree_shape.put(location, FileManager.readBIN(Handcode.directory_config + "/custom_packs/" + split[0] + "/presets/" + split[1] + "/storage/" + split[2], 13, 0));
+            cache_tree_shape.put(location, FileManager.readBIN(Handcode.path_config + "/custom_packs/" + split[0] + "/presets/" + split[1] + "/storage/" + split[2], 13, 0));
 
         }
 

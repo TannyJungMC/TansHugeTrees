@@ -10,7 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-public class DataFolderCleaner {
+public class DataFolderWorldGenCleaner {
 
     public static void start (String dimension, ChunkPos chunk_pos) {
 
@@ -18,7 +18,7 @@ public class DataFolderCleaner {
         String node = GameUtils.outside.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z);
         String file_path = dimension + "/" + region + "/" + node + ".txt";
 
-        File file_region = new File(Handcode.directory_world_data + "/world_gen/regions/" + file_path);
+        File file_region = new File(Handcode.path_world_data + "/world_gen/regions/" + file_path);
         FileManager.writeTXT(file_region.toPath().toString(), "A", true);
         boolean full_node = false;
 
@@ -43,8 +43,8 @@ public class DataFolderCleaner {
 
         if (full_node == true) {
 
-            File file_place = new File(Handcode.directory_world_data + "/world_gen/place/" + file_path);
-            File file_detailed_detection = new File(Handcode.directory_world_data + "/world_gen/detailed_detection/" + file_path);
+            File file_place = new File(Handcode.path_world_data + "/world_gen/place/" + file_path);
+            File file_detailed_detection = new File(Handcode.path_world_data + "/world_gen/detailed_detection/" + file_path);
 
             file_region.delete();
             file_place.delete();

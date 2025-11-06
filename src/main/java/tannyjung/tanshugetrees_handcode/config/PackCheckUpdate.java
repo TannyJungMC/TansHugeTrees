@@ -43,11 +43,11 @@ public class PackCheckUpdate {
 
 				}
 
-				File file = new File(Handcode.directory_config + "/custom_packs/#TannyJung-Main-Pack/version.txt");
+				File file = new File(Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack/version.txt");
 
 				if (file.exists() == false) {
 
-					file = new File(Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack/version.txt");
+					file = new File(Handcode.path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack/version.txt");
 
 				}
 

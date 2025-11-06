@@ -44,25 +44,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 public class GameUtils {
-
-    public static class GroupPosBlockCommand {
-
-        public final BlockPos pos;
-        public final BlockState block;
-        public final String command;
-
-        public GroupPosBlockCommand (BlockPos pos, BlockState block, String command) {
-
-            this.pos = pos;
-            this.block = block;
-            this.command = command;
-
-        }
-
-    }
 
 	public static class outside {
 

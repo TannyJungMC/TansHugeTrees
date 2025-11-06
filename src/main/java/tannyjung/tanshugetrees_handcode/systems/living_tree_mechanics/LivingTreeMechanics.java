@@ -45,7 +45,7 @@ public class LivingTreeMechanics {
         // Read Settings
         {
 
-            File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + GameUtils.nbt.entity.getText(entity, "tree_settings") + "_settings.txt");
+            File file = new File(Handcode.path_config + "/#dev/custom_packs_organized/presets/" + GameUtils.nbt.entity.getText(entity, "tree_settings") + "_settings.txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -133,7 +133,7 @@ public class LivingTreeMechanics {
         String[] file_path_data = GameUtils.nbt.entity.getText(entity, "file").split("\\|");
         String path_storage = file_path_data[0];
         String chosen = file_path_data[1];
-        File file = new File(Handcode.directory_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage/" + chosen);
+        File file = new File(Handcode.path_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage/" + chosen);
 
         if (file.exists() == true && file.isDirectory() == false) {
 

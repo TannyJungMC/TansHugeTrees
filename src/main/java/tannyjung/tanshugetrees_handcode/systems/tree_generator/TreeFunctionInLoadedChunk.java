@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.core.GameUtils;
+import tannyjung.core.TXTFunction;
 
 public class TreeFunctionInLoadedChunk {
 
@@ -13,7 +14,7 @@ public class TreeFunctionInLoadedChunk {
 
         if (level_accessor instanceof ServerLevel level_server) {
 
-            TreeFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), GameUtils.nbt.entity.getText(entity, "function"), true);
+            TXTFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), GameUtils.nbt.entity.getText(entity, "function"), true);
             GameUtils.command.runEntity(entity, "kill @s");
 
         }

@@ -21,8 +21,8 @@ public class ConfigWorldGen {
 
     private static void createTemp () {
 
-        File from = new File(Handcode.directory_config + "/config_world_gen.txt");
-        File to = new File(Handcode.directory_config + "/config_world_gen_temp.txt");
+        File from = new File(Handcode.path_config + "/config_world_gen.txt");
+        File to = new File(Handcode.path_config + "/config_world_gen_temp.txt");
 
         if (from.exists() == true && from.isDirectory() == false) {
 
@@ -42,8 +42,8 @@ public class ConfigWorldGen {
 
     private static void create () {
 
-        File file = new File(Handcode.directory_config + "/config_world_gen.txt");
-        File file_organized = new File(Handcode.directory_config + "/#dev/custom_packs_organized/world_gen");
+        File file = new File(Handcode.path_config + "/config_world_gen.txt");
+        File file_organized = new File(Handcode.path_config + "/#dev/custom_packs_organized/world_gen");
 
         // Re-Create The File
         {
@@ -169,7 +169,7 @@ public class ConfigWorldGen {
         // Test is it locked
         {
 
-            for (String read_all : FileManager.readTXT(Handcode.directory_config + "/config_world_gen_temp.txt")) {
+            for (String read_all : FileManager.readTXT(Handcode.path_config + "/config_world_gen_temp.txt")) {
 
                 {
 
@@ -244,7 +244,7 @@ public class ConfigWorldGen {
                                 // Get Old Value
                                 {
 
-                                    File file_temp = new File(Handcode.directory_config + "/config_world_gen_temp.txt");
+                                    File file_temp = new File(Handcode.path_config + "/config_world_gen_temp.txt");
                                     boolean thisID = false;
                                     option = read_all.substring(0, read_all.indexOf(" = "));
 
@@ -301,13 +301,13 @@ public class ConfigWorldGen {
 
         }
 
-        FileManager.writeTXT(Handcode.directory_config + "/config_world_gen.txt", write.toString(), true);
+        FileManager.writeTXT(Handcode.path_config + "/config_world_gen.txt", write.toString(), true);
 
     }
 
     private static void deleteTemp () {
 
-        File file = new File(Handcode.directory_config + "/config_world_gen_temp.txt");
+        File file = new File(Handcode.path_config + "/config_world_gen_temp.txt");
 
         if (file.exists() == true && file.isDirectory() == false) {
 

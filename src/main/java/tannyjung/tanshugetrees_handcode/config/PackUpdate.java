@@ -43,10 +43,10 @@ public class PackUpdate {
 						// Delete Old Folders
 						{
 
-							if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/#TannyJung-Main-Pack") == false) {
+							if (deleteOldPackFolder(level_server, Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack") == false) {
 								return;
 							}
-							if (deleteOldPackFolder(level_server, Handcode.directory_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack") == false) {
+							if (deleteOldPackFolder(level_server, Handcode.path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack") == false) {
 								return;
 							}
 
@@ -99,7 +99,7 @@ public class PackUpdate {
 
 	public static void message (ServerLevel level_server) {
 
-		File file = new File(Handcode.directory_config + "/custom_packs/#TannyJung-Main-Pack/message.txt");
+		File file = new File(Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack/message.txt");
 		StringBuilder message = new StringBuilder();
 
 		if (file.exists() == true && file.isDirectory() == false) {
@@ -197,7 +197,7 @@ public class PackUpdate {
 
 	private static boolean createZIP (ServerLevel level_server) {
 
-		File file = new File(Handcode.directory_config + "/custom_packs/#TannyJung-Main-Pack.zip");
+		File file = new File(Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack.zip");
 		ZipOutputStream out = null;
 
 		try {
@@ -219,7 +219,7 @@ public class PackUpdate {
 	private static boolean download (ServerLevel level_server) {
 
 		String download_from = "https://github.com/TannyJungMC/THT-tree_pack/archive/refs/heads/" + Handcode.tanny_pack_version_name.toLowerCase() + ".zip";
-		String download_to = Handcode.directory_config + "/custom_packs/#TannyJung-Main-Pack.zip";
+		String download_to = Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack.zip";
 
 		try {
 
@@ -254,8 +254,8 @@ public class PackUpdate {
 
 	private static boolean unzip (ServerLevel level_server) {
 
-		File unzip = new File(Handcode.directory_config + "/custom_packs/#TannyJung-Main-Pack.zip");
-		File unzip_to = new File(Handcode.directory_config + "/custom_packs");
+		File unzip = new File(Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack.zip");
+		File unzip_to = new File(Handcode.path_config + "/custom_packs");
 		byte[] buffer = new byte[1024];
 
 		try {
@@ -326,7 +326,7 @@ public class PackUpdate {
 
 	private static boolean deleteZIP (ServerLevel level_server) {
 
-		File file = new File(Handcode.directory_config + "/custom_packs/#TannyJung-Main-Pack.zip");
+		File file = new File(Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack.zip");
 
 		if (file.exists() == true) {
 
@@ -361,8 +361,8 @@ public class PackUpdate {
 
 	private static boolean renameFolder (ServerLevel level_server) {
 
-		File rename_from = new File(Handcode.directory_config + "/custom_packs/THT-tree_pack-" + Handcode.tanny_pack_version_name.toLowerCase());
-		File rename_to = new File(Handcode.directory_config + "/custom_packs/#TannyJung-Main-Pack");
+		File rename_from = new File(Handcode.path_config + "/custom_packs/THT-tree_pack-" + Handcode.tanny_pack_version_name.toLowerCase());
+		File rename_to = new File(Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack");
 
 		if (rename_from.renameTo(rename_to) == false) {
 

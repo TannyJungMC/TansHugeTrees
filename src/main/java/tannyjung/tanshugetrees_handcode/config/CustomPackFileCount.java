@@ -37,7 +37,7 @@ public class CustomPackFileCount {
 
     private static void fileSize () {
 
-        File file = new File(Handcode.directory_config + "/custom_packs");
+        File file = new File(Handcode.path_config + "/custom_packs");
 
         if (file.exists() == true) {
 
@@ -69,7 +69,7 @@ public class CustomPackFileCount {
 
     private static void countVariation () {
 
-        File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/world_gen");
+        File file = new File(Handcode.path_config + "/#dev/custom_packs_organized/world_gen");
 
         if (file.exists() == true) {
 
@@ -101,7 +101,7 @@ public class CustomPackFileCount {
 
     private static void countShape () {
 
-        File file = new File(Handcode.directory_config + "/custom_packs/");
+        File file = new File(Handcode.path_config + "/custom_packs/");
 
         if (file.exists() == true) {
 

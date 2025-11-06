@@ -1,7 +1,5 @@
 package tannyjung.core;
 
-import tannyjung.tanshugetrees_handcode.Handcode;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;

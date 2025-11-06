@@ -22,7 +22,7 @@ public class CustomPackIncompatible {
         // Rename all packs back to normal
         {
 
-            File[] packs = new File(Handcode.directory_config + "/custom_packs").listFiles();
+            File[] packs = new File(Handcode.path_config + "/custom_packs").listFiles();
 
             if (packs != null) {
 
@@ -36,7 +36,7 @@ public class CustomPackIncompatible {
 
         }
 
-        File[] packs = new File(Handcode.directory_config + "/custom_packs").listFiles();
+        File[] packs = new File(Handcode.path_config + "/custom_packs").listFiles();
 
         if (packs != null) {
 
@@ -73,7 +73,7 @@ public class CustomPackIncompatible {
         // Tree Settings File
         {
 
-            File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets");
+            File file = new File(Handcode.path_config + "/#dev/custom_packs_organized/presets");
 
             if (file.exists() == true) {
 
@@ -110,7 +110,7 @@ public class CustomPackIncompatible {
         // World Gen File
         {
 
-            File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/world_gen");
+            File file = new File(Handcode.path_config + "/#dev/custom_packs_organized/world_gen");
 
             if (file.exists() == true) {
 
@@ -248,7 +248,7 @@ public class CustomPackIncompatible {
 
                                 for (String test : get.split(", ")) {
 
-                                    if (new File(Handcode.directory_config + "/custom_packs/" + test).exists() == false) {
+                                    if (new File(Handcode.path_config + "/custom_packs/" + test).exists() == false) {
 
                                         error = "Detected incompatible pack. Caused by required pack not found. [ " + name_pack + " > " + test + " ]";
                                         break;
@@ -400,19 +400,19 @@ public class CustomPackIncompatible {
         // Test Storage
         {
 
-            File file_test = new File(Handcode.directory_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage");
+            File file_test = new File(Handcode.path_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage");
 
             if (file_test.exists() == true) {
 
                 if (file_test.listFiles() != null && file_test.listFiles().length == 0) {
 
-                    error = "Detected incompatible tree. Caused by empty storage directory. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
+                    error = "Detected incompatible tree. Caused by empty storage. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
 
                 }
 
             } else {
 
-                error = "Detected incompatible tree. Caused by storage directory not found. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
+                error = "Detected incompatible tree. Caused by storage path not found. [ " + name_pack + " > " + name_theme + " > " + name_tree + " ]";
 
             }
 
@@ -421,7 +421,7 @@ public class CustomPackIncompatible {
         // Test Tree Settings
         {
 
-            File file_test = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + path_tree_settings + "_settings.txt");
+            File file_test = new File(Handcode.path_config + "/#dev/custom_packs_organized/presets/" + path_tree_settings + "_settings.txt");
 
             if (file_test.exists() == false) {
 
