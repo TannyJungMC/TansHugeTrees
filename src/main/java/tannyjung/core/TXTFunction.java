@@ -8,10 +8,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 public class TXTFunction {
 
@@ -20,227 +17,376 @@ public class TXTFunction {
 
 	public static void start (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String path, boolean only_loaded_chunk) {
 
-		File file = new File(path_config + "/#dev/custom_packs_organized/functions/" + path + ".txt");
+        WorldGenLevel world_gen = (WorldGenLevel) level_accessor;
+        boolean chunk_loaded = version_1192 == true || GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~");
+        boolean function_in_loaded_chunk = false;
 
-		if (file.exists() == true && file.isDirectory() == false) {
+        boolean run_test = false;
+        boolean run_continue = true;
+        boolean run_pause = false;
+        String[] get = new String[0];
+        double chance = 0.0;
+        String[] offset_pos = new String[0];
+        int offset_posX = 0;
+        int offset_posY = 0;
+        int offset_posZ = 0;
+        String[] min_max = new String[0];
+        int minX = 0;
+        int minY = 0;
+        int minZ = 0;
+        int maxX = 0;
+        int maxY = 0;
+        int maxZ = 0;
+        BlockPos pos = null;
 
-			WorldGenLevel world_gen = (WorldGenLevel) level_accessor;
-			BlockPos pos = null;
-			boolean chunk_loaded = version_1192 == true || GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~");
-			boolean function_in_loaded_chunk = false;
+        String variable_text = "";
+        boolean variable_logic = false;
+        BlockState variable_block = Blocks.AIR.defaultBlockState();
 
-			String[] get = new String[0];
-			double chance = 0.0;
-			String[] offset_pos = new String[0];
-			int offset_posX = 0;
-			int offset_posY = 0;
-			int offset_posZ = 0;
-			String[] min_max = new String[0];
-			int minX = 0;
-			int minY = 0;
-			int minZ = 0;
-			int maxX = 0;
-			int maxY = 0;
-			int maxZ = 0;
+        for (String read_all : Cache.functions(path)) {
 
-			BlockState block = Blocks.AIR.defaultBlockState();
-			boolean keep = false;
-			String feature = "";
-			String command = "";
-			String function = "";
+            {
 
-			// Read File
-			{
+                if (read_all.equals("") == false) {
 
-				try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                    if (read_all.equals("[") == true || read_all.equals("]") == true || read_all.startsWith("-") == true) {
 
-					{
+                        run_test = false;
+                        run_continue = true;
+                        run_pause = false;
 
-						if (read_all.equals("") == false) {
+                    } else {
 
-							if (read_all.startsWith("block = ") == true) {
+                        if (run_pause == false) {
 
-								{
+                            // If-Run-Else
+                            {
 
-									if (only_loaded_chunk == false) {
+                                if (read_all.equals("if") == true) {
 
-										try {
+                                    run_test = true;
+                                    run_continue = true;
 
-											get = read_all.replace("block = ", "").split(" \\| ");
-											chance = Double.parseDouble(get[0]);
-											block = GameUtils.block.fromText(get[3]);
-											keep = Boolean.parseBoolean(get[4]);
+                                } else if (read_all.equals("else") == true) {
 
-										} catch (Exception ignored) {
+                                    if (run_test == false) {
 
-											return;
-
-										}
-
-										if (Math.random() < chance && block != Blocks.AIR.defaultBlockState()) {
-
-											// Get Pos
-											{
-
-												try {
-
-													offset_pos = get[1].split("/");
-													offset_posX = Integer.parseInt(offset_pos[0]);
-													offset_posY = Integer.parseInt(offset_pos[1]);
-													offset_posZ = Integer.parseInt(offset_pos[2]);
-
-													min_max = get[2].split("/");
-													minX = Integer.parseInt(min_max[0]);
-													minY = Integer.parseInt(min_max[1]);
-													minZ = Integer.parseInt(min_max[2]);
-													maxX = Integer.parseInt(min_max[3]);
-													maxY = Integer.parseInt(min_max[4]);
-													maxZ = Integer.parseInt(min_max[5]);
-
-												} catch (Exception ignored) {
-
-													return;
-
-												}
-
-											}
-
-											for (int testX = minX; testX <= maxX; testX++) {
-
-												for (int testY = minY; testY <= maxY; testY++) {
-
-													for (int testZ = minZ; testZ <= maxZ; testZ++) {
-
-														pos = new BlockPos(posX + offset_posX + testX, posY + offset_posY + testY, posZ + offset_posZ + testZ);
-
-														if (level_accessor.hasChunk(pos.getX() >> 4, pos.getZ() >> 4) == true) {
-
-															// Keep
-															{
-
-																if (keep == true) {
-
-																	if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
-
-																		continue;
-
-																	}
-
-																}
-
-															}
-
-															level_accessor.setBlock(new BlockPos(pos), block, 2);
-
-														}
-
-													}
-
-												}
-
-											}
-
-										}
-
-									}
-
-								}
-
-							} else if (read_all.startsWith("feature = ") == true) {
-
-								{
-
-									if (only_loaded_chunk == false) {
-
-										try {
-
-											get = read_all.replace("feature = ", "").split(" \\| ");
-											chance = Double.parseDouble(get[0]);
-											offset_pos = get[1].split("/");
-											offset_posX = Integer.parseInt(offset_pos[0]);
-											offset_posY = Integer.parseInt(offset_pos[1]);
-											offset_posZ = Integer.parseInt(offset_pos[2]);
-											feature = get[2];
-
-										} catch (Exception ignored) {
-
-											return;
-
-										}
-
-										if (Math.random() < chance) {
-
-											try {
-
-												pos = new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ);
-												world_gen.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(feature)).value().place(world_gen, world_gen.getLevel().getChunkSource().getGenerator(), world_gen.getRandom(), pos);
-
-											} catch (Exception ignored) {
-
-
-
-											}
-
-										}
-
-									}
-
-								}
-
-							} else if (read_all.startsWith("command = ") == true) {
-
-								{
-									if (chunk_loaded == true) {
-
-										try {
-
-											get = read_all.replace("command = ", "").split(" \\| ");
-											chance = Double.parseDouble(get[0]);
-											command = get[1];
-
-										} catch (Exception ignored) {
-
-											return;
-
-										}
-
-										if (Math.random() < chance) {
-
-											GameUtils.command.run(level_server, posX, posY, posZ, command);
-
-										}
-
-									} else {
-
-										function_in_loaded_chunk = true;
-
-									}
-
-								}
-
-                            } else if (read_all.startsWith("function = ") == true) {
-
-                                {
-
-                                    try {
-
-                                        get = read_all.replace("feature = ", "").split(" \\| ");
-                                        chance = Double.parseDouble(get[0]);
-                                        offset_pos = get[1].split("/");
-                                        offset_posX = Integer.parseInt(offset_pos[0]);
-                                        offset_posY = Integer.parseInt(offset_pos[1]);
-                                        offset_posZ = Integer.parseInt(offset_pos[2]);
-                                        function = get[2];
-
-                                    } catch (Exception ignored) {
-
-                                        return;
+                                        run_continue = true;
 
                                     }
 
-                                    if (Math.random() < chance) {
+                                } else if (read_all.equals("run") == true) {
 
-                                        TXTFunction.start(level_accessor, level_server, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, function, only_loaded_chunk);
+                                    run_test = false;
+
+                                }
+
+                            }
+
+                            if (run_test == true) {
+
+                                // Tests
+                                {
+
+                                    if (read_all.startsWith("chance = ") == true) {
+
+                                        {
+
+                                            try {
+
+                                                get = read_all.replace("chance = ", "").split(" \\| ");
+                                                chance = Double.parseDouble(get[0]);
+
+                                            } catch (Exception ignored) {
+
+                                                return;
+
+                                            }
+
+                                            if (Math.random() >= chance) {
+
+                                                run_test = false;
+                                                run_continue = false;
+
+                                            }
+
+                                        }
+
+                                    } else if (read_all.startsWith("biome = ") == true) {
+
+                                        {
+
+                                            try {
+
+                                                get = read_all.replace("biome = ", "").split(" \\| ");
+                                                offset_pos = get[0].split("/");
+                                                offset_posX = Integer.parseInt(offset_pos[0]);
+                                                offset_posY = Integer.parseInt(offset_pos[1]);
+                                                offset_posZ = Integer.parseInt(offset_pos[2]);
+                                                variable_text = get[1];
+
+                                            } catch (Exception ignored) {
+
+                                                return;
+
+                                            }
+
+                                            if (GameUtils.outside.configTestBiome(level_accessor.getBiome(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == false) {
+
+                                                run_test = false;
+                                                run_continue = false;
+
+                                            }
+
+                                        }
+
+                                    } else if (read_all.startsWith("block = ") == true) {
+
+                                        {
+
+                                            try {
+
+                                                get = read_all.replace("block = ", "").split(" \\| ");
+                                                offset_pos = get[0].split("/");
+                                                offset_posX = Integer.parseInt(offset_pos[0]);
+                                                offset_posY = Integer.parseInt(offset_pos[1]);
+                                                offset_posZ = Integer.parseInt(offset_pos[2]);
+                                                variable_text = get[1];
+
+                                            } catch (Exception ignored) {
+
+                                                return;
+
+                                            }
+
+                                            if (GameUtils.outside.configTestBlock(level_accessor.getBlockState(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == false) {
+
+                                                run_test = false;
+                                                run_continue = false;
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
+
+                            } else if (run_continue == true) {
+
+                                // Break
+                                {
+
+                                    if (read_all.equals("break") == true) {
+
+                                        if (run_continue == true) {
+
+                                            run_pause = true;
+
+                                        }
+
+                                    } else if (read_all.equals("return") == true) {
+
+                                        if (run_continue == true) {
+
+                                            return;
+
+                                        }
+
+                                    }
+
+                                }
+
+                                // Functions
+                                {
+
+                                    if (read_all.startsWith("block = ") == true) {
+
+                                        {
+
+                                            if (only_loaded_chunk == false) {
+
+                                                try {
+
+                                                    get = read_all.replace("block = ", "").split(" \\| ");
+                                                    chance = Double.parseDouble(get[0]);
+                                                    variable_block = GameUtils.block.fromText(get[3]);
+                                                    variable_logic = Boolean.parseBoolean(get[4]);
+
+                                                } catch (Exception ignored) {
+
+                                                    return;
+
+                                                }
+
+                                                if (Math.random() < chance && variable_block != Blocks.AIR.defaultBlockState()) {
+
+                                                    // Get Pos
+                                                    {
+
+                                                        try {
+
+                                                            offset_pos = get[1].split("/");
+                                                            offset_posX = Integer.parseInt(offset_pos[0]);
+                                                            offset_posY = Integer.parseInt(offset_pos[1]);
+                                                            offset_posZ = Integer.parseInt(offset_pos[2]);
+
+                                                            min_max = get[2].split("/");
+                                                            minX = Integer.parseInt(min_max[0]);
+                                                            minY = Integer.parseInt(min_max[1]);
+                                                            minZ = Integer.parseInt(min_max[2]);
+                                                            maxX = Integer.parseInt(min_max[3]);
+                                                            maxY = Integer.parseInt(min_max[4]);
+                                                            maxZ = Integer.parseInt(min_max[5]);
+
+                                                        } catch (Exception ignored) {
+
+                                                            return;
+
+                                                        }
+
+                                                    }
+
+                                                    for (int testX = minX; testX <= maxX; testX++) {
+
+                                                        for (int testY = minY; testY <= maxY; testY++) {
+
+                                                            for (int testZ = minZ; testZ <= maxZ; testZ++) {
+
+                                                                pos = new BlockPos(posX + offset_posX + testX, posY + offset_posY + testY, posZ + offset_posZ + testZ);
+
+                                                                if (level_accessor.hasChunk(pos.getX() >> 4, pos.getZ() >> 4) == true) {
+
+                                                                    // Keep
+                                                                    {
+
+                                                                        if (variable_logic == true) {
+
+                                                                            if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
+
+                                                                                continue;
+
+                                                                            }
+
+                                                                        }
+
+                                                                    }
+
+                                                                    level_accessor.setBlock(new BlockPos(pos), variable_block, 2);
+
+                                                                }
+
+                                                            }
+
+                                                        }
+
+                                                    }
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                    } else if (read_all.startsWith("feature = ") == true) {
+
+                                        {
+
+                                            if (only_loaded_chunk == false) {
+
+                                                try {
+
+                                                    get = read_all.replace("feature = ", "").split(" \\| ");
+                                                    chance = Double.parseDouble(get[0]);
+                                                    offset_pos = get[1].split("/");
+                                                    offset_posX = Integer.parseInt(offset_pos[0]);
+                                                    offset_posY = Integer.parseInt(offset_pos[1]);
+                                                    offset_posZ = Integer.parseInt(offset_pos[2]);
+                                                    variable_text = get[2];
+
+                                                } catch (Exception ignored) {
+
+                                                    return;
+
+                                                }
+
+                                                if (Math.random() < chance) {
+
+                                                    try {
+
+                                                        pos = new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ);
+                                                        world_gen.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(variable_text)).value().place(world_gen, world_gen.getLevel().getChunkSource().getGenerator(), world_gen.getRandom(), pos);
+
+                                                    } catch (Exception ignored) {
+
+
+                                                    }
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                    } else if (read_all.startsWith("command = ") == true) {
+
+                                        {
+
+                                            if (chunk_loaded == true) {
+
+                                                try {
+
+                                                    get = read_all.replace("command = ", "").split(" \\| ");
+                                                    chance = Double.parseDouble(get[0]);
+                                                    variable_text = get[1];
+
+                                                } catch (Exception ignored) {
+
+                                                    return;
+
+                                                }
+
+                                                if (Math.random() < chance) {
+
+                                                    GameUtils.command.run(level_server, posX, posY, posZ, variable_text);
+
+                                                }
+
+                                            } else {
+
+                                                function_in_loaded_chunk = true;
+
+                                            }
+
+                                        }
+
+                                    } else if (read_all.startsWith("txt_function = ") == true) {
+
+                                        {
+
+                                            try {
+
+                                                get = read_all.replace("feature = ", "").split(" \\| ");
+                                                chance = Double.parseDouble(get[0]);
+                                                offset_pos = get[1].split("/");
+                                                offset_posX = Integer.parseInt(offset_pos[0]);
+                                                offset_posY = Integer.parseInt(offset_pos[1]);
+                                                offset_posZ = Integer.parseInt(offset_pos[2]);
+                                                variable_text = get[2];
+
+                                            } catch (Exception ignored) {
+
+                                                return;
+
+                                            }
+
+                                            if (Math.random() < chance) {
+
+                                                TXTFunction.start(level_accessor, level_server, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, variable_text, only_loaded_chunk);
+
+                                            }
+
+                                        }
 
                                     }
 
@@ -248,21 +394,21 @@ public class TXTFunction {
 
                             }
 
-						}
+                        }
 
-					}
+                    }
 
-				} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                }
 
-			}
+            }
 
-			if (function_in_loaded_chunk == true) {
+        }
 
-				GameUtils.command.run(level_server, posX, posY, posZ, GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_function_in_loaded_chunk", "Tree Function in Loaded Chunk", "ForgeData:{function:\"" + path +"\"}"));
+        if (function_in_loaded_chunk == true) {
 
-			}
+            GameUtils.command.run(level_server, posX, posY, posZ, GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_function_in_loaded_chunk", "Tree Function in Loaded Chunk", "ForgeData:{function:\"" + path +"\"}"));
 
-		}
+        }
 
 	}
 

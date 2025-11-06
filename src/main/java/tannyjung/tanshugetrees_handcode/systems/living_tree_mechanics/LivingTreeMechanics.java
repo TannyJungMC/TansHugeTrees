@@ -9,16 +9,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
-import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,68 +42,68 @@ public class LivingTreeMechanics {
         // Read Settings
         {
 
-            File file = new File(Handcode.path_config + "/#dev/custom_packs_organized/presets/" + GameUtils.nbt.entity.getText(entity, "tree_settings") + "_settings.txt");
+            String[] tree_settings = Cache.tree_settings(GameUtils.nbt.entity.getText(entity, "tree_settings"));
 
-            if (file.exists() == true && file.isDirectory() == false) {
+            if (tree_settings.length == 0) {
+
+                return;
+
+            } else {
 
                 String get_short = "";
                 String get = "";
 
-                {
+                for (String read_all : tree_settings) {
 
-                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                    {
 
-                        {
+                        if (read_all.startsWith("can_leaves_decay = ") == true) {
 
-                            if (read_all.startsWith("can_leaves_decay = ") == true) {
+                            can_leaves_decay = Boolean.parseBoolean(read_all.replace("can_leaves_decay = ", ""));
 
-                                can_leaves_decay = Boolean.parseBoolean(read_all.replace("can_leaves_decay = ", ""));
+                        } else if (read_all.startsWith("can_leaves_drop = ") == true) {
 
-                            } else if (read_all.startsWith("can_leaves_drop = ") == true) {
+                            can_leaves_drop = Boolean.parseBoolean(read_all.replace("can_leaves_drop = ", ""));
 
-                                can_leaves_drop = Boolean.parseBoolean(read_all.replace("can_leaves_drop = ", ""));
+                        } else if (read_all.startsWith("can_leaves_regrow = ") == true) {
 
-                            } else if (read_all.startsWith("can_leaves_regrow = ") == true) {
+                            can_leaves_regrow = Boolean.parseBoolean(read_all.replace("can_leaves_regrow = ", ""));
 
-                                can_leaves_regrow = Boolean.parseBoolean(read_all.replace("can_leaves_regrow = ", ""));
+                        } else if (read_all.startsWith("Block ") == true) {
 
-                            } else if (read_all.startsWith("Block ") == true) {
+                            {
 
-                                {
+                                get_short = read_all.substring(("Block ### ").length(), ("Block ### ####").length());
+                                get = read_all.substring(("Block ### #### = ").length());
 
-                                    get_short = read_all.substring(("Block ### ").length(), ("Block ### ####").length());
-                                    get = read_all.substring(("Block ### #### = ").length());
+                                if (get.endsWith(" keep") == true) {
 
-                                    if (get.endsWith(" keep") == true) {
+                                    get = get.substring(0, get.length() - (" keep").length());
 
-                                        get = get.substring(0, get.length() - (" keep").length());
+                                }
 
-                                    }
+                                map_block.put(get_short, GameUtils.block.fromText(get));
 
-                                    map_block.put(get_short, GameUtils.block.fromText(get));
+                                if (get_short.startsWith("120") == true) {
 
-                                    if (get_short.startsWith("120") == true) {
+                                    // Leaves Types
+                                    {
 
-                                        // Leaves Types
-                                        {
+                                        if (get.endsWith("]") == true) {
 
-                                            if (get.endsWith("]") == true) {
+                                            get = get.substring(0, get.indexOf("["));
 
-                                                get = get.substring(0, get.indexOf("["));
+                                        }
 
-                                            }
+                                        int number = Integer.parseInt(get_short.substring(3)) - 1;
 
-                                            int number = Integer.parseInt(get_short.substring(3)) - 1;
+                                        if (ConfigMain.deciduous_leaves_list.contains(get) == true) {
 
-                                            if (ConfigMain.deciduous_leaves_list.contains(get) == true) {
+                                            leaves_type[number] = 1;
 
-                                                leaves_type[number] = 1;
+                                        } else if (ConfigMain.coniferous_leaves_list.contains(get) == true) {
 
-                                            } else if (ConfigMain.coniferous_leaves_list.contains(get) == true) {
-
-                                                leaves_type[number] = 2;
-
-                                            }
+                                            leaves_type[number] = 2;
 
                                         }
 
@@ -118,13 +115,9 @@ public class LivingTreeMechanics {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                    }
 
                 }
-
-            } else {
-
-                return;
 
             }
 

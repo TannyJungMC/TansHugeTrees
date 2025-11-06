@@ -4,22 +4,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import tannyjung.core.OutsideUtils;
-import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 public class LeafLitter {
 
     public static void start (LevelAccessor level_accessor, int posX, int posY, int posZ, BlockState block, boolean remove) {
 
-        File file = new File(Handcode.path_config + "/#dev/custom_packs_organized/leaf_litter/" + GameUtils.block.toTextID(block).replace(":", "-") + ".txt");
+        String[] leaf_litter = Cache.leaf_litter(GameUtils.block.toTextID(block).replace(":", "-"));
 
-        if (ConfigMain.leaf_litter_classic_only == false && (file.exists() == true && file.isDirectory() == false)) {
+        if (ConfigMain.leaf_litter_classic_only == false && leaf_litter.length > 0) {
 
             // Get from custom pack for custom
             {
@@ -38,108 +33,68 @@ public class LeafLitter {
                 BlockPos pos_from = null;
                 BlockPos pos_to = null;
 
-                {
+                for (String read_all : leaf_litter) {
 
-                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                    {
 
-                        {
+                        if (read_all.equals("") == false) {
 
-                            if (read_all.equals("") == false) {
+                            get = read_all.split(" \\| ");
+                            chance = Double.parseDouble(get[0]);
 
-                                get = read_all.split(" \\| ");
-                                chance = Double.parseDouble(get[0]);
+                            if (Math.random() < chance || remove == true) {
 
-                                if (Math.random() < chance || remove == true) {
+                                // Get Pos From-To
+                                {
 
-                                    // Get Pos From-To
+                                    get_from_to = get[1].split(" = ");
+
+                                    // From
                                     {
 
-                                        get_from_to = get[1].split(" = ");
+                                        if (get_from_to[0].equals("ground") == true || get_from_to[0].equals("water") == true) {
 
-                                        // From
-                                        {
+                                            pos_from = new BlockPos(posX, posY - 1, posZ);
+                                            block_from_text = get_from_to[0];
 
-                                            if (get_from_to[0].equals("ground") == true || get_from_to[0].equals("water") == true) {
+                                        } else {
 
-                                                pos_from = new BlockPos(posX, posY - 1, posZ);
-                                                block_from_text = get_from_to[0];
-
-                                            } else {
-
-                                                get_from = get_from_to[0].split("/");
-                                                pos_from = new BlockPos(posX, posY + Integer.parseInt(get_from[0]), posZ);
-                                                block_from_text = get_from[1];
-
-                                            }
-
-                                            block_from = level_accessor.getBlockState(pos_from);
+                                            get_from = get_from_to[0].split("/");
+                                            pos_from = new BlockPos(posX, posY + Integer.parseInt(get_from[0]), posZ);
+                                            block_from_text = get_from[1];
 
                                         }
 
-                                        // To
-                                        {
-
-                                            get_to = get_from_to[1].split("/");
-                                            pos_to = new BlockPos(posX, posY + Integer.parseInt(get_to[0]), posZ);
-                                            block_to = GameUtils.block.fromText(get_to[1]);
-
-                                        }
+                                        block_from = level_accessor.getBlockState(pos_from);
 
                                     }
 
-                                    if (remove == false) {
+                                    // To
+                                    {
 
-                                        // Place
+                                        get_to = get_from_to[1].split("/");
+                                        pos_to = new BlockPos(posX, posY + Integer.parseInt(get_to[0]), posZ);
+                                        block_to = GameUtils.block.fromText(get_to[1]);
+
+                                    }
+
+                                }
+
+                                if (remove == false) {
+
+                                    // Place
+                                    {
+
+                                        // Test Ground Block
                                         {
 
-                                            // Test Ground Block
-                                            {
+                                            if (block_from_text.equals("ground") == true) {
 
-                                                if (block_from_text.equals("ground") == true) {
+                                                {
 
-                                                    {
+                                                    if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(new BlockPos(posX, posY, posZ)), "tanshugetrees:passable_blocks") == true) {
 
-                                                        if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(new BlockPos(posX, posY, posZ)), "tanshugetrees:passable_blocks") == true) {
-
-                                                            if (GameUtils.block.isTaggedAs(block_from, "tanshugetrees:passable_blocks") == false) {
-
-                                                                pass = true;
-
-                                                            }
-
-                                                        }
-
-                                                    }
-
-                                                } else if (block_from_text.equals("water") == true) {
-
-                                                    {
-
-                                                        if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(new BlockPos(posX, posY, posZ)), "tanshugetrees:passable_blocks") == true) {
-
-                                                            if (level_accessor.isWaterAt(pos_from) == true) {
-
-                                                                pass = true;
-
-                                                            }
-
-                                                        }
-
-                                                    }
-
-                                                } else {
-
-                                                    if (block_from_text.startsWith("#") == true) {
-
-                                                        if (GameUtils.block.isTaggedAs(block_from, block_from_text.substring(1)) == true) {
-
-                                                            pass = true;
-
-                                                        }
-
-                                                    } else {
-
-                                                        if (GameUtils.block.fromText(block_from_text) == block_from) {
+                                                        if (GameUtils.block.isTaggedAs(block_from, "tanshugetrees:passable_blocks") == false) {
 
                                                             pass = true;
 
@@ -149,28 +104,64 @@ public class LeafLitter {
 
                                                 }
 
-                                            }
+                                            } else if (block_from_text.equals("water") == true) {
 
-                                            if (pass == true) {
+                                                {
 
-                                                level_accessor.setBlock(pos_to, block_to, 2);
-                                                break;
+                                                    if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(new BlockPos(posX, posY, posZ)), "tanshugetrees:passable_blocks") == true) {
+
+                                                        if (level_accessor.isWaterAt(pos_from) == true) {
+
+                                                            pass = true;
+
+                                                        }
+
+                                                    }
+
+                                                }
+
+                                            } else {
+
+                                                if (block_from_text.startsWith("#") == true) {
+
+                                                    if (GameUtils.block.isTaggedAs(block_from, block_from_text.substring(1)) == true) {
+
+                                                        pass = true;
+
+                                                    }
+
+                                                } else {
+
+                                                    if (GameUtils.block.fromText(block_from_text) == block_from) {
+
+                                                        pass = true;
+
+                                                    }
+
+                                                }
 
                                             }
 
                                         }
 
-                                    } else {
+                                        if (pass == true) {
 
-                                        // Remove
-                                        {
+                                            level_accessor.setBlock(pos_to, block_to, 2);
+                                            break;
 
-                                            if (level_accessor.getBlockState(pos_to).equals(block_to) == true) {
+                                        }
 
-                                                level_accessor.setBlock(pos_to, Blocks.AIR.defaultBlockState(), 2);
-                                                break;
+                                    }
 
-                                            }
+                                } else {
+
+                                    // Remove
+                                    {
+
+                                        if (level_accessor.getBlockState(pos_to).equals(block_to) == true) {
+
+                                            level_accessor.setBlock(pos_to, Blocks.AIR.defaultBlockState(), 2);
+                                            break;
 
                                         }
 
@@ -182,7 +173,7 @@ public class LeafLitter {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                    }
 
                 }
 

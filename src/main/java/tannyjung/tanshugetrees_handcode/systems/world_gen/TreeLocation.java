@@ -2,20 +2,18 @@ package tannyjung.tanshugetrees_handcode.systems.world_gen;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.*;
-import net.minecraft.world.level.levelgen.Heightmap;
 import tannyjung.core.FileManager;
-import tannyjung.core.OutsideUtils;
 import tannyjung.core.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 import java.io.*;
 import java.util.*;
@@ -45,46 +43,14 @@ public class TreeLocation {
             if (file.exists() == true && file.isDirectory() == false) {
 
                 TanshugetreesMod.LOGGER.info("Generating tree locations for a new region ({} -> {}/{})", dimension.replace("-", ":"), region_posX, region_posZ);
-                String[] config_world_gen = FileManager.readTXT(file.getPath());
-
-                // Overlay Loading Loop
-                {
-
-                    world_gen_overlay_animation = 4;
-                    world_gen_overlay_bar = 0;
-
-                    Handcode.thread_main.submit(() -> {
-
-                        while (world_gen_overlay_animation != 0) {
-
-                            if (world_gen_overlay_animation < 4) {
-
-                                world_gen_overlay_animation = world_gen_overlay_animation + 1;
-
-                            } else {
-
-                                world_gen_overlay_animation = 1;
-
-                            }
-
-                            try {
-
-                                Thread.sleep(1000);
-
-                            } catch (InterruptedException exception) {
-
-                                OutsideUtils.exception(new Exception(), exception);
-
-                            }
-
-                        }
-
-                    });
-
-                }
+                world_gen_overlay_animation = 4;
+                world_gen_overlay_bar = 0;
+                scanning_overlay_loop();
 
                 // Region Scanning
                 {
+
+                    String[] config_world_gen = FileManager.readTXT(file.getPath());
 
                     for (int scanX = 0; scanX < 32; scanX++) {
 
@@ -144,6 +110,30 @@ public class TreeLocation {
             cache_write_place.clear();
             cache_dead_tree_auto_level.clear();
             cache_biome_test.clear();
+
+        }
+
+    }
+
+    private static void scanning_overlay_loop () {
+
+        TanshugetreesMod.queueServerWork(20, () -> {
+
+            scanning_overlay_loop();
+
+        });
+
+        if (world_gen_overlay_animation != 0) {
+
+            if (world_gen_overlay_animation < 4) {
+
+                world_gen_overlay_animation = world_gen_overlay_animation + 1;
+
+            } else {
+
+                world_gen_overlay_animation = 1;
+
+            }
 
         }
 
@@ -532,39 +522,29 @@ public class TreeLocation {
 
                                 // Outside Region (Classic Testing)
                                 {
-
-                                    file = new File(Handcode.path_world_data + "/world_gen/tree_locations/" + dimension + "/" + (chunk_posX >> 5) + "," + (chunk_posZ >> 5) + "/" + node + ".txt");
-
-                                    if (file.exists() == true && file.isDirectory() == false) {
+                                    
+                                    for (String read_all : Cache.tree_location(dimension + "/" + (chunk_posX >> 5) + "," + (chunk_posZ >> 5) + "/" + node)) {
 
                                         {
 
-                                            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                                            if (read_all.startsWith(id + "|") == true) {
 
-                                                {
+                                                get = read_all.split("\\|");
+                                                pos = get[1].split("/");
+                                                posX = Integer.parseInt(pos[0]);
+                                                posZ = Integer.parseInt(pos[1]);
 
-                                                    if (read_all.startsWith(id + "|") == true) {
+                                                if ((Math.abs(center_posX - posX) <= min_distance) && (Math.abs(center_posZ - posZ) <= min_distance)) {
 
-                                                        get = read_all.split("\\|");
-                                                        pos = get[1].split("/");
-                                                        posX = Integer.parseInt(pos[0]);
-                                                        posZ = Integer.parseInt(pos[1]);
-
-                                                        if ((Math.abs(center_posX - posX) <= min_distance) && (Math.abs(center_posZ - posZ) <= min_distance)) {
-
-                                                            return_logic = false;
-                                                            break test;
-
-                                                        }
-
-                                                    }
+                                                    return_logic = false;
+                                                    break test;
 
                                                 }
 
-                                            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                                            }
 
                                         }
-
+                                        
                                     }
 
                                 }
@@ -688,38 +668,20 @@ public class TreeLocation {
     private static void readTreeFile (LevelAccessor level_accessor, int center_posX, int center_posZ, String id, String ground_block, String start_height_offset, String rotation, String mirrored, double dead_tree_chance, String dead_tree_level) {
 
         String path_storage = "";
-        String path_tree_settings = "";
 
-        // Scan "World Gen" File
+        // Scan World Gen File
         {
-
-            File file = new File(Handcode.path_config + "/#dev/custom_packs_organized/world_gen/" + id + ".txt");
-
-            if (file.exists() == true && file.isDirectory() == false) {
-
+            
+            for (String read_all : Cache.world_gen_settings(id)) {
+                
                 {
 
-                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                    if (read_all.startsWith("path_storage = ") == true) {
 
-                        {
+                        path_storage = read_all.replace("path_storage = ", "");
+                        break;
 
-                            if (read_all.startsWith("path_storage = ") == true) {
-
-                                path_storage = read_all.replace("path_storage = ", "");
-
-                            } else if (read_all.startsWith("path_tree_settings = ") == true) {
-
-                                path_tree_settings = read_all.replace("path_tree_settings = ", "");
-
-                            } else {
-
-                                break;
-
-                            }
-
-                        }
-
-                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                    }
 
                 }
 
