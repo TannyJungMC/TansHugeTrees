@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems.tree_generator;
+package tannyjung.core;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -8,26 +8,25 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import tannyjung.core.OutsideUtils;
-import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.core.GameUtils;
-;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-public class TreeFunction {
+public class TXTFunction {
+
+    public static String path_config = "";
+    public static boolean version_1192 = false;
 
 	public static void start (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String path, boolean only_loaded_chunk) {
 
-		File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/functions/" + path + ".txt");
+		File file = new File(path_config + "/#dev/custom_packs_organized/functions/" + path + ".txt");
 
 		if (file.exists() == true && file.isDirectory() == false) {
 
 			WorldGenLevel world_gen = (WorldGenLevel) level_accessor;
 			BlockPos pos = null;
-			boolean chunk_loaded = Handcode.version_1192 == true || GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~");
+			boolean chunk_loaded = version_1192 == true || GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~");
 			boolean function_in_loaded_chunk = false;
 
 			String[] get = new String[0];
@@ -48,6 +47,7 @@ public class TreeFunction {
 			boolean keep = false;
 			String feature = "";
 			String command = "";
+			String function = "";
 
 			// Read File
 			{
@@ -218,7 +218,35 @@ public class TreeFunction {
 
 								}
 
-							}
+                            } else if (read_all.startsWith("function = ") == true) {
+
+                                {
+
+                                    try {
+
+                                        get = read_all.replace("feature = ", "").split(" \\| ");
+                                        chance = Double.parseDouble(get[0]);
+                                        offset_pos = get[1].split("/");
+                                        offset_posX = Integer.parseInt(offset_pos[0]);
+                                        offset_posY = Integer.parseInt(offset_pos[1]);
+                                        offset_posZ = Integer.parseInt(offset_pos[2]);
+                                        function = get[2];
+
+                                    } catch (Exception ignored) {
+
+                                        return;
+
+                                    }
+
+                                    if (Math.random() < chance) {
+
+                                        TXTFunction.start(level_accessor, level_server, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, function, only_loaded_chunk);
+
+                                    }
+
+                                }
+
+                            }
 
 						}
 
