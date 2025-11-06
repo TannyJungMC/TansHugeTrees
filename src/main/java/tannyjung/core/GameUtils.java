@@ -220,7 +220,7 @@ public class GameUtils {
 
 		}
 
-		public static boolean configTestBlock (BlockState ground_block, String config_value) {
+		public static boolean configTestBlock (BlockState test_block, String config_value) {
 
 			boolean return_logic = false;
 
@@ -238,7 +238,7 @@ public class GameUtils {
 
 							if (split2.contains("#") == false) {
 
-								if (ForgeRegistries.BLOCKS.getKey(ground_block.getBlock()).toString().equals(split_get) == false) {
+								if (ForgeRegistries.BLOCKS.getKey(test_block.getBlock()).toString().equals(split_get) == false) {
 
 									return_logic = false;
 
@@ -246,7 +246,7 @@ public class GameUtils {
 
 							} else {
 
-								if (block.isTaggedAs(ground_block, split_get) == false) {
+								if (block.isTaggedAs(test_block, split_get) == false) {
 
 									return_logic = false;
 
