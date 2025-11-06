@@ -2,12 +2,14 @@ package tannyjung.tanshugetrees_handcode.systems.world_gen;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.*;
+import net.minecraft.world.level.levelgen.Heightmap;
 import tannyjung.core.FileManager;
 import tannyjung.core.OutsideUtils;
 import tannyjung.core.GameUtils;
@@ -33,12 +35,12 @@ public class TreeLocation {
 
         int region_posX = chunk_pos.x >> 5;
         int region_posZ = chunk_pos.z >> 5;
-        File region_folder = new File(Handcode.directory_world_data + "/world_gen/regions/" + dimension + "/" + region_posX + "," + region_posZ);
+        File region_folder = new File(Handcode.path_world_data + "/world_gen/regions/" + dimension + "/" + region_posX + "," + region_posZ);
 
         if (region_folder.exists() == false) {
 
             FileManager.createFolder(region_folder.toPath().toString());
-            File file = new File(Handcode.directory_config + "/config_world_gen.txt");
+            File file = new File(Handcode.path_config + "/config_world_gen.txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -108,7 +110,7 @@ public class TreeLocation {
                 // Write Tree Location
                 {
 
-                    String folder_directory = Handcode.directory_world_data + "/world_gen/tree_locations/" + dimension + "/" + region_posX + "," + region_posZ;
+                    String folder_path = Handcode.path_world_data + "/world_gen/tree_locations/" + dimension + "/" + region_posX + "," + region_posZ;
                     StringBuilder write = new StringBuilder();
 
                     for (Map.Entry<String, List<String>> entry : cache_write_tree_location.entrySet()) {
@@ -119,7 +121,7 @@ public class TreeLocation {
 
                         }
 
-                        FileManager.writeTXT(folder_directory + "/" + entry.getKey() + ".txt", write.toString(), true);
+                        FileManager.writeTXT(folder_path + "/" + entry.getKey() + ".txt", write.toString(), true);
 
                     }
 
@@ -130,7 +132,7 @@ public class TreeLocation {
 
                     for (Map.Entry<String, String> entry : cache_write_place.entrySet()) {
 
-                        FileManager.writeTXT(Handcode.directory_world_data + "/world_gen/place/" + dimension + "/" + entry.getKey() + ".txt", entry.getValue(), true);
+                        FileManager.writeTXT(Handcode.path_world_data + "/world_gen/place/" + dimension + "/" + entry.getKey() + ".txt", entry.getValue(), true);
 
                     }
 
@@ -164,7 +166,7 @@ public class TreeLocation {
         String group_size = "";
         double waterside_chance = 0.0;
         double dead_tree_chance = 0.0;
-        String[] dead_tree_levels = new String[0];
+        String dead_tree_level = "";
         String start_height_offset = "";
         String rotation = "";
         String mirrored = "";
@@ -247,7 +249,7 @@ public class TreeLocation {
 
                                 } else if (read_all.startsWith("dead_tree_level = ") == true) {
 
-                                    dead_tree_levels = read_all.replace("dead_tree_level = ", "").split(" / ");
+                                    dead_tree_level = read_all.replace("dead_tree_level = ", "");
 
                                 } else if (read_all.startsWith("start_height_offset = ") == true) {
 
@@ -375,9 +377,7 @@ public class TreeLocation {
 
                                         }
 
-                                        String dead_tree_level = dead_tree_levels[(int) (Math.random() * (dead_tree_levels.length - 1))];
-                                        String tree_data = id + "|" + ground_block + "|" + start_height_offset + "|" + rotation + "|" + mirrored + "|" + dead_tree_chance + "|" + dead_tree_level;
-                                        readTreeFile(level_accessor, tree_data, center_posX, center_posZ);
+                                        readTreeFile(level_accessor, center_posX, center_posZ, id, ground_block, start_height_offset, rotation, mirrored, dead_tree_chance, dead_tree_level);
 
                                         // Group Spawning
                                         {
@@ -418,9 +418,7 @@ public class TreeLocation {
 
                                                     }
 
-                                                    dead_tree_level = dead_tree_levels[(int) (Math.random() * (dead_tree_levels.length - 1))];
-                                                    tree_data = id + "|" + ground_block + "|" + start_height_offset + "|" + rotation + "|" + mirrored + "|" + dead_tree_chance + "|" + dead_tree_level;
-                                                    readTreeFile(level_accessor, tree_data, center_posX, center_posZ);
+                                                    readTreeFile(level_accessor, center_posX, center_posZ, id, ground_block, start_height_offset, rotation, mirrored, dead_tree_chance, dead_tree_level);
 
                                                 }
 
@@ -535,7 +533,7 @@ public class TreeLocation {
                                 // Outside Region (Classic Testing)
                                 {
 
-                                    file = new File(Handcode.directory_world_data + "/world_gen/tree_locations/" + dimension + "/" + (chunk_posX >> 5) + "," + (chunk_posZ >> 5) + "/" + node + ".txt");
+                                    file = new File(Handcode.path_world_data + "/world_gen/tree_locations/" + dimension + "/" + (chunk_posX >> 5) + "," + (chunk_posZ >> 5) + "/" + node + ".txt");
 
                                     if (file.exists() == true && file.isDirectory() == false) {
 
@@ -687,33 +685,7 @@ public class TreeLocation {
 
     }
 
-    private static void readTreeFile (LevelAccessor level_accessor, String tree_data, int center_posX, int center_posZ) {
-
-        String id = "";
-        String ground_block = "";
-        String start_height_offset = "";
-        String rotation = "";
-        String mirrored = "";
-        double dead_tree_chance = 0.0;
-        String dead_tree_level = "";
-
-        try {
-
-            String[] get = tree_data.split("\\|");
-
-            id = get[0];
-            ground_block = get[1];
-            start_height_offset = get[2];
-            rotation = get[3];
-            mirrored = get[4];
-            dead_tree_chance = Double.parseDouble(get[5]);
-            dead_tree_level = get[6];
-
-        } catch (Exception ignored) {
-
-            return;
-
-        }
+    private static void readTreeFile (LevelAccessor level_accessor, int center_posX, int center_posZ, String id, String ground_block, String start_height_offset, String rotation, String mirrored, double dead_tree_chance, String dead_tree_level) {
 
         String path_storage = "";
         String path_tree_settings = "";
@@ -721,7 +693,7 @@ public class TreeLocation {
         // Scan "World Gen" File
         {
 
-            File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/world_gen/" + id + ".txt");
+            File file = new File(Handcode.path_config + "/#dev/custom_packs_organized/world_gen/" + id + ".txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -760,7 +732,7 @@ public class TreeLocation {
         // Random Select File
         {
 
-            String storage = Handcode.directory_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage";
+            String storage = Handcode.path_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage";
             File[] list = new File(storage).listFiles();
 
             if (list != null) {
@@ -787,157 +759,124 @@ public class TreeLocation {
             int count_twig = get[9];
             int count_sprig = get[10];
 
-            // Dead Tree Auto Level Selection
+            // Dead Tree
             {
 
-                if (dead_tree_level.startsWith("auto") == true) {
+                if (Math.random() >= dead_tree_chance) {
 
-                    StringBuilder write = new StringBuilder();
+                    dead_tree_level = "0";
 
-                    if (cache_dead_tree_auto_level.containsKey(id) == true) {
+                } else {
 
-                        write.append(cache_dead_tree_auto_level.get(id));
+                    if (dead_tree_level.startsWith("auto") == true) {
 
-                    } else {
+                        StringBuilder write = new StringBuilder();
 
-                        String is_pine = "0";
+                        if (cache_dead_tree_auto_level.containsKey(id) == true) {
 
-                        if (dead_tree_level.endsWith("pine") == true) {
+                            write.append(cache_dead_tree_auto_level.get(id));
 
-                            is_pine = "1";
+                        } else {
+
+                            String is_pine = "0";
+
+                            if (dead_tree_level.endsWith("pine") == true) {
+
+                                is_pine = "1";
+
+                            }
+
+                            // Write Data
+                            {
+
+                                if (count_trunk > 0) {
+
+                                    write.append("180 / 190 / 280 / 290");
+
+                                }
+
+                                if (count_bough > 0) {
+
+                                    if (dead_tree_level.equals("") == false) {
+
+                                        write.append(" / 160 / 170 / 260 / 270 / ");
+
+                                    }
+
+                                    write.append("1").append("5").append(is_pine).append(" / ").append("2").append("5").append(is_pine);
+
+                                }
+
+                                if (count_branch > 0) {
+
+                                    if (dead_tree_level.equals("") == false) {
+
+                                        write.append(" / ");
+
+                                    }
+
+                                    write.append("1").append("4").append(is_pine).append(" / ").append("2").append("4").append(is_pine);
+
+                                }
+
+                                if (count_limb > 0) {
+
+                                    if (dead_tree_level.equals("") == false) {
+
+                                        write.append(" / ");
+
+                                    }
+
+                                    write.append("1").append("3").append(is_pine).append(" / ").append("2").append("3").append(is_pine);
+
+                                }
+
+                                if (count_twig > 0) {
+
+                                    if (dead_tree_level.equals("") == false) {
+
+                                        write.append(" / ");
+
+                                    }
+
+                                    write.append("1").append("2").append(is_pine).append(" / ").append("2").append("2").append(is_pine);
+
+                                }
+
+                                if (count_sprig > 0) {
+
+                                    if (dead_tree_level.equals("") == false) {
+
+                                        write.append(" / ");
+
+                                    }
+
+                                    write.append("1").append("1").append(is_pine).append(" / ").append("2").append("1").append(is_pine);
+
+                                }
+
+                            }
 
                         }
 
-                        // Write Data
-                        {
-
-                            if (count_trunk > 0) {
-
-                                write.append("180 / 190 / 280 / 290");
-
-                            }
-
-                            if (count_bough > 0) {
-
-                                if (dead_tree_level.equals("") == false) {
-
-                                    write.append(" / 160 / 170 / 260 / 270");
-
-                                }
-
-                                write.append("1").append("5").append(is_pine).append(" / ").append("2").append("5").append(is_pine);
-
-                            }
-
-                            if (count_branch > 0) {
-
-                                if (dead_tree_level.equals("") == false) {
-
-                                    write.append(" / ");
-
-                                }
-
-                                write.append("1").append("4").append(is_pine).append(" / ").append("2").append("4").append(is_pine);
-
-                            }
-
-                            if (count_limb > 0) {
-
-                                if (dead_tree_level.equals("") == false) {
-
-                                    write.append(" / ");
-
-                                }
-
-                                write.append("1").append("3").append(is_pine).append(" / ").append("2").append("3").append(is_pine);
-
-                            }
-
-                            if (count_twig > 0) {
-
-                                if (dead_tree_level.equals("") == false) {
-
-                                    write.append(" / ");
-
-                                }
-
-                                write.append("1").append("2").append(is_pine).append(" / ").append("2").append("2").append(is_pine);
-
-                            }
-
-                            if (count_sprig > 0) {
-
-                                if (dead_tree_level.equals("") == false) {
-
-                                    write.append(" / ");
-
-                                }
-
-                                write.append("1").append("1").append(is_pine).append(" / ").append("2").append("1").append(is_pine);
-
-                            }
-
-                        }
+                        dead_tree_level = write.toString();
 
                     }
 
-                    String[] split = write.toString().split(" / ");
+                    String[] split = dead_tree_level.split(" / ");
                     dead_tree_level = split[(int) (Math.random() * (split.length - 1))];
 
                 }
 
             }
 
-            String tree_type = "";
-            int start_height = 0;
+            int start_height_offset_get = 0;
 
-            // Scan Tree Settings File
-            {
-
-                File file = new File(Handcode.directory_config + "/#dev/custom_packs_organized/presets/" + path_tree_settings + "_settings.txt");
-
-                if (file.exists() == true && file.isDirectory() == false) {
-
-                    {
-
-                        try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
-
-                            {
-
-                                if (read_all.startsWith("tree_type = ") == true) {
-
-                                    {
-
-                                        tree_type = read_all.replace("tree_type = ", "");
-
-                                    }
-
-                                } else if (read_all.startsWith("start_height = ") == true) {
-
-                                    {
-
-                                        start_height = Integer.parseInt(read_all.replace("start_height = ", ""));
-
-                                    }
-
-                                }
-
-                            }
-
-                        } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
-
-                    }
-
-                }
-
-            }
-
-            // Random Start Height
+            // Height Offset
             {
 
                 String[] offset_get = start_height_offset.split(" <> ");
-                int offset = Mth.nextInt(RandomSource.create(), Integer.parseInt(offset_get[0]), Integer.parseInt(offset_get[1]));
-                start_height = start_height + offset;
+                start_height_offset_get = Mth.nextInt(RandomSource.create(), Integer.parseInt(offset_get[0]), Integer.parseInt(offset_get[1]));
 
             }
 
@@ -1103,8 +1042,6 @@ public class TreeLocation {
 
             }
 
-            String other_data = tree_type + "/" + start_height + "/" + (sizeY - center_sizeY) + "/" + ground_block + "/" + dead_tree_chance + "/" + dead_tree_level;
-
             // Write Tree Location
             {
 
@@ -1116,7 +1053,7 @@ public class TreeLocation {
             // Write Place
             {
 
-                String data = from_chunkX + "/" + from_chunkZ + "/" + to_chunkX + "/" + to_chunkZ + "|" + id + "|" + chosen.getName() + "|" + center_posX + "/" + center_posZ + "|" + rotation + "/" + mirrored + "|" + other_data + "\n";
+                String data = from_chunkX + "/" + from_chunkZ + "/" + to_chunkX + "/" + to_chunkZ + "|" + id + "|" + chosen.getName() + "|" + center_posX + "/" + center_posZ + "|" + rotation + "/" + mirrored + "|" + start_height_offset_get + "|" + (sizeY - center_sizeY) + "|" + ground_block + "|" + dead_tree_level + "\n";
                 int size = 32 >> 2;
                 int from_chunkX_test = (int) (Math.floor((double) from_chunkX / (double) size) * (double) size);
                 int from_chunkZ_test = (int) (Math.floor((double) from_chunkZ / (double) size) * (double) size);
