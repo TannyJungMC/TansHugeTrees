@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.FileManager;
-import tannyjung.core.GameUtils;
+import tannyjung.core.Utils;
 
 import java.util.*;
 
@@ -131,9 +131,9 @@ public class ConfigMain {
 					| Cancel the trees when their spawn center is above this Y level. As some world gen mods such as ReTerraForged, replacing mountain block and my trees can't detect those new block, make them spawn on blocks that not in the list. Set to 0 to disable this.
 					| Default is [ 0 ]
 					
-					unviable_ecology_skip_chance = 0.9
+					unviable_ecology_skip_chance = 0.0
 					| Skip trees that generate in unviable ecosystems. For example, land trees that generate in water.
-					| Default is [ 0.9 ]
+					| Default is [ 0.0 ]
 					
 					leaf_litter_world_gen = true
 					leaf_litter_world_gen_chance = 0.1
@@ -405,7 +405,7 @@ public class ConfigMain {
 
 		if (level_accessor instanceof ServerLevel level_server) {
 
-			GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Applied The Config");
+			Utils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Applied The Config");
 
 		}
 
@@ -425,7 +425,7 @@ public class ConfigMain {
 
 		if (level_accessor instanceof ServerLevel level_server) {
 
-			GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Repaired The Config");
+			Utils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Repaired The Config");
 
 		}
 

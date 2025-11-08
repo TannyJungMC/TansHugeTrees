@@ -1,14 +1,13 @@
 package tannyjung.tanshugetrees_handcode.systems.world_gen;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import tannyjung.core.GameUtils;
+import tannyjung.core.Utils;
 
 public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
 
@@ -50,7 +49,7 @@ public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
                             pos = new BlockPos(center_pos.getX() + scanX, center_pos.getY() + scanY, center_pos.getZ() + scanZ);
                             previous_block = level_accessor.getBlockState(pos);
 
-                            if (GameUtils.block.isTaggedAs(previous_block, "minecraft:sand") == true || GameUtils.block.isTaggedAs(previous_block, "minecraft:base_stone_overworld") == true) {
+                            if (Utils.block.isTaggedAs(previous_block, "minecraft:sand") == true || Utils.block.isTaggedAs(previous_block, "minecraft:base_stone_overworld") == true) {
 
                                 if (Math.random() < 0.5 && level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ())).isAir() == true) {
 

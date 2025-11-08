@@ -13,8 +13,7 @@ import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 ;
-import tannyjung.core.GameUtils;
-import tannyjung.core.OutsideUtils;
+import tannyjung.core.Utils;
 
 public class PackCheckUpdate {
 
@@ -22,9 +21,9 @@ public class PackCheckUpdate {
 
 		if (level_accessor instanceof ServerLevel level_server) {
 
-			if (OutsideUtils.isConnectedToInternet() == false) {
+			if (Utils.outside.isConnectedToInternet() == false) {
 
-				GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't check for update right now, as the mod can't connect to the internet.");
+				Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't check for update right now, as the mod can't connect to the internet.");
 
 			} else {
 
@@ -75,7 +74,7 @@ public class PackCheckUpdate {
 
 								}
 
-							} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+							} buffered_reader.close(); } catch (Exception exception) { Utils.outside.exception(new Exception(), exception); }
 
 						}
 
@@ -98,7 +97,7 @@ public class PackCheckUpdate {
 
 								}
 
-							} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+							} buffered_reader.close(); } catch (Exception exception) { Utils.outside.exception(new Exception(), exception); }
 
 						}
 
@@ -106,7 +105,7 @@ public class PackCheckUpdate {
 
 							if (up_to_date_message == true) {
 
-								GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + ") is already up to date");
+								Utils.misc.sendChatMessage(level_server, "@a", "gray", "THT : TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + ") is already up to date");
 
 							}
 
@@ -118,12 +117,12 @@ public class PackCheckUpdate {
 
 									if (ConfigMain.auto_update == true) {
 
-										GameUtils.misc.sendChatMessage(level_server, "@a", "gold", "THT : Detected new version for TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + "). Starting auto update...");
+										Utils.misc.sendChatMessage(level_server, "@a", "gold", "THT : Detected new version for TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + "). Starting auto update...");
 										PackUpdate.start(level_server);
 
 									} else {
 
-										GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"THT : Detected new version for TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + "). You can manual update by follow the guide in \",\"color\":\"gold\"},{\"text\":\"GitHub\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + github + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:air\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + github + "\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/TANSHUGETREES tanny_pack update\"}},{\"text\":\" to let the mod install it.\",\"color\":\"gold\"}]");
+										Utils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"THT : Detected new version for TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + "). You can manual update by follow the guide in \",\"color\":\"gold\"},{\"text\":\"GitHub\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + github + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:air\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + github + "\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/TANSHUGETREES tanny_pack update\"}},{\"text\":\" to let the mod install it.\",\"color\":\"gold\"}]");
 
 									}
 
@@ -131,7 +130,7 @@ public class PackCheckUpdate {
 
 							} else {
 
-								GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to be available.");
+								Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to be available.");
 								TanshugetreesMod.LOGGER.info("Your mod data structure version is " + Handcode.data_structure_version + " but the pack is " + url_data_structure_version);
 
 							}
@@ -140,13 +139,13 @@ public class PackCheckUpdate {
 
 					} catch (Exception ignored) {
 
-						GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't check the update right now, try again later.");
+						Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't check the update right now, try again later.");
 
 					}
 
 				} else {
 
-					GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"THT : Not detected TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + ") in the custom packs folder. You can manual install by follow the guide in \",\"color\":\"gold\"},{\"text\":\"GitHub\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + github + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:air\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + github + "\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/TANSHUGETREES tanny_pack update\"}},{\"text\":\" to let the mod install it.\",\"color\":\"gold\"}]");
+					Utils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"THT : Not detected TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + ") in the custom packs folder. You can manual install by follow the guide in \",\"color\":\"gold\"},{\"text\":\"GitHub\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + github + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:air\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + github + "\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/TANSHUGETREES tanny_pack update\"}},{\"text\":\" to let the mod install it.\",\"color\":\"gold\"}]");
 
 				}
 

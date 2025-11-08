@@ -18,7 +18,7 @@ public class TXTFunction {
 	public static void start (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String path, boolean only_loaded_chunk) {
 
         WorldGenLevel world_gen = (WorldGenLevel) level_accessor;
-        boolean chunk_loaded = version_1192 == true || GameUtils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~");
+        boolean chunk_loaded = version_1192 == true || Utils.command.result(level_server, posX, posY, posZ, "execute if loaded ~ ~ ~");
         boolean function_in_loaded_chunk = false;
 
         boolean run_test = false;
@@ -131,7 +131,7 @@ public class TXTFunction {
 
                                             }
 
-                                            if (GameUtils.outside.configTestBiome(level_accessor.getBiome(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == false) {
+                                            if (Utils.outside.configTestBiome(level_accessor.getBiome(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == false) {
 
                                                 run_test = false;
                                                 run_continue = false;
@@ -159,7 +159,7 @@ public class TXTFunction {
 
                                             }
 
-                                            if (GameUtils.outside.configTestBlock(level_accessor.getBlockState(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == false) {
+                                            if (Utils.outside.configTestBlock(level_accessor.getBlockState(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == false) {
 
                                                 run_test = false;
                                                 run_continue = false;
@@ -210,7 +210,7 @@ public class TXTFunction {
 
                                                     get = read_all.replace("block = ", "").split(" \\| ");
                                                     chance = Double.parseDouble(get[0]);
-                                                    variable_block = GameUtils.block.fromText(get[3]);
+                                                    variable_block = Utils.block.fromText(get[3]);
                                                     variable_logic = Boolean.parseBoolean(get[4]);
 
                                                 } catch (Exception ignored) {
@@ -262,7 +262,7 @@ public class TXTFunction {
 
                                                                         if (variable_logic == true) {
 
-                                                                            if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
+                                                                            if (Utils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
 
                                                                                 continue;
 
@@ -348,7 +348,7 @@ public class TXTFunction {
 
                                                 if (Math.random() < chance) {
 
-                                                    GameUtils.command.run(level_server, posX, posY, posZ, variable_text);
+                                                    Utils.command.run(level_server, posX, posY, posZ, variable_text);
 
                                                 }
 
@@ -406,7 +406,7 @@ public class TXTFunction {
 
         if (function_in_loaded_chunk == true) {
 
-            GameUtils.command.run(level_server, posX, posY, posZ, GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_function_in_loaded_chunk", "Tree Function in Loaded Chunk", "ForgeData:{function:\"" + path +"\"}"));
+            Utils.command.run(level_server, posX, posY, posZ, Utils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_function_in_loaded_chunk", "Tree Function in Loaded Chunk", "ForgeData:{function:\"" + path +"\"}"));
 
         }
 

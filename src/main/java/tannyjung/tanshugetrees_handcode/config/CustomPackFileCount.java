@@ -2,9 +2,8 @@ package tannyjung.tanshugetrees_handcode.config;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.core.GameUtils;
+import tannyjung.core.Utils;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -29,7 +28,7 @@ public class CustomPackFileCount {
 
             file_size = Double.parseDouble(String.format("%.2f", file_size / (1024.0 * 1024.0)));
 
-            GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"There are now \",\"color\":\"white\"},{\"text\":\"" + count_variation + "\",\"color\":\"yellow\"},{\"text\":\" variation of species from all installed packs, and \",\"color\":\"white\"},{\"text\":\"" + count_shape + "\",\"color\":\"yellow\"},{\"text\":\" different shapes in total! Used about \",\"color\":\"white\"},{\"text\":\"" + String.format("%.1f", file_size) + " MB\",\"color\":\"yellow\"},{\"text\":\" of the space.\",\"color\":\"white\"}]");
+            Utils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"There are now \",\"color\":\"white\"},{\"text\":\"" + count_variation + "\",\"color\":\"yellow\"},{\"text\":\" variation of species from all installed packs, and \",\"color\":\"white\"},{\"text\":\"" + count_shape + "\",\"color\":\"yellow\"},{\"text\":\" different shapes in total! Used about \",\"color\":\"white\"},{\"text\":\"" + String.format("%.1f", file_size) + " MB\",\"color\":\"yellow\"},{\"text\":\" of the space.\",\"color\":\"white\"}]");
 
         }
 
@@ -57,7 +56,7 @@ public class CustomPackFileCount {
 
                 } catch (Exception exception) {
 
-                    OutsideUtils.exception(new Exception(), exception);
+                    Utils.outside.exception(new Exception(), exception);
 
                 }
 
@@ -89,7 +88,7 @@ public class CustomPackFileCount {
 
                 } catch (Exception exception) {
 
-                    OutsideUtils.exception(new Exception(), exception);
+                    Utils.outside.exception(new Exception(), exception);
 
                 }
 
@@ -121,7 +120,7 @@ public class CustomPackFileCount {
 
                 } catch (Exception exception) {
 
-                    OutsideUtils.exception(new Exception(), exception);
+                    Utils.outside.exception(new Exception(), exception);
 
                 }
 

@@ -5,8 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.core.GameUtils;
+import tannyjung.core.Utils;
 
 public class LivingTreeMechanicsLeafDrop {
 
@@ -32,14 +31,14 @@ public class LivingTreeMechanicsLeafDrop {
         BlockPos test_pos = new BlockPos(posX, posY, posZ);
         BlockState test_block = level_accessor.getBlockState(test_pos);
 
-        if (GameUtils.block.isTaggedAs(test_block, "tanshugetrees:passable_blocks") == true && level_accessor.isWaterAt(test_pos) == false) {
+        if (Utils.block.isTaggedAs(test_block, "tanshugetrees:passable_blocks") == true && level_accessor.isWaterAt(test_pos) == false) {
 
-            GameUtils.command.runEntity(entity, "tp ~ ~-0.1 ~");
+            Utils.command.runEntity(entity, "tp ~ ~-0.1 ~");
 
         } else {
 
-            LeafLitter.start(level_server, posX, posY + 1, posZ, GameUtils.block.fromText(GameUtils.nbt.entity.getText(entity, "block")), false);
-            GameUtils.command.runEntity(entity, "kill @s");
+            LeafLitter.start(level_server, posX, posY + 1, posZ, Utils.block.fromText(Utils.nbt.entity.getText(entity, "block")), false);
+            Utils.command.runEntity(entity, "kill @s");
 
         }
 

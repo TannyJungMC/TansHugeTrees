@@ -2,7 +2,7 @@ package tannyjung.tanshugetrees_handcode.config;
 
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.core.FileManager;
-import tannyjung.core.OutsideUtils;
+import tannyjung.core.Utils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.File;
@@ -37,7 +37,7 @@ public class CustomPackOrganized {
 
                 } catch (Exception exception) {
 
-                    OutsideUtils.exception(new Exception(), exception);
+                    Utils.outside.exception(new Exception(), exception);
 
                 }
 
@@ -45,7 +45,7 @@ public class CustomPackOrganized {
 
         } catch (Exception exception) {
 
-            OutsideUtils.exception(new Exception(), exception);
+            Utils.outside.exception(new Exception(), exception);
 
         }
 
@@ -130,7 +130,7 @@ public class CustomPackOrganized {
 
                                                 } catch (Exception exception) {
 
-                                                    OutsideUtils.exception(new Exception(), exception);
+                                                    Utils.outside.exception(new Exception(), exception);
 
                                                 }
 
@@ -142,7 +142,7 @@ public class CustomPackOrganized {
 
                                 } catch (Exception exception) {
 
-                                    OutsideUtils.exception(new Exception(), exception);
+                                    Utils.outside.exception(new Exception(), exception);
 
                                 }
 
@@ -189,7 +189,7 @@ public class CustomPackOrganized {
 
                                         } catch (Exception exception) {
 
-                                            OutsideUtils.exception(new Exception(), exception);
+                                            Utils.outside.exception(new Exception(), exception);
 
                                         }
 
@@ -199,7 +199,7 @@ public class CustomPackOrganized {
 
                             } catch (Exception exception) {
 
-                                OutsideUtils.exception(new Exception(), exception);
+                                Utils.outside.exception(new Exception(), exception);
 
                             }
 

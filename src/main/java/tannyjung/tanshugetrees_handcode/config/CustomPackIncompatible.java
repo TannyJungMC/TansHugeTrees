@@ -5,10 +5,9 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.fml.ModList;
 import tannyjung.core.FileManager;
-import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.core.GameUtils;
+import tannyjung.core.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -97,7 +96,7 @@ public class CustomPackIncompatible {
 
                     } catch (Exception exception) {
 
-                        OutsideUtils.exception(new Exception(), exception);
+                        Utils.outside.exception(new Exception(), exception);
 
                     }
 
@@ -130,7 +129,7 @@ public class CustomPackIncompatible {
 
                     } catch (Exception exception) {
 
-                        OutsideUtils.exception(new Exception(), exception);
+                        Utils.outside.exception(new Exception(), exception);
 
                     }
 
@@ -188,7 +187,7 @@ public class CustomPackIncompatible {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                } buffered_reader.close(); } catch (Exception exception) { Utils.outside.exception(new Exception(), exception); }
 
             }
 
@@ -208,7 +207,7 @@ public class CustomPackIncompatible {
 
             if (level_accessor instanceof ServerLevel level_server) {
 
-                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + error);
+                Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + error);
 
             } else {
 
@@ -296,7 +295,7 @@ public class CustomPackIncompatible {
 
             if (level_accessor instanceof ServerLevel level_server) {
 
-                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + error);
+                Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + error);
 
             } else {
 
@@ -334,7 +333,7 @@ public class CustomPackIncompatible {
 
                             id = id.replace(" keep", "");
 
-                            if (GameUtils.block.fromText(id).getBlock() == Blocks.AIR) {
+                            if (Utils.block.fromText(id).getBlock() == Blocks.AIR) {
 
                                 error = "Detected incompatible tree. Caused by unknown block ID. [ " + name_pack + " > " + name_theme + " > " + name_tree + " > " + id + " ]";
                                 break;

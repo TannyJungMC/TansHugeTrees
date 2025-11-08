@@ -15,8 +15,7 @@ import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 ;
-import tannyjung.core.GameUtils;
-import tannyjung.core.OutsideUtils;
+import tannyjung.core.Utils;
 
 public class PackUpdate {
 
@@ -26,17 +25,17 @@ public class PackUpdate {
 
 		if (level_accessor instanceof ServerLevel level_server) {
 
-			if (OutsideUtils.isConnectedToInternet() == false) {
+			if (Utils.outside.isConnectedToInternet() == false) {
 
-				GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't update right now, as the mod can't connect to the internet.");
+				Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't update right now, as the mod can't connect to the internet.");
 
 			} else {
 
 				if (checkModVersion(level_server, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
 
 					install_pause_systems = true;
-					GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
-					GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
+					Utils.misc.sendChatMessage(level_server, "@a", "white", "");
+					Utils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
 
 					TanshugetreesMod.queueServerWork(40, () -> {
 
@@ -76,13 +75,13 @@ public class PackUpdate {
 
 						}
 
-						GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Install Completed!");
+						Utils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Install Completed!");
 						ConfigMain.repairAll(null);
 						ConfigMain.apply(null);
 
-						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+						Utils.misc.sendChatMessage(level_server, "@a", "white", "");
 						CustomPackFileCount.start(level_server);
-						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+						Utils.misc.sendChatMessage(level_server, "@a", "white", "");
 						message(level_server);
 
 						install_pause_systems = false;
@@ -114,11 +113,11 @@ public class PackUpdate {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+				} buffered_reader.close(); } catch (Exception exception) { Utils.outside.exception(new Exception(), exception); }
 
 			}
 
-			GameUtils.command.run(level_server, 0, 0, 0, message.toString());
+			Utils.command.run(level_server, 0, 0, 0, message.toString());
 
 		}
 
@@ -144,19 +143,19 @@ public class PackUpdate {
 
 				}
 
-			} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+			} buffered_reader.close(); } catch (Exception exception) { Utils.outside.exception(new Exception(), exception); }
 
         }
 
 		if (Handcode.data_structure_version > data_structure_version_url) {
 
 			return_logic = false;
-			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to be available.");
+			Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to be available.");
 
 		} else if (Handcode.data_structure_version < data_structure_version_url) {
 
 			return_logic = false;
-			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : You're currently using mod version that does not support to new version of the pack. Try update the mod and do it again.");
+			Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : You're currently using mod version that does not support to new version of the pack. Try update the mod and do it again.");
 
 		}
 
@@ -184,7 +183,7 @@ public class PackUpdate {
 
 			} catch (Exception ignored) {
 
-				GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+				Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 				return false;
 
 			}
@@ -207,7 +206,7 @@ public class PackUpdate {
 
 		} catch (Exception ignored) {
 
-			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+			Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 			return false;
 
 		}
@@ -243,7 +242,7 @@ public class PackUpdate {
 
 		} catch (Exception ignored) {
 
-			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+			Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 			return false;
 
 		}
@@ -273,7 +272,7 @@ public class PackUpdate {
 
 						if (!newFile.isDirectory() && !newFile.mkdirs()) {
 
-							GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+							Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 							return false;
 
 						}
@@ -286,7 +285,7 @@ public class PackUpdate {
 
 						if (!parent.isDirectory() && !parent.mkdirs()) {
 
-							GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+							Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 							return false;
 
 						}
@@ -315,7 +314,7 @@ public class PackUpdate {
 
 		} catch (Exception ignored) {
 
-			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+			Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 			return false;
 
 		}
@@ -340,7 +339,7 @@ public class PackUpdate {
 
 					} catch (Exception exception) {
 
-						OutsideUtils.exception(new Exception(), exception);
+						Utils.outside.exception(new Exception(), exception);
 
                     }
 
@@ -348,7 +347,7 @@ public class PackUpdate {
 
 			} catch (Exception ignored) {
 
-				GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+				Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 				return false;
 
 			}
@@ -366,7 +365,7 @@ public class PackUpdate {
 
 		if (rename_from.renameTo(rename_to) == false) {
 
-			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
+			Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Something error during installation. Try moving around or lower render distance, then try again.");
 			return false;
 
 		}

@@ -3,7 +3,7 @@ package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.core.GameUtils;
+import tannyjung.core.Utils;
 import tannyjung.core.TXTFunction;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 
@@ -12,11 +12,11 @@ public class BlockPlacer {
     public static void start (LevelAccessor level_accessor, BlockPos pos) {
 
         ServerLevel level_server = (ServerLevel) level_accessor;
-        String function = GameUtils.nbt.block.getText(level_accessor, pos, "function");
+        String function = Utils.nbt.block.getText(level_accessor, pos, "function");
 
-        if (GameUtils.nbt.block.getLogic(level_accessor, pos, "delay1") == false) {
+        if (Utils.nbt.block.getLogic(level_accessor, pos, "delay1") == false) {
 
-            GameUtils.nbt.block.setLogic(level_accessor, pos, "delay1", true);
+            Utils.nbt.block.setLogic(level_accessor, pos, "delay1", true);
             level_server.scheduleTick(pos, level_server.getBlockState(pos).getBlock(), 100);
 
             // Test Function
@@ -24,7 +24,7 @@ public class BlockPlacer {
 
                 if (function.equals("") == false) {
 
-                    String[] styles = GameUtils.nbt.block.getText(level_accessor, pos, "function_style").split("/");
+                    String[] styles = Utils.nbt.block.getText(level_accessor, pos, "function_style").split("/");
                     boolean pass = false;
 
                     for (String style : styles) {
@@ -75,7 +75,7 @@ public class BlockPlacer {
 
                     if (pass == false) {
 
-                        GameUtils.nbt.block.setText(level_accessor, pos, "function", "");
+                        Utils.nbt.block.setText(level_accessor, pos, "function", "");
 
                     }
 
@@ -88,14 +88,14 @@ public class BlockPlacer {
             // Normal
             {
 
-                if (GameUtils.nbt.block.getLogic(level_accessor, pos, "delay2") == false) {
+                if (Utils.nbt.block.getLogic(level_accessor, pos, "delay2") == false) {
 
-                    GameUtils.nbt.block.setLogic(level_accessor, pos, "delay2", true);
+                    Utils.nbt.block.setLogic(level_accessor, pos, "delay2", true);
                     level_server.scheduleTick(pos, level_server.getBlockState(pos).getBlock(), 100);
 
                 } else {
 
-                    level_accessor.setBlock(pos, GameUtils.block.fromText(GameUtils.nbt.block.getText(level_accessor, pos, "block")), 2);
+                    level_accessor.setBlock(pos, Utils.block.fromText(Utils.nbt.block.getText(level_accessor, pos, "block")), 2);
 
                     if (function.equals("") == false) {
 

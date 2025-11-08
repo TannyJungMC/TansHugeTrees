@@ -3,7 +3,7 @@ package tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees.TanshugetreesMod;
-import tannyjung.core.GameUtils;
+import tannyjung.core.Utils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class SeasonDetector {
@@ -36,7 +36,7 @@ public class SeasonDetector {
 
             if (season_detector_tick == 1 || season_detector_tick == 3 || season_detector_tick == 5 || season_detector_tick == 7 || season_detector_tick == 9) {
 
-                GameUtils.command.run(level_server, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
+                Utils.command.run(level_server, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
 
                 if (season_detector_tick == 9) {
 
@@ -74,8 +74,8 @@ public class SeasonDetector {
 
                 if (season.equals("") == false) {
 
-                    GameUtils.command.run(level_server, posX, posY, posZ, "setblock ~ ~ ~ command_block{Command:\"TANSHUGETREES command season set " + season + "\"}");
-                    GameUtils.command.run(level_server, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
+                    Utils.command.run(level_server, posX, posY, posZ, "setblock ~ ~ ~ command_block{Command:\"TANSHUGETREES command season set " + season + "\"}");
+                    Utils.command.run(level_server, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
 
                 }
 
