@@ -13,9 +13,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
-import tannyjung.core.GameUtils;
+import tannyjung.core.Utils;
 import tannyjung.core.TXTFunction;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.config.CustomPackIncompatible;
@@ -43,9 +42,8 @@ public class Handcode {
 
 	// ----------------------------------------------------------------------------------------------------
 
-	public static String path_game = FMLPaths.GAMEDIR.get().toString();
-	public static String path_config = path_game + "/config/tanshugetrees";
-	public static String path_world_data = path_game + "/saves/tanshugetrees-error/path_world_data";
+	public static String path_config = Utils.path_game + "/config/tanshugetrees";
+	public static String path_world_data = Utils.path_game + "/saves/tanshugetrees-error/path_world_data";
 	public static String tanny_pack_version_name = ""; // Make this because version can swap to "WIP" by config
 
     public static ExecutorService thread_main = Executors.newFixedThreadPool(1);
@@ -131,7 +129,7 @@ public class Handcode {
 
 		if (level_accessor instanceof ServerLevel level_server) {
 
-			GameUtils.command.run(level_server, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
+			Utils.command.run(level_server, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
 
 			// Season Detector
 			{
@@ -168,7 +166,7 @@ public class Handcode {
 	@SubscribeEvent
 	public static void playerJoined (PlayerEvent.PlayerLoggedInEvent event) {
 
-		if (GameUtils.misc.playerCount() == 1) {
+		if (Utils.misc.playerCount() == 1) {
 
 			TanshugetreesMod.queueServerWork(100, () -> {
 
