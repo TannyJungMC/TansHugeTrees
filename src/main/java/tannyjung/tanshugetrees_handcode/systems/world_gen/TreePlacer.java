@@ -15,8 +15,7 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import tannyjung.core.FileManager;
-import tannyjung.core.OutsideUtils;
-import tannyjung.core.GameUtils;
+import tannyjung.core.Utils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
@@ -24,6 +23,8 @@ import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LeafLitter
 import tannyjung.core.TXTFunction;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,8 +34,8 @@ public class TreePlacer {
 
         String[] from_to_chunk_get = null;
         int[] from_to_chunk = new int[4];
-        
-        for (String read_all : Cache.world_gen_place(dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + "/" + GameUtils.outside.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z))) {
+
+        for (String read_all : FileManager.readTXT(Handcode.path_world_data + "/world_gen/place/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + ".txt")) {
 
             {
 
@@ -61,19 +62,19 @@ public class TreePlacer {
 
                     if ((from_to_chunk[0] <= chunk_pos.x && chunk_pos.x <= from_to_chunk[2]) && (from_to_chunk[1] <= chunk_pos.z && chunk_pos.z <= from_to_chunk[3])) {
 
-                        detailed_detection(level_accessor, level_server, chunk_generator, dimension, chunk_pos, from_to_chunk, read_all);
+                        detailed_detection(level_accessor, level_server, chunk_generator, dimension, chunk_pos, read_all);
 
                     }
 
                 }
 
             }
-            
+
         }
 
     }
 
-    private static void detailed_detection (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos, int[] from_to_chunk, String data) {
+    private static void detailed_detection (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos, String data) {
 
         String id = "";
         String chosen = "";
@@ -91,9 +92,9 @@ public class TreePlacer {
         // Get Data
         {
 
-            String[] split = data.split("\\|");
-
             try {
+
+                String[] split = data.split("\\|");
 
                 id = split[1];
                 chosen = split[2];
@@ -122,46 +123,40 @@ public class TreePlacer {
         boolean already_tested = false;
         boolean pass = false;
         int center_posY = 0;
+        int center_chunkX = center_posX >> 4;
+        int center_chunkZ = center_posZ >> 4;
+        int center_regionX = center_chunkX >> 5;
+        int center_regionZ = center_chunkZ >> 5;
 
         // Already Tested
         {
 
-            File file = new File(Handcode.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + "/" + GameUtils.outside.quardtreeChunkToNode(chunk_pos.x, chunk_pos.z) + ".txt");
+            String[] get = new String[0];
 
-            if (file.exists() == true && file.isDirectory() == false) {
-
-                String[] get = new String[0];
+            for (String read_all : FileManager.readTXT(Handcode.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + center_regionX + "," + center_regionZ + ".txt")) {
 
                 {
 
-                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                    if (read_all.startsWith(id + "|" + center_posX + "/" + center_posZ + "|") == true) {
 
-                        {
+                        already_tested = true;
 
-                            if (read_all.startsWith(id + "|" + center_posX + "/" + center_posZ + "|") == true) {
+                        try {
 
-                                already_tested = true;
+                            get = read_all.split("\\|");
+                            pass = Boolean.parseBoolean(get[2]);
+                            center_posY = Integer.parseInt(get[3]);
+                            dead_tree_level = Integer.parseInt(get[4]);
 
-                                try {
+                        } catch (Exception ignored) {
 
-                                    get = read_all.split("\\|");
-                                    pass = Boolean.parseBoolean(get[2]);
-                                    center_posY = Integer.parseInt(get[3]);
-                                    dead_tree_level = Integer.parseInt(get[4]);
-
-                                } catch (Exception ignored) {
-
-                                    return;
-
-                                }
-
-                                break;
-
-                            }
+                            return;
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                        break;
+
+                    }
 
                 }
 
@@ -213,17 +208,17 @@ public class TreePlacer {
 
                 // Scan Tree Settings File
                 {
-                    
+
                     String[] tree_settings = Cache.tree_settings(path_tree_settings);
-                    
+
                     if (tree_settings.length == 0) {
 
                         return;
 
                     } else {
-                        
+
                         for (String read_all : tree_settings) {
-                            
+
                             {
 
                                 if (read_all.startsWith("tree_type = ") == true) {
@@ -240,13 +235,11 @@ public class TreePlacer {
                             }
 
                         }
-                        
+
                     }
 
                 }
 
-                int center_chunkX = center_posX >> 4;
-                int center_chunkZ = center_posZ >> 4;
                 boolean coarse_woody_debris = dead_tree_level > 200;
 
                 test:
@@ -305,7 +298,7 @@ public class TreePlacer {
                             // Ground Block
                             {
 
-                                if (GameUtils.outside.configTestBlock(chunk.getBlockState(new BlockPos(center_posX, center_posY - 1, center_posZ)), ground_block) == false) {
+                                if (Utils.outside.configTestBlock(chunk.getBlockState(new BlockPos(center_posX, center_posY - 1, center_posZ)), ground_block) == false) {
 
                                     break test;
 
@@ -391,7 +384,7 @@ public class TreePlacer {
 
                             if (coarse_woody_debris == true) {
 
-                                int[] pos_converted = GameUtils.outside.convertRotationMirrored(seed, 0, originalY + up_sizeY, 0, rotation, mirrored, coarse_woody_debris);
+                                int[] pos_converted = Utils.outside.convertRotationMirrored(seed, 0, originalY + up_sizeY, 0, rotation, mirrored, coarse_woody_debris);
                                 int pos1 = chunk_generator.getBaseHeight(center_posX + pos_converted[0], center_posZ + pos_converted[2], Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
                                 int pos2 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.75), center_posZ + (int) (pos_converted[2] * 0.75), Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
                                 int pos3 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.5), center_posZ + (int) (pos_converted[2] * 0.5), Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
@@ -444,10 +437,6 @@ public class TreePlacer {
                 // Write File
                 {
 
-                    int from_chunkX = from_to_chunk[0];
-                    int from_chunkZ = from_to_chunk[1];
-                    int to_chunkX = from_to_chunk[2];
-                    int to_chunkZ = from_to_chunk[3];
                     StringBuilder write = new StringBuilder();
 
                     {
@@ -464,27 +453,12 @@ public class TreePlacer {
                                 .append(center_posY)
                                 .append("|")
                                 .append(dead_tree_level)
+                                .append("\n")
                         ;
 
-                        write.append("\n");
-
                     }
 
-                    int size = 32 >> 2;
-                    int from_chunkX_test = (int) (Math.floor((double) from_chunkX / (double) size) * size);
-                    int from_chunkZ_test = (int) (Math.floor((double) from_chunkZ / (double) size) * size);
-                    int to_chunkX_test = (int) (Math.floor((double) to_chunkX / (double) size) * size);
-                    int to_chunkZ_test = (int) (Math.floor((double) to_chunkZ / (double) size) * size);
-
-                    for (int scanX = from_chunkX_test; scanX <= to_chunkX_test; scanX = scanX + size) {
-
-                        for (int scanZ = from_chunkZ_test; scanZ <= to_chunkZ_test; scanZ = scanZ + size) {
-
-                            FileManager.writeTXT(Handcode.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (scanX >> 5) + "," + (scanZ >> 5) + "/" + GameUtils.outside.quardtreeChunkToNode(scanX, scanZ) + ".txt", write.toString(), true);
-
-                        }
-
-                    }
+                    FileManager.writeTXT(Handcode.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + center_regionX + "," + center_regionZ + ".txt", write.toString(), true);
 
                 }
 
@@ -539,7 +513,7 @@ public class TreePlacer {
 
         }
 
-        short[] shape = Cache.tree_shape(path_storage + "/" + chosen);
+        short[] shape = Cache.tree_shape(path_storage + "/" + chosen, 2);
 
         if (shape != null) {
 
@@ -666,6 +640,8 @@ public class TreePlacer {
 
                 if (dead_tree_level > 0) {
 
+                    short[] block_count = Arrays.copyOfRange(Cache.tree_shape(path_storage + "/" + chosen, 1), 6, 12);
+
                     if (dead_tree_level > 200) {
 
                         dead_tree_level = dead_tree_level - 200;
@@ -676,8 +652,6 @@ public class TreePlacer {
                         dead_tree_level = dead_tree_level - 100;
 
                     }
-
-                    short[] block_count = FileManager.readBIN(Handcode.path_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage/" + chosen, 7, 12);
 
                     if (dead_tree_level >= 60) {
 
@@ -776,7 +750,7 @@ public class TreePlacer {
             // Read File
             {
 
-                boolean in_snowy_biome = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX, center_posY, center_posZ)), "forge:is_snowy");
+                boolean in_snowy_biome = Utils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX, center_posY, center_posZ)), "forge:is_snowy");
                 boolean can_run_function = false;
                 BlockState block = Blocks.AIR.defaultBlockState();
                 BlockPos pos = null;
@@ -793,16 +767,10 @@ public class TreePlacer {
 
                 for (short read_all : shape) {
 
-                    // Loop and Get Data
+                    // Get Data
                     {
 
                         loop = loop + 1;
-
-                        if (loop > 4) {
-
-                            loop = 1;
-
-                        }
 
                         if (loop == 1) {
 
@@ -816,40 +784,59 @@ public class TreePlacer {
 
                             posY = read_all;
 
-                        } else {
+                        } else if (loop == 4) {
 
                             posZ = read_all;
+                            loop = 0;
+
+                        }
+
+                        if (loop != 0) {
+
+                            continue;
 
                         }
 
                     }
 
-                    if (loop == 4) {
+                    pos_converted = Utils.outside.convertRotationMirrored(seed, posX, posY, posZ, rotation, mirrored, coarse_woody_debris);
+                    pos = new BlockPos(center_posX + pos_converted[0], center_posY + pos_converted[1], center_posZ + pos_converted[2]);
 
-                        pos_converted = GameUtils.outside.convertRotationMirrored(seed, posX, posY, posZ, rotation, mirrored, coarse_woody_debris);
-                        pos = new BlockPos(center_posX + pos_converted[0], center_posY + pos_converted[1], center_posZ + pos_converted[2]);
+                    if (type.startsWith("1") == true) {
 
-                        if (type.startsWith("1") == true) {
+                        can_run_function = false;
 
-                            can_run_function = false;
+                        // Dead Tree Reduction
+                        {
 
-                            // Dead Tree Reduction
-                            {
+                            if (dead_tree_level > 0) {
 
-                                if (dead_tree_level > 0) {
+                                // Basic Style
+                                {
 
-                                    // Basic Style
-                                    {
+                                    if (type.startsWith("120") == true) {
 
-                                        if (type.startsWith("120") == true) {
+                                        continue;
+
+                                    } else if (type.startsWith("119") == true) {
+
+                                        if (block_count_sprig > 0) {
+
+                                            block_count_sprig = block_count_sprig - 1;
+
+                                        } else {
 
                                             continue;
 
-                                        } else if (type.startsWith("119") == true) {
+                                        }
 
-                                            if (block_count_sprig > 0) {
+                                    } else if (type.startsWith("118") == true) {
 
-                                                block_count_sprig = block_count_sprig - 1;
+                                        if (block_count_sprig == 0) {
+
+                                            if (block_count_twig > 0) {
+
+                                                block_count_twig = block_count_twig - 1;
 
                                             } else {
 
@@ -857,67 +844,51 @@ public class TreePlacer {
 
                                             }
 
-                                        } else if (type.startsWith("118") == true) {
+                                        }
 
-                                            if (block_count_sprig == 0) {
+                                    } else if (type.startsWith("117") == true) {
 
-                                                if (block_count_twig > 0) {
+                                        if (block_count_twig == 0) {
 
-                                                    block_count_twig = block_count_twig - 1;
+                                            if (block_count_limb > 0) {
 
-                                                } else {
+                                                block_count_limb = block_count_limb - 1;
 
-                                                    continue;
+                                            } else {
 
-                                                }
-
-                                            }
-
-                                        } else if (type.startsWith("117") == true) {
-
-                                            if (block_count_twig == 0) {
-
-                                                if (block_count_limb > 0) {
-
-                                                    block_count_limb = block_count_limb - 1;
-
-                                                } else {
-
-                                                    continue;
-
-                                                }
+                                                continue;
 
                                             }
 
-                                        } else if (type.startsWith("116") == true) {
+                                        }
 
-                                            if (block_count_limb == 0) {
+                                    } else if (type.startsWith("116") == true) {
 
-                                                if (block_count_branch > 0) {
+                                        if (block_count_limb == 0) {
 
-                                                    block_count_branch = block_count_branch - 1;
+                                            if (block_count_branch > 0) {
 
-                                                } else {
+                                                block_count_branch = block_count_branch - 1;
 
-                                                    continue;
+                                            } else {
 
-                                                }
+                                                continue;
 
                                             }
 
-                                        } else if (type.startsWith("115") == true) {
+                                        }
 
-                                            if (block_count_branch == 0) {
+                                    } else if (type.startsWith("115") == true) {
 
-                                                if (block_count_bough > 0) {
+                                        if (block_count_branch == 0) {
 
-                                                    block_count_bough = block_count_bough - 1;
+                                            if (block_count_bough > 0) {
 
-                                                } else {
+                                                block_count_bough = block_count_bough - 1;
 
-                                                    continue;
+                                            } else {
 
-                                                }
+                                                continue;
 
                                             }
 
@@ -925,32 +896,32 @@ public class TreePlacer {
 
                                     }
 
-                                    if (dead_tree_level >= 60) {
+                                }
 
-                                        // Only Trunk
-                                        {
+                                if (dead_tree_level >= 60) {
 
-                                            if (type.startsWith("114") == true) {
+                                    // Only Trunk
+                                    {
 
-                                                if (block_count_trunk > 0) {
+                                        if (type.startsWith("114") == true) {
 
-                                                    block_count_trunk = block_count_trunk - 1;
+                                            if (block_count_trunk > 0) {
 
-                                                    if (hollowed == true) {
+                                                block_count_trunk = block_count_trunk - 1;
 
-                                                        if (type.equals("1143") == true) {
+                                                if (hollowed == true) {
 
-                                                            continue;
+                                                    if (type.equals("1143") == true) {
 
-                                                        }
+                                                        continue;
 
                                                     }
 
-                                                } else {
-
-                                                    continue;
-
                                                 }
+
+                                            } else {
+
+                                                continue;
 
                                             }
 
@@ -962,17 +933,44 @@ public class TreePlacer {
 
                             }
 
-                            if (chunk_pos.x == pos.getX() >> 4 && chunk_pos.z == pos.getZ() >> 4) {
+                        }
 
-                                // Test and Place Block
+                        if (chunk_pos.x == pos.getX() >> 4 && chunk_pos.z == pos.getZ() >> 4) {
+
+                            // Test and Place Block
+                            {
+
+                                // Get Block
                                 {
 
-                                    // Get Block
-                                    {
+                                    get = map_block.getOrDefault(type, "");
 
-                                        get = map_block.getOrDefault(type, "");
+                                    if (get.equals("") == true) {
 
-                                        if (get.equals("") == true) {
+                                        continue;
+
+                                    }
+
+                                }
+
+                                // No Roots
+                                {
+
+                                    if (coarse_woody_debris == false) {
+
+                                        if (ConfigMain.world_gen_roots == false && can_disable_roots == true) {
+
+                                            if (type.startsWith("111") == true || type.startsWith("112") == true || type.startsWith("113") == true) {
+
+                                                continue;
+
+                                            }
+
+                                        }
+
+                                    } else {
+
+                                        if (type.startsWith("112") == true || type.startsWith("113") == true) {
 
                                             continue;
 
@@ -980,107 +978,61 @@ public class TreePlacer {
 
                                     }
 
-                                    // No Roots
-                                    {
+                                }
 
-                                        if (coarse_woody_debris == false) {
+                                // Keep
+                                {
 
-                                            if (ConfigMain.world_gen_roots == false && can_disable_roots == true) {
+                                    if (get.endsWith(" keep") == true) {
 
-                                                if (type.startsWith("111") == true || type.startsWith("112") == true || type.startsWith("113") == true) {
+                                        get = get.replace(" keep", "");
 
-                                                    continue;
+                                        if (Utils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
 
-                                                }
-
-                                            }
-
-                                        } else {
-
-                                            if (type.startsWith("112") == true || type.startsWith("113") == true) {
-
-                                                continue;
-
-                                            }
+                                            continue;
 
                                         }
 
                                     }
 
-                                    // Keep
-                                    {
+                                }
 
-                                        if (get.endsWith(" keep") == true) {
+                                block = Utils.block.fromText(get);
 
-                                            get = get.replace(" keep", "");
+                                // Leaves
+                                {
 
-                                            if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
+                                    if (type.startsWith("120") == true && Utils.block.isTaggedAs(block, "minecraft:leaves") == true) {
 
-                                                continue;
+                                        // Pre Leaves Drop
+                                        {
 
-                                            }
+                                            if (ConfigMain.leaf_litter == true && ConfigMain.leaf_litter_world_gen == true) {
 
-                                        }
+                                                if (can_leaves_drop == true) {
 
-                                    }
+                                                    // Get "Chance" Value
+                                                    {
 
-                                    block = GameUtils.block.fromText(get);
+                                                        if ((type.endsWith("1") == true && leaves_type[0] == 2) || (type.endsWith("2") == true && leaves_type[1] == 2)) {
 
-                                    // Leaves
-                                    {
+                                                            leaf_litter_world_gen_chance = ConfigMain.leaf_litter_world_gen_chance_coniferous;
 
-                                        if (type.startsWith("120") == true && GameUtils.block.isTaggedAs(block, "minecraft:leaves") == true) {
+                                                        } else {
 
-                                            // Pre Leaves Drop
-                                            {
-
-                                                if (ConfigMain.leaf_litter == true && ConfigMain.leaf_litter_world_gen == true) {
-
-                                                    if (can_leaves_drop == true) {
-
-                                                        // Get "Chance" Value
-                                                        {
-
-                                                            if ((type.endsWith("1") == true && leaves_type[0] == 2) || (type.endsWith("2") == true && leaves_type[1] == 2)) {
-
-                                                                leaf_litter_world_gen_chance = ConfigMain.leaf_litter_world_gen_chance_coniferous;
-
-                                                            } else {
-
-                                                                leaf_litter_world_gen_chance = ConfigMain.leaf_litter_world_gen_chance;
-
-                                                            }
-
-                                                        }
-
-                                                        if (Math.random() < leaf_litter_world_gen_chance) {
-
-                                                            height_motion = level_accessor.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
-
-                                                            if (height_motion != level_accessor.getMinBuildHeight() && height_motion < pos.getY()) {
-
-                                                                LeafLitter.start(level_accessor, pos.getX(), height_motion, pos.getZ(), block, false);
-
-                                                            }
+                                                            leaf_litter_world_gen_chance = ConfigMain.leaf_litter_world_gen_chance;
 
                                                         }
 
                                                     }
 
-                                                }
+                                                    if (Math.random() < leaf_litter_world_gen_chance) {
 
-                                            }
+                                                        height_motion = level_accessor.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
 
-                                            // Abscission (World Gen)
-                                            {
+                                                        if (height_motion != level_accessor.getMinBuildHeight() && height_motion < pos.getY()) {
 
-                                                if (ConfigMain.abscission_world_gen == true) {
-
-                                                    if (in_snowy_biome == true) {
-
-                                                        if ((type.endsWith("1") == true && leaves_type[0] == 1) || (type.endsWith("2") == true && leaves_type[1] == 1)) {
-
-                                                            continue;
+                                                            LeafLitter.start(level_accessor, pos.getX(), height_motion, pos.getZ(), block, false);
 
                                                         }
 
@@ -1092,35 +1044,20 @@ public class TreePlacer {
 
                                         }
 
-                                    }
+                                        // Abscission (World Gen)
+                                        {
 
-                                    // Automatic Waterlogged
-                                    {
+                                            if (ConfigMain.abscission_world_gen == true) {
 
-                                        if (level_accessor.isWaterAt(pos) == true) {
+                                                if (in_snowy_biome == true) {
 
-                                            block = GameUtils.block.propertyBooleanSet(block, "waterlogged", true);
+                                                    if ((type.endsWith("1") == true && leaves_type[0] == 1) || (type.endsWith("2") == true && leaves_type[1] == 1)) {
 
-                                        }
+                                                        continue;
 
-                                    }
+                                                    }
 
-                                    level_accessor.setBlock(pos, block, 0);
-
-                                }
-
-                                // Summon Marker
-                                {
-
-                                    // At Center
-                                    if (posY == 0 && pos_converted[0] == 0 && pos_converted[1] == 0) {
-
-                                        if (ConfigMain.tree_location == true && dead_tree_level == 0) {
-
-                                            if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
-
-                                                String marker_data = "ForgeData:{file:\"" + path_storage + "|" + chosen + "\",tree_settings:\"" + path_tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
-                                                GameUtils.command.run(level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
+                                                }
 
                                             }
 
@@ -1130,32 +1067,66 @@ public class TreePlacer {
 
                                 }
 
-                                // Dead Tree Decay
+                                // Automatic Waterlogged
                                 {
 
-                                    if (dead_tree_level > 0) {
+                                    if (level_accessor.isWaterAt(pos) == true) {
 
-                                        TXTFunction.start(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), "#TannyJung-Main-Pack/dead_tree_decay", false);
+                                        block = Utils.block.propertyBooleanSet(block, "waterlogged", true);
 
                                     }
 
                                 }
 
-                                can_run_function = true;
+                                level_accessor.setBlock(pos, block, 0);
 
                             }
 
-                        } else if (type.startsWith("2") == true) {
-
-                            // Function
+                            // Summon Marker
                             {
 
-                                // Separate like this because start and end function doesn't need to test "can_run_function"
-                                if (can_run_function == true || type.equals("210") == true || type.equals("220") == true) {
+                                // At Center
+                                if (posX == 0 && posY == 0 && posZ == 0) {
 
-                                    TXTFunction.start(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), get, false);
+                                    if (ConfigMain.tree_location == true && dead_tree_level == 0) {
+
+                                        if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
+
+                                            String marker_data = "ForgeData:{file:\"" + path_storage + "|" + chosen + "\",tree_settings:\"" + path_tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
+                                            Utils.command.run(level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, Utils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
+
+                                        }
+
+                                    }
 
                                 }
+
+                            }
+
+                            // Dead Tree Decay
+                            {
+
+                                if (dead_tree_level > 0) {
+
+                                    TXTFunction.start(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), "#TannyJung-Main-Pack/dead_tree_decay", false);
+
+                                }
+
+                            }
+
+                            can_run_function = true;
+
+                        }
+
+                    } else if (type.startsWith("2") == true) {
+
+                        // Function
+                        {
+
+                            // Separate like this because start and end function doesn't need to test "can_run_function"
+                            if (can_run_function == true || type.equals("210") == true || type.equals("220") == true) {
+
+                                TXTFunction.start(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), get, false);
 
                             }
 
