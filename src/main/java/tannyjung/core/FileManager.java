@@ -1,9 +1,10 @@
 package tannyjung.core;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FileManager {
@@ -24,7 +25,7 @@ public class FileManager {
 
 				} catch (Exception exception) {
 
-					OutsideUtils.exception(new Exception(), exception);
+					Utils.outside.exception(new Exception(), exception);
 
 				}
 
@@ -51,7 +52,7 @@ public class FileManager {
 
 				} catch (Exception exception) {
 
-					OutsideUtils.exception(new Exception(), exception);
+					Utils.outside.exception(new Exception(), exception);
 
 				}
 
@@ -71,7 +72,7 @@ public class FileManager {
 
 		} catch (Exception exception) {
 
-			OutsideUtils.exception(new Exception(), exception);
+			Utils.outside.exception(new Exception(), exception);
 
 		}
 
@@ -117,7 +118,7 @@ public class FileManager {
 
 										}
 
-									} buffered_reader2.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+									} buffered_reader2.close(); } catch (Exception exception) { Utils.outside.exception(new Exception(), exception); }
 
 								}
 
@@ -130,7 +131,7 @@ public class FileManager {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+				} buffered_reader.close(); } catch (Exception exception) { Utils.outside.exception(new Exception(), exception); }
 
 			}
 
@@ -153,7 +154,7 @@ public class FileManager {
 
 			} catch (Exception exception) {
 
-				OutsideUtils.exception(new Exception(), exception);
+				Utils.outside.exception(new Exception(), exception);
 
 			}
 
@@ -163,7 +164,7 @@ public class FileManager {
 
 	}
 
-    public static void writeBIN (String path, short[] write, boolean append) {
+    public static void writeBIN (String path, List<String> write, boolean append) {
 
         File file = new File(path);
 
@@ -180,7 +181,7 @@ public class FileManager {
 
                 } catch (Exception exception) {
 
-                    OutsideUtils.exception(new Exception(), exception);
+                    Utils.outside.exception(new Exception(), exception);
 
                 }
 
@@ -192,9 +193,35 @@ public class FileManager {
 
             DataOutputStream file_bin = new DataOutputStream(new FileOutputStream(path, append));
 
-            for (short read_all : write) {
+            {
 
-                file_bin.writeShort(read_all);
+                String type = "";
+                int value = 0;
+
+                for (String read_all : write) {
+
+                    type = read_all.substring(0, 1);
+                    value = Integer.parseInt(read_all.substring(1));
+
+                    if (type.equals("b") == true) {
+
+                        file_bin.writeByte(value);
+
+                    } else if (type.equals("s") == true) {
+
+                        file_bin.writeShort(value);
+
+                    } else if (type.equals("i") == true) {
+
+                        file_bin.writeInt(value);
+
+                    } else if (type.equals("t") == true) {
+
+                        file_bin.writeShort(0);
+
+                    }
+
+                }
 
             }
 
@@ -202,54 +229,27 @@ public class FileManager {
 
         } catch (Exception exception) {
 
-            OutsideUtils.exception(new Exception(), exception);
+            Utils.outside.exception(new Exception(), exception);
 
         }
 
     }
 
-    public static short[] readBIN (String path, int start, int end) {
+    public static ByteBuffer readBIN (String path) {
 
-        List<Short> get_list = new ArrayList<>();
+        byte[] data = new byte[0];
 
-        {
+        try {
 
-            try {
+            data = Files.readAllBytes(Path.of(path));
 
-                DataInputStream file_bin = new DataInputStream(new BufferedInputStream(new FileInputStream(path), 65536));
-                int loop = 0;
-                short read_all = 0;
+        } catch (Exception exception) {
 
-                while (file_bin.available() > 0) {
-
-                    loop = loop + 1;
-                    read_all = file_bin.readShort();
-
-                    if (loop >= start) {
-
-                        get_list.add(read_all);
-
-                        if (end != 0 && loop >= end) {
-
-                            break;
-
-                        }
-
-                    }
-
-                }
-
-                file_bin.close();
-
-            } catch (Exception exception) {
-
-                OutsideUtils.exception(new Exception(), exception);
-
-            }
+            Utils.outside.exception(new Exception(), exception);
 
         }
 
-        return OutsideUtils.shortListToArray(get_list);
+        return ByteBuffer.wrap(data).order(ByteOrder.BIG_ENDIAN);
 
     }
 
