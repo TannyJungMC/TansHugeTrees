@@ -1,5 +1,7 @@
 package tannyjung.core;
 
+import tannyjung.tanshugetrees_handcode.systems.Cache;
+
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -196,28 +198,32 @@ public class FileManager {
             {
 
                 String type = "";
-                int value = 0;
+                String value = "";
 
                 for (String read_all : write) {
 
                     type = read_all.substring(0, 1);
-                    value = Integer.parseInt(read_all.substring(1));
+                    value = read_all.substring(1);
 
                     if (type.equals("b") == true) {
 
-                        file_bin.writeByte(value);
+                        file_bin.writeByte(Byte.parseByte(value));
 
                     } else if (type.equals("s") == true) {
 
-                        file_bin.writeShort(value);
+                        file_bin.writeShort(Short.parseShort(value));
 
                     } else if (type.equals("i") == true) {
 
-                        file_bin.writeInt(value);
+                        file_bin.writeInt(Integer.parseInt(value));
+
+                    } else if (type.equals("l") == true) {
+
+                        file_bin.writeBoolean(Boolean.parseBoolean(value));
 
                     } else if (type.equals("t") == true) {
 
-                        file_bin.writeShort(0);
+                        file_bin.writeShort(Short.parseShort(Cache.dictionary(value, false)));
 
                     }
 
@@ -238,14 +244,19 @@ public class FileManager {
     public static ByteBuffer readBIN (String path) {
 
         byte[] data = new byte[0];
+        File file = new File(path);
 
-        try {
+        if (file.exists() == true && file.isDirectory() == false) {
 
-            data = Files.readAllBytes(Path.of(path));
+            try {
 
-        } catch (Exception exception) {
+                data = Files.readAllBytes(Path.of(path));
 
-            Utils.outside.exception(new Exception(), exception);
+            } catch (Exception exception) {
+
+                Utils.outside.exception(new Exception(), exception);
+
+            }
 
         }
 
