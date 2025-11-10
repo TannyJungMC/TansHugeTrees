@@ -75,7 +75,6 @@ public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
 
         }
 
-
         return true;
 
     }

@@ -101,7 +101,7 @@ public class BlockPlacer {
 
                         TanshugetreesMod.queueServerWork(20, () -> {
 
-                            TXTFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), function, false);
+                            TXTFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), function);
 
                         });
 

@@ -32,25 +32,25 @@ public class Loop {
 
         TanshugetreesMod.queueServerWork(1, () -> {
 
-            run(level_accessor, level_server);
+            if (Handcode.thread_pause == false) {
+
+                run(level_accessor, level_server);
+
+            }
 
         });
 
-        if (PackUpdate.install_pause_systems == false) {
+        tick(level_accessor, level_server);
 
-            tick(level_accessor, level_server);
+        // Second Loop
+        {
 
-            // Second Loop
-            {
+            second = second + 1;
 
-                second = second + 1;
+            if (second > 20) {
 
-                if (second > 20) {
-
-                    second = 0;
-                    second(level_server);
-
-                }
+                second = 0;
+                second(level_server);
 
             }
 
@@ -138,32 +138,47 @@ public class Loop {
 
     private static void second (ServerLevel level_server) {
 
-        // Developer Mode
-        {
-
-            if (ConfigMain.developer_mode == true) {
-
-                Utils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
-
-            }
-
-        }
+        boolean loop_delayed_command = Utils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANNYJUNG-delayed_command]");
 
         loop_tree_generator = Utils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_generator]");
         loop_tree_location = Utils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_location]");
         loop_living_tree_mechanics_leaf_drop = Utils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_drop]");
         loop_living_tree_mechanics_leaf_litter_remover = Utils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_litter_remover]");
 
-        if (loop_tree_location == true) {
+        // Developer Mode
+        {
 
-            // Tree Location
-            {
+            if (ConfigMain.developer_mode == true) {
 
-                Utils.score.set(level_server, "TANSHUGETREES", "tree_location", 0);
-                Utils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] run scoreboard players add tree_location TANSHUGETREES 1");
+                Utils.command.run(level_server, 0, 0, 0, "execute at @e[type=marker] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
+
+                // Delayed Command
+                {
+
+                    Utils.score.set(level_server, "TANSHUGETREES", "delayed_command", 0);
+
+                    if (loop_delayed_command == true) {
+
+                        Utils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANNYJUNG-delayed_command] run scoreboard players add delayed_command TANSHUGETREES 1");
+
+                    }
+
+                }
 
             }
 
+        }
+
+        // Tree Location
+        {
+
+            Utils.score.set(level_server, "TANSHUGETREES", "tree_location", 0);
+
+            if (loop_tree_location == true) {
+
+                Utils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] run scoreboard players add tree_location TANSHUGETREES 1");
+
+            }
         }
 
         // Living Tree Mechanics
@@ -212,20 +227,12 @@ public class Loop {
 
         }
 
-        // Tree Function
+        // Delayed Command
         {
 
-            if (Utils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk]") == true) {
+            if (loop_delayed_command == true) {
 
-                if (Handcode.version_1192 == false) {
-
-                    Utils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk] at @s if loaded ~ ~ ~ run TANSHUGETREES dev tree_function_in_loaded_chunk");
-
-                } else {
-
-                    Utils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_function_in_loaded_chunk] at @s run TANSHUGETREES dev tree_function_in_loaded_chunk");
-
-                }
+                Utils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANNYJUNG-delayed_command] at @s run TANSHUGETREES dev tree_function_in_loaded_chunk");
 
             }
 

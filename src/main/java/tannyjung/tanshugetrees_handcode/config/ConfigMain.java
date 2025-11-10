@@ -417,7 +417,6 @@ public class ConfigMain {
 		FileManager.createFolder(Handcode.path_config + "/#dev/custom_packs_organized");
 		FileManager.createFolder(Handcode.path_config + "/#dev/shape_file_converter");
 		FileManager.createFolder(Handcode.path_config + "/custom_packs");
-
 		CustomPackOrganized.start(level_accessor);
 		ConfigMain.repair();
 		ConfigWorldGen.start();
@@ -425,7 +424,7 @@ public class ConfigMain {
 
 		if (level_accessor instanceof ServerLevel level_server) {
 
-			Utils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Repaired The Config");
+			Utils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Restarted All Systems and cleared caches");
 
 		}
 

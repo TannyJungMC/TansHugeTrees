@@ -193,12 +193,13 @@ public class LivingTreeMechanics {
                     } else {
 
                         posZ = read_all;
+                        loop = 0;
 
                     }
 
                 }
 
-                if (loop == 4) {
+                if (loop == 0) {
 
                     process = process + 1;
 

@@ -115,7 +115,7 @@ public class TreeGenerator {
 
         if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-            TXTFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), Utils.nbt.entity.getText(entity, "function_start"), false);
+            TXTFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), Utils.nbt.entity.getText(entity, "function_start"));
 
         } else {
 
@@ -1500,7 +1500,7 @@ public class TreeGenerator {
 
                 if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                    return Utils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks");
+                    return level_accessor.getBlockState(pos).isAir();
 
                 } else {
 
@@ -1643,7 +1643,7 @@ public class TreeGenerator {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                TXTFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), Utils.nbt.entity.getText(entity, "function_end"), false);
+                TXTFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), Utils.nbt.entity.getText(entity, "function_end"));
 
             } else {
 
