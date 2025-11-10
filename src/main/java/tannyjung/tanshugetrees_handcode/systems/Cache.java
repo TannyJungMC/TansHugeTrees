@@ -11,24 +11,85 @@ import java.util.Map;
 
 public class Cache {
 
+    private static final Map<String, String> dictionary = new HashMap<>();
     private static final Map<String, short[]> tree_shape_part1 = new HashMap<>();
     private static final Map<String, short[]> tree_shape_part2 = new HashMap<>();
     private static final Map<String, String[]> world_gen_settings = new HashMap<>();
     private static final Map<String, String[]> tree_settings = new HashMap<>();
     private static final Map<String, String[]> functions = new HashMap<>();
     private static final Map<String, String[]> leaf_litter = new HashMap<>();
-    private static final Map<String, String[]> tree_location = new HashMap<>();
 
     public static void clear () {
 
-        TanshugetreesMod.LOGGER.info("Cleared All Main Caches");
+        dictionary.clear();
         tree_shape_part1.clear();
         tree_shape_part2.clear();
         world_gen_settings.clear();
         tree_settings.clear();
         functions.clear();
         leaf_litter.clear();
-        tree_location.clear();
+        TanshugetreesMod.LOGGER.info("Cleared All Main Caches");
+
+    }
+
+    public static String dictionary (String key, boolean id) {
+
+        if (dictionary.containsKey(key) == false) {
+
+            {
+
+                String path = Handcode.path_world_data + "/dictionary.txt";
+                String[] data = FileManager.readTXT(path);
+                String value_id = "";
+                String value_text = "";
+
+                for (String read_all : data) {
+
+                    if (id == true) {
+
+                        if (read_all.startsWith(key + "|") == true) {
+
+                            value_id = key;
+                            value_text = read_all.substring(read_all.indexOf("|") + 1);
+                            break;
+
+                        }
+
+                    } else {
+
+                        if (read_all.endsWith("|" + key) == true) {
+
+                            value_id = read_all.substring(0, read_all.indexOf("|"));
+                            value_text = key;
+                            break;
+
+                        }
+
+                    }
+
+                }
+
+                if (value_id.equals("") == true && value_text.equals("") == true) {
+
+                    if (id == false) {
+
+                        value_text = key;
+
+                    }
+
+                    value_id = String.valueOf(data.length + 1);
+                    FileManager.writeTXT(path, value_id + "|" + value_text + "\n", true);
+
+                }
+
+                dictionary.put(value_id, value_text);
+                dictionary.put(value_text, value_id);
+
+            }
+
+        }
+
+        return dictionary.getOrDefault(key, "");
 
     }
 
@@ -105,32 +166,6 @@ public class Cache {
         }
 
         return leaf_litter.getOrDefault(id, new String[0]);
-
-    }
-
-    public static String[] tree_location (String id) {
-
-        if (tree_location.containsKey(id) == false) {
-
-            tree_location.put(id, FileManager.readTXT(Handcode.path_world_data + "/world_gen/tree_locations/" + id + ".txt"));
-
-        }
-
-        return tree_location.getOrDefault(id, new String[0]);
-
-    }
-
-    public static short idTextNumber (String text) {
-
-        short return_number = 0;
-
-        {
-
-
-
-        }
-
-        return return_number;
 
     }
 
