@@ -19,8 +19,6 @@ import tannyjung.core.Utils;
 
 public class PackUpdate {
 
-	public static boolean install_pause_systems = false;
-
     public static void start (LevelAccessor level_accessor) {
 
 		if (level_accessor instanceof ServerLevel level_server) {
@@ -33,11 +31,11 @@ public class PackUpdate {
 
 				if (checkModVersion(level_server, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
 
-					install_pause_systems = true;
+					Handcode.thread_pause = true;
 					Utils.misc.sendChatMessage(level_server, "@a", "white", "");
 					Utils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
 
-					TanshugetreesMod.queueServerWork(40, () -> {
+					TanshugetreesMod.queueServerWork(20, () -> {
 
 						// Delete Old Folders
 						{
@@ -76,15 +74,12 @@ public class PackUpdate {
 						}
 
 						Utils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Install Completed!");
-						ConfigMain.repairAll(null);
-						ConfigMain.apply(null);
-
 						Utils.misc.sendChatMessage(level_server, "@a", "white", "");
 						CustomPackFileCount.start(level_server);
 						Utils.misc.sendChatMessage(level_server, "@a", "white", "");
 						message(level_server);
 
-						install_pause_systems = false;
+                        Handcode.restart(level_accessor, true);
 
 					});
 
