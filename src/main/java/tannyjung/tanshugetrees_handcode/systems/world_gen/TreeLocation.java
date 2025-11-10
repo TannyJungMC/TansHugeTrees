@@ -423,82 +423,126 @@ public class TreeLocation {
 
     private static boolean testDistance (String dimension, String id, int center_posX, int center_posZ, int min_distance) {
 
-        int center_chunkX = center_posX >> 4;
-        int center_chunkZ = center_posZ >> 4;
-        int center_regionX = center_chunkX >> 5;
-        int center_regionZ = center_chunkZ >> 5;
-        int testX = 0;
-        int testZ = 0;
+        int center_regionX = center_posX >> 9;
+        int center_regionZ = center_posZ >> 9;
         int scanX = 0;
         int scanZ = 0;
-        int step = 0;
+        List<String> already_tested_region = new ArrayList<>();
 
-        String[] get = null;
-        String[] pos = null;
-        int posX = 0;
-        int posZ = 0;
+        String test_id = "";
+        int test_posX = 0;
+        int test_posZ = 0;
 
-        // Go next radius of scan size
-        for (int distance = 0; distance <= (int) Math.ceil((min_distance / 16.0) / 32.0) * 32.0; distance = distance + 32) {
+        for (int step = 1; step <= 9; step++) {
 
-            step = 1;
-            scanX = 0;
-            scanZ = 0;
+            // Get Region Pos
+            {
 
-            // Go around like spiral
-            while (true) {
+                if (step == 1) {
 
-                testX = ((center_chunkX - distance) + scanX) >> 5;
-                testZ = ((center_chunkZ - distance) + scanZ) >> 5;
+                    scanX = center_posX;
+                    scanZ = center_posZ;
 
-                // Read Data
-                {
+                } else if (step == 2) {
 
-                    if (center_regionX == testX && center_regionZ == testZ) {
+                    scanX = center_posX + min_distance;
 
-                        // Current Region
-                        {
+                } else if (step == 3) {
 
-                            for (String read_all : cache_write_tree_location.getOrDefault(testX + "," + testZ, new ArrayList<>())) {
+                    scanX = center_posX - min_distance;
 
-                                if (read_all.startsWith(id + "|") == true) {
+                } else if (step == 4) {
 
-                                    get = read_all.split("\\|");
-                                    pos = get[1].split("/");
-                                    posX = Integer.parseInt(pos[0]);
-                                    posZ = Integer.parseInt(pos[1]);
+                    scanZ = center_posZ + min_distance;
 
-                                }
+                } else if (step == 5) {
 
-                                if ((Math.abs(center_posX - posX) <= min_distance) && (Math.abs(center_posZ - posZ) <= min_distance)) {
+                    scanZ = center_posZ - min_distance;
 
-                                    return false;
+                } else if (step == 6) {
+
+                    scanX = center_posX + min_distance;
+                    scanZ = center_posZ + min_distance;
+
+                } else if (step == 7) {
+
+                    scanX = center_posX + min_distance;
+                    scanZ = center_posZ - min_distance;
+
+                } else if (step == 8) {
+
+                    scanX = center_posX - min_distance;
+                    scanZ = center_posZ + min_distance;
+
+                } else {
+
+                    scanX = center_posX - min_distance;
+                    scanZ = center_posZ - min_distance;
+
+                }
+
+                scanX = scanX >> 9;
+                scanZ = scanZ >> 9;
+
+            }
+
+            if (already_tested_region.contains(scanX + "," + scanZ) == false) {
+
+                already_tested_region.add(scanX + "," + scanZ);
+
+                if (center_regionX == scanX && center_regionZ == scanZ) {
+
+                    // Current Region
+                    {
+
+                        int loop = 0;
+                        String value = "";
+
+                        for (String read_all : cache_write_tree_location.getOrDefault(scanX + "," + scanZ, new ArrayList<>())) {
+
+                            loop = loop + 1;
+
+                            // Get Value
+                            {
+
+                                value = read_all.substring(1);
+
+                                if (loop == 1) {
+
+                                    test_id = value;
+
+                                } else if (loop == 2) {
+
+                                    test_posX = Integer.parseInt(value);
+
+                                } else {
+
+                                    test_posZ = Integer.parseInt(value);
 
                                 }
 
                             }
 
-                        }
+                            if (loop == 3) {
 
-                    } else {
+                                loop = 0;
 
-                        // Outside Region (Classic Testing)
-                        {
-
-                            for (String read_all : Cache.tree_location(dimension + "/" + testX + "," + testZ)) {
-
+                                // Test
                                 {
 
-                                    if (read_all.startsWith(id + "|") == true) {
+                                    if (center_posX == test_posX && center_posZ == test_posZ) {
 
-                                        get = read_all.split("\\|");
-                                        pos = get[1].split("/");
-                                        posX = Integer.parseInt(pos[0]);
-                                        posZ = Integer.parseInt(pos[1]);
+                                        return false;
 
-                                        if ((Math.abs(center_posX - posX) <= min_distance) && (Math.abs(center_posZ - posZ) <= min_distance)) {
+                                    } else {
 
-                                            return false;
+                                        if (id.equals(test_id) == true) {
+
+                                            if ((Math.abs(center_posX - test_posX) <= min_distance) && (Math.abs(center_posZ - test_posZ) <= min_distance)) {
+
+                                                return false;
+
+                                            }
 
                                         }
 
@@ -512,48 +556,45 @@ public class TreeLocation {
 
                     }
 
-                }
+                } else {
 
-                // Steps
-                {
+                    // Outside Region (Classic Testing)
+                    {
 
-                    if (step == 1) {
 
-                        scanX = scanX + 32;
+                        ByteBuffer read_all = FileManager.readBIN(Handcode.path_world_data + "/world_gen/tree_locations/" + dimension + "/" + scanX + "," + scanZ + ".bin");
 
-                        if (scanX > (distance * 2)) {
+                        while (read_all.remaining() > 0) {
 
-                            step = 2;
+                            try {
 
-                        }
+                                test_id = Cache.dictionary(String.valueOf(read_all.getShort()), true);
+                                test_posX = read_all.getInt();
+                                test_posZ = read_all.getInt();
 
-                    } else if (step == 2) {
+                            } catch (Exception ignored) {
 
-                        scanZ = scanZ + 32;
+                                return false;
 
-                        if (scanZ > (distance * 2)) {
+                            }
 
-                            step = 3;
+                            if (center_posX == test_posX && center_posZ == test_posZ) {
 
-                        }
+                                return false;
 
-                    } else if (step == 3) {
+                            } else {
 
-                        scanX = scanX - 32;
+                                if (id.equals(test_id) == true) {
 
-                        if (scanX <= 0) {
+                                    if ((Math.abs(center_posX - test_posX) <= min_distance) && (Math.abs(center_posZ - test_posZ) <= min_distance)) {
 
-                            step = 4;
+                                        return false;
 
-                        }
+                                    }
 
-                    } else {
+                                }
 
-                        scanZ = scanZ - 32;
-
-                        if (scanZ <= 0) {
-
-                            break;
+                            }
 
                         }
 
