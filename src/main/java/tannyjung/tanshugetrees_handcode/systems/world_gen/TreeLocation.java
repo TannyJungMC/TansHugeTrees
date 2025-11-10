@@ -646,17 +646,16 @@ public class TreeLocation {
 
         }
 
-        File chosen = null;
+        File chosen = new File(Handcode.path_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage");
 
         // Random Select File
         {
 
-            String storage = Handcode.path_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage";
-            File[] list = new File(storage).listFiles();
+            File[] list = chosen.listFiles();
 
             if (list != null) {
 
-                chosen = new File(storage + "/" + list[(int) (Math.random() * list.length)].getName());
+                chosen = new File(chosen.getPath() + "/" + list[(int) (Math.random() * list.length)].getName());
 
             }
 
