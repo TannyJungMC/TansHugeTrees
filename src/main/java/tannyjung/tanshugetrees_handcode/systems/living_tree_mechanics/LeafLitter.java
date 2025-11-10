@@ -195,11 +195,16 @@ public class LeafLitter {
 
                             if (Utils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == true) {
 
-                                // If Found Water
-                                if (level_accessor.isWaterAt(new BlockPos(posX, posY - 1, posZ)) == true) {
+                                BlockPos pos_ground = new BlockPos(posX, posY - 1, posZ);
+
+                                if (level_accessor.isWaterAt(pos_ground) == true) {
 
                                     block = Utils.block.propertyBooleanSet(block, "waterlogged", true);
                                     posY = posY - 1;
+
+                                } else if (Utils.block.isTaggedAs(level_accessor.getBlockState(pos_ground), "tanshugetrees:passable_blocks") == true) {
+
+                                    return;
 
                                 }
 
