@@ -16,12 +16,13 @@ import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.*;
 
 public class TreeLocation {
 
     private static final Map<String, List<String>> cache_write_tree_location = new HashMap<>();
-    private static final Map<String, StringBuilder> cache_write_place = new HashMap<>();
+    private static final Map<String, List<String>> cache_write_place = new HashMap<>();
     private static final Map<String, String> cache_dead_tree_auto_level = new HashMap<>();
     private static final Map<String, Boolean> cache_biome_test = new HashMap<>();
     public static int world_gen_overlay_animation = 0;
@@ -73,34 +74,18 @@ public class TreeLocation {
                 world_gen_overlay_animation = 0;
                 TanshugetreesMod.LOGGER.info("Completed!");
 
-                // Write Tree Location
+                // Write File
                 {
-
-                    StringBuilder write = new StringBuilder();
 
                     for (Map.Entry<String, List<String>> entry : cache_write_tree_location.entrySet()) {
 
-                        write = new StringBuilder();
-
-                        for (String read_all : entry.getValue()) {
-
-                            write.append(read_all).append("\n");
-
-                        }
-
-                        FileManager.writeTXT(Handcode.path_world_data + "/world_gen/tree_locations/" + dimension + "/" + entry.getKey() + ".txt", write.toString(), true);
+                        FileManager.writeBIN(Handcode.path_world_data + "/world_gen/tree_locations/" + dimension + "/" + entry.getKey() + ".bin", entry.getValue(), true);
 
                     }
 
-                }
+                    for (Map.Entry<String, List<String>> entry : cache_write_place.entrySet()) {
 
-                // Write Place
-                {
-
-                    for (Map.Entry<String, StringBuilder> entry : cache_write_place.entrySet()) {
-
-
-                        FileManager.writeTXT(Handcode.path_world_data + "/world_gen/place/" + dimension + "/" + entry.getKey() + ".txt", entry.getValue().toString(), true);
+                        FileManager.writeBIN(Handcode.path_world_data + "/world_gen/place/" + dimension + "/" + entry.getKey() + ".bin", entry.getValue(), true);
 
                     }
 
@@ -976,26 +961,54 @@ public class TreeLocation {
 
             }
 
-            int regionX = center_posX >> 9;
-            int regionZ = center_posZ >> 9;
-            String key = regionX + "," + regionZ;
-            String value = id + "|" + center_posX + "/" + center_posZ;
-            cache_write_tree_location.computeIfAbsent(key, test -> new ArrayList<>()).add(value);
-
-            // Write Place
+            // Everything Pass
             {
 
-                String data = from_chunkX + "/" + from_chunkZ + "/" + to_chunkX + "/" + to_chunkZ + "|" + id + "|" + chosen.getName() + "|" + center_posX + "/" + center_posZ + "|" + rotation + "/" + mirrored + "|" + start_height_offset_get + "|" + (sizeY - center_sizeY) + "|" + ground_block + "|" + dead_tree_level;
-                int from_chunkX_test = from_chunkX >> 5;
-                int from_chunkZ_test = from_chunkZ >> 5;
-                int to_chunkX_test = to_chunkX >> 5;
-                int to_chunkZ_test = to_chunkZ >> 5;
+                int regionX = center_posX >> 9;
+                int regionZ = center_posZ >> 9;
 
-                for (int scanX = from_chunkX_test; scanX <= to_chunkX_test; scanX++) {
+                // Write Tree Location
+                {
 
-                    for (int scanZ = from_chunkZ_test; scanZ <= to_chunkZ_test; scanZ++) {
+                    List<String> write = new ArrayList<>();
+                    write.add("t" + id);
+                    write.add("i" + center_posX);
+                    write.add("i" + center_posZ);
+                    cache_write_tree_location.computeIfAbsent(regionX + "," + regionZ, test -> new ArrayList<>()).addAll(write);
 
-                        cache_write_place.computeIfAbsent(scanX + "," + scanZ, test -> new StringBuilder()).append(data).append("\n");
+                }
+
+                // Write Place
+                {
+
+                    List<String> write = new ArrayList<>();
+                    write.add("i" + from_chunkX);
+                    write.add("i" + from_chunkZ);
+                    write.add("i" + to_chunkX);
+                    write.add("i" + to_chunkZ);
+                    write.add("t" + id);
+                    write.add("t" + chosen.getName());
+                    write.add("i" + center_posX);
+                    write.add("i" + center_posZ);
+                    write.add("b" + rotation);
+                    write.add("l" + mirrored);
+                    write.add("s" + start_height_offset_get);
+                    write.add("s" + (sizeY - center_sizeY));
+                    write.add("t" + ground_block);
+                    write.add("s" + dead_tree_level);
+
+                    int from_chunkX_test = from_chunkX >> 5;
+                    int from_chunkZ_test = from_chunkZ >> 5;
+                    int to_chunkX_test = to_chunkX >> 5;
+                    int to_chunkZ_test = to_chunkZ >> 5;
+
+                    for (int scanX = from_chunkX_test; scanX <= to_chunkX_test; scanX++) {
+
+                        for (int scanZ = from_chunkZ_test; scanZ <= to_chunkZ_test; scanZ++) {
+
+                            cache_write_place.computeIfAbsent(scanX + "," + scanZ, test -> new ArrayList<>()).addAll(write);
+
+                        }
 
                     }
 
