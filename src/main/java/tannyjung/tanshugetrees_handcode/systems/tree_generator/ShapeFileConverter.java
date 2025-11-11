@@ -297,10 +297,10 @@ public class ShapeFileConverter {
         {
 
             // Start Function
-            data.add("210");
-            data.add("0");
-            data.add("0");
-            data.add("0");
+            data.add("s210");
+            data.add("s0");
+            data.add("s0");
+            data.add("s0");
 
             // Blocks and Way Functions
             {
@@ -479,20 +479,20 @@ public class ShapeFileConverter {
 
                     }
 
-                    data.add(String.valueOf(type));
-                    data.add(String.valueOf(posX));
-                    data.add(String.valueOf(posY));
-                    data.add(String.valueOf(posZ));
+                    data.add("s" + type);
+                    data.add("s" + posX);
+                    data.add("s" + posY);
+                    data.add("s" + posZ);
 
                 }
 
             }
 
             // End Function
-            data.add("220");
-            data.add("0");
-            data.add("0");
-            data.add("0");
+            data.add("s220");
+            data.add("s0");
+            data.add("s0");
+            data.add("s0");
 
         }
 
@@ -501,18 +501,18 @@ public class ShapeFileConverter {
         // Start Data
         {
 
-            start_data.add(String.valueOf((max_sizeX - min_sizeX)));
-            start_data.add(String.valueOf((max_sizeY - min_sizeY)));
-            start_data.add(String.valueOf((max_sizeZ - min_sizeZ)));
-            start_data.add(String.valueOf(-(min_sizeX)));
-            start_data.add(String.valueOf(-(min_sizeY)));
-            start_data.add(String.valueOf(-(min_sizeZ)));
-            start_data.add(String.valueOf(block_count_trunk));
-            start_data.add(String.valueOf(block_count_bough));
-            start_data.add(String.valueOf(block_count_branch));
-            start_data.add(String.valueOf(block_count_limb));
-            start_data.add(String.valueOf(block_count_twig));
-            start_data.add(String.valueOf(block_count_sprig));
+            start_data.add("s" + (max_sizeX - min_sizeX));
+            start_data.add("s" + (max_sizeY - min_sizeY));
+            start_data.add("s" + (max_sizeZ - min_sizeZ));
+            start_data.add("s" + -(min_sizeX));
+            start_data.add("s" + -(min_sizeY));
+            start_data.add("s" + -(min_sizeZ));
+            start_data.add("s" + block_count_trunk);
+            start_data.add("s" + block_count_bough);
+            start_data.add("s" + block_count_branch);
+            start_data.add("s" + block_count_limb);
+            start_data.add("s" + block_count_twig);
+            start_data.add("s" + block_count_sprig);
 
         }
 
