@@ -80,13 +80,11 @@ public class TreePlacer {
                     int center_posY = 0;
                     int center_chunkX = center_posX >> 4;
                     int center_chunkZ = center_posZ >> 4;
-                    int center_regionX = center_chunkX >> 5;
-                    int center_regionZ = center_chunkZ >> 5;
 
                     // Already Tested
                     {
 
-                        ByteBuffer detailed_detection = FileManager.readBIN(Handcode.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + center_regionX + "," + center_regionZ + ".bin");
+                        ByteBuffer detailed_detection = FileManager.readBIN(Handcode.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + ".bin");
                         boolean get_pass = false;
                         int get_posX = 0;
                         int get_posY = 0;
@@ -343,9 +341,9 @@ public class TreePlacer {
                                         if (coarse_woody_debris == true) {
 
                                             int[] pos_converted = Utils.outside.convertRotationMirrored(seed, 0, originalY + up_sizeY, 0, rotation, mirrored, coarse_woody_debris);
-                                            int pos1 = chunk_generator.getBaseHeight(center_posX + pos_converted[0], center_posZ + pos_converted[2], Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
+                                            int pos1 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.5), center_posZ + (int) (pos_converted[2] * 0.5), Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
                                             int pos2 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.75), center_posZ + (int) (pos_converted[2] * 0.75), Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
-                                            int pos3 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.5), center_posZ + (int) (pos_converted[2] * 0.5), Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
+                                            int pos3 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 1.0), center_posZ + (int) (pos_converted[2] * 1.0), Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
 
                                             if (originalY > pos1 && originalY > pos2 && originalY > pos3) {
 
@@ -395,13 +393,27 @@ public class TreePlacer {
                             // Write File
                             {
 
+                                int from_chunkX_test = from_chunkX >> 5;
+                                int from_chunkZ_test = from_chunkZ >> 5;
+                                int to_chunkX_test = to_chunkX >> 5;
+                                int to_chunkZ_test = to_chunkZ >> 5;
+
                                 List<String> write = new ArrayList<>();
                                 write.add("l" + pass);
                                 write.add("i" + center_posX);
                                 write.add("i" + center_posY);
                                 write.add("i" + center_posZ);
                                 write.add("s" + dead_tree_level);
-                                FileManager.writeBIN(Handcode.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + center_regionX + "," + center_regionZ + ".bin", write, true);
+
+                                for (int scanX = from_chunkX_test; scanX <= to_chunkX_test; scanX++) {
+
+                                    for (int scanZ = from_chunkZ_test; scanZ <= to_chunkZ_test; scanZ++) {
+
+                                        FileManager.writeBIN(Handcode.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + scanX + "," + scanZ + ".bin", write, true);
+
+                                    }
+
+                                }
 
                             }
 
@@ -464,7 +476,7 @@ public class TreePlacer {
 
         short[] shape = Cache.tree_shape(path_storage + "/" + chosen, 2);
 
-        if (shape != null) {
+        if (shape.length > 0) {
 
             Map<String, String> map_block = new HashMap<>();
             boolean can_disable_roots = false;
@@ -583,106 +595,124 @@ public class TreePlacer {
             int block_count_sprig = 0;
             boolean hollowed = false;
             boolean coarse_woody_debris = false;
+            boolean no_roots = (ConfigMain.world_gen_roots == false && can_disable_roots);
 
             // Block Count and Dead Tree
             {
 
                 if (dead_tree_level > 0) {
 
-                    short[] block_count = Arrays.copyOfRange(Cache.tree_shape(path_storage + "/" + chosen, 1), 6, 12);
+                    short[] block_count = Cache.tree_shape(path_storage + "/" + chosen, 1);
 
-                    if (dead_tree_level > 200) {
+                    if (block_count.length > 0) {
 
-                        dead_tree_level = dead_tree_level - 200;
-                        coarse_woody_debris = true;
+                        block_count = Arrays.copyOfRange(block_count, 6, 12);
 
-                    } else {
-
-                        dead_tree_level = dead_tree_level - 100;
-
-                    }
-
-                    if (dead_tree_level >= 60) {
-
-                        // Only Trunk
+                        // Dead Tree Main Type
                         {
 
-                            block_count_trunk = block_count[0];
+                            if (dead_tree_level > 300) {
 
-                            if (dead_tree_level == 60 || dead_tree_level == 70) {
+                                dead_tree_level = dead_tree_level - 300;
+                                coarse_woody_debris = true;
+                                no_roots = true;
 
-                                block_count_trunk = (int) (Mth.nextDouble(RandomSource.create(seed), 0.0, 0.5) * (double) block_count_trunk);
+                            } else if (dead_tree_level > 200) {
 
-                            } else if (dead_tree_level == 80 || dead_tree_level == 90) {
+                                dead_tree_level = dead_tree_level - 200;
+                                coarse_woody_debris = true;
 
-                                block_count_trunk = (int) (Mth.nextDouble(RandomSource.create(seed), 0.5, 1.0) * (double) block_count_trunk);
+                            } else {
 
-                            }
-
-                            if (dead_tree_level == 70 || dead_tree_level == 90) {
-
-                                hollowed = true;
+                                dead_tree_level = dead_tree_level - 100;
 
                             }
 
                         }
 
-                    } else {
+                        if (dead_tree_level >= 60) {
 
-                        // General
-                        {
+                            // Only Trunk
+                            {
 
-                            block_count_bough = block_count[1];
+                                block_count_trunk = block_count[0];
 
-                            if (dead_tree_level == 50) {
+                                if (dead_tree_level == 60 || dead_tree_level == 70) {
 
-                                block_count_bough = (int) ((double) block_count_bough * Mth.nextDouble(RandomSource.create(seed + 1), 0.1, 0.9));
+                                    block_count_trunk = (int) (Mth.nextDouble(RandomSource.create(seed), 0.5, 1.0) * (double) block_count_trunk);
 
-                            }
+                                } else if (dead_tree_level == 80 || dead_tree_level == 90) {
 
-                            if (dead_tree_level < 50) {
+                                    block_count_trunk = (int) (Mth.nextDouble(RandomSource.create(seed), 0.0, 0.5) * (double) block_count_trunk);
 
-                                block_count_branch = block_count[2];
+                                }
 
-                                if (dead_tree_level == 40) {
+                                if (dead_tree_level == 70 || dead_tree_level == 90) {
 
-                                    block_count_branch = (int) ((double) block_count_branch * Mth.nextDouble(RandomSource.create(seed + 2), 0.1, 0.9));
+                                    hollowed = true;
 
                                 }
 
                             }
 
-                            if (dead_tree_level < 40) {
+                        } else {
 
-                                block_count_limb = block_count[3];
+                            // General
+                            {
 
-                                if (dead_tree_level == 30) {
+                                block_count_bough = block_count[1];
 
-                                    block_count_limb = (int) ((double) block_count_limb * Mth.nextDouble(RandomSource.create(seed + 3), 0.1, 0.9));
+                                if (dead_tree_level == 50) {
 
-                                }
-
-                            }
-
-                            if (dead_tree_level < 30) {
-
-                                block_count_twig = block_count[4];
-
-                                if (dead_tree_level == 20) {
-
-                                    block_count_twig = (int) ((double) block_count_twig * Mth.nextDouble(RandomSource.create(seed + 4), 0.1, 0.9));
+                                    block_count_bough = (int) ((double) block_count_bough * Mth.nextDouble(RandomSource.create(seed + 1), 0.1, 0.9));
 
                                 }
 
-                            }
+                                if (dead_tree_level < 50) {
 
-                            if (dead_tree_level < 20) {
+                                    block_count_branch = block_count[2];
 
-                                block_count_sprig = block_count[5];
+                                    if (dead_tree_level == 40) {
 
-                                if (dead_tree_level == 10) {
+                                        block_count_branch = (int) ((double) block_count_branch * Mth.nextDouble(RandomSource.create(seed + 2), 0.1, 0.9));
 
-                                    block_count_sprig = (int) ((double) block_count_sprig * Mth.nextDouble(RandomSource.create(seed + 5), 0.1, 0.9));
+                                    }
+
+                                }
+
+                                if (dead_tree_level < 40) {
+
+                                    block_count_limb = block_count[3];
+
+                                    if (dead_tree_level == 30) {
+
+                                        block_count_limb = (int) ((double) block_count_limb * Mth.nextDouble(RandomSource.create(seed + 3), 0.1, 0.9));
+
+                                    }
+
+                                }
+
+                                if (dead_tree_level < 30) {
+
+                                    block_count_twig = block_count[4];
+
+                                    if (dead_tree_level == 20) {
+
+                                        block_count_twig = (int) ((double) block_count_twig * Mth.nextDouble(RandomSource.create(seed + 4), 0.1, 0.9));
+
+                                    }
+
+                                }
+
+                                if (dead_tree_level < 20) {
+
+                                    block_count_sprig = block_count[5];
+
+                                    if (dead_tree_level == 10) {
+
+                                        block_count_sprig = (int) ((double) block_count_sprig * Mth.nextDouble(RandomSource.create(seed + 5), 0.1, 0.9));
+
+                                    }
 
                                 }
 
@@ -903,7 +933,7 @@ public class TreePlacer {
 
                                         if (coarse_woody_debris == false) {
 
-                                            if (ConfigMain.world_gen_roots == false && can_disable_roots == true) {
+                                            if (no_roots == true) {
 
                                                 if (type.startsWith("111") == true || type.startsWith("112") == true || type.startsWith("113") == true) {
 
@@ -918,6 +948,16 @@ public class TreePlacer {
                                             if (type.startsWith("112") == true || type.startsWith("113") == true) {
 
                                                 continue;
+
+                                            }
+
+                                            if (no_roots == true) {
+
+                                                if (type.startsWith("110") == true || type.startsWith("111") == true) {
+
+                                                    continue;
+
+                                                }
 
                                             }
 
