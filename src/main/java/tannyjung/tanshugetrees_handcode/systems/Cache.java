@@ -38,7 +38,7 @@ public class Cache {
 
             {
 
-                String path = Handcode.path_world_data + "/dictionary.txt";
+                String path = Handcode.path_world_data + "/bin_dictionary.txt";
                 String[] data = FileManager.readTXT(path);
                 String value_id = "";
                 String value_text = "";
@@ -99,11 +99,15 @@ public class Cache {
 
             String[] split = id.split("/");
             ShortBuffer buffer = FileManager.readBIN(Handcode.path_config + "/custom_packs/" + split[0] + "/presets/" + split[1] + "/storage/" + split[2]).asShortBuffer();
-            short[] data = new short[buffer.remaining()];
-            buffer.get(data);
 
-            tree_shape_part1.put(id, Arrays.copyOfRange(data, 0, 12));
-            tree_shape_part2.put(id, Arrays.copyOfRange(data, 12, data.length));
+            if (buffer.remaining() > 0) {
+
+                short[] data = new short[buffer.remaining()];
+                buffer.get(data);
+                tree_shape_part1.put(id, Arrays.copyOfRange(data, 0, 12));
+                tree_shape_part2.put(id, Arrays.copyOfRange(data, 12, data.length));
+
+            }
 
         }
 
