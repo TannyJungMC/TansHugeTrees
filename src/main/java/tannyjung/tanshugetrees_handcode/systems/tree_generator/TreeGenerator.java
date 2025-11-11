@@ -1364,9 +1364,17 @@ public class TreeGenerator {
 
                             }
 
+                        } else if (type_short.equals("tr") == true) {
+
+                            if ("ta/se/te/fi".contains(previous_block) == true) {
+
+                                is_blacklist = true;
+
+                            }
+
                         } else if (type_short.equals("bo") == true) {
 
-                            if ("tr".contains(previous_block) == true) {
+                            if ("ta/se/te/fi/tr".contains(previous_block) == true) {
 
                                 is_blacklist = true;
 
@@ -1374,7 +1382,7 @@ public class TreeGenerator {
 
                         } else if (type_short.equals("br") == true) {
 
-                            if ("tr/bo".contains(previous_block) == true) {
+                            if ("ta/se/te/fi/tr/bo".contains(previous_block) == true) {
 
                                 is_blacklist = true;
 
@@ -1382,7 +1390,7 @@ public class TreeGenerator {
 
                         } else if (type_short.equals("li") == true) {
 
-                            if ("tr/bo/br".contains(previous_block) == true) {
+                            if ("ta/se/te/fi/tr/bo/br".contains(previous_block) == true) {
 
                                 is_blacklist = true;
 
@@ -1390,7 +1398,7 @@ public class TreeGenerator {
 
                         } else if (type_short.equals("tw") == true) {
 
-                            if ("tr/bo/br/li".contains(previous_block) == true) {
+                            if ("ta/se/te/fi/tr/bo/br/li".contains(previous_block) == true) {
 
                                 is_blacklist = true;
 
@@ -1398,7 +1406,7 @@ public class TreeGenerator {
 
                         } else if (type_short.equals("sp") == true) {
 
-                            if ("tr/bo/br/li/tw".contains(previous_block) == true) {
+                            if ("ta/se/te/fi/tr/bo/br/li/tw".contains(previous_block) == true) {
 
                                 is_blacklist = true;
 
