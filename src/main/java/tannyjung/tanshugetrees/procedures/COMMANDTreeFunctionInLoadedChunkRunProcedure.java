@@ -1,6 +1,6 @@
 package tannyjung.tanshugetrees.procedures;
 
-import tannyjung.tanshugetrees_handcode.systems.tree_generator.TreeFunctionInLoadedChunk;
+import tannyjung.core.TXTFunction;
 
 import tannyjung.tanshugetrees.TanshugetreesMod;
 
@@ -13,6 +13,6 @@ public class COMMANDTreeFunctionInLoadedChunkRunProcedure {
 		if (false) {
 			TanshugetreesMod.LOGGER.info(entity);
 		}
-		TreeFunctionInLoadedChunk.start(entity);
+		TXTFunction.delayed_command(entity);
 	}
 }

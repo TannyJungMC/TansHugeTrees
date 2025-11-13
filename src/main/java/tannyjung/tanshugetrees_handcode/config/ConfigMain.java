@@ -422,12 +422,6 @@ public class ConfigMain {
 		ConfigWorldGen.start();
 		ConfigShapeFileConverter.repair();
 
-		if (level_accessor instanceof ServerLevel level_server) {
-
-			Utils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Restarted All Systems and cleared caches");
-
-		}
-
 	}
 	
 }

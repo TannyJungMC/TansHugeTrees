@@ -27,6 +27,6 @@ public class COMMANDShapeFileConverterStartProcedure {
 			TanshugetreesMod.LOGGER.info(entity);
 		}
 		count = DoubleArgumentType.getDouble(arguments, "count");
-		ShapeFileConverter.start(world, entity, (int) count);
+		ShapeFileConverter.start(world, (int) count);
 	}
 }

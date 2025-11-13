@@ -79,7 +79,7 @@ public class PackUpdate {
 						Utils.misc.sendChatMessage(level_server, "@a", "white", "");
 						message(level_server);
 
-                        Handcode.restart(level_accessor, true);
+                        Handcode.restart(level_accessor, false, true);
 
 					});
 
