@@ -323,11 +323,7 @@ public class LivingTreeMechanics {
 
                 if (Utils.nbt.entity.getLogic(entity, "dead_tree") == true) {
 
-                    level_server.getServer().execute(() -> {
-
-                        Utils.command.runEntity(entity, "kill @s");
-
-                    });
+                    Utils.command.runEntity(entity, "kill @s");
 
                 } else if (Utils.nbt.entity.getLogic(entity, "still_alive") == true) {
 
