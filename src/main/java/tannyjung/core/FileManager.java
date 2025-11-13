@@ -191,51 +191,55 @@ public class FileManager {
 
         }
 
-        try {
+        if (write.size() > 0) {
 
-            DataOutputStream file_bin = new DataOutputStream(new FileOutputStream(path, append));
+            try {
 
-            {
+                DataOutputStream file_bin = new DataOutputStream(new FileOutputStream(path, append));
 
-                String type = "";
-                String value = "";
+                {
 
-                for (String read_all : write) {
+                    String type = "";
+                    String value = "";
 
-                    type = read_all.substring(0, 1);
-                    value = read_all.substring(1);
+                    for (String read_all : write) {
 
-                    if (type.equals("b") == true) {
+                        type = read_all.substring(0, 1);
+                        value = read_all.substring(1);
 
-                        file_bin.writeByte(Byte.parseByte(value));
+                        if (type.equals("b") == true) {
 
-                    } else if (type.equals("s") == true) {
+                            file_bin.writeByte(Byte.parseByte(value));
 
-                        file_bin.writeShort(Short.parseShort(value));
+                        } else if (type.equals("s") == true) {
 
-                    } else if (type.equals("i") == true) {
+                            file_bin.writeShort(Short.parseShort(value));
 
-                        file_bin.writeInt(Integer.parseInt(value));
+                        } else if (type.equals("i") == true) {
 
-                    } else if (type.equals("l") == true) {
+                            file_bin.writeInt(Integer.parseInt(value));
 
-                        file_bin.writeBoolean(Boolean.parseBoolean(value));
+                        } else if (type.equals("l") == true) {
 
-                    } else if (type.equals("t") == true) {
+                            file_bin.writeBoolean(Boolean.parseBoolean(value));
 
-                        file_bin.writeShort(Short.parseShort(Cache.dictionary(value, false)));
+                        } else if (type.equals("t") == true) {
+
+                            file_bin.writeShort(Short.parseShort(Cache.dictionary(value, false)));
+
+                        }
 
                     }
 
                 }
 
+                file_bin.close();
+
+            } catch (Exception exception) {
+
+                Utils.outside.exception(new Exception(), exception);
+
             }
-
-            file_bin.close();
-
-        } catch (Exception exception) {
-
-            Utils.outside.exception(new Exception(), exception);
 
         }
 
