@@ -45,56 +45,60 @@ public class Cache {
 
     public static String dictionary (String key, boolean id) {
 
-        if (dictionary.containsKey(key) == false) {
+        if (key.equals("") == false) {
 
-            {
+            if (dictionary.containsKey(key) == false) {
 
-                String path = Handcode.path_world_data + "/bin_dictionary.txt";
-                String[] data = FileManager.readTXT(path);
-                String value_id = "";
-                String value_text = "";
+                {
 
-                for (String read_all : data) {
+                    String path = Handcode.path_world_data + "/bin_dictionary.txt";
+                    String[] data = FileManager.readTXT(path);
+                    String value_id = "";
+                    String value_text = "";
 
-                    if (id == true) {
+                    for (String read_all : data) {
 
-                        if (read_all.startsWith(key + "|") == true) {
+                        if (id == true) {
 
-                            value_id = key;
-                            value_text = read_all.substring(read_all.indexOf("|") + 1);
-                            break;
+                            if (read_all.startsWith(key + "|") == true) {
+
+                                value_id = key;
+                                value_text = read_all.substring(read_all.indexOf("|") + 1);
+                                break;
+
+                            }
+
+                        } else {
+
+                            if (read_all.endsWith("|" + key) == true) {
+
+                                value_id = read_all.substring(0, read_all.indexOf("|"));
+                                value_text = key;
+                                break;
+
+                            }
 
                         }
 
-                    } else {
+                    }
 
-                        if (read_all.endsWith("|" + key) == true) {
+                    if (value_id.equals("") == true && value_text.equals("") == true) {
 
-                            value_id = read_all.substring(0, read_all.indexOf("|"));
+                        if (id == false) {
+
                             value_text = key;
-                            break;
 
                         }
 
-                    }
-
-                }
-
-                if (value_id.equals("") == true && value_text.equals("") == true) {
-
-                    if (id == false) {
-
-                        value_text = key;
+                        value_id = String.valueOf(data.length + 1);
+                        FileManager.writeTXT(path, value_id + "|" + value_text + "\n", true);
 
                     }
 
-                    value_id = String.valueOf(data.length + 1);
-                    FileManager.writeTXT(path, value_id + "|" + value_text + "\n", true);
+                    dictionary.put(value_id, value_text);
+                    dictionary.put(value_text, value_id);
 
                 }
-
-                dictionary.put(value_id, value_text);
-                dictionary.put(value_text, value_id);
 
             }
 
