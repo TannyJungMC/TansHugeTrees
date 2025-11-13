@@ -208,9 +208,9 @@ public class TreePlacer {
 
                                     if (radius > 0) {
 
-                                        for (int scanX = -radius; scanX < radius; scanX++) {
+                                        for (int scanX = -radius; scanX <= radius; scanX++) {
 
-                                            for (int scanZ = -radius; scanZ < radius; scanZ++) {
+                                            for (int scanZ = -radius; scanZ <= radius; scanZ++) {
 
                                                 ChunkAccess chunk = level_accessor.getChunk(center_chunkX + scanX, center_chunkZ + scanZ, ChunkStatus.STRUCTURE_REFERENCES, false);
 
