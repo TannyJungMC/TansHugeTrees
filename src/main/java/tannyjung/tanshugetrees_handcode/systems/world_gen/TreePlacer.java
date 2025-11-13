@@ -220,7 +220,7 @@ public class TreePlacer {
 
                                                         // structure.type().equals(StructureType.MINESHAFT);
 
-                                                        if (structure.step().equals(GenerationStep.Decoration.SURFACE_STRUCTURES) == true || structure.step().equals(GenerationStep.Decoration.STRONGHOLDS) == true) {
+                                                        if (structure.step().equals(GenerationStep.Decoration.SURFACE_STRUCTURES) == true) {
 
                                                             break test;
 
