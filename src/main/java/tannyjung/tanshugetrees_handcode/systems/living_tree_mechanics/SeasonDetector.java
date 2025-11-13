@@ -10,84 +10,79 @@ public class SeasonDetector {
 
     private static int season_detector_tick = 0;
 
-    public static void start (LevelAccessor level_accessor) {
+    public static void start (LevelAccessor level_accessor, ServerLevel level_server) {
 
-        Handcode.thread_main.submit(() -> {
+        level_server.getServer().execute(() -> {
 
-            run(level_accessor);
+            run(level_accessor, level_server);
 
         });
 
     }
 
-    private static void run (LevelAccessor level_accessor) {
+    private static void run (LevelAccessor level_accessor, ServerLevel level_server) {
 
         TanshugetreesMod.queueServerWork(200, () -> {
 
             if (Handcode.thread_pause == false) {
 
-                run(level_accessor);
+                run(level_accessor, level_server);
 
             }
 
         });
 
-        if (level_accessor instanceof ServerLevel level_server) {
+        int posX = level_accessor.getLevelData().getXSpawn();
+        int posZ = level_accessor.getLevelData().getZSpawn();
+        int posY = level_accessor.getMinBuildHeight() + 1;
 
-            int posX = level_server.getLevelData().getXSpawn();
-            int posZ = level_server.getLevelData().getZSpawn();
-            int posY = level_server.getMinBuildHeight() + 1;
+        if (season_detector_tick == 1 || season_detector_tick == 3 || season_detector_tick == 5 || season_detector_tick == 7 || season_detector_tick == 9) {
 
-            if (season_detector_tick == 1 || season_detector_tick == 3 || season_detector_tick == 5 || season_detector_tick == 7 || season_detector_tick == 9) {
+            Utils.command.run(level_server, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
 
-                Utils.command.run(level_server, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
+            if (season_detector_tick == 9) {
 
-                if (season_detector_tick == 9) {
-
-                    season_detector_tick = 0;
-                    return;
-
-                }
-
-            } else {
-
-                String season = "";
-                int season_number = 0;
-
-                if (season_detector_tick == 2) {
-
-                    season = "spring";
-                    season_number = 0;
-
-                } else if (season_detector_tick == 4) {
-
-                    season = "summer";
-                    season_number = 1;
-
-                } else if (season_detector_tick == 6) {
-
-                    season = "autumn";
-                    season_number = 2;
-
-                } else if (season_detector_tick == 8) {
-
-                    season = "winter";
-                    season_number = 3;
-
-                }
-
-                if (season.equals("") == false) {
-
-                    Utils.command.run(level_server, posX, posY, posZ, "setblock ~ ~ ~ command_block{Command:\"TANSHUGETREES command season set " + season + "\"}");
-                    Utils.command.run(level_server, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
-
-                }
+                season_detector_tick = 0;
+                return;
 
             }
 
-            season_detector_tick = season_detector_tick + 1;
+        } else {
+
+            String season = "";
+            int season_number = 0;
+
+            if (season_detector_tick == 2) {
+
+                season = "spring";
+
+            } else if (season_detector_tick == 4) {
+
+                season = "summer";
+                season_number = 1;
+
+            } else if (season_detector_tick == 6) {
+
+                season = "autumn";
+                season_number = 2;
+
+            } else if (season_detector_tick == 8) {
+
+                season = "winter";
+                season_number = 3;
+
+            }
+
+            if (season.equals("") == false) {
+
+                Utils.command.run(level_server, posX, posY, posZ, "setblock ~ ~ ~ command_block{Command:\"TANSHUGETREES command season set " + season + "\"}");
+                Utils.command.run(level_server, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
+
+            }
 
         }
+
+        season_detector_tick = season_detector_tick + 1;
 
     }
 
