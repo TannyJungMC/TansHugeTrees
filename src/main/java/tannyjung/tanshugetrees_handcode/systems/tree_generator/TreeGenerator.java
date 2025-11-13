@@ -6,6 +6,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.core.Utils;
 import tannyjung.core.TXTFunction;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
@@ -950,11 +951,25 @@ public class TreeGenerator {
                         build_saveY = Utils.nbt.entity.getNumber(entity, "build_saveY");
                         build_saveZ = Utils.nbt.entity.getNumber(entity, "build_saveZ");
 
-                        if (build_saveY <= scan_end) {
+                        if (build_saveY > scan_end) {
 
-                            if (build_saveX <= scan_end) {
+                            break;
 
-                                if (build_saveZ <= scan_end) {
+                        } else {
+
+                            if (build_saveX > scan_end) {
+
+                                Utils.nbt.entity.setNumber(entity, "build_saveX", -(scan_start));
+                                Utils.nbt.entity.addNumber(entity, "build_saveY", scan_change);
+
+                            } else {
+
+                                if (build_saveZ > scan_end) {
+
+                                    Utils.nbt.entity.setNumber(entity, "build_saveZ", -(scan_start));
+                                    Utils.nbt.entity.addNumber(entity, "build_saveX", scan_change);
+
+                                } else {
 
                                     Utils.nbt.entity.addNumber(entity, "build_saveZ", scan_change);
 
@@ -1001,16 +1016,12 @@ public class TreeGenerator {
 
                                                 }
 
-                                                if (buildTestKeep(level_accessor, entity, pos, replace) == true) {
+                                                String previous_block = buildGetPreviousBlock(level_accessor, pos, replace);
+                                                String block_type = buildGetBlockType(entity, type, previous_block, radius, build_area);
 
-                                                    String block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
+                                                if (buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type, previous_block) == false) {
 
-                                                    if (block_type.equals("") == false) {
-
-                                                        buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type);
-                                                        return;
-
-                                                    }
+                                                    return;
 
                                                 }
 
@@ -1023,8 +1034,9 @@ public class TreeGenerator {
 
                                                 if (Math.random() < Utils.nbt.entity.getNumber(entity, "leaves_density") * 0.01) {
 
-                                                    BlockPos pos_leaves = null;
+                                                    String previous_block = "";
                                                     String block_type = "";
+                                                    BlockPos pos_leaves = null;
                                                     int deep = 1;
 
                                                     if (Math.random() < Utils.nbt.entity.getNumber(entity, "leaves_straighten_chance")) {
@@ -1039,24 +1051,12 @@ public class TreeGenerator {
 
                                                         if (Utils.block.isTaggedAs(level_accessor.getBlockState(pos_leaves), "tanshugetrees:block_placer_blacklist_leaves") == false && Utils.block.toTextID(level_accessor.getBlockState(pos_leaves)).startsWith("tanshugetrees:block_placer_leaves") == false) {
 
-                                                            if (buildTestKeep(level_accessor, entity, pos_leaves, replace) == true) {
+                                                            previous_block = buildGetPreviousBlock(level_accessor, pos, replace);
+                                                            block_type = buildGetBlockType(entity, type, previous_block, radius, build_area);
 
-                                                                // Get Block
-                                                                {
+                                                            if (buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type, previous_block) == false) {
 
-                                                                    if (Math.random() < Utils.nbt.entity.getNumber(entity, "leaves2_chance")) {
-
-                                                                        block_type = "2";
-
-                                                                    } else {
-
-                                                                        block_type = "1";
-
-                                                                    }
-
-                                                                }
-
-                                                                buildPlaceBlock(level_accessor, level_server, entity, pos_leaves, type, block_type);
+                                                                return;
 
                                                             }
 
@@ -1074,23 +1074,9 @@ public class TreeGenerator {
 
                                     }
 
-                                } else {
-
-                                    Utils.nbt.entity.setNumber(entity, "build_saveZ", -(scan_start));
-                                    Utils.nbt.entity.addNumber(entity, "build_saveX", scan_change);
-
                                 }
 
-                            } else {
-
-                                Utils.nbt.entity.setNumber(entity, "build_saveX", -(scan_start));
-                                Utils.nbt.entity.addNumber(entity, "build_saveY", scan_change);
-
                             }
-
-                        } else {
-
-                            break;
 
                         }
 
@@ -1135,15 +1121,12 @@ public class TreeGenerator {
                         // Place Block
                         {
 
-                            if (buildTestKeep(level_accessor, entity, pos, replace) == true) {
+                            String previous_block = buildGetPreviousBlock(level_accessor, pos, replace);
+                            String block_type = buildGetBlockType(entity, type, previous_block, radius, build_area);
 
-                                String block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
+                            if (buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type, previous_block) == false) {
 
-                                if (block_type.equals("") == false) {
-
-                                    buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type);
-
-                                }
+                                return;
 
                             }
 
@@ -1163,15 +1146,12 @@ public class TreeGenerator {
                         // Place Block
                         {
 
-                            if (buildTestKeep(level_accessor, entity, pos, replace) == true) {
+                            String previous_block = buildGetPreviousBlock(level_accessor, pos, replace);
+                            String block_type = buildGetBlockType(entity, type, previous_block, radius, build_area);
 
-                                String block_type = buildOuterInnerCore(level_accessor, entity, type, radius, pos, build_area);
+                            if (buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type, previous_block) == false) {
 
-                                if (block_type.equals("") == false) {
-
-                                    buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type);
-
-                                }
+                                return;
 
                             }
 
@@ -1185,254 +1165,95 @@ public class TreeGenerator {
 
         }
 
-        private static String buildOuterInnerCore (LevelAccessor level_accessor, Entity entity, String type, double radius, BlockPos pos, double build_area) {
+        private static String buildGetBlockType (Entity entity, String type, String previous_block, double radius, double build_area) {
 
             String block = "";
 
-            // Get Block Type
-            {
+            if (type.equals("leaves") == false) {
 
-                double outer_level = Utils.nbt.entity.getNumber(entity, type + "_outer_level");
-                double inner_level = Utils.nbt.entity.getNumber(entity, type + "_inner_level");
-                double outer_level_area = outer_level;
-                double inner_level_area = inner_level;
-
-                // Outer and inner thickness must not lower than 1
+                // General
                 {
 
-                    if (outer_level_area < 1) {
+                    // Get Outer-Inner-Core
+                    {
 
-                        outer_level_area = 1;
+                        double outer_level = Utils.nbt.entity.getNumber(entity, type + "_outer_level");
+                        double inner_level = Utils.nbt.entity.getNumber(entity, type + "_inner_level");
+                        double outer_level_area = outer_level;
+                        double inner_level_area = inner_level;
 
-                    }
+                        // Outer and inner thickness must not lower than 1
+                        {
 
-                    if (inner_level_area < 1) {
+                            if (outer_level_area < 1) {
 
-                        inner_level_area = 1;
+                                outer_level_area = 1;
 
-                    }
+                            }
 
-                }
+                            if (inner_level_area < 1) {
 
-                double outer_area = radius - outer_level_area;
-                double inner_area = outer_area - inner_level_area;
+                                inner_level_area = 1;
 
-                // Area Calculation
-                {
-
-                    if (outer_area > 0) {
-
-                        outer_area = outer_area * outer_area;
-
-                    } else {
-
-                        outer_area = 0;
-
-                    }
-
-                    if (inner_area > 0) {
-
-                        inner_area = inner_area * inner_area;
-
-                    } else {
-
-                        inner_area = 0;
-
-                    }
-
-                }
-
-                if (build_area < inner_area) {
-
-                    block = "core";
-
-                } else if (build_area < outer_area) {
-
-                    if (inner_level >= 1 || Math.random() < inner_level) {
-
-                        block = "inner";
-
-                    } else {
-
-                        block = "core";
-
-                    }
-
-                } else {
-
-                    if (outer_level >= 1 || Math.random() < outer_level) {
-
-                        block = "outer";
-
-                    } else {
-
-                        if (inner_level >= 1 || Math.random() < inner_level) {
-
-                            block = "inner";
+                            }
 
                         }
 
-                    }
+                        double outer_area = radius - outer_level_area;
+                        double inner_area = outer_area - inner_level_area;
 
-                }
+                        // Area Calculation
+                        {
 
-            }
+                            if (outer_area > 0) {
 
-            // Replace
-            {
-
-                String previous_block = "";
-                String previous_block_type = "";
-                boolean is_block_placer = false;
-
-                // Get Previous Block
-                {
-
-                    if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
-
-                        previous_block = Utils.block.toTextID(level_accessor.getBlockState(pos));
-
-                        if (previous_block.startsWith("tanshugetrees:block_placer_") == true) {
-
-                            is_block_placer = true;
-                            previous_block = previous_block.substring("tanshugetrees:block_placer_".length());
-
-                            if (previous_block.endsWith("outer") == true) {
-
-                                previous_block_type = "o";
-
-                            } else if (previous_block.endsWith("inner") == true) {
-
-                                previous_block_type = "i";
+                                outer_area = outer_area * outer_area;
 
                             } else {
 
-                                previous_block_type = "c";
+                                outer_area = 0;
 
                             }
 
-                            previous_block = previous_block.substring(0, 2);
+                            if (inner_area > 0) {
 
-                        }
+                                inner_area = inner_area * inner_area;
 
-                    } else {
+                            } else {
 
-                        String key = "B" + (pos.getX() - entity.getBlockX()) + "/" + (pos.getY() - 1000) + "/" + (pos.getZ() - entity.getBlockZ());
-                        previous_block = ShapeFileConverter.export_data.getOrDefault(key, "");
-
-                        if (previous_block.equals("") == false) {
-
-                            is_block_placer = true;
-                            previous_block_type = previous_block.substring(2);
-                            previous_block = previous_block.substring(0, 2);
-
-                        }
-
-                    }
-
-                }
-
-                if (is_block_placer == true) {
-
-                    String type_short = type.substring(0, 2);
-                    boolean is_blacklist = false;
-
-                    // Test Blacklist
-                    {
-
-                        if (type_short.equals("se") == true) {
-
-                            if ("ta".contains(previous_block) == true) {
-
-                                is_blacklist = true;
-
-                            }
-
-                        } else if (type_short.equals("te") == true) {
-
-                            if ("ta/se".contains(previous_block) == true) {
-
-                                is_blacklist = true;
-
-                            }
-
-                        } else if (type_short.equals("fi") == true) {
-
-                            if ("ta/se/te".contains(previous_block) == true) {
-
-                                is_blacklist = true;
-
-                            }
-
-                        } else if (type_short.equals("tr") == true) {
-
-                            if ("ta/se/te/fi".contains(previous_block) == true) {
-
-                                is_blacklist = true;
-
-                            }
-
-                        } else if (type_short.equals("bo") == true) {
-
-                            if ("ta/se/te/fi/tr".contains(previous_block) == true) {
-
-                                is_blacklist = true;
-
-                            }
-
-                        } else if (type_short.equals("br") == true) {
-
-                            if ("ta/se/te/fi/tr/bo".contains(previous_block) == true) {
-
-                                is_blacklist = true;
-
-                            }
-
-                        } else if (type_short.equals("li") == true) {
-
-                            if ("ta/se/te/fi/tr/bo/br".contains(previous_block) == true) {
-
-                                is_blacklist = true;
-
-                            }
-
-                        } else if (type_short.equals("tw") == true) {
-
-                            if ("ta/se/te/fi/tr/bo/br/li".contains(previous_block) == true) {
-
-                                is_blacklist = true;
-
-                            }
-
-                        } else if (type_short.equals("sp") == true) {
-
-                            if ("ta/se/te/fi/tr/bo/br/li/tw".contains(previous_block) == true) {
-
-                                is_blacklist = true;
+                                inner_area = 0;
 
                             }
 
                         }
 
-                    }
+                        if (build_area < inner_area) {
 
-                    boolean is_same_type = type_short.equals(previous_block);
-                    boolean is_core = previous_block_type.endsWith("c");
+                            block = "core";
 
-                    if (block.equals("core") == true) {
+                        } else if (build_area < outer_area) {
 
-                        // Core
-                        {
+                            if (inner_level >= 1 || Math.random() < inner_level) {
 
-                            if (is_core == true) {
+                                block = "inner";
 
-                                if (is_same_type == true) {
+                            } else {
 
-                                    block = "";
+                                block = "core";
 
-                                } else if (is_blacklist == true) {
+                            }
 
-                                    block = "";
+                        } else {
+
+                            if (outer_level >= 1 || Math.random() < outer_level) {
+
+                                block = "outer";
+
+                            } else {
+
+                                if (inner_level >= 1 || Math.random() < inner_level) {
+
+                                    block = "inner";
 
                                 }
 
@@ -1440,37 +1261,150 @@ public class TreeGenerator {
 
                         }
 
-                    } else {
+                    }
 
-                        // Outer and Inner
+                    if (previous_block.equals("") == false) {
+
+                        String type_short = type.substring(0, 2);
+                        String previous_block_short = previous_block.substring(0, 2);
+                        boolean is_blacklist = false;
+
+                        // Test Blacklist
                         {
 
-                            if (is_same_type == true) {
+                            if (type_short.equals("se") == true) {
+
+                                if ("ta".contains(previous_block_short) == true) {
+
+                                    is_blacklist = true;
+
+                                }
+
+                            } else if (type_short.equals("te") == true) {
+
+                                if ("ta/se".contains(previous_block_short) == true) {
+
+                                    is_blacklist = true;
+
+                                }
+
+                            } else if (type_short.equals("fi") == true) {
+
+                                if ("ta/se/te".contains(previous_block_short) == true) {
+
+                                    is_blacklist = true;
+
+                                }
+
+                            } else if (type_short.equals("tr") == true) {
+
+                                if ("ta/se/te/fi".contains(previous_block_short) == true) {
+
+                                    is_blacklist = true;
+
+                                }
+
+                            } else if (type_short.equals("bo") == true) {
+
+                                if ("ta/se/te/fi/tr".contains(previous_block_short) == true) {
+
+                                    is_blacklist = true;
+
+                                }
+
+                            } else if (type_short.equals("br") == true) {
+
+                                if ("ta/se/te/fi/tr/bo".contains(previous_block_short) == true) {
+
+                                    is_blacklist = true;
+
+                                }
+
+                            } else if (type_short.equals("li") == true) {
+
+                                if ("ta/se/te/fi/tr/bo/br".contains(previous_block_short) == true) {
+
+                                    is_blacklist = true;
+
+                                }
+
+                            } else if (type_short.equals("tw") == true) {
+
+                                if ("ta/se/te/fi/tr/bo/br/li".contains(previous_block_short) == true) {
+
+                                    is_blacklist = true;
+
+                                }
+
+                            } else if (type_short.equals("sp") == true) {
+
+                                if ("ta/se/te/fi/tr/bo/br/li/tw".contains(previous_block_short) == true) {
+
+                                    is_blacklist = true;
+
+                                }
+
+                            }
+
+                        }
+
+                        boolean is_same_type = type_short.equals(previous_block_short);
+                        boolean is_core = previous_block.endsWith("c");
+
+                        if (block.equals("core") == true) {
+
+                            // Core
+                            {
 
                                 if (is_core == true) {
 
-                                    block = "";
+                                    if (is_same_type == true) {
 
-                                } else {
+                                        block = "";
 
-                                    {
+                                    } else if (is_blacklist == true) {
 
-                                        boolean is_same_type_outer = previous_block_type.equals("o");
-                                        boolean is_same_type_inner = previous_block_type.equals("i");
+                                        block = "";
 
-                                        if (block.equals("outer") == true) {
+                                    }
 
-                                            if (is_same_type_outer == true || is_same_type_inner == true) {
+                                }
 
-                                                block = "";
+                            }
 
-                                            }
+                        } else {
 
-                                        } else if (block.equals("inner") == true) {
+                            // Outer and Inner
+                            {
 
-                                            if (is_same_type_inner == true) {
+                                if (is_same_type == true) {
 
-                                                block = "";
+                                    if (is_core == true) {
+
+                                        block = "";
+
+                                    } else {
+
+                                        {
+
+                                            boolean is_same_type_outer = previous_block.endsWith("o");
+                                            boolean is_same_type_inner = previous_block.endsWith("i");
+
+                                            if (block.equals("outer") == true) {
+
+                                                if (is_same_type_outer == true || is_same_type_inner == true) {
+
+                                                    block = "";
+
+                                                }
+
+                                            } else if (block.equals("inner") == true) {
+
+                                                if (is_same_type_inner == true) {
+
+                                                    block = "";
+
+                                                }
 
                                             }
 
@@ -1478,19 +1412,36 @@ public class TreeGenerator {
 
                                     }
 
-                                }
+                                } else {
 
-                            } else {
+                                    if (is_blacklist == true) {
 
-                                if (is_blacklist == true) {
+                                        block = "";
 
-                                    block = "";
+                                    }
 
                                 }
 
                             }
 
                         }
+
+                    }
+
+                }
+
+            } else {
+
+                // Leaves
+                {
+
+                    if (Math.random() < Utils.nbt.entity.getNumber(entity, "leaves2_chance")) {
+
+                        block = "2";
+
+                    } else {
+
+                        block = "1";
 
                     }
 
@@ -1502,76 +1453,137 @@ public class TreeGenerator {
 
         }
 
-        private static boolean buildTestKeep (LevelAccessor level_accessor, Entity entity, BlockPos pos, boolean replace) {
+        private static String buildGetPreviousBlock (LevelAccessor level_accessor, BlockPos pos, boolean replace) {
 
-            if (replace == false) {
+            String previous_block = "";
 
-                if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
-
-                    return level_accessor.getBlockState(pos).isAir();
-
-                } else {
-
-                    String block = ShapeFileConverter.export_data.getOrDefault("B" + (pos.getX() - entity.getBlockX()) + "/" + (pos.getY() - 1000) + "/" + (pos.getZ() - entity.getBlockZ()), "");
-                    return block.isEmpty();
-
-                }
-
-            }
-
-            return true;
-
-        }
-
-        private static void buildPlaceBlock (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, BlockPos pos, String type, String block_type) {
-
-            String type_short = type.substring(0, 2);
-            String block_placer = "";
-            String block = "";
-
-            if (type.equals("leaves") == false) {
-
-                type_short = type_short + block_type.substring(0, 1);
-                block_placer = type + "_" + block_type;
-                block = block_placer;
-
-            } else {
-
-                type_short = type_short + block_type;
-                block_placer = "leaves_" + block_type;
-                block = "leaves" + block_type;
-
-            }
-
-            if (Utils.nbt.entity.getText(entity, block).equals("") == false) {
-
-                String[] function = buildGetWayFunction(entity, type);
+            {
 
                 if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                    Utils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
-                    level_accessor.setBlock(pos, Utils.block.fromText("tanshugetrees:block_placer_" + block_placer), 2);
+                    BlockState block = level_accessor.getBlockState(pos);
 
-                    Utils.nbt.block.setText(level_accessor, pos, "block", Utils.nbt.entity.getText(entity, block));
-                    Utils.nbt.block.setText(level_accessor, pos, "function", function[1]);
-                    Utils.nbt.block.setText(level_accessor, pos, "function_style", function[2]);
+                    if (replace == true || block.isAir() == false) {
+
+                        previous_block = Utils.block.toTextID(block);
+
+                        if (previous_block.startsWith("tanshugetrees:block_placer_") == false) {
+
+                            previous_block = "";
+
+                        } else {
+
+                            previous_block = previous_block.substring("tanshugetrees:block_placer_".length());
+                            String type = previous_block.substring(0, 2);
+
+                            if (previous_block.endsWith("outer") == true) {
+
+                                previous_block = "o";
+
+                            } else if (previous_block.endsWith("inner") == true) {
+
+                                previous_block = "i";
+
+                            } else if (previous_block.endsWith("core") == true) {
+
+                                previous_block = "c";
+
+                            }
+
+                            previous_block = type + previous_block;
+
+                        }
+
+                    }
 
                 } else {
 
-                    String key = (pos.getX() - entity.getBlockX()) + "/" + (pos.getY() - 1000) + "/" + (pos.getZ() - entity.getBlockZ());
-                    ShapeFileConverter.export_data.remove("B" + key);
-                    ShapeFileConverter.export_data.put("B" + key, type_short);
+                    String key = "B" + pos.getX() + "/" + pos.getY() + "/" + pos.getZ();
+                    previous_block = ShapeFileConverter.export_data.getOrDefault(key, "");
 
-                    if (function[0].equals("") == false) {
+                    if (replace == false && previous_block.equals("") == false) {
 
-                        ShapeFileConverter.export_data.remove("F" + key);
-                        ShapeFileConverter.export_data.put("F" + key, function[0]);
+                        previous_block = "";
 
                     }
 
                 }
 
             }
+
+            return previous_block;
+
+        }
+
+        private static boolean buildPlaceBlock (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, BlockPos pos, String type, String block_type, String previous_block) {
+
+            if (block_type.equals("") == false) {
+
+                String type_short = type.substring(0, 2);
+                String block_placer = "";
+                String block = "";
+
+                if (type.equals("leaves") == false) {
+
+                    type_short = type_short + block_type.charAt(0);
+                    block_placer = type + "_" + block_type;
+                    block = block_placer;
+
+                } else {
+
+                    type_short = type_short + block_type;
+                    block_placer = "leaves_" + block_type;
+                    block = "leaves" + block_type;
+
+                }
+
+                if (Utils.nbt.entity.getText(entity, block).equals("") == false) {
+
+                    String[] function = buildGetWayFunction(entity, type);
+                    boolean replacing = previous_block.equals("") == false;
+
+                    if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
+
+                        Utils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
+                        level_accessor.setBlock(pos, Utils.block.fromText("tanshugetrees:block_placer_" + block_placer), 2);
+
+                        Utils.nbt.block.setText(level_accessor, pos, "block", Utils.nbt.entity.getText(entity, block));
+                        Utils.nbt.block.setText(level_accessor, pos, "function", function[1]);
+                        Utils.nbt.block.setText(level_accessor, pos, "function_style", function[2]);
+
+                    } else {
+
+                        String key = pos.getX() + "/" + pos.getY() + "/" + pos.getZ();
+
+                        if (replacing == true) {
+
+                            ShapeFileConverter.export_data.remove("B" + key);
+
+                        }
+
+                        ShapeFileConverter.export_data.put("B" + key, type_short);
+
+                        if (function[0].equals("") == false) {
+
+                            if (replacing == true) {
+
+                                ShapeFileConverter.export_data.remove("F" + key);
+
+                            }
+
+                            ShapeFileConverter.export_data.put("F" + key, function[0]);
+
+                        }
+
+                    }
+
+                    return true;
+
+                }
+
+            }
+
+            return false;
 
         }
 

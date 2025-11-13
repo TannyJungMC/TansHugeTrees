@@ -15,7 +15,7 @@ public class ShapeFileConverter {
 
     public static LinkedHashMap<String, String> export_data = new LinkedHashMap<>();
 
-    public static void start (LevelAccessor level_accessor, Entity entity, int count) {
+    public static void start (LevelAccessor level_accessor, int count) {
 
         if (level_accessor instanceof ServerLevel level_server) {
 
@@ -315,9 +315,9 @@ public class ShapeFileConverter {
                 for (Map.Entry<String, String> entry : export_data.entrySet()) {
 
                     pos = entry.getKey().substring(1).split("/");
-                    posX = Integer.parseInt(pos[0]);
-                    posY = Integer.parseInt(pos[1]);
-                    posZ = Integer.parseInt(pos[2]);
+                    posX = entity.getBlockX() - Integer.parseInt(pos[0]);
+                    posY = entity.getBlockY() - Integer.parseInt(pos[1]);
+                    posZ = entity.getBlockZ() - Integer.parseInt(pos[2]);
                     type_short = entry.getValue();
 
                     if (entry.getKey().startsWith("B") == true) {
