@@ -1,7 +1,7 @@
 package tannyjung.tanshugetrees_handcode.systems;
 
 import tannyjung.core.FileManager;
-import tannyjung.tanshugetrees.TanshugetreesMod;
+import tannyjung.core.Utils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.nio.ShortBuffer;
@@ -19,7 +19,17 @@ public class Cache {
     private static final Map<String, String[]> functions = new HashMap<>();
     private static final Map<String, String[]> leaf_litter = new HashMap<>();
 
-    public static void clear () {
+    public static double clear () {
+
+        double size = 0;
+        size = size + Utils.outside.mapSizeText(dictionary);
+        size = size + Utils.outside.mapSizeNumber(tree_shape_part1);
+        size = size + Utils.outside.mapSizeNumber(tree_shape_part2);
+        size = size + Utils.outside.mapSizeTextList(world_gen_settings);
+        size = size + Utils.outside.mapSizeTextList(tree_settings);
+        size = size + Utils.outside.mapSizeTextList(functions);
+        size = size + Utils.outside.mapSizeTextList(leaf_litter);
+        size = Double.parseDouble(String.format("%.2f", size / (1024 * 1024)));
 
         dictionary.clear();
         tree_shape_part1.clear();
@@ -28,7 +38,8 @@ public class Cache {
         tree_settings.clear();
         functions.clear();
         leaf_litter.clear();
-        TanshugetreesMod.LOGGER.info("Cleared All Main Caches");
+
+        return size;
 
     }
 

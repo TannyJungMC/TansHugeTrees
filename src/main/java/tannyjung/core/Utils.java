@@ -49,6 +49,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class Utils {
 
@@ -377,6 +378,48 @@ public class Utils {
 			return return_text;
 
 		}
+
+        public static int mapSizeText (Map<String, String> test) {
+
+            int return_number = 0;
+
+            for (Map.Entry<String, String> entry : test.entrySet()) {
+
+                return_number = return_number + entry.getValue().length() * Character.BYTES;
+
+            }
+
+            return return_number;
+
+        }
+
+        public static int mapSizeTextList (Map<String, String[]> test) {
+
+            int return_number = 0;
+
+            for (Map.Entry<String, String[]> entry : test.entrySet()) {
+
+                return_number = return_number + entry.getValue().length * Integer.BYTES;
+
+            }
+
+            return return_number;
+
+        }
+
+        public static int mapSizeNumber (Map<String, short[]> test) {
+
+            int return_number = 0;
+
+            for (Map.Entry<String, short[]> entry : test.entrySet()) {
+
+                return_number = return_number + entry.getValue().length * Short.BYTES;
+
+            }
+
+            return return_number;
+
+        }
 
 	}
 
