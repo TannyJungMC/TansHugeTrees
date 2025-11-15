@@ -1101,13 +1101,25 @@ public class TreePlacer {
                                 // Tree Decoration
                                 {
 
-                                    if (dead_tree_level == 0) {
+                                    if (type.startsWith("120") == false) {
 
-                                        TXTFunction.start(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), "#TannyJung-Main-Pack/tree_decoration_normal");
+                                        if (dead_tree_level == 0) {
 
-                                    } else {
+                                            for (String name : Cache.functions_tree_decoration()) {
 
-                                        TXTFunction.start(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), "#TannyJung-Main-Pack/tree_decoration_decay");
+                                                TXTFunction.start(level_accessor, level_server, random, pos.getX(), pos.getY(), pos.getZ(), "#TannyJung-Main-Pack/tree_decoration/" + name);
+
+                                            }
+
+                                        } else {
+
+                                            for (String name : Cache.functions_tree_decoration_decay()) {
+
+                                                TXTFunction.start(level_accessor, level_server, random, pos.getX(), pos.getY(), pos.getZ(), "#TannyJung-Main-Pack/tree_decoration_decay/" + name);
+
+                                            }
+
+                                        }
 
                                     }
 
