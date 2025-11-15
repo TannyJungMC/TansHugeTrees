@@ -4,10 +4,9 @@ import tannyjung.core.FileManager;
 import tannyjung.core.Utils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
+import java.io.File;
 import java.nio.ShortBuffer;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Cache {
 
@@ -17,29 +16,39 @@ public class Cache {
     private static final Map<String, String[]> world_gen_settings = new HashMap<>();
     private static final Map<String, String[]> tree_settings = new HashMap<>();
     private static final Map<String, String[]> functions = new HashMap<>();
+    private static String[] functions_tree_decoration = new String[0];
+    private static String[] functions_tree_decoration_decay = new String[0];
     private static final Map<String, String[]> leaf_litter = new HashMap<>();
 
     public static double clear () {
 
         double size = 0;
-        size = size + Utils.outside.mapSizeText(dictionary);
-        size = size + Utils.outside.mapSizeNumber(tree_shape_part1);
-        size = size + Utils.outside.mapSizeNumber(tree_shape_part2);
-        size = size + Utils.outside.mapSizeTextList(world_gen_settings);
-        size = size + Utils.outside.mapSizeTextList(tree_settings);
-        size = size + Utils.outside.mapSizeTextList(functions);
-        size = size + Utils.outside.mapSizeTextList(leaf_litter);
-        size = Double.parseDouble(String.format("%.2f", size / (1024 * 1024)));
 
-        dictionary.clear();
-        tree_shape_part1.clear();
-        tree_shape_part2.clear();
-        world_gen_settings.clear();
-        tree_settings.clear();
-        functions.clear();
-        leaf_litter.clear();
+        {
 
-        return size;
+            size = size + Utils.size.sizeMapText(dictionary);
+            size = size + Utils.size.sizeMapNumber(tree_shape_part1);
+            size = size + Utils.size.sizeMapNumber(tree_shape_part2);
+            size = size + Utils.size.sizeMapTextList(world_gen_settings);
+            size = size + Utils.size.sizeMapTextList(tree_settings);
+            size = size + Utils.size.sizeMapTextList(functions);
+            size = size + Utils.size.sizeArrayText(functions_tree_decoration);
+            size = size + Utils.size.sizeArrayText(functions_tree_decoration_decay);
+            size = size + Utils.size.sizeMapTextList(leaf_litter);
+
+            dictionary.clear();
+            tree_shape_part1.clear();
+            tree_shape_part2.clear();
+            world_gen_settings.clear();
+            tree_settings.clear();
+            functions.clear();
+            functions_tree_decoration = new String[0];
+            functions_tree_decoration_decay = new String[0];
+            leaf_litter.clear();
+
+        }
+
+        return Double.parseDouble(String.format("%.2f", size / (1024 * 1024)));
 
     }
 
@@ -173,6 +182,62 @@ public class Cache {
         }
 
         return functions.getOrDefault(id, new String[0]);
+
+    }
+
+    public static String[] functions_tree_decoration () {
+
+        if (functions_tree_decoration.length == 0) {
+
+            String[] list = new File(Handcode.path_config + "/#dev/custom_packs_organized/functions/#TannyJung-Main-Pack/tree_decoration").list();
+
+            if (list != null) {
+
+                String[] convert = new String[list.length];
+                int loop = 0;
+
+                while (loop < list.length) {
+
+                    convert[loop] = list[loop].replace(".txt", "");
+                    loop = loop + 1;
+
+                }
+
+                functions_tree_decoration = convert;
+
+            }
+
+        }
+
+        return functions_tree_decoration;
+
+    }
+
+    public static String[] functions_tree_decoration_decay () {
+
+        if (functions_tree_decoration_decay.length == 0) {
+
+            String[] list = new File(Handcode.path_config + "/#dev/custom_packs_organized/functions/#TannyJung-Main-Pack/tree_decoration_decay").list();
+
+            if (list != null) {
+
+                String[] convert = new String[list.length];
+                int loop = 0;
+
+                while (loop < list.length) {
+
+                    convert[loop] = list[loop].replace(".txt", "");
+                    loop = loop + 1;
+
+                }
+
+                functions_tree_decoration_decay = convert;
+
+            }
+
+        }
+
+        return functions_tree_decoration_decay;
 
     }
 
