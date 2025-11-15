@@ -1,9 +1,10 @@
-package tannyjung.core;
+package tannyjung.core.game;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
@@ -14,10 +15,7 @@ import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 public class TXTFunction {
 
-    public static String path_config = "";
-    public static boolean version_1192 = false;
-
-	public static void start (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String path) {
+	public static void start (LevelAccessor level_accessor, ServerLevel level_server, RandomSource random, int posX, int posY, int posZ, String path) {
 
         WorldGenLevel world_gen = (WorldGenLevel) level_accessor;
         boolean chunk_loaded = level_server.isPositionEntityTicking(new BlockPos(posX, posY, posZ));
@@ -87,7 +85,7 @@ public class TXTFunction {
 
                                         }
 
-                                        if (Math.random() < chance) {
+                                        if (random.nextDouble() < chance) {
 
                                             TanshugetreesMod.LOGGER.info(variable_text + "   |   Testing > " + run_test + "   |   Result > " + run_test_result + "   |   Skip > " + run_skip + "   |   Break > " + run_break);
 
@@ -111,7 +109,15 @@ public class TXTFunction {
 
                                                 if (run_skip == false) {
 
-                                                    run_skip = run_test_result;
+                                                    if (run_test_result == false) {
+
+                                                        run_test_result = true;
+
+                                                    } else {
+
+                                                        run_skip = true;
+
+                                                    }
 
                                                 }
 
@@ -184,7 +190,7 @@ public class TXTFunction {
 
                                                             }
 
-                                                            if (Math.random() < chance) {
+                                                            if (random.nextDouble() < chance) {
 
                                                                 continue;
 
@@ -211,7 +217,7 @@ public class TXTFunction {
 
                                                             }
 
-                                                            if (Utils.outside.configTestBiome(level_accessor.getBiome(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == true) {
+                                                            if (GameUtils.misc.customTestBiome(level_accessor.getBiome(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == true) {
 
                                                                 continue;
 
@@ -238,7 +244,7 @@ public class TXTFunction {
 
                                                             }
 
-                                                            if (Utils.outside.configTestBlock(level_accessor.getBlockState(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == true) {
+                                                            if (GameUtils.misc.customTestBlock(level_accessor.getBlockState(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == true) {
 
                                                                 continue;
 
@@ -265,7 +271,7 @@ public class TXTFunction {
 
                                                                 get = read_all.replace("block = ", "").split(" \\| ");
                                                                 chance = Double.parseDouble(get[0]);
-                                                                variable_block = Utils.block.fromText(get[3]);
+                                                                variable_block = GameUtils.block.fromText(get[3]);
                                                                 variable_logic = Boolean.parseBoolean(get[4]);
 
                                                             } catch (Exception ignored) {
@@ -274,7 +280,7 @@ public class TXTFunction {
 
                                                             }
 
-                                                            if (Math.random() < chance && variable_block != Blocks.AIR.defaultBlockState()) {
+                                                            if (random.nextDouble() < chance && variable_block != Blocks.AIR.defaultBlockState()) {
 
                                                                 // Get Pos
                                                                 {
@@ -317,7 +323,7 @@ public class TXTFunction {
 
                                                                                     if (variable_logic == true) {
 
-                                                                                        if (Utils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
+                                                                                        if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
 
                                                                                             continue;
 
@@ -349,7 +355,7 @@ public class TXTFunction {
 
                                                                 get = read_all.replace("block = ", "").split(" \\| ");
                                                                 chance = Double.parseDouble(get[0]);
-                                                                variable_block = Utils.block.fromText(get[3]);
+                                                                variable_block = GameUtils.block.fromText(get[3]);
                                                                 variable_logic = Boolean.parseBoolean(get[4]);
 
                                                             } catch (Exception ignored) {
@@ -358,7 +364,7 @@ public class TXTFunction {
 
                                                             }
 
-                                                            if (Math.random() < chance && variable_block != Blocks.AIR.defaultBlockState()) {
+                                                            if (random.nextDouble() < chance && variable_block != Blocks.AIR.defaultBlockState()) {
 
                                                                 // Get Pos
                                                                 {
@@ -401,7 +407,7 @@ public class TXTFunction {
 
                                                                                     if (variable_logic == true) {
 
-                                                                                        if (Utils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
+                                                                                        if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
 
                                                                                             continue;
 
@@ -445,7 +451,7 @@ public class TXTFunction {
 
                                                             }
 
-                                                            if (Math.random() < chance) {
+                                                            if (random.nextDouble() < chance) {
 
                                                                 try {
 
@@ -482,9 +488,9 @@ public class TXTFunction {
 
                                                             }
 
-                                                            if (Math.random() < chance) {
+                                                            if (random.nextDouble() < chance) {
 
-                                                                TXTFunction.start(level_accessor, level_server, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, variable_text);
+                                                                TXTFunction.start(level_accessor, level_server, random, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, variable_text);
 
                                                             }
 
@@ -506,11 +512,11 @@ public class TXTFunction {
 
                                                             }
 
-                                                            if (Math.random() < chance) {
+                                                            if (random.nextDouble() < chance) {
 
                                                                 if (chunk_loaded == true) {
 
-                                                                    Utils.command.run(level_server, posX, posY, posZ, variable_text);
+                                                                    GameUtils.command.run(level_server, posX, posY, posZ, variable_text);
 
                                                                 } else {
 
@@ -560,7 +566,7 @@ public class TXTFunction {
                 }
 
                 command = command.replace("'", "*").replace("\"", "$");
-                Utils.command.run(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, Utils.entity.summonCommand("marker", "TANNYJUNG / TANNYJUNG-delayed_command", "Delayed Command", "ForgeData:{command:\"" + command + "\"}"));
+                GameUtils.command.run(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, GameUtils.command.summonEntity("marker", "TANNYJUNG / TANNYJUNG-delayed_command", "Delayed Command", "ForgeData:{command:\"" + command + "\"}"));
 
             }
 
@@ -576,14 +582,14 @@ public class TXTFunction {
 
             if (level_server.isPositionEntityTicking(entity.blockPosition()) == true) {
 
-                for (String command : Utils.nbt.entity.getText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
+                for (String command : GameUtils.nbt.entity.getText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
 
-                    Utils.command.run(level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), command);
+                    GameUtils.command.run(level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), command);
 
 
                 }
 
-                Utils.command.runEntity(entity, "kill @s");
+                GameUtils.command.runEntity(entity, "kill @s");
 
             }
 
