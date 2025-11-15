@@ -16,11 +16,12 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import tannyjung.core.FileManager;
 import tannyjung.core.Utils;
+import tannyjung.core.game.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LeafLitter;
-import tannyjung.core.TXTFunction;
+import tannyjung.core.game.TXTFunction;
 
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -29,23 +30,25 @@ public class TreePlacer {
 
     public static void start (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos) {
 
+        RandomSource random = RandomSource.create(level_server.getSeed() ^ (chunk_pos.x * 341873128712L + chunk_pos.z * 132897987541L));
         ByteBuffer get = FileManager.readBIN(Handcode.path_world_data + "/world_gen/place/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + ".bin");
-        int from_chunkX = 0;
-        int from_chunkZ = 0;
-        int to_chunkX = 0;
-        int to_chunkZ = 0;
-        String id = "";
-        String chosen = "";
-        int center_posX = 0;
-        int center_posZ = 0;
-        int rotation = 0;
-        boolean mirrored = false;
-        int start_height_offset = 0;
-        int up_sizeY = 0;
-        String ground_block = "";
-        int dead_tree_level = 0;
 
         while (get.remaining() > 0) {
+
+            int from_chunkX = 0;
+            int from_chunkZ = 0;
+            int to_chunkX = 0;
+            int to_chunkZ = 0;
+            String id = "";
+            String chosen = "";
+            int center_posX = 0;
+            int center_posZ = 0;
+            int rotation = 0;
+            boolean mirrored = false;
+            int start_height_offset = 0;
+            int up_sizeY = 0;
+            String ground_block = "";
+            int dead_tree_level = 0;
 
             try {
 
@@ -120,8 +123,6 @@ public class TreePlacer {
                         }
 
                     }
-
-                    int seed = center_posX * center_posZ;
 
                     if (already_tested == false) {
 
@@ -254,7 +255,7 @@ public class TreePlacer {
                                         // Ground Block
                                         {
 
-                                            if (Utils.outside.configTestBlock(chunk.getBlockState(new BlockPos(center_posX, center_posY - 1, center_posZ)), ground_block) == false) {
+                                            if (GameUtils.misc.customTestBlock(chunk.getBlockState(new BlockPos(center_posX, center_posY - 1, center_posZ)), ground_block) == false) {
 
                                                 break test;
 
@@ -340,7 +341,8 @@ public class TreePlacer {
 
                                         if (coarse_woody_debris == true) {
 
-                                            int[] pos_converted = Utils.outside.convertRotationMirrored(seed, 0, originalY + up_sizeY, 0, rotation, mirrored, coarse_woody_debris);
+                                            int fallen_direction = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ (center_posX * 341873128712L + center_posZ * 132897987541L)).nextInt(4) + 1;
+                                            int[] pos_converted = Utils.misc.convertPosRotationMirrored(0, originalY + up_sizeY, 0, rotation, mirrored, fallen_direction);
                                             int pos1 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.5), center_posZ + (int) (pos_converted[2] * 0.5), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
                                             int pos2 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.75), center_posZ + (int) (pos_converted[2] * 0.75), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
                                             int pos3 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 1.0), center_posZ + (int) (pos_converted[2] * 1.0), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
@@ -372,7 +374,7 @@ public class TreePlacer {
 
                                             } else {
 
-                                                if (Math.random() < ConfigMain.unviable_ecology_skip_chance) {
+                                                if (random.nextDouble() < ConfigMain.unviable_ecology_skip_chance) {
 
                                                     break test;
 
@@ -423,7 +425,7 @@ public class TreePlacer {
 
                     if (pass == true) {
 
-                        getData(level_accessor, level_server, seed, chunk_pos, id, chosen, center_posX, center_posY, center_posZ, rotation, mirrored, dead_tree_level);
+                        getData(level_accessor, level_server, random, chunk_pos, id, chosen, center_posX, center_posY, center_posZ, rotation, mirrored, dead_tree_level);
 
                     }
 
@@ -435,7 +437,7 @@ public class TreePlacer {
 
     }
 
-    private static void getData (LevelAccessor level_accessor, ServerLevel level_server, int seed, ChunkPos chunk_pos, String id, String chosen, int center_posX, int center_posY, int center_posZ, int rotation, boolean mirrored, int dead_tree_level) {
+    private static void getData (LevelAccessor level_accessor, ServerLevel level_server, RandomSource random, ChunkPos chunk_pos, String id, String chosen, int center_posX, int center_posY, int center_posZ, int rotation, boolean mirrored, int dead_tree_level) {
 
         String path_storage = "";
         String path_tree_settings = "";
@@ -606,6 +608,7 @@ public class TreePlacer {
 
                     if (block_count.length > 0) {
 
+                        RandomSource random_dead_tree = RandomSource.create(level_server.getSeed() ^ (center_posX * 341873128712L + center_posZ * 132897987541L));
                         block_count = Arrays.copyOfRange(block_count, 6, 12);
 
                         // Dead Tree Main Type
@@ -639,11 +642,11 @@ public class TreePlacer {
 
                                 if (dead_tree_level == 60 || dead_tree_level == 70) {
 
-                                    block_count_trunk = (int) (Mth.nextDouble(RandomSource.create(seed), 0.5, 1.0) * (double) block_count_trunk);
+                                    block_count_trunk = (int) (Mth.nextDouble(random_dead_tree, 0.5, 1.0) * (double) block_count_trunk);
 
                                 } else if (dead_tree_level == 80 || dead_tree_level == 90) {
 
-                                    block_count_trunk = (int) (Mth.nextDouble(RandomSource.create(seed), 0.0, 0.5) * (double) block_count_trunk);
+                                    block_count_trunk = (int) (Mth.nextDouble(random_dead_tree, 0.0, 0.5) * (double) block_count_trunk);
 
                                 }
 
@@ -664,7 +667,7 @@ public class TreePlacer {
 
                                 if (dead_tree_level == 50) {
 
-                                    block_count_bough = (int) ((double) block_count_bough * Mth.nextDouble(RandomSource.create(seed + 1), 0.1, 0.9));
+                                    block_count_bough = (int) (random_dead_tree.nextDouble() * block_count_bough);
 
                                 }
 
@@ -674,7 +677,7 @@ public class TreePlacer {
 
                                     if (dead_tree_level == 40) {
 
-                                        block_count_branch = (int) ((double) block_count_branch * Mth.nextDouble(RandomSource.create(seed + 2), 0.1, 0.9));
+                                        block_count_branch = (int) (random_dead_tree.nextDouble() * block_count_branch);
 
                                     }
 
@@ -684,9 +687,9 @@ public class TreePlacer {
 
                                     block_count_limb = block_count[3];
 
-                                    if (dead_tree_level == 30) {
+                                    if (dead_tree_level == 30 && block_count_limb > 0) {
 
-                                        block_count_limb = (int) ((double) block_count_limb * Mth.nextDouble(RandomSource.create(seed + 3), 0.1, 0.9));
+                                        block_count_limb = (int) (random_dead_tree.nextDouble() * block_count_limb);
 
                                     }
 
@@ -696,9 +699,9 @@ public class TreePlacer {
 
                                     block_count_twig = block_count[4];
 
-                                    if (dead_tree_level == 20) {
+                                    if (dead_tree_level == 20 && block_count_twig > 0) {
 
-                                        block_count_twig = (int) ((double) block_count_twig * Mth.nextDouble(RandomSource.create(seed + 4), 0.1, 0.9));
+                                        block_count_twig = (int) (random_dead_tree.nextDouble() * block_count_twig);
 
                                     }
 
@@ -708,9 +711,9 @@ public class TreePlacer {
 
                                     block_count_sprig = block_count[5];
 
-                                    if (dead_tree_level == 10) {
+                                    if (dead_tree_level == 10 && block_count_sprig > 0) {
 
-                                        block_count_sprig = (int) ((double) block_count_sprig * Mth.nextDouble(RandomSource.create(seed + 5), 0.1, 0.9));
+                                        block_count_sprig = (int) (random_dead_tree.nextDouble() * block_count_sprig);
 
                                     }
 
@@ -729,12 +732,19 @@ public class TreePlacer {
             // Read File
             {
 
-                boolean in_snowy_biome = Utils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX, center_posY, center_posZ)), "forge:is_snowy");
+                boolean in_snowy_biome = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX, center_posY, center_posZ)), "forge:is_snowy");
                 boolean can_run_function = false;
                 BlockState block = Blocks.AIR.defaultBlockState();
                 BlockPos pos = null;
                 double leaf_litter_world_gen_chance = 0.0;
                 int height_motion = 0;
+                int fallen_direction = 0;
+
+                if (coarse_woody_debris == true) {
+
+                    fallen_direction = RandomSource.create(level_server.getSeed() ^ (center_posX * 341873128712L + center_posZ * 132897987541L)).nextInt(4) + 1;
+
+                }
 
                 int loop = 0;
                 String type = "";
@@ -903,7 +913,7 @@ public class TreePlacer {
 
                         }
 
-                        pos_converted = Utils.outside.convertRotationMirrored(seed, posX, posY, posZ, rotation, mirrored, coarse_woody_debris);
+                        pos_converted = Utils.misc.convertPosRotationMirrored(posX, posY, posZ, rotation, mirrored, fallen_direction);
                         pos = new BlockPos(center_posX + pos_converted[0], center_posY + pos_converted[1], center_posZ + pos_converted[2]);
 
                         if (chunk_pos.x == pos.getX() >> 4 && chunk_pos.z == pos.getZ() >> 4) {
@@ -982,12 +992,12 @@ public class TreePlacer {
 
                                     }
 
-                                    block = Utils.block.fromText(get);
+                                    block = GameUtils.block.fromText(get);
 
                                     // Leaves
                                     {
 
-                                        if (type.startsWith("120") == true && Utils.block.isTaggedAs(block, "minecraft:leaves") == true) {
+                                        if (type.startsWith("120") == true && GameUtils.block.isTaggedAs(block, "minecraft:leaves") == true) {
 
                                             // Pre Leaves Drop
                                             {
@@ -1011,7 +1021,7 @@ public class TreePlacer {
 
                                                         }
 
-                                                        if (Math.random() < leaf_litter_world_gen_chance) {
+                                                        if (random.nextDouble() < leaf_litter_world_gen_chance) {
 
                                                             height_motion = level_accessor.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
 
@@ -1057,7 +1067,7 @@ public class TreePlacer {
 
                                         if (level_accessor.isWaterAt(pos) == true) {
 
-                                            block = Utils.block.propertyBooleanSet(block, "waterlogged", true);
+                                            block = GameUtils.block.propertyBooleanSet(block, "waterlogged", true);
 
                                         }
 
@@ -1078,7 +1088,7 @@ public class TreePlacer {
                                             if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
 
                                                 String marker_data = "ForgeData:{file:\"" + path_storage + "|" + chosen + "\",tree_settings:\"" + path_tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
-                                                Utils.command.run(level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, Utils.entity.summonCommand("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
+                                                GameUtils.command.run(level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.command.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
 
                                             }
 
@@ -1113,7 +1123,7 @@ public class TreePlacer {
                                     // Separate like this because start and end function doesn't need to test "can_run_function"
                                     if (can_run_function == true || (type.equals("210") == true || type.equals("220") == true)) {
 
-                                        TXTFunction.start(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), get);
+                                        TXTFunction.start(level_accessor, level_server, random, pos.getX(), pos.getY(), pos.getZ(), get);
 
                                     }
 

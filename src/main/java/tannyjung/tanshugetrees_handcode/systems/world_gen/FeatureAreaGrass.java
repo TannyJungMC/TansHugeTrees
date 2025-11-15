@@ -1,13 +1,14 @@
 package tannyjung.tanshugetrees_handcode.systems.world_gen;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import tannyjung.core.Utils;
+import tannyjung.core.game.GameUtils;
 
 public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
 
@@ -33,6 +34,7 @@ public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
         BlockState previous_block = Blocks.AIR.defaultBlockState();
         BlockPos pos = null;
         BlockState block = Blocks.AIR.defaultBlockState();
+        RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ (center_pos.getX() * 341873128712L + center_pos.getZ() * 132897987541L));
 
         for (int scanX = startX; scanX <= endX; scanX++) {
 
@@ -44,12 +46,12 @@ public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
 
                     if (area_test < area_sphere) {
 
-                        if (Math.random() < 1.0 - (area_test / area_sphere)) {
+                        if (random.nextDouble() < 1.0 - (area_test / area_sphere)) {
 
                             pos = new BlockPos(center_pos.getX() + scanX, center_pos.getY() + scanY, center_pos.getZ() + scanZ);
                             previous_block = level_accessor.getBlockState(pos);
 
-                            if (Utils.block.isTaggedAs(previous_block, "minecraft:sand") == true || Utils.block.isTaggedAs(previous_block, "minecraft:base_stone_overworld") == true) {
+                            if (GameUtils.block.isTaggedAs(previous_block, "minecraft:sand") == true || GameUtils.block.isTaggedAs(previous_block, "minecraft:base_stone_overworld") == true) {
 
                                 if (Math.random() < 0.5 && level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ())).isAir() == true) {
 
