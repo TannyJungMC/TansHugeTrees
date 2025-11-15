@@ -2,12 +2,12 @@ package tannyjung.tanshugetrees_handcode.systems;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
+import tannyjung.core.game.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.core.Utils;
+
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
-import tannyjung.tanshugetrees_handcode.config.PackUpdate;
 
 public class Loop {
 
@@ -82,7 +82,7 @@ public class Loop {
 
                     }
 
-                    Utils.command.run(level_server, 0, 0, 0, "execute at @p as @e[tag=TANSHUGETREES-tree_generator" + custom + "] at @s run TANSHUGETREES dev tree_generator");
+                    GameUtils.command.run(level_server, 0, 0, 0, "execute at @p as @e[tag=TANSHUGETREES-tree_generator" + custom + "] at @s run TANSHUGETREES dev tree_generator");
 
                 }
 
@@ -106,9 +106,9 @@ public class Loop {
 
                             living_tree_mechanics_tick = 0;
 
-                            if (Math.random() < (double) Utils.score.get(level_server, "TANSHUGETREES", "tree_location") / (double) ConfigMain.living_tree_mechanics_simulation) {
+                            if (Math.random() < (double) GameUtils.score.get(level_server, "TANSHUGETREES", "tree_location") / (double) ConfigMain.living_tree_mechanics_simulation) {
 
-                                Utils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_location,limit=1,sort=random] at @s run TANSHUGETREES dev living_tree_mechanics main");
+                                GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_location,limit=1,sort=random] at @s run TANSHUGETREES dev living_tree_mechanics main");
 
                             }
 
@@ -122,13 +122,13 @@ public class Loop {
 
             if (loop_living_tree_mechanics_leaf_drop == true) {
 
-                Utils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-leaf_drop] at @s run TANSHUGETREES dev living_tree_mechanics leaf_drop");
+                GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-leaf_drop] at @s run TANSHUGETREES dev living_tree_mechanics leaf_drop");
 
             }
 
             if (loop_living_tree_mechanics_leaf_litter_remover == true) {
 
-                Utils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-leaf_litter_remover] at @s run TANSHUGETREES dev living_tree_mechanics leaf_litter_remover");
+                GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-leaf_litter_remover] at @s run TANSHUGETREES dev living_tree_mechanics leaf_litter_remover");
 
             }
 
@@ -138,28 +138,28 @@ public class Loop {
 
     private static void second (ServerLevel level_server) {
 
-        boolean loop_delayed_command = Utils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANNYJUNG-delayed_command]");
+        boolean loop_delayed_command = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANNYJUNG-delayed_command]");
 
-        loop_tree_generator = Utils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_generator]");
-        loop_tree_location = Utils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_location]");
-        loop_living_tree_mechanics_leaf_drop = Utils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_drop]");
-        loop_living_tree_mechanics_leaf_litter_remover = Utils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_litter_remover]");
+        loop_tree_generator = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_generator]");
+        loop_tree_location = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_location]");
+        loop_living_tree_mechanics_leaf_drop = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_drop]");
+        loop_living_tree_mechanics_leaf_litter_remover = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_litter_remover]");
 
         // Developer Mode
         {
 
             if (ConfigMain.developer_mode == true) {
 
-                Utils.command.run(level_server, 0, 0, 0, "execute at @e[type=marker] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
+                GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[type=marker] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
 
                 // Delayed Command
                 {
 
-                    Utils.score.set(level_server, "TANSHUGETREES", "delayed_command", 0);
+                    GameUtils.score.set(level_server, "TANSHUGETREES", "delayed_command", 0);
 
                     if (loop_delayed_command == true) {
 
-                        Utils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANNYJUNG-delayed_command] run scoreboard players add delayed_command TANSHUGETREES 1");
+                        GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANNYJUNG-delayed_command] run scoreboard players add delayed_command TANSHUGETREES 1");
 
                     }
 
@@ -172,11 +172,11 @@ public class Loop {
         // Tree Location
         {
 
-            Utils.score.set(level_server, "TANSHUGETREES", "tree_location", 0);
+            GameUtils.score.set(level_server, "TANSHUGETREES", "tree_location", 0);
 
             if (loop_tree_location == true) {
 
-                Utils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] run scoreboard players add tree_location TANSHUGETREES 1");
+                GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-tree_location] run scoreboard players add tree_location TANSHUGETREES 1");
 
             }
         }
@@ -184,8 +184,8 @@ public class Loop {
         // Living Tree Mechanics
         {
 
-            Utils.score.set(level_server, "TANSHUGETREES", "leaf_drop", 0);
-            Utils.score.set(level_server, "TANSHUGETREES", "leaf_litter_remover", 0);
+            GameUtils.score.set(level_server, "TANSHUGETREES", "leaf_drop", 0);
+            GameUtils.score.set(level_server, "TANSHUGETREES", "leaf_litter_remover", 0);
 
             if (loop_living_tree_mechanics_leaf_drop == true) {
 
@@ -194,11 +194,11 @@ public class Loop {
 
                     if (Handcode.version_1192 == false) {
 
-                        Utils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_drop] if loaded ~ ~ ~ run scoreboard players add leaf_drop TANSHUGETREES 1");
+                        GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_drop] if loaded ~ ~ ~ run scoreboard players add leaf_drop TANSHUGETREES 1");
 
                     } else {
 
-                        Utils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_drop] run scoreboard players add leaf_drop TANSHUGETREES 1");
+                        GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_drop] run scoreboard players add leaf_drop TANSHUGETREES 1");
 
                     }
 
@@ -213,11 +213,11 @@ public class Loop {
 
                     if (Handcode.version_1192 == false) {
 
-                        Utils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_litter_remover] if loaded ~ ~ ~ run scoreboard players add leaf_litter_remover TANSHUGETREES 1");
+                        GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_litter_remover] if loaded ~ ~ ~ run scoreboard players add leaf_litter_remover TANSHUGETREES 1");
 
                     } else {
 
-                        Utils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_litter_remover] run scoreboard players add leaf_litter_remover TANSHUGETREES 1");
+                        GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-leaf_litter_remover] run scoreboard players add leaf_litter_remover TANSHUGETREES 1");
 
                     }
 
@@ -232,7 +232,7 @@ public class Loop {
 
             if (loop_delayed_command == true) {
 
-                Utils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANNYJUNG-delayed_command] at @s run TANSHUGETREES dev tree_function_in_loaded_chunk");
+                GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANNYJUNG-delayed_command] at @s run TANSHUGETREES dev tree_function_in_loaded_chunk");
 
             }
 

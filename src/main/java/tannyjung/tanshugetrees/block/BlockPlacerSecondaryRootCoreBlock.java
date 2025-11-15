@@ -3,8 +3,6 @@ package tannyjung.tanshugetrees.block;
 import tannyjung.tanshugetrees.procedures.BlockPlacerTickProcedure;
 import tannyjung.tanshugetrees.block.entity.BlockPlacerSecondaryRootCoreBlockEntity;
 
-import org.checkerframework.checker.units.qual.s;
-
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.CollisionContext;

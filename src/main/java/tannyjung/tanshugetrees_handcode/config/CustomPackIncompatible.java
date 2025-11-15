@@ -3,11 +3,11 @@ package tannyjung.tanshugetrees_handcode.config;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.fml.ModList;
 import tannyjung.core.FileManager;
+import tannyjung.core.Utils;
+import tannyjung.core.game.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.core.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -96,7 +96,7 @@ public class CustomPackIncompatible {
 
                     } catch (Exception exception) {
 
-                        Utils.outside.exception(new Exception(), exception);
+                        Utils.misc.exception(new Exception(), exception);
 
                     }
 
@@ -129,7 +129,7 @@ public class CustomPackIncompatible {
 
                     } catch (Exception exception) {
 
-                        Utils.outside.exception(new Exception(), exception);
+                        Utils.misc.exception(new Exception(), exception);
 
                     }
 
@@ -187,7 +187,7 @@ public class CustomPackIncompatible {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { Utils.outside.exception(new Exception(), exception); }
+                } buffered_reader.close(); } catch (Exception exception) { Utils.misc.exception(new Exception(), exception); }
 
             }
 
@@ -207,7 +207,7 @@ public class CustomPackIncompatible {
 
             if (level_accessor instanceof ServerLevel level_server) {
 
-                Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + error);
+                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + error);
 
             } else {
 
@@ -270,7 +270,7 @@ public class CustomPackIncompatible {
 
                                 for (String test : get.split(", ")) {
 
-                                    if (ModList.get().isLoaded(test) == false) {
+                                    if (GameUtils.misc.isModLoaded(test) == false) {
 
                                         error = "Detected incompatible pack. Caused by required mod not found. [ " + name_pack + " > " + test + " ]";
                                         break;
@@ -295,7 +295,7 @@ public class CustomPackIncompatible {
 
             if (level_accessor instanceof ServerLevel level_server) {
 
-                Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + error);
+                GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : " + error);
 
             } else {
 
@@ -333,7 +333,7 @@ public class CustomPackIncompatible {
 
                             id = id.replace(" keep", "");
 
-                            if (Utils.block.fromText(id).getBlock() == Blocks.AIR) {
+                            if (GameUtils.block.fromText(id).getBlock() == Blocks.AIR) {
 
                                 error = "Detected incompatible tree. Caused by unknown block ID. [ " + name_pack + " > " + name_theme + " > " + name_tree + " > " + id + " ]";
                                 break;

@@ -37,7 +37,7 @@ public class CustomPackOrganized {
 
                 } catch (Exception exception) {
 
-                    Utils.outside.exception(new Exception(), exception);
+                    Utils.misc.exception(new Exception(), exception);
 
                 }
 
@@ -45,7 +45,7 @@ public class CustomPackOrganized {
 
         } catch (Exception exception) {
 
-            Utils.outside.exception(new Exception(), exception);
+            Utils.misc.exception(new Exception(), exception);
 
         }
 
@@ -130,7 +130,7 @@ public class CustomPackOrganized {
 
                                                 } catch (Exception exception) {
 
-                                                    Utils.outside.exception(new Exception(), exception);
+                                                    Utils.misc.exception(new Exception(), exception);
 
                                                 }
 
@@ -142,7 +142,7 @@ public class CustomPackOrganized {
 
                                 } catch (Exception exception) {
 
-                                    Utils.outside.exception(new Exception(), exception);
+                                    Utils.misc.exception(new Exception(), exception);
 
                                 }
 
@@ -189,7 +189,7 @@ public class CustomPackOrganized {
 
                                         } catch (Exception exception) {
 
-                                            Utils.outside.exception(new Exception(), exception);
+                                            Utils.misc.exception(new Exception(), exception);
 
                                         }
 
@@ -199,7 +199,7 @@ public class CustomPackOrganized {
 
                             } catch (Exception exception) {
 
-                                Utils.outside.exception(new Exception(), exception);
+                                Utils.misc.exception(new Exception(), exception);
 
                             }
 

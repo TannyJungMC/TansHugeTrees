@@ -68,7 +68,7 @@ public class PresetFixer {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { Utils.outside.exception(new Exception(), exception); }
+                } buffered_reader.close(); } catch (Exception exception) { Utils.misc.exception(new Exception(), exception); }
 
             }
 
@@ -99,7 +99,7 @@ public class PresetFixer {
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { Utils.outside.exception(new Exception(), exception); }
+                } buffered_reader.close(); } catch (Exception exception) { Utils.misc.exception(new Exception(), exception); }
 
             }
 

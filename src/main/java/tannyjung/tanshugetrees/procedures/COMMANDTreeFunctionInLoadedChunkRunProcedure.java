@@ -1,6 +1,6 @@
 package tannyjung.tanshugetrees.procedures;
 
-import tannyjung.core.TXTFunction;
+import tannyjung.core.game.TXTFunction;
 
 import tannyjung.tanshugetrees.TanshugetreesMod;
 

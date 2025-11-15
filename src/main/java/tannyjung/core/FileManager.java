@@ -27,7 +27,7 @@ public class FileManager {
 
 				} catch (Exception exception) {
 
-					Utils.outside.exception(new Exception(), exception);
+					Utils.misc.exception(new Exception(), exception);
 
 				}
 
@@ -54,7 +54,7 @@ public class FileManager {
 
 				} catch (Exception exception) {
 
-					Utils.outside.exception(new Exception(), exception);
+					Utils.misc.exception(new Exception(), exception);
 
 				}
 
@@ -74,7 +74,7 @@ public class FileManager {
 
 		} catch (Exception exception) {
 
-			Utils.outside.exception(new Exception(), exception);
+			Utils.misc.exception(new Exception(), exception);
 
 		}
 
@@ -120,7 +120,7 @@ public class FileManager {
 
 										}
 
-									} buffered_reader2.close(); } catch (Exception exception) { Utils.outside.exception(new Exception(), exception); }
+									} buffered_reader2.close(); } catch (Exception exception) { Utils.misc.exception(new Exception(), exception); }
 
 								}
 
@@ -133,7 +133,7 @@ public class FileManager {
 
 					}
 
-				} buffered_reader.close(); } catch (Exception exception) { Utils.outside.exception(new Exception(), exception); }
+				} buffered_reader.close(); } catch (Exception exception) { Utils.misc.exception(new Exception(), exception); }
 
 			}
 
@@ -156,7 +156,7 @@ public class FileManager {
 
 			} catch (Exception exception) {
 
-				Utils.outside.exception(new Exception(), exception);
+				Utils.misc.exception(new Exception(), exception);
 
 			}
 
@@ -183,7 +183,7 @@ public class FileManager {
 
                 } catch (Exception exception) {
 
-                    Utils.outside.exception(new Exception(), exception);
+                    Utils.misc.exception(new Exception(), exception);
 
                 }
 
@@ -237,7 +237,7 @@ public class FileManager {
 
             } catch (Exception exception) {
 
-                Utils.outside.exception(new Exception(), exception);
+                Utils.misc.exception(new Exception(), exception);
 
             }
 
@@ -258,7 +258,7 @@ public class FileManager {
 
             } catch (Exception exception) {
 
-                Utils.outside.exception(new Exception(), exception);
+                Utils.misc.exception(new Exception(), exception);
 
             }
 

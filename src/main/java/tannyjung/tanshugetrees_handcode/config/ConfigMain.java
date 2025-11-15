@@ -2,9 +2,10 @@ package tannyjung.tanshugetrees_handcode.config;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
+import tannyjung.core.game.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.FileManager;
-import tannyjung.core.Utils;
+
 
 import java.util.*;
 
@@ -405,7 +406,7 @@ public class ConfigMain {
 
 		if (level_accessor instanceof ServerLevel level_server) {
 
-			Utils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Applied The Config");
+			GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Applied The Config");
 
 		}
 

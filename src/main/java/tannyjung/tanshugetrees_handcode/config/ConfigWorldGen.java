@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.config;
 
+
 import tannyjung.core.Utils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.FileManager;
@@ -32,7 +33,7 @@ public class ConfigWorldGen {
 
             } catch (Exception exception) {
 
-                Utils.outside.exception(new Exception(), exception);
+                Utils.misc.exception(new Exception(), exception);
 
             }
 
@@ -124,7 +125,7 @@ public class ConfigWorldGen {
 
                 } catch (Exception exception) {
 
-                    Utils.outside.exception(new Exception(), exception);
+                    Utils.misc.exception(new Exception(), exception);
 
                 }
 
@@ -317,7 +318,7 @@ public class ConfigWorldGen {
 
             } catch (Exception exception) {
 
-                Utils.outside.exception(new Exception(), exception);
+                Utils.misc.exception(new Exception(), exception);
 
             }
 

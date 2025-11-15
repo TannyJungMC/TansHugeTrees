@@ -1,1 +1,0 @@
-java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern(""HH:mm:ss:SSS"))
