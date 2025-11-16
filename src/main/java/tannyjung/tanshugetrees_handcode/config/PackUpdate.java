@@ -22,75 +22,81 @@ public class PackUpdate {
 
     public static void start (LevelAccessor level_accessor) {
 
-		if (level_accessor instanceof ServerLevel level_server) {
+        Handcode.thread_main.submit(() -> {
 
-			if (Utils.misc.isConnectedToInternet() == false) {
+            if (level_accessor instanceof ServerLevel level_server) {
 
-				GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't update right now, as the mod can't connect to the internet.");
+                if (Utils.misc.isConnectedToInternet() == false) {
 
-			} else {
+                    GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't update right now, as the mod can't connect to the internet.");
 
-				if (checkModVersion(level_server, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
+                } else {
 
-					Handcode.thread_pause = true;
-					GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
-					GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
+                    if (checkModVersion(level_server, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
 
-					TanshugetreesMod.queueServerWork(20, () -> {
+                        GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+                        GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
 
-						// Delete Old Folders
-						{
+                        Handcode.system_pause = true;
+                        run(level_accessor, level_server);
 
-							if (deleteOldPackFolder(level_server, Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack") == false) {
-								return;
-							}
-							if (deleteOldPackFolder(level_server, Handcode.path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack") == false) {
-								return;
-							}
+                    }
 
-						}
+                }
 
-						// Systems
-						{
+            }
 
-							if (createZIP(level_server) == false) {
-								return;
-							}
-							if (createZIP(level_server) == false) {
-								return;
-							}
-							if (download(level_server) == false) {
-								return;
-							}
-							if (unzip(level_server) == false) {
-								return;
-							}
-							if (deleteZIP(level_server) == false) {
-								return;
-							}
-							if (renameFolder(level_server) == false) {
-								return;
-							}
-
-						}
-
-						GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Install Completed!");
-						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
-						CustomPackFileCount.start(level_server);
-						GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
-						message(level_server);
-
-                        Handcode.restart(level_accessor, false, true);
-
-					});
-
-				}
-
-			}
-
-		}
+        });
 
 	}
+
+    private static void run (LevelAccessor level_accessor, ServerLevel level_server) {
+
+        // Delete Old Folders
+        {
+
+            if (deleteOldPackFolder(level_server, Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack") == false) {
+                return;
+            }
+            if (deleteOldPackFolder(level_server, Handcode.path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack") == false) {
+                return;
+            }
+
+        }
+
+        // Systems
+        {
+
+            if (createZIP(level_server) == false) {
+                return;
+            }
+            if (createZIP(level_server) == false) {
+                return;
+            }
+            if (download(level_server) == false) {
+                return;
+            }
+            if (unzip(level_server) == false) {
+                return;
+            }
+            if (deleteZIP(level_server) == false) {
+                return;
+            }
+            if (renameFolder(level_server) == false) {
+                return;
+            }
+
+        }
+
+        GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Install Completed!");
+        GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+        CustomPackFileCount.start(level_server);
+        GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+        message(level_server);
+
+        Handcode.restart(level_accessor, false);
+
+    }
 
 	public static void message (ServerLevel level_server) {
 
