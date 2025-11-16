@@ -32,7 +32,7 @@ public class Loop {
 
         TanshugetreesMod.queueServerWork(1, () -> {
 
-            if (Handcode.thread_pause == false) {
+            if (Handcode.system_pause == false) {
 
                 run(level_accessor, level_server);
 

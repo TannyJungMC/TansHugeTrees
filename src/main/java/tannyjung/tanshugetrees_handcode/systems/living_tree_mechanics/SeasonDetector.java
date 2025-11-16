@@ -24,7 +24,7 @@ public class SeasonDetector {
 
         TanshugetreesMod.queueServerWork(200, () -> {
 
-            if (Handcode.thread_pause == false) {
+            if (Handcode.system_pause == false) {
 
                 run(level_accessor, level_server);
 

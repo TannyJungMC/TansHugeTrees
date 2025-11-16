@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.systems.world_gen;
 
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -217,13 +218,17 @@ public class TreePlacer {
 
                                                 if (chunk != null) {
 
-                                                    for (Structure structure : chunk.getAllReferences().keySet().toArray(new Structure[0])) {
+                                                    Map<Structure, LongSet> references = chunk.getAllReferences();
 
-                                                        // structure.type().equals(StructureType.MINESHAFT);
+                                                    if (references != null) {
 
-                                                        if (structure.step().equals(GenerationStep.Decoration.SURFACE_STRUCTURES) == true) {
+                                                        for (Structure structure : references.keySet().toArray(new Structure[0])) {
 
-                                                            break test;
+                                                            if (structure.step().equals(GenerationStep.Decoration.SURFACE_STRUCTURES) == true) {
+
+                                                                break test;
+
+                                                            }
 
                                                         }
 

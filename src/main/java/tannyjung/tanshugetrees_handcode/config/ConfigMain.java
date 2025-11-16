@@ -170,9 +170,9 @@ public class ConfigMain {
 					| Set height down of surface smoothness. If the detector detects that the surface is lower than this height, it will cancel that tree.
 					| Default is [ 6 ]
 					
-					structure_detection_size = 3
+					structure_detection_size = 1
 					| Cancel trees if they detect structure around them. This size is radius, min and max is 0 to 9. Set to 1 for only chunks that marked as having structures. Set to 0 to disable this feature.
-					| Default is [ 3 ]
+					| Default is [ 1 ]
 					
 					----------------------------------------------------------------------------------------------------
 					Living Tree Mechanics
@@ -298,7 +298,7 @@ public class ConfigMain {
 
 	}
 
-	public static void apply (LevelAccessor level_accessor) {
+	public static void apply () {
 
 		Map<String, String> data = new HashMap<>();
 
@@ -401,12 +401,6 @@ public class ConfigMain {
 				Handcode.tanny_pack_version_name = Handcode.tanny_pack_version;
 
 			}
-
-		}
-
-		if (level_accessor instanceof ServerLevel level_server) {
-
-			GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Applied The Config");
 
 		}
 
