@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.ChunkEvent;
@@ -21,7 +20,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tannyjung.core.OutsideUtils;
 import tannyjung.core.game.Utils;
-import tannyjung.tanshugetrees_mcreator.TanshugetreesMod;
 import tannyjung.tanshugetrees.config.CustomPackIncompatible;
 import tannyjung.tanshugetrees.config.PackCheckUpdate;
 import tannyjung.tanshugetrees.config.ConfigMain;
@@ -51,6 +49,7 @@ public class Handcode {
 
     public static final int DATA_STRUCTURE_VERSION = 20251023;
     public static final String TANNY_PACK_VERSION = "Alpha";
+
     public static final boolean VERSION_1192 = false;
 
     public static final Logger logger = LogManager.getLogger("TansHugeTrees");
@@ -79,29 +78,39 @@ public class Handcode {
 
         }
 
-        // Registries
-        {
+        runRegistries();
+        runRestart(null, false);
 
-            IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+    }
+
+    private static void runRegistries () {
+
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        // Features
+        {
 
             DeferredRegister<Feature<?>> REGISTRY = DeferredRegister.create(Registries.FEATURE, "tanshugetrees");
             REGISTRY.register("world_gen_before_plants", WorldGenBeforePlants::new);
             REGISTRY.register("area_grass", FeatureAreaGrass::new);
             REGISTRY.register("area_dirt", FeatureAreaDirt::new);
+            REGISTRY.register(bus);
+
+        }
+
+        // Things
+        {
+
             TanshugetreesModBlocks.REGISTRY.register(bus);
             TanshugetreesModBlockEntities.REGISTRY.register(bus);
             TanshugetreesModItems.REGISTRY.register(bus);
             TanshugetreesModTabs.REGISTRY.register(bus);
 
-            REGISTRY.register(bus);
-
         }
-
-        restart(null, false);
 
     }
 
-    public static void restart (LevelAccessor level_accessor, boolean config_repair) {
+    public static void runRestart (LevelAccessor level_accessor, boolean config_repair) {
 
         system_pause = true;
 
@@ -126,7 +135,7 @@ public class Handcode {
 
             }
 
-            worldGenNotify();
+            notifyWorldGen();
 
         });
 
@@ -142,7 +151,7 @@ public class Handcode {
 
     }
 
-    public static void worldGenPause () {
+    public static void pauseWorldGen () {
 
         synchronized (lock) {
 
@@ -164,7 +173,7 @@ public class Handcode {
 
     }
 
-    public static void worldGenNotify () {
+    public static void notifyWorldGen () {
 
         system_pause = false;
 
@@ -182,7 +191,7 @@ public class Handcode {
     public static void eventWorldAboutToStart (ServerAboutToStartEvent event) {
 
         path_world_data = event.getServer().getWorldPath(new LevelResource(".")) + "/data/tanshugetrees";
-        restart(null, false);
+        runRestart(null, false);
 
     }
 
@@ -207,7 +216,7 @@ public class Handcode {
                 }
 
                 Handcode.logger.info("Started World Systems");
-                worldGenNotify();
+                notifyWorldGen();
 
             });
 
@@ -218,7 +227,7 @@ public class Handcode {
     @SubscribeEvent
     public static void eventPlayerJoined (PlayerEvent.PlayerLoggedInEvent event) {
 
-        if (Utils.misc.playerCount() == 1) {
+        if (Utils.misc.getPlayerCount() == 1) {
 
             Handcode.createDelayedWorks(100, () -> {
 

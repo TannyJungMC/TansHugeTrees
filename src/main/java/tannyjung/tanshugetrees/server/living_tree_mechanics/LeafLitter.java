@@ -12,7 +12,7 @@ public class LeafLitter {
 
     public static void start (LevelAccessor level_accessor, int posX, int posY, int posZ, BlockState block, boolean remove) {
 
-        String[] leaf_litter = Cache.leaf_litter(Utils.block.toTextID(block).replace(":", "-"));
+        String[] leaf_litter = Cache.getLeafLitter(Utils.block.toTextID(block).replace(":", "-"));
 
         if (ConfigMain.leaf_litter_classic_only == false && leaf_litter.length > 0) {
 

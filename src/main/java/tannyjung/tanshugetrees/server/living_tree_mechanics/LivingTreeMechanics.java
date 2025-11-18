@@ -44,7 +44,7 @@ public class LivingTreeMechanics {
         // Read Settings
         {
 
-            String[] tree_settings = Cache.tree_settings(NBTManager.entity.getText(entity, "tree_settings"));
+            String[] tree_settings = Cache.getTreeSettings(NBTManager.Entity.getText(entity, "tree_settings"));
 
             if (tree_settings.length == 0) {
 
@@ -125,7 +125,7 @@ public class LivingTreeMechanics {
 
         }
 
-        String[] file_path_data = NBTManager.entity.getText(entity, "file").split("\\|");
+        String[] file_path_data = NBTManager.Entity.getText(entity, "file").split("\\|");
         String path_storage = file_path_data[0];
         String chosen = file_path_data[1];
         File file = new File(Handcode.path_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage/" + chosen);
@@ -134,8 +134,8 @@ public class LivingTreeMechanics {
 
             BlockPos center_pos = new BlockPos(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
             boolean have_center_block = level_accessor.getBlockState(center_pos).isAir() == false;
-            int rotation = (int) NBTManager.entity.getNumber(entity, "rotation");
-            boolean mirrored = NBTManager.entity.getLogic(entity, "mirrored");
+            int rotation = (int) NBTManager.Entity.getNumber(entity, "rotation");
+            boolean mirrored = NBTManager.Entity.getLogic(entity, "mirrored");
             int biome_type = 0;
 
             // Biome Type Test
@@ -167,7 +167,7 @@ public class LivingTreeMechanics {
             BlockState block = Blocks.AIR.defaultBlockState();
             String[] pre_block_data = new String[0];
 
-            for (short read_all : Cache.tree_shape(path_storage + "/" + chosen, 2)) {
+            for (short read_all : Cache.getTreeShape(path_storage + "/" + chosen, 2)) {
 
                 // Loop and Get Data
                 {
@@ -211,7 +211,7 @@ public class LivingTreeMechanics {
                         // Out of Save
                         {
 
-                            if (process < NBTManager.entity.getNumber(entity, "process_save")) {
+                            if (process < NBTManager.Entity.getNumber(entity, "process_save")) {
 
                                 continue;
 
@@ -224,9 +224,9 @@ public class LivingTreeMechanics {
 
                             if (ConfigMain.living_tree_mechanics_process_limit > 0) {
 
-                                if (NBTManager.entity.getNumber(entity, "process_save") + ConfigMain.living_tree_mechanics_process_limit <= process) {
+                                if (NBTManager.Entity.getNumber(entity, "process_save") + ConfigMain.living_tree_mechanics_process_limit <= process) {
 
-                                    NBTManager.entity.setNumber(entity, "process_save", process);
+                                    NBTManager.Entity.setNumber(entity, "process_save", process);
                                     return;
 
                                 }
@@ -241,15 +241,15 @@ public class LivingTreeMechanics {
 
                         if (type.startsWith("120") == false) {
 
-                            NBTManager.entity.setText(entity, "pre_block", type + "/" + posX + "/" + posY + "/" + posZ);
+                            NBTManager.Entity.setText(entity, "pre_block", type + "/" + posX + "/" + posY + "/" + posZ);
 
                         } else {
 
                             // Get Previous Block Data
                             {
 
-                                pre_block_data = NBTManager.entity.getText(entity, "pre_block").split("/");
-                                pos_converted = OutsideUtils.Misc.convertPosRotationMirrored(Integer.parseInt(pre_block_data[1]), Integer.parseInt(pre_block_data[2]), Integer.parseInt(pre_block_data[3]), rotation, mirrored, 0);
+                                pre_block_data = NBTManager.Entity.getText(entity, "pre_block").split("/");
+                                pos_converted = OutsideUtils.convertPosRotationMirrored(Integer.parseInt(pre_block_data[1]), Integer.parseInt(pre_block_data[2]), Integer.parseInt(pre_block_data[3]), rotation, mirrored, 0);
                                 pre_pos = new BlockPos(entity.getBlockX() + pos_converted[0], entity.getBlockY() + pos_converted[1], entity.getBlockZ() + pos_converted[2]);
 
                                 // Only Loaded Chunks
@@ -267,7 +267,7 @@ public class LivingTreeMechanics {
 
                             }
 
-                            pos_converted = OutsideUtils.Misc.convertPosRotationMirrored(posX, posY, posZ, rotation, mirrored, 0);
+                            pos_converted = OutsideUtils.convertPosRotationMirrored(posX, posY, posZ, rotation, mirrored, 0);
                             pos = new BlockPos(entity.getBlockX() + pos_converted[0], entity.getBlockY() + pos_converted[1], entity.getBlockZ() + pos_converted[2]);
                             block = map_block.get(type);
 
@@ -321,18 +321,18 @@ public class LivingTreeMechanics {
             // At the end of the file
             {
 
-                NBTManager.entity.setNumber(entity, "process_save", 0);
+                NBTManager.Entity.setNumber(entity, "process_save", 0);
 
-                if (NBTManager.entity.getLogic(entity, "dead_tree") == true) {
+                if (NBTManager.Entity.getLogic(entity, "dead_tree") == true) {
 
                     Utils.command.runEntity(entity, "kill @s");
 
-                } else if (NBTManager.entity.getLogic(entity, "still_alive") == true) {
+                } else if (NBTManager.Entity.getLogic(entity, "still_alive") == true) {
 
-                    NBTManager.entity.setLogic(entity, "still_alive", false);
-                    NBTManager.entity.setLogic(entity, "have_leaves", false);
+                    NBTManager.Entity.setLogic(entity, "still_alive", false);
+                    NBTManager.Entity.setLogic(entity, "have_leaves", false);
 
-                } else if (NBTManager.entity.getLogic(entity, "have_leaves") == false) {
+                } else if (NBTManager.Entity.getLogic(entity, "have_leaves") == false) {
 
                     if (leaves_type[0] == 1 || leaves_type[1] == 1) {
 
@@ -340,7 +340,7 @@ public class LivingTreeMechanics {
 
                         if (current_season.equals("Spring") == true || current_season.equals("Autumn") == true || current_season.equals("Winter") == true) {
 
-                            NBTManager.entity.setLogic(entity, "dormancy", true);
+                            NBTManager.Entity.setLogic(entity, "dormancy", true);
 
                         }
 
@@ -350,7 +350,7 @@ public class LivingTreeMechanics {
 
                     if (Math.random() < 0.1) {
 
-                        NBTManager.entity.setLogic(entity, "dead_tree", true);
+                        NBTManager.Entity.setLogic(entity, "dead_tree", true);
 
                     }
 
@@ -372,11 +372,11 @@ public class LivingTreeMechanics {
         // Leaves Straighten Test
         {
 
-            if ((NBTManager.entity.getNumber(entity, "straighten_highestX") != pos.getX() || NBTManager.entity.getNumber(entity, "straighten_highestY") < pos.getY() || NBTManager.entity.getNumber(entity, "straighten_highestZ") != pos.getZ())) {
+            if ((NBTManager.Entity.getNumber(entity, "straighten_highestX") != pos.getX() || NBTManager.Entity.getNumber(entity, "straighten_highestY") < pos.getY() || NBTManager.Entity.getNumber(entity, "straighten_highestZ") != pos.getZ())) {
 
-                NBTManager.entity.setNumber(entity, "straighten_highestX", pos.getX());
-                NBTManager.entity.setNumber(entity, "straighten_highestY", pos.getY());
-                NBTManager.entity.setNumber(entity, "straighten_highestZ", pos.getZ());
+                NBTManager.Entity.setNumber(entity, "straighten_highestX", pos.getX());
+                NBTManager.Entity.setNumber(entity, "straighten_highestY", pos.getY());
+                NBTManager.Entity.setNumber(entity, "straighten_highestZ", pos.getZ());
 
             } else {
 
@@ -408,7 +408,7 @@ public class LivingTreeMechanics {
 
                     if (straighten == true) {
 
-                        BlockState test = level_accessor.getBlockState(new BlockPos(pos.getX(), (int) NBTManager.entity.getNumber(entity, "straighten_highestY"), pos.getZ()));
+                        BlockState test = level_accessor.getBlockState(new BlockPos(pos.getX(), (int) NBTManager.Entity.getNumber(entity, "straighten_highestY"), pos.getZ()));
 
                         if (map_block.get("1201").getBlock() != test.getBlock() && map_block.get("1202").getBlock() != test.getBlock()) {
 
@@ -588,7 +588,7 @@ public class LivingTreeMechanics {
 
                     if (Math.random() < chance) {
 
-                        NBTManager.entity.setLogic(entity, "dormancy", false);
+                        NBTManager.Entity.setLogic(entity, "dormancy", false);
                         block = Utils.block.propertyBooleanSet(block, "persistent", true);
                         level_accessor.setBlock(pos, block, 2);
 
@@ -620,20 +620,20 @@ public class LivingTreeMechanics {
         // Still Alive
         {
 
-            if (NBTManager.entity.getLogic(entity, "still_alive") == false) {
+            if (NBTManager.Entity.getLogic(entity, "still_alive") == false) {
 
                 if (is_leaves == true) {
 
-                    NBTManager.entity.setLogic(entity, "still_alive", true);
-                    NBTManager.entity.setLogic(entity, "have_leaves", true);
+                    NBTManager.Entity.setLogic(entity, "still_alive", true);
+                    NBTManager.Entity.setLogic(entity, "have_leaves", true);
 
                 } else if (leaves_type == 1 && biome_type == 1) {
 
-                    NBTManager.entity.setLogic(entity, "still_alive", true);
+                    NBTManager.Entity.setLogic(entity, "still_alive", true);
 
-                } else if (NBTManager.entity.getLogic(entity, "dormancy") == true) {
+                } else if (NBTManager.Entity.getLogic(entity, "dormancy") == true) {
 
-                    NBTManager.entity.setLogic(entity, "still_alive", true);
+                    NBTManager.Entity.setLogic(entity, "still_alive", true);
 
                 }
 

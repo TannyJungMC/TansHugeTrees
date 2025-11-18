@@ -54,13 +54,13 @@ public class Utils {
 
         }
 
-        public static int playerCount () {
+        public static int getPlayerCount () {
 
             return ServerLifecycleHooks.getCurrentServer().getPlayerCount();
 
         }
 
-        public static boolean customTestBiome (Holder<Biome> biome_center, String config_value) {
+        public static boolean testCustomBiome (Holder<Biome> biome_center, String config_value) {
 
             boolean return_logic = false;
 
@@ -126,7 +126,7 @@ public class Utils {
 
         }
 
-        public static boolean customTestBlock (BlockState test_block, String config_value) {
+        public static boolean testCustomBlock (BlockState test_block, String config_value) {
 
             boolean return_logic = false;
 

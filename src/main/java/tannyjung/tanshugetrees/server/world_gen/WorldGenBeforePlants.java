@@ -21,7 +21,7 @@ public class WorldGenBeforePlants extends Feature <NoneFeatureConfiguration> {
     @Override
     public boolean place (FeaturePlaceContext <NoneFeatureConfiguration> context) {
 
-        Handcode.worldGenPause();
+        Handcode.pauseWorldGen();
 
         LevelAccessor level_accessor = context.level();
         ServerLevel level_server = context.level().getLevel();

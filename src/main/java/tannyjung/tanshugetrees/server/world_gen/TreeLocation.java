@@ -298,7 +298,7 @@ public class TreeLocation {
 
                                                 } else {
 
-                                                    boolean result = Utils.misc.customTestBiome(biome_center, biome);
+                                                    boolean result = Utils.misc.testCustomBiome(biome_center, biome);
                                                     cache_biome_test.put(Utils.biome.toID(biome_center) + "|" + id, result);
 
                                                     if (result == false) {
@@ -389,7 +389,7 @@ public class TreeLocation {
 
                                                         biome_center = level_accessor.getBiome(new BlockPos(center_posX, level_accessor.getMaxBuildHeight(), center_posZ));
 
-                                                        if (Utils.misc.customTestBiome(biome_center, biome) == false) {
+                                                        if (Utils.misc.testCustomBiome(biome_center, biome) == false) {
 
                                                             continue;
 
@@ -585,7 +585,7 @@ public class TreeLocation {
 
                             try {
 
-                                test_id = Cache.dictionary(String.valueOf(read_all.getShort()), true);
+                                test_id = Cache.getDictionary(String.valueOf(read_all.getShort()), true);
                                 test_posX = read_all.getInt();
                                 test_posZ = read_all.getInt();
 
@@ -687,7 +687,7 @@ public class TreeLocation {
         // Scan World Gen File
         {
             
-            for (String read_all : Cache.world_gen_settings(id)) {
+            for (String read_all : Cache.getWorldGenSettings(id)) {
                 
                 {
 
@@ -721,7 +721,7 @@ public class TreeLocation {
 
         if (chosen.exists() == true && chosen.isDirectory() == false) {
 
-            short[] get = Cache.tree_shape(path_storage + "/" + chosen.getName(), 1);
+            short[] get = Cache.getTreeShape(path_storage + "/" + chosen.getName(), 1);
             int sizeX = get[0];
             int sizeY = get[1];
             int sizeZ = get[2];

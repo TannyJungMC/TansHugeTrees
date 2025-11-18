@@ -80,7 +80,7 @@ public class FileManager {
 
 	}
 
-	public static void writeConfigTXT (String path, String write_get) {
+	public static void writeTXTConfig (String path, String write_get) {
 
 		File file = new File(path);
 		createFolder(file.getParent());
@@ -225,7 +225,7 @@ public class FileManager {
 
                         } else if (type.equals("t") == true) {
 
-                            file_bin.writeShort(Short.parseShort(Cache.dictionary(value, false)));
+                            file_bin.writeShort(Short.parseShort(Cache.getDictionary(value, false)));
 
                         }
 

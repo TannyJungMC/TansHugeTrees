@@ -21,7 +21,7 @@ public class PackCheckUpdate {
 
 		if (level_accessor instanceof ServerLevel level_server) {
 
-			if (OutsideUtils.Misc.isConnectedToInternet() == false) {
+			if (OutsideUtils.isConnectedToInternet() == false) {
 
 				Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't check for update right now, as the mod can't connect to the internet.");
 

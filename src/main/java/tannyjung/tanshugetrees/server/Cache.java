@@ -26,15 +26,15 @@ public class Cache {
 
         {
 
-            size = size + OutsideUtils.CacheSize.getMapText(dictionary);
-            size = size + OutsideUtils.CacheSize.getMapNumber(tree_shape_part1);
-            size = size + OutsideUtils.CacheSize.getMapNumber(tree_shape_part2);
-            size = size + OutsideUtils.CacheSize.getMapTextList(world_gen_settings);
-            size = size + OutsideUtils.CacheSize.getMapTextList(tree_settings);
-            size = size + OutsideUtils.CacheSize.getMapTextList(functions);
-            size = size + OutsideUtils.CacheSize.getArrayText(functions_tree_decoration);
-            size = size + OutsideUtils.CacheSize.getArrayText(functions_tree_decoration_decay);
-            size = size + OutsideUtils.CacheSize.getMapTextList(leaf_litter);
+            size = size + OutsideUtils.Cache.sizeMapText(dictionary);
+            size = size + OutsideUtils.Cache.sizeMapNumber(tree_shape_part1);
+            size = size + OutsideUtils.Cache.sizeMapNumber(tree_shape_part2);
+            size = size + OutsideUtils.Cache.sizeMapTextList(world_gen_settings);
+            size = size + OutsideUtils.Cache.sizeMapTextList(tree_settings);
+            size = size + OutsideUtils.Cache.sizeMapTextList(functions);
+            size = size + OutsideUtils.Cache.sizeArrayText(functions_tree_decoration);
+            size = size + OutsideUtils.Cache.sizeArrayText(functions_tree_decoration_decay);
+            size = size + OutsideUtils.Cache.sizeMapTextList(leaf_litter);
 
             dictionary.clear();
             tree_shape_part1.clear();
@@ -52,7 +52,7 @@ public class Cache {
 
     }
 
-    public static String dictionary (String key, boolean id) {
+    public static String getDictionary (String key, boolean id) {
 
         if (key.equals("") == false) {
 
@@ -117,7 +117,7 @@ public class Cache {
 
     }
 
-    public static short[] tree_shape (String id, int part) {
+    public static short[] getTreeShape (String id, int part) {
 
         if (tree_shape_part1.containsKey(id) == false) {
 
@@ -149,7 +149,7 @@ public class Cache {
 
     }
 
-    public static String[] world_gen_settings (String id) {
+    public static String[] getWorldGenSettings (String id) {
 
         if (world_gen_settings.containsKey(id) == false) {
 
@@ -161,7 +161,7 @@ public class Cache {
 
     }
 
-    public static String[] tree_settings (String id) {
+    public static String[] getTreeSettings (String id) {
 
         if (tree_settings.containsKey(id) == false) {
 
@@ -173,7 +173,7 @@ public class Cache {
 
     }
 
-    public static String[] functions (String id) {
+    public static String[] getFunction (String id) {
 
         if (functions.containsKey(id) == false) {
 
@@ -185,7 +185,7 @@ public class Cache {
 
     }
 
-    public static String[] functions_tree_decoration () {
+    public static String[] getFunctionTreeDecoration () {
 
         if (functions_tree_decoration.length == 0) {
 
@@ -213,7 +213,7 @@ public class Cache {
 
     }
 
-    public static String[] functions_tree_decoration_decay () {
+    public static String[] getFunctionTreeDecorationDecay () {
 
         if (functions_tree_decoration_decay.length == 0) {
 
@@ -241,7 +241,7 @@ public class Cache {
 
     }
 
-    public static String[] leaf_litter (String id) {
+    public static String[] getLeafLitter (String id) {
 
         if (leaf_litter.containsKey(id) == false) {
 

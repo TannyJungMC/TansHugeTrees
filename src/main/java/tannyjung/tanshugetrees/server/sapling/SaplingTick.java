@@ -14,11 +14,11 @@ public class SaplingTick {
 
         BlockPos pos = new BlockPos((int) posX, (int) posY, (int) posZ);
 
-        if (NBTManager.block.getLogic(level_accessor, pos, "sapling_clickable") == true) {
+        if (NBTManager.Block.getLogic(level_accessor, pos, "sapling_clickable") == true) {
 
             if (level_accessor instanceof ServerLevel level_server) {
 
-                int countdown = (int) NBTManager.block.getNumber(level_accessor, pos, "countdown");
+                int countdown = (int) NBTManager.Block.getNumber(level_accessor, pos, "countdown");
                 Utils.command.run(level_server, pos.getX(), pos.getY(),  pos.getZ(), "execute positioned ~0.5 ~1.25 ~0.5 run kill @e[tag=TANSHUGETREES-sapling_text,distance=..1]");
 
                 if (countdown >= 0) {
@@ -40,7 +40,7 @@ public class SaplingTick {
 
                     }
 
-                    NBTManager.block.addNumber(level_accessor, pos, "countdown", -1);
+                    NBTManager.Block.addNumber(level_accessor, pos, "countdown", -1);
 
                 } else {
 

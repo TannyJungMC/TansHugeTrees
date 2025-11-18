@@ -44,7 +44,7 @@ public class TXTFunction {
         BlockState variable_block = Blocks.AIR.defaultBlockState();
         StringBuilder export_command = new StringBuilder();
 
-        for (String read_all : Cache.functions(path)) {
+        for (String read_all : Cache.getFunction(path)) {
 
             {
 
@@ -217,7 +217,7 @@ public class TXTFunction {
 
                                                             }
 
-                                                            if (Utils.misc.customTestBiome(level_accessor.getBiome(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == true) {
+                                                            if (Utils.misc.testCustomBiome(level_accessor.getBiome(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == true) {
 
                                                                 continue;
 
@@ -244,7 +244,7 @@ public class TXTFunction {
 
                                                             }
 
-                                                            if (Utils.misc.customTestBlock(level_accessor.getBlockState(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == true) {
+                                                            if (Utils.misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == true) {
 
                                                                 continue;
 
@@ -574,7 +574,7 @@ public class TXTFunction {
 
 	}
 
-    public static void delayed_command (Entity entity) {
+    public static void runDelayedCommand (Entity entity) {
 
         LevelAccessor level_accessor = entity.level();
 
@@ -582,7 +582,7 @@ public class TXTFunction {
 
             if (level_server.isPositionEntityTicking(entity.blockPosition()) == true) {
 
-                for (String command : NBTManager.entity.getText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
+                for (String command : NBTManager.Entity.getText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
 
                     Utils.command.run(level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), command);
 

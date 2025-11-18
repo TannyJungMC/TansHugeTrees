@@ -38,7 +38,7 @@ public class LivingTreeMechanicsLeafDrop {
 
         } else {
 
-            LeafLitter.start(level_server, posX, posY + 1, posZ, Utils.block.fromText(NBTManager.entity.getText(entity, "block")), false);
+            LeafLitter.start(level_server, posX, posY + 1, posZ, Utils.block.fromText(NBTManager.Entity.getText(entity, "block")), false);
             Utils.command.runEntity(entity, "kill @s");
 
         }

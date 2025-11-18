@@ -130,10 +130,10 @@ public class ShapeFileConverter {
 
     public static void whenTreeStart (ServerLevel level_server, Entity entity) {
 
-        String name = NBTManager.entity.getText(entity, "name");
+        String name = NBTManager.Entity.getText(entity, "name");
         String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss-SSS").format(Calendar.getInstance().getTime());
-        NBTManager.entity.setText(entity, "export_file_name", name + "_" + time + ".bin");
-        Utils.command.run(level_server, 0, 0, 0, "tellraw @a [\"\",{\"text\":\"THT : Generating \",\"color\":\"aqua\"},{\"text\":\"" + NBTManager.entity.getText(entity, "export_file_name").replace(" (generating)", "") + "\",\"color\":\"white\"}]");
+        NBTManager.Entity.setText(entity, "export_file_name", name + "_" + time + ".bin");
+        Utils.command.run(level_server, 0, 0, 0, "tellraw @a [\"\",{\"text\":\"THT : Generating \",\"color\":\"aqua\"},{\"text\":\"" + NBTManager.Entity.getText(entity, "export_file_name").replace(" (generating)", "") + "\",\"color\":\"white\"}]");
 
         // Write Settings
         {
@@ -146,12 +146,12 @@ public class ShapeFileConverter {
                 {
 
                     write
-                            .append("tree_type = ").append(NBTManager.entity.getText(entity, "tree_type")).append("\n")
-                            .append("start_height = ").append((int) NBTManager.entity.getNumber(entity, "start_height")).append("\n")
-                            .append("can_disable_roots = ").append(NBTManager.entity.getLogic(entity, "can_disable_roots")).append("\n")
-                            .append("can_leaves_decay = ").append(NBTManager.entity.getLogic(entity, "can_leaves_decay")).append("\n")
-                            .append("can_leaves_drop = ").append(NBTManager.entity.getLogic(entity, "can_leaves_drop")).append("\n")
-                            .append("can_leaves_regrow = ").append(NBTManager.entity.getLogic(entity, "can_leaves_regrow")).append("\n")
+                            .append("tree_type = ").append(NBTManager.Entity.getText(entity, "tree_type")).append("\n")
+                            .append("start_height = ").append((int) NBTManager.Entity.getNumber(entity, "start_height")).append("\n")
+                            .append("can_disable_roots = ").append(NBTManager.Entity.getLogic(entity, "can_disable_roots")).append("\n")
+                            .append("can_leaves_decay = ").append(NBTManager.Entity.getLogic(entity, "can_leaves_decay")).append("\n")
+                            .append("can_leaves_drop = ").append(NBTManager.Entity.getLogic(entity, "can_leaves_drop")).append("\n")
+                            .append("can_leaves_regrow = ").append(NBTManager.Entity.getLogic(entity, "can_leaves_regrow")).append("\n")
                     ;
 
                 }
@@ -183,13 +183,13 @@ public class ShapeFileConverter {
                 {
 
                     write
-                            .append("Function fs 210 = ").append(NBTManager.entity.getText(entity, "function_start")).append("\n")
-                            .append("Function fe 220 = ").append(NBTManager.entity.getText(entity, "function_end")).append("\n")
-                            .append("Function f1 201 = ").append(NBTManager.entity.getText(entity, "function_way1")).append("\n")
-                            .append("Function f2 202 = ").append(NBTManager.entity.getText(entity, "function_way2")).append("\n")
-                            .append("Function f3 203 = ").append(NBTManager.entity.getText(entity, "function_way3")).append("\n")
-                            .append("Function f4 204 = ").append(NBTManager.entity.getText(entity, "function_way4")).append("\n")
-                            .append("Function f5 205 = ").append(NBTManager.entity.getText(entity, "function_way5")).append("\n")
+                            .append("Function fs 210 = ").append(NBTManager.Entity.getText(entity, "function_start")).append("\n")
+                            .append("Function fe 220 = ").append(NBTManager.Entity.getText(entity, "function_end")).append("\n")
+                            .append("Function f1 201 = ").append(NBTManager.Entity.getText(entity, "function_way1")).append("\n")
+                            .append("Function f2 202 = ").append(NBTManager.Entity.getText(entity, "function_way2")).append("\n")
+                            .append("Function f3 203 = ").append(NBTManager.Entity.getText(entity, "function_way3")).append("\n")
+                            .append("Function f4 204 = ").append(NBTManager.Entity.getText(entity, "function_way4")).append("\n")
+                            .append("Function f5 205 = ").append(NBTManager.Entity.getText(entity, "function_way5")).append("\n")
                     ;
 
                 }
@@ -207,7 +207,7 @@ public class ShapeFileConverter {
         String retuen_text = type.substring(0, 2);
         String keep = "";
 
-        if (NBTManager.entity.getLogic(entity, type + "_replace") == false) {
+        if (NBTManager.Entity.getLogic(entity, type + "_replace") == false) {
 
             keep = " keep";
 
@@ -218,9 +218,9 @@ public class ShapeFileConverter {
             // General Blocks
             {
 
-                String outer = NBTManager.entity.getText(entity, type + "_outer") + keep;
-                String inner = NBTManager.entity.getText(entity, type + "_inner") + keep;
-                String core = NBTManager.entity.getText(entity, type + "_core") + keep;
+                String outer = NBTManager.Entity.getText(entity, type + "_outer") + keep;
+                String inner = NBTManager.Entity.getText(entity, type + "_inner") + keep;
+                String core = NBTManager.Entity.getText(entity, type + "_core") + keep;
 
                 if (outer.equals(keep) == true) {
 
@@ -252,8 +252,8 @@ public class ShapeFileConverter {
             // Leaves
             {
 
-                String leaves1 = NBTManager.entity.getText(entity, "leaves1") + keep;
-                String leaves2 = NBTManager.entity.getText(entity, "leaves2") + keep;
+                String leaves1 = NBTManager.Entity.getText(entity, "leaves1") + keep;
+                String leaves2 = NBTManager.Entity.getText(entity, "leaves2") + keep;
 
                 if (leaves1.equals(keep) == true) {
 
@@ -518,7 +518,7 @@ public class ShapeFileConverter {
 
         }
 
-        String path = Handcode.path_config + "/#dev/shape_file_converter/" + NBTManager.entity.getText(entity, "name") + "/storage/" + NBTManager.entity.getText(entity, "export_file_name");
+        String path = Handcode.path_config + "/#dev/shape_file_converter/" + NBTManager.Entity.getText(entity, "name") + "/storage/" + NBTManager.Entity.getText(entity, "export_file_name");
         FileManager.writeBIN(path, start_data, false);
         FileManager.writeBIN(path, data, true);
         Utils.misc.sendChatMessage(level_server, "@a", "green", "THT : Completed!");

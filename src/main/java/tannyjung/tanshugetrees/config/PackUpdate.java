@@ -25,7 +25,7 @@ public class PackUpdate {
 
             if (level_accessor instanceof ServerLevel level_server) {
 
-                if (OutsideUtils.Misc.isConnectedToInternet() == false) {
+                if (OutsideUtils.isConnectedToInternet() == false) {
 
                     Utils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't update right now, as the mod can't connect to the internet.");
 
@@ -93,7 +93,7 @@ public class PackUpdate {
         Utils.misc.sendChatMessage(level_server, "@a", "white", "");
         message(level_server);
 
-        Handcode.restart(level_accessor, false);
+        Handcode.runRestart(level_accessor, false);
 
     }
 

@@ -57,15 +57,15 @@ public class TreePlacer {
                 from_chunkZ = get.getInt();
                 to_chunkX = get.getInt();
                 to_chunkZ = get.getInt();
-                id = Cache.dictionary(String.valueOf(get.getShort()), true);
-                chosen = Cache.dictionary(String.valueOf(get.getShort()), true);
+                id = Cache.getDictionary(String.valueOf(get.getShort()), true);
+                chosen = Cache.getDictionary(String.valueOf(get.getShort()), true);
                 center_posX = get.getInt();
                 center_posZ = get.getInt();
                 rotation = get.get();
                 mirrored = get.get() == 1;
                 start_height_offset = get.getShort();
                 up_sizeY = get.getShort();
-                ground_block = Cache.dictionary(String.valueOf(get.getShort()), true);
+                ground_block = Cache.getDictionary(String.valueOf(get.getShort()), true);
                 dead_tree_level = get.getShort();
 
             } catch (Exception ignored) {
@@ -134,7 +134,7 @@ public class TreePlacer {
                             // Scan World Gen File
                             {
 
-                                String[] world_gen_settings = Cache.world_gen_settings(id);
+                                String[] world_gen_settings = Cache.getWorldGenSettings(id);
 
                                 if (world_gen_settings.length == 0) {
 
@@ -167,7 +167,7 @@ public class TreePlacer {
                             // Scan Tree Settings File
                             {
 
-                                String[] tree_settings = Cache.tree_settings(path_tree_settings);
+                                String[] tree_settings = Cache.getTreeSettings(path_tree_settings);
 
                                 if (tree_settings.length == 0) {
 
@@ -260,7 +260,7 @@ public class TreePlacer {
                                         // Ground Block
                                         {
 
-                                            if (Utils.misc.customTestBlock(chunk.getBlockState(new BlockPos(center_posX, center_posY - 1, center_posZ)), ground_block) == false) {
+                                            if (Utils.misc.testCustomBlock(chunk.getBlockState(new BlockPos(center_posX, center_posY - 1, center_posZ)), ground_block) == false) {
 
                                                 break test;
 
@@ -347,7 +347,7 @@ public class TreePlacer {
                                         if (coarse_woody_debris == true) {
 
                                             int fallen_direction = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ (center_posX * 341873128712L + center_posZ * 132897987541L)).nextInt(4) + 1;
-                                            int[] pos_converted = OutsideUtils.Misc.convertPosRotationMirrored(0, originalY + up_sizeY, 0, rotation, mirrored, fallen_direction);
+                                            int[] pos_converted = OutsideUtils.convertPosRotationMirrored(0, originalY + up_sizeY, 0, rotation, mirrored, fallen_direction);
                                             int pos1 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.5), center_posZ + (int) (pos_converted[2] * 0.5), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
                                             int pos2 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.75), center_posZ + (int) (pos_converted[2] * 0.75), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
                                             int pos3 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 1.0), center_posZ + (int) (pos_converted[2] * 1.0), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
@@ -450,7 +450,7 @@ public class TreePlacer {
         // Scan World Gen File
         {
 
-            String[] world_gen_settings = Cache.world_gen_settings(id);
+            String[] world_gen_settings = Cache.getWorldGenSettings(id);
 
             if (world_gen_settings.length == 0) {
 
@@ -481,7 +481,7 @@ public class TreePlacer {
 
         }
 
-        short[] shape = Cache.tree_shape(path_storage + "/" + chosen, 2);
+        short[] shape = Cache.getTreeShape(path_storage + "/" + chosen, 2);
 
         if (shape.length > 0) {
 
@@ -495,7 +495,7 @@ public class TreePlacer {
             // Get Tree Settings File
             {
 
-                String[] tree_settings = Cache.tree_settings(path_tree_settings);
+                String[] tree_settings = Cache.getTreeSettings(path_tree_settings);
 
                 if (tree_settings.length == 0) {
 
@@ -609,7 +609,7 @@ public class TreePlacer {
 
                 if (dead_tree_level > 0) {
 
-                    short[] block_count = Cache.tree_shape(path_storage + "/" + chosen, 1);
+                    short[] block_count = Cache.getTreeShape(path_storage + "/" + chosen, 1);
 
                     if (block_count.length > 0) {
 
@@ -924,7 +924,7 @@ public class TreePlacer {
 
                         }
 
-                        pos_converted = OutsideUtils.Misc.convertPosRotationMirrored(posX, posY, posZ, rotation, mirrored, fallen_direction);
+                        pos_converted = OutsideUtils.convertPosRotationMirrored(posX, posY, posZ, rotation, mirrored, fallen_direction);
                         pos = new BlockPos(center_posX + pos_converted[0], center_posY + pos_converted[1], center_posZ + pos_converted[2]);
 
                         if (chunk_pos.x == pos.getX() >> 4 && chunk_pos.z == pos.getZ() >> 4) {
@@ -1114,7 +1114,7 @@ public class TreePlacer {
 
                                         if (dead_tree_level == 0) {
 
-                                            for (String name : Cache.functions_tree_decoration()) {
+                                            for (String name : Cache.getFunctionTreeDecoration()) {
 
                                                 TXTFunction.start(level_accessor, level_server, random, pos.getX(), pos.getY(), pos.getZ(), "#TannyJung-Main-Pack/tree_decoration/" + name);
 
@@ -1122,7 +1122,7 @@ public class TreePlacer {
 
                                         } else {
 
-                                            for (String name : Cache.functions_tree_decoration_decay()) {
+                                            for (String name : Cache.getFunctionTreeDecorationDecay()) {
 
                                                 TXTFunction.start(level_accessor, level_server, random, pos.getX(), pos.getY(), pos.getZ(), "#TannyJung-Main-Pack/tree_decoration_decay/" + name);
 

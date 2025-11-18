@@ -19,7 +19,7 @@ public class Sapling {
 
         BlockPos pos = new BlockPos((int) posX, (int) posY, (int) posZ);
 
-        if (NBTManager.block.getLogic(level_accessor, pos, "sapling_clickable") == false) {
+        if (NBTManager.Block.getLogic(level_accessor, pos, "sapling_clickable") == false) {
 
             if (level_accessor instanceof ServerLevel level_server) {
 
@@ -32,7 +32,7 @@ public class Sapling {
                     if (creative_mode == false) {
 
                         Utils.entity.itemCountAdd(entity, EquipmentSlot.MAINHAND, -1);
-                        NBTManager.block.addNumber(level_accessor, pos, "bone_meal_usage", 1);
+                        NBTManager.Block.addNumber(level_accessor, pos, "bone_meal_usage", 1);
 
                     }
 
@@ -46,7 +46,7 @@ public class Sapling {
                                 // Custom Tree
                                 {
 
-                                    if (NBTManager.block.getNumber(level_accessor, pos, "tree_generator_speed_tick") == 0) {
+                                    if (NBTManager.Block.getNumber(level_accessor, pos, "tree_generator_speed_tick") == 0) {
 
                                         cancel(level_accessor, level_server, pos, "No Preset Inside");
                                         pass = false;
@@ -85,11 +85,11 @@ public class Sapling {
 
                             if (creative_mode == true) {
 
-                                NBTManager.block.setNumber(level_accessor, pos, "countdown", -1);
+                                NBTManager.Block.setNumber(level_accessor, pos, "countdown", -1);
 
                             }
 
-                            NBTManager.block.setLogic(level_accessor, pos, "sapling_clickable", true);
+                            NBTManager.Block.setLogic(level_accessor, pos, "sapling_clickable", true);
 
                         }
 
@@ -105,13 +105,13 @@ public class Sapling {
 
     private static void cancel (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String message) {
 
-        for (int test = (int) NBTManager.block.getNumber(level_accessor, pos, "bone_meal_usage"); test > 0; test--) {
+        for (int test = (int) NBTManager.Block.getNumber(level_accessor, pos, "bone_meal_usage"); test > 0; test--) {
 
             Utils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "execute positioned ~0.5 ~0.5 ~0.5 run " + Utils.command.summonEntity("item", "", "", "Item:{id:\"minecraft:bone_meal\",Count:1b}"));
 
         }
 
-        NBTManager.block.setNumber(level_accessor, pos, "bone_meal_usage", 0);
+        NBTManager.Block.setNumber(level_accessor, pos, "bone_meal_usage", 0);
 
         // Display Text
         {

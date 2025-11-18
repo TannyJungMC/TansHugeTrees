@@ -14,11 +14,11 @@ public class BlockPlacer {
     public static void start (LevelAccessor level_accessor, BlockPos pos) {
 
         ServerLevel level_server = (ServerLevel) level_accessor;
-        String function = NBTManager.block.getText(level_accessor, pos, "function");
+        String function = NBTManager.Block.getText(level_accessor, pos, "function");
 
-        if (NBTManager.block.getLogic(level_accessor, pos, "delay1") == false) {
+        if (NBTManager.Block.getLogic(level_accessor, pos, "delay1") == false) {
 
-            NBTManager.block.setLogic(level_accessor, pos, "delay1", true);
+            NBTManager.Block.setLogic(level_accessor, pos, "delay1", true);
             level_server.scheduleTick(pos, level_server.getBlockState(pos).getBlock(), 100);
 
             // Test Function
@@ -26,7 +26,7 @@ public class BlockPlacer {
 
                 if (function.equals("") == false) {
 
-                    String[] styles = NBTManager.block.getText(level_accessor, pos, "function_style").split("/");
+                    String[] styles = NBTManager.Block.getText(level_accessor, pos, "function_style").split("/");
                     boolean pass = false;
 
                     for (String style : styles) {
@@ -77,7 +77,7 @@ public class BlockPlacer {
 
                     if (pass == false) {
 
-                        NBTManager.block.setText(level_accessor, pos, "function", "");
+                        NBTManager.Block.setText(level_accessor, pos, "function", "");
 
                     }
 
@@ -90,14 +90,14 @@ public class BlockPlacer {
             // Normal
             {
 
-                if (NBTManager.block.getLogic(level_accessor, pos, "delay2") == false) {
+                if (NBTManager.Block.getLogic(level_accessor, pos, "delay2") == false) {
 
-                    NBTManager.block.setLogic(level_accessor, pos, "delay2", true);
+                    NBTManager.Block.setLogic(level_accessor, pos, "delay2", true);
                     level_server.scheduleTick(pos, level_server.getBlockState(pos).getBlock(), 100);
 
                 } else {
 
-                    level_accessor.setBlock(pos, Utils.block.fromText(NBTManager.block.getText(level_accessor, pos, "block")), 2);
+                    level_accessor.setBlock(pos, Utils.block.fromText(NBTManager.Block.getText(level_accessor, pos, "block")), 2);
 
                     if (function.equals("") == false) {
 

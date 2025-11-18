@@ -292,7 +292,7 @@ public class ConfigMain {
 
 		}
 
-		FileManager.writeConfigTXT(Handcode.path_config + "/config.txt", write.toString());
+		FileManager.writeTXTConfig(Handcode.path_config + "/config.txt", write.toString());
 
 	}
 

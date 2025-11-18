@@ -6,34 +6,33 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class NBTManager {
 
-    public static class entity {
+    public static class Entity {
 
-        public static String getText (Entity entity, String name) {
+        public static String getText (net.minecraft.world.entity.Entity entity, String name) {
 
             return entity.getPersistentData().getString(name);
 
         }
 
-        public static Boolean getLogic (Entity entity, String name) {
+        public static Boolean getLogic (net.minecraft.world.entity.Entity entity, String name) {
 
             return entity.getPersistentData().getBoolean(name);
 
         }
 
-        public static double getNumber (Entity entity, String name) {
+        public static double getNumber (net.minecraft.world.entity.Entity entity, String name) {
 
             return entity.getPersistentData().getDouble(name);
 
         }
 
-        public static double[] getListNumber (Entity entity, String name) {
+        public static double[] getListNumber (net.minecraft.world.entity.Entity entity, String name) {
 
             ListTag list = entity.getPersistentData().getList(name, Tag.TAG_DOUBLE);
             double[] convert = new double[list.size()];
@@ -48,7 +47,7 @@ public class NBTManager {
 
         }
 
-        public static double[] getListNumberFloat (Entity entity, String name) {
+        public static double[] getListNumberFloat (net.minecraft.world.entity.Entity entity, String name) {
 
             ListTag list = entity.getPersistentData().getList(name, Tag.TAG_FLOAT);
             double[] convert = new double[list.size()];
@@ -63,25 +62,25 @@ public class NBTManager {
 
         }
 
-        public static void setText (Entity entity, String name, String value) {
+        public static void setText (net.minecraft.world.entity.Entity entity, String name, String value) {
 
             entity.getPersistentData().putString(name, value);
 
         }
 
-        public static void setLogic (Entity entity, String name, boolean value) {
+        public static void setLogic (net.minecraft.world.entity.Entity entity, String name, boolean value) {
 
             entity.getPersistentData().putBoolean(name, value);
 
         }
 
-        public static void setNumber (Entity entity, String name, double value) {
+        public static void setNumber (net.minecraft.world.entity.Entity entity, String name, double value) {
 
             entity.getPersistentData().putDouble(name, value);
 
         }
 
-        public static void addNumber (Entity entity, String name, double value) {
+        public static void addNumber (net.minecraft.world.entity.Entity entity, String name, double value) {
 
             entity.getPersistentData().putDouble(name, entity.getPersistentData().getDouble(name) + value);
 
@@ -89,7 +88,7 @@ public class NBTManager {
 
     }
 
-    public static class block {
+    public static class Block {
 
         public static String getText (LevelAccessor level_accessor, BlockPos pos, String name) {
 

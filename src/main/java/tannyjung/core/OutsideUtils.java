@@ -31,152 +31,148 @@ public class OutsideUtils {
 
     }
 
-	public static class Misc {
+    public static boolean isConnectedToInternet () {
 
-        public static boolean isConnectedToInternet () {
+        try {
 
-            try {
+            URL url = new URL("https://sites.google.com/view/tannyjung");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("HEAD");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+            connection.connect();
+            return true;
 
-                URL url = new URL("https://sites.google.com/view/tannyjung");
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("HEAD");
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
-                connection.connect();
-                return true;
+        } catch (Exception exception) {
 
-            } catch (Exception exception) {
-
-                exception(new Exception(), exception);
-                return false;
-
-            }
+            exception(new Exception(), exception);
+            return false;
 
         }
 
-		public static int[] convertPosRotationMirrored (int posX, int posY, int posZ, int rotation, boolean mirrored, int fallen_direction) {
+    }
 
+    public static int[] convertPosRotationMirrored (int posX, int posY, int posZ, int rotation, boolean mirrored, int fallen_direction) {
+
+        {
+
+            // General
             {
 
-                // General
-                {
+                if (mirrored == true) {
 
-                    if (mirrored == true) {
-
-                        posX = posX * (-1);
-
-                    }
-
-                    if (rotation == 2) {
-
-                        int posX_save = posX;
-                        posX = posZ;
-                        posZ = posX_save * (-1);
-
-                    } else if (rotation == 3) {
-
-                        posX = posX * (-1);
-                        posZ = posZ * (-1);
-
-                    } else if (rotation == 4) {
-
-                        int posX_save = posX;
-                        int posZ_save = posZ;
-                        posX = posZ_save * (-1);
-                        posZ = posX_save;
-
-                    }
+                    posX = posX * (-1);
 
                 }
 
-                // Fallen
-                {
+                if (rotation == 2) {
 
-                    if (fallen_direction > 0) {
+                    int posX_save = posX;
+                    posX = posZ;
+                    posZ = posX_save * (-1);
 
-                        int posX_save = posX;
-                        int posY_save = posY;
-                        int posZ_save = posZ;
+                } else if (rotation == 3) {
 
-                        if (fallen_direction == 1) {
+                    posX = posX * (-1);
+                    posZ = posZ * (-1);
 
-                            posY = posX_save;
-                            posX = posY_save;
+                } else if (rotation == 4) {
 
-                        } else if (fallen_direction == 2) {
-
-                            posY = posZ_save;
-                            posZ = posY_save;
-
-                        } else if (fallen_direction == 3) {
-
-                            posY = posX_save;
-                            posX = -posY_save;
-
-                        } else if (fallen_direction == 4) {
-
-                            posY = posZ_save;
-                            posZ = -posY_save;
-
-                        }
-
-                    }
+                    int posX_save = posX;
+                    int posZ_save = posZ;
+                    posX = posZ_save * (-1);
+                    posZ = posX_save;
 
                 }
 
             }
 
-			return new int[]{posX, posY, posZ};
-
-		}
-
-        public static short[] shortListToArray (List<Short> list) {
-
-            short[] return_number = new short[list.size()];
-
-            for (int count = 0; count < list.size(); count++) {
-
-                return_number[count] = list.get(count);
-
-            }
-
-            return return_number;
-
-        }
-
-        public static String quardtree (int chunkX, int chunkZ) {
-
-            StringBuilder return_text = new StringBuilder();
-
+            // Fallen
             {
 
-                int localX = chunkX & 31;
-                int localZ = chunkZ & 31;
+                if (fallen_direction > 0) {
 
-                for (int level = 1; level <= 2; level++) {
+                    int posX_save = posX;
+                    int posY_save = posY;
+                    int posZ_save = posZ;
 
-                    int size = 32 >> level;
-                    int posX = (localX / size) % 2;
-                    int posZ = (localZ / size) % 2;
+                    if (fallen_direction == 1) {
 
-                    if (posX == 0 && posZ == 0) return_text.append("-NW");
-                    else if (posX == 1 && posZ == 0) return_text.append("-NE");
-                    else if (posX == 0) return_text.append("-SW");
-                    else return_text.append("-SE");
+                        posY = posX_save;
+                        posX = posY_save;
+
+                    } else if (fallen_direction == 2) {
+
+                        posY = posZ_save;
+                        posZ = posY_save;
+
+                    } else if (fallen_direction == 3) {
+
+                        posY = posX_save;
+                        posX = -posY_save;
+
+                    } else if (fallen_direction == 4) {
+
+                        posY = posZ_save;
+                        posZ = -posY_save;
+
+                    }
 
                 }
 
             }
 
-            return return_text.substring(1);
+        }
+
+        return new int[]{posX, posY, posZ};
+
+    }
+
+    public static short[] convertShortListToArray (List<Short> list) {
+
+        short[] return_number = new short[list.size()];
+
+        for (int count = 0; count < list.size(); count++) {
+
+            return_number[count] = list.get(count);
 
         }
 
-	}
+        return return_number;
 
-    public static class CacheSize {
+    }
 
-        public static int getMapText (Map<String, String> test) {
+    public static String getQuardtree (int chunkX, int chunkZ) {
+
+        StringBuilder return_text = new StringBuilder();
+
+        {
+
+            int localX = chunkX & 31;
+            int localZ = chunkZ & 31;
+
+            for (int level = 1; level <= 2; level++) {
+
+                int size = 32 >> level;
+                int posX = (localX / size) % 2;
+                int posZ = (localZ / size) % 2;
+
+                if (posX == 0 && posZ == 0) return_text.append("-NW");
+                else if (posX == 1 && posZ == 0) return_text.append("-NE");
+                else if (posX == 0) return_text.append("-SW");
+                else return_text.append("-SE");
+
+            }
+
+        }
+
+        return return_text.substring(1);
+
+    }
+
+    public static class Cache {
+
+        public static int sizeMapText (Map<String, String> test) {
 
             int return_number = 0;
 
@@ -190,7 +186,7 @@ public class OutsideUtils {
 
         }
 
-        public static int getMapTextList (Map<String, String[]> test) {
+        public static int sizeMapTextList (Map<String, String[]> test) {
 
             int return_number = 0;
 
@@ -204,7 +200,7 @@ public class OutsideUtils {
 
         }
 
-        public static int getMapNumber (Map<String, short[]> test) {
+        public static int sizeMapNumber (Map<String, short[]> test) {
 
             int return_number = 0;
 
@@ -218,7 +214,7 @@ public class OutsideUtils {
 
         }
 
-        public static int getArrayText (String[] test) {
+        public static int sizeArrayText (String[] test) {
 
             int return_number = 0;
 
