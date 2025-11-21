@@ -3,6 +3,8 @@ package tannyjung.tanshugetrees.block;
 import tannyjung.tanshugetrees.procedures.BlockPlacerTickProcedure;
 import tannyjung.tanshugetrees.block.entity.BlockPlacerLeaves2BlockEntity;
 
+import org.checkerframework.checker.units.qual.s;
+
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -122,7 +124,7 @@ public class BlockPlacerLeaves2Block extends Block implements SimpleWaterloggedB
 	public boolean triggerEvent(BlockState state, Level world, BlockPos pos, int eventID, int eventParam) {
 		super.triggerEvent(state, world, pos, eventID, eventParam);
 		BlockEntity blockEntity = world.getBlockEntity(pos);
-		return blockEntity == null ? false : blockEntity.triggerEvent(eventID, eventParam);
+		return blockEntity != null && blockEntity.triggerEvent(eventID, eventParam);
 	}
 
 	@Override

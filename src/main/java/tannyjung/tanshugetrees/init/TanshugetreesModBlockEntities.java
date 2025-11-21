@@ -3,41 +3,7 @@
  */
 package tannyjung.tanshugetrees.init;
 
-import tannyjung.tanshugetrees.block.entity.YokaiBlockEntity;
-import tannyjung.tanshugetrees.block.entity.RandomTreeBlockEntity;
-import tannyjung.tanshugetrees.block.entity.HalcyonBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerTwigOuterBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerTwigInnerBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerTwigCoreBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerTrunkOuterBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerTrunkInnerBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerTrunkCoreBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerTertiaryRootOuterBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerTertiaryRootInnerBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerTertiaryRootCoreBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerTaprootOuterBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerTaprootInnerBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerTaprootCoreBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerSprigOuterBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerSprigInnerBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerSprigCoreBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerSecondaryRootOuterBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerSecondaryRootInnerBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerSecondaryRootCoreBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerLimbOuterBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerLimbInnerBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerLimbCoreBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerLeaves2BlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerLeaves1BlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerFineRootOuterBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerFineRootInnerBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerFineRootCoreBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerBranchOuterBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerBranchInnerBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerBranchCoreBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerBoughOuterBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerBoughInnerBlockEntity;
-import tannyjung.tanshugetrees.block.entity.BlockPlacerBoughCoreBlockEntity;
+import tannyjung.tanshugetrees.block.entity.*;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 
 import net.minecraftforge.registries.RegistryObject;
