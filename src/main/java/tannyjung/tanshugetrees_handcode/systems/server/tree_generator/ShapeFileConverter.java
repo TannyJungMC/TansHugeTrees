@@ -322,9 +322,9 @@ public class ShapeFileConverter {
                 for (Map.Entry<String, String> entry : export_data.entrySet()) {
 
                     pos = entry.getKey().substring(1).split("/");
-                    posX = entity.getBlockX() - Integer.parseInt(pos[0]);
-                    posY = entity.getBlockY() - Integer.parseInt(pos[1]);
-                    posZ = entity.getBlockZ() - Integer.parseInt(pos[2]);
+                    posX = Integer.parseInt(pos[0]) - entity.getBlockX();
+                    posY = Integer.parseInt(pos[1]) - entity.getBlockY();
+                    posZ = Integer.parseInt(pos[2]) - entity.getBlockZ();
                     type_short = entry.getValue();
 
                     if (entry.getKey().startsWith("B") == true) {
