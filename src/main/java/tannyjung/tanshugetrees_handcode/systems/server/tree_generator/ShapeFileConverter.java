@@ -113,8 +113,13 @@ public class ShapeFileConverter {
             {
 
                 GameUtils.command.run(level_server, 0, 0, 0, "execute at @p positioned ~ 1000 ~ run " + GameUtils.command.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", GameUtils.misc.getForgeDataFromGiveFile(file.getPath())));
-                String data_modify = "debug_mode:false,tree_generator_speed_global:false,tree_generator_speed_tick:1,tree_generator_speed_repeat:0";
-                GameUtils.command.run(level_server, 0, 0, 0, "execute at @p positioned ~ 1000 ~ run data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
+
+                Handcode.createDelayedWorks(1, () -> {
+
+                    String data_modify = "debug_mode:false,tree_generator_speed_global:false,tree_generator_speed_tick:1,tree_generator_speed_repeat:0";
+                    GameUtils.command.run(level_server, 0, 0, 0, "execute at @p positioned ~ 1000 ~ run data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
+
+                });
 
             }
 
@@ -509,12 +514,12 @@ public class ShapeFileConverter {
             start_data.add("s" + -(min_sizeX));
             start_data.add("s" + -(min_sizeY));
             start_data.add("s" + -(min_sizeZ));
-            start_data.add("s" + block_count_trunk);
-            start_data.add("s" + block_count_bough);
-            start_data.add("s" + block_count_branch);
-            start_data.add("s" + block_count_limb);
-            start_data.add("s" + block_count_twig);
-            start_data.add("s" + block_count_sprig);
+            start_data.add("i" + block_count_trunk);
+            start_data.add("i" + block_count_bough);
+            start_data.add("i" + block_count_branch);
+            start_data.add("i" + block_count_limb);
+            start_data.add("i" + block_count_twig);
+            start_data.add("i" + block_count_sprig);
 
         }
 
