@@ -1782,7 +1782,7 @@
     "mcreatorDependencies": [],
     "currentGenerator": "forge-1.20.1",
     "credits": "Created with MCreator and IntelliJ",
-    "modElementsPackage": "tannyjung.tanshugetrees_handcode"
+    "modElementsPackage": "tannyjung.tanshugetrees"
   },
   "mcreatorVersion": 202500228610
 }
