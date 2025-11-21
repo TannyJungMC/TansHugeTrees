@@ -1,6 +1,6 @@
 package tannyjung.core;
 
-import tannyjung.tanshugetrees_handcode.common.Cache;
+import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 import java.io.*;
 import java.nio.ByteBuffer;

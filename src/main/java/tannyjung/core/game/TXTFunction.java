@@ -11,7 +11,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.core.OutsideUtils;
-import tannyjung.tanshugetrees_handcode.common.Cache;
+import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 public class TXTFunction {
 
@@ -217,7 +217,7 @@ public class TXTFunction {
 
                                                             }
 
-                                                            if (Utils.misc.testCustomBiome(level_accessor.getBiome(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == true) {
+                                                            if (GameUtils.misc.testCustomBiome(level_accessor.getBiome(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == true) {
 
                                                                 continue;
 
@@ -244,7 +244,7 @@ public class TXTFunction {
 
                                                             }
 
-                                                            if (Utils.misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == true) {
+                                                            if (GameUtils.misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == true) {
 
                                                                 continue;
 
@@ -271,7 +271,7 @@ public class TXTFunction {
 
                                                                 get = read_all.replace("block = ", "").split(" \\| ");
                                                                 chance = Double.parseDouble(get[0]);
-                                                                variable_block = Utils.block.fromText(get[3]);
+                                                                variable_block = GameUtils.block.fromText(get[3]);
                                                                 variable_logic = Boolean.parseBoolean(get[4]);
 
                                                             } catch (Exception ignored) {
@@ -323,7 +323,7 @@ public class TXTFunction {
 
                                                                                     if (variable_logic == true) {
 
-                                                                                        if (Utils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
+                                                                                        if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
 
                                                                                             continue;
 
@@ -355,7 +355,7 @@ public class TXTFunction {
 
                                                                 get = read_all.replace("block = ", "").split(" \\| ");
                                                                 chance = Double.parseDouble(get[0]);
-                                                                variable_block = Utils.block.fromText(get[3]);
+                                                                variable_block = GameUtils.block.fromText(get[3]);
                                                                 variable_logic = Boolean.parseBoolean(get[4]);
 
                                                             } catch (Exception ignored) {
@@ -407,7 +407,7 @@ public class TXTFunction {
 
                                                                                     if (variable_logic == true) {
 
-                                                                                        if (Utils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
+                                                                                        if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
 
                                                                                             continue;
 
@@ -516,7 +516,7 @@ public class TXTFunction {
 
                                                                 if (chunk_loaded == true) {
 
-                                                                    Utils.command.run(level_server, posX, posY, posZ, variable_text);
+                                                                    GameUtils.command.run(level_server, posX, posY, posZ, variable_text);
 
                                                                 } else {
 
@@ -566,7 +566,7 @@ public class TXTFunction {
                 }
 
                 command = command.replace("'", "*").replace("\"", "$");
-                Utils.command.run(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, Utils.command.summonEntity("marker", "TANNYJUNG / TANNYJUNG-delayed_command", "Delayed Command", "ForgeData:{command:\"" + command + "\"}"));
+                GameUtils.command.run(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, GameUtils.command.summonEntity("marker", "TANNYJUNG / TANNYJUNG-delayed_command", "Delayed Command", "ForgeData:{command:\"" + command + "\"}"));
 
             }
 
@@ -584,12 +584,12 @@ public class TXTFunction {
 
                 for (String command : NBTManager.entity.getText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
 
-                    Utils.command.run(level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), command);
+                    GameUtils.command.run(level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), command);
 
 
                 }
 
-                Utils.command.runEntity(entity, "kill @s");
+                GameUtils.command.runEntity(entity, "kill @s");
 
             }
 

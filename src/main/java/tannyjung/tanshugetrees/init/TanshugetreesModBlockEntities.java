@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.Block;
 
 public class TanshugetreesModBlockEntities {
 	public static final DeferredRegister<BlockEntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, TanshugetreesMod.MODID);
-	public static final RegistryObject<BlockEntityType<YokaiBlockEntity>> YOKAI = register("yokai", TanshugetreesModBlocks.YOKAI, YokaiBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<BlockPlacerTaprootOuterBlockEntity>> BLOCK_PLACER_TAPROOT_OUTER = register("block_placer_taproot_outer", TanshugetreesModBlocks.BLOCK_PLACER_TAPROOT_OUTER,
 			BlockPlacerTaprootOuterBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<BlockPlacerTaprootInnerBlockEntity>> BLOCK_PLACER_TAPROOT_INNER = register("block_placer_taproot_inner", TanshugetreesModBlocks.BLOCK_PLACER_TAPROOT_INNER,
@@ -60,8 +59,15 @@ public class TanshugetreesModBlockEntities {
 	public static final RegistryObject<BlockEntityType<BlockPlacerLimbCoreBlockEntity>> BLOCK_PLACER_LIMB_CORE = register("block_placer_limb_core", TanshugetreesModBlocks.BLOCK_PLACER_LIMB_CORE, BlockPlacerLimbCoreBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<BlockPlacerLimbInnerBlockEntity>> BLOCK_PLACER_LIMB_INNER = register("block_placer_limb_inner", TanshugetreesModBlocks.BLOCK_PLACER_LIMB_INNER, BlockPlacerLimbInnerBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<BlockPlacerLimbOuterBlockEntity>> BLOCK_PLACER_LIMB_OUTER = register("block_placer_limb_outer", TanshugetreesModBlocks.BLOCK_PLACER_LIMB_OUTER, BlockPlacerLimbOuterBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<RandomTreeBlockEntity>> RANDOM_TREE = register("random_tree", TanshugetreesModBlocks.RANDOM_TREE, RandomTreeBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<HalcyonBlockEntity>> HALCYON = register("halcyon", TanshugetreesModBlocks.HALCYON, HalcyonBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingHalcyonBlockEntity>> SAPLING_HALCYON = register("sapling_halcyon", TanshugetreesModBlocks.SAPLING_HALCYON, SaplingHalcyonBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingYokaiBlockEntity>> SAPLING_YOKAI = register("sapling_yokai", TanshugetreesModBlocks.SAPLING_YOKAI, SaplingYokaiBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<TreeGeneratorBlockEntity>> TREE_GENERATOR = register("tree_generator", TanshugetreesModBlocks.TREE_GENERATOR, TreeGeneratorBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingRedwoodBlockEntity>> SAPLING_REDWOOD = register("sapling_redwood", TanshugetreesModBlocks.SAPLING_REDWOOD, SaplingRedwoodBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingMalusDomesticaBlockEntity>> SAPLING_MALUS_DOMESTICA = register("sapling_malus_domestica", TanshugetreesModBlocks.SAPLING_MALUS_DOMESTICA, SaplingMalusDomesticaBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingWendyBlockEntity>> SAPLING_WENDY = register("sapling_wendy", TanshugetreesModBlocks.SAPLING_WENDY, SaplingWendyBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingMangroveBlockEntity>> SAPLING_MANGROVE = register("sapling_mangrove", TanshugetreesModBlocks.SAPLING_MANGROVE, SaplingMangroveBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingFalconBlockEntity>> SAPLING_FALCON = register("sapling_falcon", TanshugetreesModBlocks.SAPLING_FALCON, SaplingFalconBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingSkyIslandChainBlockEntity>> SAPLING_SKY_ISLAND_CHAIN = register("sapling_sky_island_chain", TanshugetreesModBlocks.SAPLING_SKY_ISLAND_CHAIN, SaplingSkyIslandChainBlockEntity::new);
 
 	// Start of user code block custom block entities
 	// End of user code block custom block entities

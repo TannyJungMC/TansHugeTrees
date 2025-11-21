@@ -1,6 +1,6 @@
 package tannyjung.tanshugetrees.procedures;
 
-import tannyjung.tanshugetrees_handcode.server.sapling.SaplingTick;
+import tannyjung.tanshugetrees_handcode.systems.server.sapling.SaplingTick;
 
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.Vec2;

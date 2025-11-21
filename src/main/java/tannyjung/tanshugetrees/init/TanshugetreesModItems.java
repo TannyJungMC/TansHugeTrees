@@ -16,7 +16,6 @@ import net.minecraft.world.item.BlockItem;
 public class TanshugetreesModItems {
 	public static final DeferredRegister<Item> REGISTRY = DeferredRegister.create(ForgeRegistries.ITEMS, TanshugetreesMod.MODID);
 	public static final RegistryObject<Item> WAYPOINT_FLOWER;
-	public static final RegistryObject<Item> YOKAI;
 	public static final RegistryObject<Item> BLOCK_PLACER_TAPROOT_OUTER;
 	public static final RegistryObject<Item> BLOCK_PLACER_TAPROOT_INNER;
 	public static final RegistryObject<Item> BLOCK_PLACER_TAPROOT_CORE;
@@ -49,11 +48,17 @@ public class TanshugetreesModItems {
 	public static final RegistryObject<Item> BLOCK_PLACER_LIMB_CORE;
 	public static final RegistryObject<Item> BLOCK_PLACER_LIMB_INNER;
 	public static final RegistryObject<Item> BLOCK_PLACER_LIMB_OUTER;
-	public static final RegistryObject<Item> RANDOM_TREE;
-	public static final RegistryObject<Item> HALCYON;
+	public static final RegistryObject<Item> SAPLING_HALCYON;
+	public static final RegistryObject<Item> SAPLING_YOKAI;
+	public static final RegistryObject<Item> TREE_GENERATOR;
+	public static final RegistryObject<Item> SAPLING_REDWOOD;
+	public static final RegistryObject<Item> SAPLING_MALUS_DOMESTICA;
+	public static final RegistryObject<Item> SAPLING_WENDY;
+	public static final RegistryObject<Item> SAPLING_MANGROVE;
+	public static final RegistryObject<Item> SAPLING_FALCON;
+	public static final RegistryObject<Item> SAPLING_SKY_ISLAND_CHAIN;
 	static {
 		WAYPOINT_FLOWER = block(TanshugetreesModBlocks.WAYPOINT_FLOWER);
-		YOKAI = block(TanshugetreesModBlocks.YOKAI);
 		BLOCK_PLACER_TAPROOT_OUTER = block(TanshugetreesModBlocks.BLOCK_PLACER_TAPROOT_OUTER);
 		BLOCK_PLACER_TAPROOT_INNER = block(TanshugetreesModBlocks.BLOCK_PLACER_TAPROOT_INNER);
 		BLOCK_PLACER_TAPROOT_CORE = block(TanshugetreesModBlocks.BLOCK_PLACER_TAPROOT_CORE);
@@ -86,8 +91,15 @@ public class TanshugetreesModItems {
 		BLOCK_PLACER_LIMB_CORE = block(TanshugetreesModBlocks.BLOCK_PLACER_LIMB_CORE);
 		BLOCK_PLACER_LIMB_INNER = block(TanshugetreesModBlocks.BLOCK_PLACER_LIMB_INNER);
 		BLOCK_PLACER_LIMB_OUTER = block(TanshugetreesModBlocks.BLOCK_PLACER_LIMB_OUTER);
-		RANDOM_TREE = block(TanshugetreesModBlocks.RANDOM_TREE);
-		HALCYON = block(TanshugetreesModBlocks.HALCYON);
+		SAPLING_HALCYON = block(TanshugetreesModBlocks.SAPLING_HALCYON);
+		SAPLING_YOKAI = block(TanshugetreesModBlocks.SAPLING_YOKAI);
+		TREE_GENERATOR = block(TanshugetreesModBlocks.TREE_GENERATOR);
+		SAPLING_REDWOOD = block(TanshugetreesModBlocks.SAPLING_REDWOOD);
+		SAPLING_MALUS_DOMESTICA = block(TanshugetreesModBlocks.SAPLING_MALUS_DOMESTICA);
+		SAPLING_WENDY = block(TanshugetreesModBlocks.SAPLING_WENDY);
+		SAPLING_MANGROVE = block(TanshugetreesModBlocks.SAPLING_MANGROVE);
+		SAPLING_FALCON = block(TanshugetreesModBlocks.SAPLING_FALCON);
+		SAPLING_SKY_ISLAND_CHAIN = block(TanshugetreesModBlocks.SAPLING_SKY_ISLAND_CHAIN);
 	}
 
 	// Start of user code block custom items

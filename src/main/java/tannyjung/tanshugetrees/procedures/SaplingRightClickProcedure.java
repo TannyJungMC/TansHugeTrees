@@ -1,6 +1,6 @@
 package tannyjung.tanshugetrees.procedures;
 
-import tannyjung.tanshugetrees_handcode.server.sapling.Sapling;
+import tannyjung.tanshugetrees_handcode.systems.server.sapling.Sapling;
 
 import tannyjung.tanshugetrees.TanshugetreesMod;
 

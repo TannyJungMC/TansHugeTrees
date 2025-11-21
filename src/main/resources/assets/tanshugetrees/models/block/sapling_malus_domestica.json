@@ -1,0 +1,8 @@
+{
+  "parent": "block/cross",
+  "textures": {
+    "cross": "tanshugetrees:block/sapling_malus_domestica",
+    "particle": "tanshugetrees:block/sapling_malus_domestica"
+  },
+  "render_type": "cutout"
+}

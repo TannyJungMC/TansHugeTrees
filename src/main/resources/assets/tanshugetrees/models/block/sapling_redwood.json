@@ -1,0 +1,8 @@
+{
+  "parent": "block/cross",
+  "textures": {
+    "cross": "tanshugetrees:block/sapling_redwood",
+    "particle": "tanshugetrees:block/sapling_redwood"
+  },
+  "render_type": "cutout"
+}

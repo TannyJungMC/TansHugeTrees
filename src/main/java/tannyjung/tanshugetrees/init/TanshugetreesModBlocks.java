@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.Block;
 public class TanshugetreesModBlocks {
 	public static final DeferredRegister<Block> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, TanshugetreesMod.MODID);
 	public static final RegistryObject<Block> WAYPOINT_FLOWER;
-	public static final RegistryObject<Block> YOKAI;
 	public static final RegistryObject<Block> BLOCK_PLACER_TAPROOT_OUTER;
 	public static final RegistryObject<Block> BLOCK_PLACER_TAPROOT_INNER;
 	public static final RegistryObject<Block> BLOCK_PLACER_TAPROOT_CORE;
@@ -48,11 +47,17 @@ public class TanshugetreesModBlocks {
 	public static final RegistryObject<Block> BLOCK_PLACER_LIMB_CORE;
 	public static final RegistryObject<Block> BLOCK_PLACER_LIMB_INNER;
 	public static final RegistryObject<Block> BLOCK_PLACER_LIMB_OUTER;
-	public static final RegistryObject<Block> RANDOM_TREE;
-	public static final RegistryObject<Block> HALCYON;
+	public static final RegistryObject<Block> SAPLING_HALCYON;
+	public static final RegistryObject<Block> SAPLING_YOKAI;
+	public static final RegistryObject<Block> TREE_GENERATOR;
+	public static final RegistryObject<Block> SAPLING_REDWOOD;
+	public static final RegistryObject<Block> SAPLING_MALUS_DOMESTICA;
+	public static final RegistryObject<Block> SAPLING_WENDY;
+	public static final RegistryObject<Block> SAPLING_MANGROVE;
+	public static final RegistryObject<Block> SAPLING_FALCON;
+	public static final RegistryObject<Block> SAPLING_SKY_ISLAND_CHAIN;
 	static {
 		WAYPOINT_FLOWER = REGISTRY.register("waypoint_flower", WaypointFlowerBlock::new);
-		YOKAI = REGISTRY.register("yokai", YokaiBlock::new);
 		BLOCK_PLACER_TAPROOT_OUTER = REGISTRY.register("block_placer_taproot_outer", BlockPlacerTaprootOuterBlock::new);
 		BLOCK_PLACER_TAPROOT_INNER = REGISTRY.register("block_placer_taproot_inner", BlockPlacerTaprootInnerBlock::new);
 		BLOCK_PLACER_TAPROOT_CORE = REGISTRY.register("block_placer_taproot_core", BlockPlacerTaprootCoreBlock::new);
@@ -85,8 +90,15 @@ public class TanshugetreesModBlocks {
 		BLOCK_PLACER_LIMB_CORE = REGISTRY.register("block_placer_limb_core", BlockPlacerLimbCoreBlock::new);
 		BLOCK_PLACER_LIMB_INNER = REGISTRY.register("block_placer_limb_inner", BlockPlacerLimbInnerBlock::new);
 		BLOCK_PLACER_LIMB_OUTER = REGISTRY.register("block_placer_limb_outer", BlockPlacerLimbOuterBlock::new);
-		RANDOM_TREE = REGISTRY.register("random_tree", RandomTreeBlock::new);
-		HALCYON = REGISTRY.register("halcyon", HalcyonBlock::new);
+		SAPLING_HALCYON = REGISTRY.register("sapling_halcyon", SaplingHalcyonBlock::new);
+		SAPLING_YOKAI = REGISTRY.register("sapling_yokai", SaplingYokaiBlock::new);
+		TREE_GENERATOR = REGISTRY.register("tree_generator", TreeGeneratorBlock::new);
+		SAPLING_REDWOOD = REGISTRY.register("sapling_redwood", SaplingRedwoodBlock::new);
+		SAPLING_MALUS_DOMESTICA = REGISTRY.register("sapling_malus_domestica", SaplingMalusDomesticaBlock::new);
+		SAPLING_WENDY = REGISTRY.register("sapling_wendy", SaplingWendyBlock::new);
+		SAPLING_MANGROVE = REGISTRY.register("sapling_mangrove", SaplingMangroveBlock::new);
+		SAPLING_FALCON = REGISTRY.register("sapling_falcon", SaplingFalconBlock::new);
+		SAPLING_SKY_ISLAND_CHAIN = REGISTRY.register("sapling_sky_island_chain", SaplingSkyIslandChainBlock::new);
 	}
 	// Start of user code block custom blocks
 	// End of user code block custom blocks
