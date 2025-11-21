@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class NBTManager {
 
-    public static class Entity {
+    public static class entity {
 
         public static String getText (net.minecraft.world.entity.Entity entity, String name) {
 
@@ -88,7 +88,7 @@ public class NBTManager {
 
     }
 
-    public static class Block {
+    public static class block {
 
         public static String getText (LevelAccessor level_accessor, BlockPos pos, String name) {
 

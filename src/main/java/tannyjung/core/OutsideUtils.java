@@ -31,12 +31,11 @@ public class OutsideUtils {
 
     }
 
-    public static boolean isConnectedToInternet () {
+    public static boolean isURLAvailable (String url) {
 
         try {
 
-            URL url = new URL("https://sites.google.com/view/tannyjung");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
             connection.setRequestMethod("HEAD");
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
@@ -170,7 +169,7 @@ public class OutsideUtils {
 
     }
 
-    public static class Cache {
+    public static class cache {
 
         public static int sizeMapText (Map<String, String> test) {
 

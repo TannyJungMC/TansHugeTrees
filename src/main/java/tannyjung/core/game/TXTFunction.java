@@ -11,7 +11,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.core.OutsideUtils;
-import tannyjung.tanshugetrees.server.Cache;
+import tannyjung.tanshugetrees_handcode.common.Cache;
 
 public class TXTFunction {
 
@@ -582,7 +582,7 @@ public class TXTFunction {
 
             if (level_server.isPositionEntityTicking(entity.blockPosition()) == true) {
 
-                for (String command : NBTManager.Entity.getText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
+                for (String command : NBTManager.entity.getText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
 
                     Utils.command.run(level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), command);
 
