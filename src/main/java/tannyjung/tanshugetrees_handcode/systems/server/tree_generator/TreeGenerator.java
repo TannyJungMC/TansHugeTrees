@@ -117,7 +117,7 @@ public class TreeGenerator {
 
         if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-            TXTFunction.start(level_accessor, level_server, RandomSource.create(), entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), NBTManager.entity.getText(entity, "function_start"));
+            TXTFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), NBTManager.entity.getText(entity, "function_start"), true);
 
         } else {
 
@@ -1017,10 +1017,10 @@ public class TreeGenerator {
 
                                                 }
 
-                                                String previous_block = buildGetPreviousBlock(level_accessor, pos, replace);
+                                                String previous_block = buildGetPreviousBlock(level_accessor, pos);
                                                 String block_type = buildGetBlockType(entity, type, previous_block, radius, build_area);
 
-                                                if (buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type, previous_block) == false) {
+                                                if (buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type, previous_block, replace) == false) {
 
                                                     return;
 
@@ -1038,7 +1038,7 @@ public class TreeGenerator {
                                                     String previous_block = "";
                                                     String block_type = "";
                                                     BlockPos pos_leaves = null;
-                                                    int deep = 1;
+                                                    int deep = 0;
 
                                                     if (Math.random() < NBTManager.entity.getNumber(entity, "leaves_straighten_chance")) {
 
@@ -1046,20 +1046,15 @@ public class TreeGenerator {
 
                                                     }
 
-                                                    for (int deep_test = 0; deep_test < deep; deep_test++) {
+                                                    for (int deep_test = 0; deep_test <= deep; deep_test++) {
 
                                                         pos_leaves = new BlockPos(pos.getX(), pos.getY() - deep_test, pos.getZ());
+                                                        previous_block = buildGetPreviousBlock(level_accessor, pos_leaves);
+                                                        block_type = buildGetBlockType(entity, type, previous_block, radius, build_area);
 
-                                                        if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos_leaves), "tanshugetrees:block_placer_blacklist_leaves") == false && GameUtils.block.toTextID(level_accessor.getBlockState(pos_leaves)).startsWith("tanshugetrees:block_placer_leaves") == false) {
+                                                        if (buildPlaceBlock(level_accessor, level_server, entity, pos_leaves, type, block_type, previous_block, replace) == false) {
 
-                                                            previous_block = buildGetPreviousBlock(level_accessor, pos, replace);
-                                                            block_type = buildGetBlockType(entity, type, previous_block, radius, build_area);
-
-                                                            if (buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type, previous_block) == false) {
-
-                                                                return;
-
-                                                            }
+                                                            return;
 
                                                         }
 
@@ -1122,10 +1117,10 @@ public class TreeGenerator {
                         // Place Block
                         {
 
-                            String previous_block = buildGetPreviousBlock(level_accessor, pos, replace);
+                            String previous_block = buildGetPreviousBlock(level_accessor, pos);
                             String block_type = buildGetBlockType(entity, type, previous_block, radius, build_area);
 
-                            if (buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type, previous_block) == false) {
+                            if (buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type, previous_block, replace) == false) {
 
                                 return;
 
@@ -1147,10 +1142,10 @@ public class TreeGenerator {
                         // Place Block
                         {
 
-                            String previous_block = buildGetPreviousBlock(level_accessor, pos, replace);
+                            String previous_block = buildGetPreviousBlock(level_accessor, pos);
                             String block_type = buildGetBlockType(entity, type, previous_block, radius, build_area);
 
-                            if (buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type, previous_block) == false) {
+                            if (buildPlaceBlock(level_accessor, level_server, entity, pos, type, block_type, previous_block, replace) == false) {
 
                                 return;
 
@@ -1454,7 +1449,7 @@ public class TreeGenerator {
 
         }
 
-        private static String buildGetPreviousBlock (LevelAccessor level_accessor, BlockPos pos, boolean replace) {
+        private static String buildGetPreviousBlock (LevelAccessor level_accessor, BlockPos pos) {
 
             String previous_block = "";
 
@@ -1462,11 +1457,9 @@ public class TreeGenerator {
 
                 if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                    BlockState block = level_accessor.getBlockState(pos);
+                    {
 
-                    if (replace == true || block.isAir() == false) {
-
-                        previous_block = GameUtils.block.toTextID(block);
+                        previous_block = GameUtils.block.toTextID(level_accessor.getBlockState(pos));
 
                         if (previous_block.startsWith("tanshugetrees:block_placer_") == false) {
 
@@ -1502,12 +1495,6 @@ public class TreeGenerator {
                     String key = "B" + pos.getX() + "/" + pos.getY() + "/" + pos.getZ();
                     previous_block = ShapeFileConverter.export_data.getOrDefault(key, "");
 
-                    if (replace == false && previous_block.equals("") == false) {
-
-                        previous_block = "";
-
-                    }
-
                 }
 
             }
@@ -1516,63 +1503,75 @@ public class TreeGenerator {
 
         }
 
-        private static boolean buildPlaceBlock (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, BlockPos pos, String type, String block_type, String previous_block) {
+        private static boolean buildPlaceBlock (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, BlockPos pos, String type, String block_type, String previous_block, boolean replace) {
 
             if (block_type.equals("") == false) {
 
-                String type_short = type.substring(0, 2);
-                String block_placer = "";
-                String block = "";
+                boolean remove_then_add = false;
 
-                if (type.equals("leaves") == false) {
+                if (previous_block.equals("") == false) {
 
-                    type_short = type_short + block_type.charAt(0);
-                    block_placer = type + "_" + block_type;
-                    block = block_placer;
+                    if (replace == false) {
 
-                } else {
+                        return false;
 
-                    type_short = type_short + block_type;
-                    block_placer = "leaves_" + block_type;
+                    } else {
+
+                        remove_then_add = true;
+
+                    }
+
+                }
+
+                String type_short = type.substring(0, 2) + block_type.charAt(0);
+                String block_placer = type + "_" + block_type;
+                String block = block_placer;
+
+                if (type.equals("leaves") == true) {
+
                     block = "leaves" + block_type;
 
                 }
 
                 if (NBTManager.entity.getText(entity, block).equals("") == false) {
 
-                    String[] function = buildGetWayFunction(entity, type);
-                    boolean replacing = previous_block.equals("") == false;
+                    // Place
+                    {
 
-                    if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
+                        String[] function = buildGetWayFunction(entity, type);
 
-                        GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
-                        level_accessor.setBlock(pos, GameUtils.block.fromText("tanshugetrees:block_placer_" + block_placer), 2);
+                        if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                        NBTManager.block.setText(level_accessor, pos, "block", NBTManager.entity.getText(entity, block));
-                        NBTManager.block.setText(level_accessor, pos, "function", function[1]);
-                        NBTManager.block.setText(level_accessor, pos, "function_style", function[2]);
+                            GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
+                            level_accessor.setBlock(pos, GameUtils.block.fromText("tanshugetrees:block_placer_" + block_placer), 2);
 
-                    } else {
+                            NBTManager.block.setText(level_accessor, pos, "block", NBTManager.entity.getText(entity, block));
+                            NBTManager.block.setText(level_accessor, pos, "function", function[1]);
+                            NBTManager.block.setText(level_accessor, pos, "function_style", function[2]);
 
-                        String key = pos.getX() + "/" + pos.getY() + "/" + pos.getZ();
+                        } else {
 
-                        if (replacing == true) {
+                            String key = pos.getX() + "/" + pos.getY() + "/" + pos.getZ();
 
-                            ShapeFileConverter.export_data.remove("B" + key);
+                            if (remove_then_add == true) {
 
-                        }
-
-                        ShapeFileConverter.export_data.put("B" + key, type_short);
-
-                        if (function[0].equals("") == false) {
-
-                            if (replacing == true) {
-
-                                ShapeFileConverter.export_data.remove("F" + key);
+                                ShapeFileConverter.export_data.remove("B" + key);
 
                             }
 
-                            ShapeFileConverter.export_data.put("F" + key, function[0]);
+                            ShapeFileConverter.export_data.put("B" + key, type_short);
+
+                            if (function[0].equals("") == false) {
+
+                                if (remove_then_add == true) {
+
+                                    ShapeFileConverter.export_data.remove("F" + key);
+
+                                }
+
+                                ShapeFileConverter.export_data.put("F" + key, function[0]);
+
+                            }
 
                         }
 
@@ -1664,7 +1663,7 @@ public class TreeGenerator {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                TXTFunction.start(level_accessor, level_server, RandomSource.create(), entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), NBTManager.entity.getText(entity, "function_end"));
+                TXTFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), NBTManager.entity.getText(entity, "function_end"), true);
 
             } else {
 
