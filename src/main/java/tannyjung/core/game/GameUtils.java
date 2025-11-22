@@ -21,11 +21,9 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -667,7 +665,15 @@ public class GameUtils {
 
 				}
 
-			}
+			} else if (name.equals("type") == true) {
+
+                if (block.hasProperty(SlabBlock.TYPE) == true) {
+
+                    block = block.setValue(SlabBlock.TYPE, SlabType.valueOf(value.toUpperCase()));
+
+                }
+
+            }
 
 			return block;
 
