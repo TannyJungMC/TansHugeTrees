@@ -1,6 +1,5 @@
 package tannyjung.tanshugetrees_handcode.systems;
 
-import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerLevel;
@@ -29,26 +28,74 @@ public class Commands {
     @SubscribeEvent
     public static void start (RegisterCommandsEvent event) {
 
+        CommandMaker.registry(event, 0, "TANSHUGETREES / commands / seasons / get", run.commands.seasons::get);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / commands / seasons / set / autumn", run.commands.seasons.set::autumn);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / commands / seasons / set / spring", run.commands.seasons.set::spring);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / commands / seasons / set / summer", run.commands.seasons.set::summer);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / commands / seasons / set / winter", run.commands.seasons.set::winter);
         CommandMaker.registry(event, 0, "TANSHUGETREES / custom_packs / check_update_main", run.custom_packs::check_update_main);
         CommandMaker.registry(event, 0, "TANSHUGETREES / custom_packs / update_main", run.custom_packs::update_main);
         CommandMaker.registry(event, 0, "TANSHUGETREES / dev / delayed_command", run.dev::detailed_command);
         CommandMaker.registry(event, 0, "TANSHUGETREES / dev / living_tree_mechanics / leaf_drop", run.dev.living_tree_mechanics::leaf_drop);
         CommandMaker.registry(event, 0, "TANSHUGETREES / dev / living_tree_mechanics / leaf_litter_remover", run.dev.living_tree_mechanics::leaf_litter_remover);
         CommandMaker.registry(event, 0, "TANSHUGETREES / dev / living_tree_mechanics / loop", run.dev.living_tree_mechanics::loop);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / dev / preset_fixer", run.dev::preset_fixer);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / dev / shape_file_converter / start / <number>", run.dev.shape_file_converter::start);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / dev / shape_file_converter / stop", run.dev.shape_file_converter::stop);
         CommandMaker.registry(event, 0, "TANSHUGETREES / dev / tree_generator", run.dev::tree_generator);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / general / preset_fixer", run.general::preset_fixer);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / general / shape_file_converter / start / <number>", run.general.shape_file_converter::start);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / general / shape_file_converter / stop", run.general.shape_file_converter::stop);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / general / seasons / get", run.general.seasons::get);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / general / seasons / set / autumn", run.general.seasons.set::autumn);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / general / seasons / set / spring", run.general.seasons.set::spring);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / general / seasons / set / summer", run.general.seasons.set::summer);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / general / seasons / set / winter", run.general.seasons.set::winter);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / dev / txt_function / <text>", run.dev::txt_function);
         CommandMaker.registry(event, 0, "TANSHUGETREES / restart", run::restart);
 
     }
 
     private static class run {
+
+        private static class commands {
+
+            private static class seasons {
+
+                private static void get (CommandContext<CommandSourceStack> data) {
+
+                    ServerLevel level_server = data.getSource().getLevel();
+                    Seasons.get(level_server);
+
+                }
+
+                private static class set {
+
+                    private static void autumn (CommandContext<CommandSourceStack> data) {
+
+                        ServerLevel level_server = data.getSource().getLevel();
+                        Seasons.set(level_server, "Autumn");
+
+                    }
+
+                    private static void spring (CommandContext<CommandSourceStack> data) {
+
+                        ServerLevel level_server = data.getSource().getLevel();
+                        Seasons.set(level_server, "Spring");
+
+                    }
+
+                    private static void summer (CommandContext<CommandSourceStack> data) {
+
+                        ServerLevel level_server = data.getSource().getLevel();
+                        Seasons.set(level_server, "Summer");
+
+                    }
+
+                    private static void winter (CommandContext<CommandSourceStack> data) {
+
+                        ServerLevel level_server = data.getSource().getLevel();
+                        Seasons.set(level_server, "Winter");
+
+                    }
+
+                }
+
+            }
+
+        }
 
         private static class custom_packs {
 
@@ -130,6 +177,31 @@ public class Commands {
 
             }
 
+            private static void preset_fixer (CommandContext<CommandSourceStack> data) {
+
+                PresetFixer.start();
+
+            }
+
+            private static class shape_file_converter {
+
+                private static void start (CommandContext<CommandSourceStack> data) {
+
+                    LevelAccessor level_accessor = data.getSource().getLevel();
+                    int number = CommandMaker.argument.getNumber(data);
+                    ShapeFileConverter.start(level_accessor, number);
+
+                }
+
+                private static void stop (CommandContext<CommandSourceStack> data) {
+
+                    LevelAccessor level_accessor = data.getSource().getLevel();
+                    ShapeFileConverter.stop(level_accessor);
+
+                }
+
+            }
+
             private static void tree_generator (CommandContext<CommandSourceStack> data) {
 
                 LevelAccessor level_accessor = data.getSource().getLevel();
@@ -145,75 +217,15 @@ public class Commands {
 
             }
 
-        }
+            private static void txt_function (CommandContext<CommandSourceStack> data) {
 
-        private static class general {
-
-            private static void preset_fixer (CommandContext<CommandSourceStack> data) {
-
-                PresetFixer.start();
-
-            }
-
-            private static class shape_file_converter {
-
-                private static void start (CommandContext<CommandSourceStack> data) {
-
-                    LevelAccessor level_accessor = data.getSource().getLevel();
-                    int count = (int) DoubleArgumentType.getDouble(data, "number");
-                    ShapeFileConverter.start(level_accessor, count);
-
-                }
-
-                private static void stop (CommandContext<CommandSourceStack> data) {
-
-                    LevelAccessor level_accessor = data.getSource().getLevel();
-                    ShapeFileConverter.stop(level_accessor);
-
-                }
-
-            }
-
-            private static class seasons {
-
-                private static void get (CommandContext<CommandSourceStack> data) {
-
-                    ServerLevel level_server = data.getSource().getLevel();
-                    Seasons.get(level_server);
-
-                }
-
-                private static class set {
-
-                    private static void autumn (CommandContext<CommandSourceStack> data) {
-
-                        ServerLevel level_server = data.getSource().getLevel();
-                        Seasons.set(level_server, "Autumn");
-
-                    }
-
-                    private static void spring (CommandContext<CommandSourceStack> data) {
-
-                        ServerLevel level_server = data.getSource().getLevel();
-                        Seasons.set(level_server, "Spring");
-
-                    }
-
-                    private static void summer (CommandContext<CommandSourceStack> data) {
-
-                        ServerLevel level_server = data.getSource().getLevel();
-                        Seasons.set(level_server, "Summer");
-
-                    }
-
-                    private static void winter (CommandContext<CommandSourceStack> data) {
-
-                        ServerLevel level_server = data.getSource().getLevel();
-                        Seasons.set(level_server, "Winter");
-
-                    }
-
-                }
+                LevelAccessor level_accessor = data.getSource().getLevel();
+                ServerLevel level_server = data.getSource().getLevel();
+                int posX = (int) data.getSource().getPosition().x();
+                int posY = (int) data.getSource().getPosition().y();
+                int posZ = (int) data.getSource().getPosition().z();
+                String text = CommandMaker.argument.getText(data);
+                TXTFunction.start(level_accessor, level_server, posX, posY, posZ, text, true);
 
             }
 
@@ -222,7 +234,7 @@ public class Commands {
         private static void restart (CommandContext<CommandSourceStack> data) {
 
             LevelAccessor level_accessor = data.getSource().getLevel();
-            Handcode.runRestart(level_accessor, true);
+            Handcode.runRestart(level_accessor, true, true);
 
         }
 
