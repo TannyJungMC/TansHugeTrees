@@ -5,6 +5,7 @@ import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.*;
 
@@ -12,7 +13,8 @@ public class Cache {
 
     private static final Map<String, String> dictionary = new HashMap<>();
     private static final Map<String, short[]> tree_shape_part1 = new HashMap<>();
-    private static final Map<String, short[]> tree_shape_part2 = new HashMap<>();
+    private static final Map<String, int[]> tree_shape_part2 = new HashMap<>();
+    private static final Map<String, short[]> tree_shape_part3 = new HashMap<>();
     private static final Map<String, String[]> world_gen_settings = new HashMap<>();
     private static final Map<String, String[]> tree_settings = new HashMap<>();
     private static final Map<String, String[]> functions = new HashMap<>();
@@ -27,8 +29,9 @@ public class Cache {
         {
 
             size = size + OutsideUtils.cache.sizeMapText(dictionary);
-            size = size + OutsideUtils.cache.sizeMapNumber(tree_shape_part1);
-            size = size + OutsideUtils.cache.sizeMapNumber(tree_shape_part2);
+            size = size + OutsideUtils.cache.sizeMapNumberShort(tree_shape_part1);
+            size = size + OutsideUtils.cache.sizeMapNumberInt(tree_shape_part2);
+            size = size + OutsideUtils.cache.sizeMapNumberShort(tree_shape_part3);
             size = size + OutsideUtils.cache.sizeMapTextList(world_gen_settings);
             size = size + OutsideUtils.cache.sizeMapTextList(tree_settings);
             size = size + OutsideUtils.cache.sizeMapTextList(functions);
@@ -39,6 +42,7 @@ public class Cache {
             dictionary.clear();
             tree_shape_part1.clear();
             tree_shape_part2.clear();
+            tree_shape_part3.clear();
             world_gen_settings.clear();
             tree_settings.clear();
             functions.clear();
@@ -60,7 +64,7 @@ public class Cache {
 
                 {
 
-                    String path = Handcode.path_world_data + "/bin_dictionary.txt";
+                    String path = Handcode.path_world_data + "/dictionary.txt";
                     String[] data = FileManager.readTXT(path);
                     String value_id = "";
                     String value_text = "";
@@ -117,35 +121,81 @@ public class Cache {
 
     }
 
-    public static short[] getTreeShape (String id, int part) {
+    private static void getTreeShape (String id) {
 
         if (tree_shape_part1.containsKey(id) == false) {
 
             String[] split = id.split("/");
-            ShortBuffer buffer = FileManager.readBIN(Handcode.path_config + "/custom_packs/" + split[0] + "/presets/" + split[1] + "/storage/" + split[2]).asShortBuffer();
+            ByteBuffer buffer = FileManager.readBIN(Handcode.path_config + "/custom_packs/" + split[0] + "/presets/" + split[1] + "/storage/" + split[2]);
 
             if (buffer.remaining() > 0) {
 
-                short[] data = new short[buffer.remaining()];
-                buffer.get(data);
-                tree_shape_part1.put(id, Arrays.copyOfRange(data, 0, 12));
-                tree_shape_part2.put(id, Arrays.copyOfRange(data, 12, data.length));
+                // Part 1
+                {
+
+                    int count = 6;
+                    short[] data = new short[count];
+
+                    for (int number = 0; number < count; number++) {
+
+                        data[number] = buffer.getShort();
+
+                    }
+
+                    tree_shape_part1.put(id, data);
+
+                }
+
+                // Part 2
+                {
+
+                    int count = 6;
+                    int[] data = new int[count];
+
+                    for (int number = 0; number < count; number++) {
+
+                        data[number] = buffer.getInt();
+
+                    }
+
+                    tree_shape_part2.put(id, data);
+
+                }
+
+                // Part 3
+                {
+
+                    ShortBuffer buffer_convert = buffer.asShortBuffer();
+                    short[] data = new short[buffer_convert.remaining()];
+                    buffer_convert.get(data);
+                    tree_shape_part3.put(id, data);
+
+                }
 
             }
 
         }
 
-        if (part == 1) {
+    }
 
-           return tree_shape_part1.getOrDefault(id, new short[0]);
+    public static short[] getTreeShapePart1 (String id) {
 
-        } else if (part == 2) {
+        getTreeShape(id);
+        return tree_shape_part1.getOrDefault(id, new short[0]);
 
-            return tree_shape_part2.getOrDefault(id, new short[0]);
+    }
 
-        }
+    public static int[] getTreeShapePart2 (String id) {
 
-        return new short[0];
+        getTreeShape(id);
+        return tree_shape_part2.getOrDefault(id, new int[0]);
+
+    }
+
+    public static short[] getTreeShapePart3 (String id) {
+
+        getTreeShape(id);
+        return tree_shape_part3.getOrDefault(id, new short[0]);
 
     }
 
