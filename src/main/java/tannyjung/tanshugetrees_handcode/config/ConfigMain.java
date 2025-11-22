@@ -71,6 +71,7 @@ public class ConfigMain {
 	public static int tree_generator_count_limit = 0;
 
 	public static boolean developer_mode = false;
+	public static boolean world_gen_icon = false;
 
 	// ----------------------------------------------------------------------------------------------------
 	
@@ -285,6 +286,10 @@ public class ConfigMain {
 					| Enable some features for debugging. Such as region pre-location info in-game, to see what tree slowdown the pre-location. Tracking the trees to see what tree running the living tree mechanics.
 					| Default is [ false ]
 					
+					world_gen_icon = true
+					| Enable little icon at top-left showing everytime the mod generate new region. This config only affect on singleplayer.
+					| Default is [ true ]
+					
 					----------------------------------------------------------------------------------------------------
 					"""
 
@@ -386,6 +391,7 @@ public class ConfigMain {
 		tree_generator_count_limit = Integer.parseInt(data.get("tree_generator_count_limit"));
 
 		developer_mode = Boolean.parseBoolean(data.get("developer_mode"));
+        world_gen_icon = Boolean.parseBoolean(data.get("world_gen_icon"));
 
 		// After Applying
 		{
@@ -401,19 +407,6 @@ public class ConfigMain {
 			}
 
 		}
-
-	}
-
-	public static void repairAll (LevelAccessor level_accessor) {
-
-		FileManager.createFolder(Handcode.path_config + "/#dev");
-		FileManager.createFolder(Handcode.path_config + "/#dev/custom_packs_organized");
-		FileManager.createFolder(Handcode.path_config + "/#dev/shape_file_converter");
-		FileManager.createFolder(Handcode.path_config + "/custom_packs");
-		CustomPackOrganized.start(level_accessor);
-		ConfigMain.repair();
-		ConfigWorldGen.start();
-		ConfigShapeFileConverter.repair();
 
 	}
 	
