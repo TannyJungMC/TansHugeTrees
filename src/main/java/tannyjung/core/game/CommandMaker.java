@@ -4,7 +4,9 @@ import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import tannyjung.core.OutsideUtils;
 
 import java.util.function.Consumer;
 
@@ -35,6 +37,10 @@ public class CommandMaker {
                         if (get.equals("<number>") == true) {
 
                             convert.append("N");
+
+                        } else if (get.equals("<text>") == true) {
+
+                            convert.append("T");
 
                         }
 
@@ -116,7 +122,58 @@ public class CommandMaker {
 
                 }
 
+            } else if (structure_short.equals("#/#/#/T") == true) {
+
+                {
+
+                    event.getDispatcher().register(Commands.literal(split[0]).requires(s -> s.hasPermission(permission)).then(Commands.literal(split[1]).then(Commands.literal(split[2]).then(Commands.argument("text", MessageArgument.message()).executes(arguments -> {
+
+                        data.accept(arguments);
+                        return 0;
+
+                    })))));
+
+                }
+
             }
+
+        }
+
+    }
+
+    public static class argument {
+
+        public static int getNumber (CommandContext<CommandSourceStack> data) {
+
+            return (int) DoubleArgumentType.getDouble(data, "number");
+
+        }
+
+        public static String getText (CommandContext<CommandSourceStack> data) {
+
+            String return_text = "";
+
+            return_text = (new Object() {
+
+                public String get () {
+
+                    try {
+
+                        return MessageArgument.getMessage(data, "text").getString();
+
+                    } catch (Exception exception) {
+
+                        OutsideUtils.exception(new Exception(), exception);
+
+                    }
+
+                    return "";
+
+                }
+
+            }).get();
+
+            return return_text;
 
         }
 
