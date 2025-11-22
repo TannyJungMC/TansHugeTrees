@@ -15,10 +15,17 @@ import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 public class TXTFunction {
 
-	public static void start (LevelAccessor level_accessor, ServerLevel level_server, RandomSource random, int posX, int posY, int posZ, String path) {
+	public static void start (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String path, boolean randomly) {
 
         WorldGenLevel world_gen = (WorldGenLevel) level_accessor;
         boolean chunk_loaded = level_server.isPositionEntityTicking(new BlockPos(posX, posY, posZ));
+        RandomSource random = RandomSource.create();
+
+        if (randomly == true) {
+
+            RandomSource.create(level_server.getSeed() ^ ((posX * 341873128712L) + posY + (posZ * 132897987541L)));
+
+        }
 
         boolean run_test = false;
         boolean run_test_result = true;
@@ -490,7 +497,7 @@ public class TXTFunction {
 
                                                             if (random.nextDouble() < chance) {
 
-                                                                TXTFunction.start(level_accessor, level_server, random, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, variable_text);
+                                                                TXTFunction.start(level_accessor, level_server, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, variable_text, false);
 
                                                             }
 

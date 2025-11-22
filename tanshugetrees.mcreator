@@ -931,28 +931,10 @@
       "value": "false"
     },
     {
-      "name": "shape_file_converter_chat_messages",
-      "type": "logic",
-      "scope": "map",
-      "value": "false"
-    },
-    {
-      "name": "shape_file_converter_cooldown",
-      "type": "number",
-      "scope": "map",
-      "value": "0"
-    },
-    {
       "name": "shape_file_converter_count",
       "type": "number",
       "scope": "map",
       "value": "0"
-    },
-    {
-      "name": "shape_file_converter_back_position",
-      "type": "string",
-      "scope": "map",
-      "value": ""
     },
     {
       "name": "season",
@@ -977,133 +959,20 @@
       "TAG:minecraft:replaceable",
       "TAG:mod:air_blocks",
       "TAG:minecraft:flowers"
-    ],
-    "BLOCKS:mod:block_placer_blacklist_secondary_root": [
-      "CUSTOM:BlockPlacerTaprootCore",
-      "CUSTOM:BlockPlacerTaprootInner",
-      "CUSTOM:BlockPlacerTaprootOuter"
-    ],
-    "BLOCKS:mod:block_placer_blacklist_tertiary_root": [
-      "CUSTOM:BlockPlacerTaprootCore",
-      "CUSTOM:BlockPlacerTaprootInner",
-      "CUSTOM:BlockPlacerTaprootOuter",
-      "CUSTOM:BlockPlacerSecondaryRootCore",
-      "CUSTOM:BlockPlacerSecondaryRootInner",
-      "CUSTOM:BlockPlacerSecondaryRootOuter"
-    ],
-    "BLOCKS:mod:block_placer_blacklist_fine_root": [
-      "CUSTOM:BlockPlacerTaprootCore",
-      "CUSTOM:BlockPlacerTaprootInner",
-      "CUSTOM:BlockPlacerTaprootOuter",
-      "CUSTOM:BlockPlacerSecondaryRootCore",
-      "CUSTOM:BlockPlacerSecondaryRootInner",
-      "CUSTOM:BlockPlacerSecondaryRootOuter",
-      "CUSTOM:BlockPlacerTertiaryRootCore",
-      "CUSTOM:BlockPlacerTertiaryRootInner",
-      "CUSTOM:BlockPlacerTertiaryRootOuter"
-    ],
-    "BLOCKS:mod:block_placer_blacklist_bough": [
-      "CUSTOM:BlockPlacerTrunkCore",
-      "CUSTOM:BlockPlacerTrunkInner",
-      "CUSTOM:BlockPlacerTrunkOuter"
-    ],
-    "BLOCKS:mod:block_placer_blacklist_branch": [
-      "CUSTOM:BlockPlacerTrunkCore",
-      "CUSTOM:BlockPlacerTrunkInner",
-      "CUSTOM:BlockPlacerTrunkOuter",
-      "CUSTOM:BlockPlacerBoughCore",
-      "CUSTOM:BlockPlacerBoughInner",
-      "CUSTOM:BlockPlacerBoughOuter"
-    ],
-    "BLOCKS:mod:block_placer_blacklist_limb": [
-      "CUSTOM:BlockPlacerTrunkCore",
-      "CUSTOM:BlockPlacerTrunkInner",
-      "CUSTOM:BlockPlacerTrunkOuter",
-      "CUSTOM:BlockPlacerBoughCore",
-      "CUSTOM:BlockPlacerBoughInner",
-      "CUSTOM:BlockPlacerBoughOuter",
-      "CUSTOM:BlockPlacerBranchCore",
-      "CUSTOM:BlockPlacerBranchInner",
-      "CUSTOM:BlockPlacerBranchOuter"
-    ],
-    "BLOCKS:mod:block_placer_blacklist_twig": [
-      "CUSTOM:BlockPlacerTrunkCore",
-      "CUSTOM:BlockPlacerTrunkInner",
-      "CUSTOM:BlockPlacerTrunkOuter",
-      "CUSTOM:BlockPlacerBoughCore",
-      "CUSTOM:BlockPlacerBoughInner",
-      "CUSTOM:BlockPlacerBoughOuter",
-      "CUSTOM:BlockPlacerBranchCore",
-      "CUSTOM:BlockPlacerBranchInner",
-      "CUSTOM:BlockPlacerBranchOuter",
-      "CUSTOM:BlockPlacerLimbCore",
-      "CUSTOM:BlockPlacerLimbInner",
-      "CUSTOM:BlockPlacerLimbOuter"
-    ],
-    "BLOCKS:mod:block_placer_blacklist_sprig": [
-      "CUSTOM:BlockPlacerTrunkCore",
-      "CUSTOM:BlockPlacerTrunkInner",
-      "CUSTOM:BlockPlacerTrunkOuter",
-      "CUSTOM:BlockPlacerBoughCore",
-      "CUSTOM:BlockPlacerBoughInner",
-      "CUSTOM:BlockPlacerBoughOuter",
-      "CUSTOM:BlockPlacerBranchCore",
-      "CUSTOM:BlockPlacerBranchInner",
-      "CUSTOM:BlockPlacerBranchOuter",
-      "CUSTOM:BlockPlacerLimbCore",
-      "CUSTOM:BlockPlacerLimbInner",
-      "CUSTOM:BlockPlacerLimbOuter",
-      "CUSTOM:BlockPlacerTwigCore",
-      "CUSTOM:BlockPlacerTwigInner",
-      "CUSTOM:BlockPlacerTwigOuter"
-    ],
-    "BLOCKS:mod:block_placer_blacklist_leaves": [
-      "CUSTOM:BlockPlacerTrunkCore",
-      "CUSTOM:BlockPlacerTrunkInner",
-      "CUSTOM:BlockPlacerTrunkOuter",
-      "CUSTOM:BlockPlacerBoughCore",
-      "CUSTOM:BlockPlacerBoughInner",
-      "CUSTOM:BlockPlacerBoughOuter",
-      "CUSTOM:BlockPlacerBranchCore",
-      "CUSTOM:BlockPlacerBranchInner",
-      "CUSTOM:BlockPlacerBranchOuter",
-      "CUSTOM:BlockPlacerLimbCore",
-      "CUSTOM:BlockPlacerLimbInner",
-      "CUSTOM:BlockPlacerLimbOuter",
-      "CUSTOM:BlockPlacerTwigCore",
-      "CUSTOM:BlockPlacerTwigInner",
-      "CUSTOM:BlockPlacerTwigOuter",
-      "CUSTOM:BlockPlacerSprigCore",
-      "CUSTOM:BlockPlacerSprigInner",
-      "CUSTOM:BlockPlacerSprigOuter"
-    ],
-    "BLOCKS:mod:block_placer_roots": [
-      "CUSTOM:BlockPlacerTaprootCore",
-      "CUSTOM:BlockPlacerTaprootInner",
-      "CUSTOM:BlockPlacerTaprootOuter",
-      "CUSTOM:BlockPlacerSecondaryRootCore",
-      "CUSTOM:BlockPlacerSecondaryRootInner",
-      "CUSTOM:BlockPlacerSecondaryRootOuter",
-      "CUSTOM:BlockPlacerTertiaryRootCore",
-      "CUSTOM:BlockPlacerTertiaryRootInner",
-      "CUSTOM:BlockPlacerTertiaryRootOuter",
-      "CUSTOM:BlockPlacerFineRootCore",
-      "CUSTOM:BlockPlacerFineRootInner",
-      "CUSTOM:BlockPlacerFineRootOuter"
     ]
   },
   "tab_element_order": {
     "CUSTOM:Tab": [
       "WaypointFlower",
       "TreeGenerator",
-      "SaplingHalcyon",
-      "SaplingYokai",
-      "SaplingRedwood",
-      "SaplingMalusDomestica",
-      "SaplingWendy",
-      "SaplingMangrove",
       "SaplingFalcon",
-      "SaplingSkyIslandChain"
+      "SaplingHalcyon",
+      "SaplingMalusDomestica",
+      "SaplingMangrove",
+      "SaplingRedwood",
+      "SaplingSkyIslandChain",
+      "SaplingWendy",
+      "SaplingYokai"
     ]
   },
   "language_map": {

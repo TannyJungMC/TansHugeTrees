@@ -103,7 +103,7 @@ public class BlockPlacer {
 
                         Handcode.createDelayedWorks(20, () -> {
 
-                            TXTFunction.start(level_server, level_server, RandomSource.create(), pos.getX(), pos.getY(), pos.getZ(), function);
+                            TXTFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), function, true);
 
                         });
 

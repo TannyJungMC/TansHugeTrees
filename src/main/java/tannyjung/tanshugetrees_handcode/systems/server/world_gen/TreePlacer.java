@@ -210,15 +210,18 @@ public class TreePlacer {
 
                                     if (radius > 0) {
 
+                                        ChunkAccess chunk = null;
+                                        Map<Structure, LongSet> references = new HashMap<>();
+
                                         for (int scanX = -radius; scanX <= radius; scanX++) {
 
                                             for (int scanZ = -radius; scanZ <= radius; scanZ++) {
 
-                                                ChunkAccess chunk = level_accessor.getChunk(center_chunkX + scanX, center_chunkZ + scanZ, ChunkStatus.STRUCTURE_REFERENCES, false);
+                                                chunk = level_accessor.getChunk(center_chunkX + scanX, center_chunkZ + scanZ, ChunkStatus.STRUCTURE_REFERENCES, false);
 
                                                 if (chunk != null) {
 
-                                                    Map<Structure, LongSet> references = chunk.getAllReferences();
+                                                    references = chunk.getAllReferences();
 
                                                     if (references != null) {
 
@@ -481,7 +484,7 @@ public class TreePlacer {
 
         }
 
-        short[] shape = Cache.getTreeShape(path_storage + "/" + chosen, 2);
+        short[] shape = Cache.getTreeShapePart3(path_storage + "/" + chosen);
 
         if (shape.length > 0) {
 
@@ -609,12 +612,11 @@ public class TreePlacer {
 
                 if (dead_tree_level > 0) {
 
-                    short[] block_count = Cache.getTreeShape(path_storage + "/" + chosen, 1);
+                    int[] block_count = Cache.getTreeShapePart2(path_storage + "/" + chosen);
 
                     if (block_count.length > 0) {
 
-                        RandomSource random_dead_tree = RandomSource.create(level_server.getSeed() ^ (center_posX * 341873128712L + center_posZ * 132897987541L));
-                        block_count = Arrays.copyOfRange(block_count, 6, 12);
+                        RandomSource random_dead_tree = RandomSource.create(level_server.getSeed() ^ ((center_posX * 341873128712L) + (center_posZ * 132897987541L)));
 
                         // Dead Tree Main Type
                         {
@@ -747,7 +749,7 @@ public class TreePlacer {
 
                 if (coarse_woody_debris == true) {
 
-                    fallen_direction = RandomSource.create(level_server.getSeed() ^ (center_posX * 341873128712L + center_posZ * 132897987541L)).nextInt(4) + 1;
+                    fallen_direction = RandomSource.create(level_server.getSeed() ^ ((center_posX * 341873128712L) + (center_posZ * 132897987541L))).nextInt(4) + 1;
 
                 }
 
@@ -1116,7 +1118,7 @@ public class TreePlacer {
 
                                             for (String name : Cache.getFunctionTreeDecoration()) {
 
-                                                TXTFunction.start(level_accessor, level_server, random, pos.getX(), pos.getY(), pos.getZ(), "#TannyJung-Main-Pack/tree_decoration/" + name);
+                                                TXTFunction.start(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), "#TannyJung-Main-Pack/tree_decoration/" + name, false);
 
                                             }
 
@@ -1124,7 +1126,7 @@ public class TreePlacer {
 
                                             for (String name : Cache.getFunctionTreeDecorationDecay()) {
 
-                                                TXTFunction.start(level_accessor, level_server, random, pos.getX(), pos.getY(), pos.getZ(), "#TannyJung-Main-Pack/tree_decoration_decay/" + name);
+                                                TXTFunction.start(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), "#TannyJung-Main-Pack/tree_decoration_decay/" + name, false);
 
                                             }
 
@@ -1144,7 +1146,7 @@ public class TreePlacer {
                                     // Separate like this because start and end function doesn't need to test "can_run_function"
                                     if (can_run_function == true || (type.equals("210") == true || type.equals("220") == true)) {
 
-                                        TXTFunction.start(level_accessor, level_server, random, pos.getX(), pos.getY(), pos.getZ(), get);
+                                        TXTFunction.start(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), get, false);
 
                                     }
 

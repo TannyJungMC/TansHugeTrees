@@ -167,7 +167,7 @@ public class LivingTreeMechanics {
             BlockState block = Blocks.AIR.defaultBlockState();
             String[] pre_block_data = new String[0];
 
-            for (short read_all : Cache.getTreeShape(path_storage + "/" + chosen, 2)) {
+            for (short read_all : Cache.getTreeShapePart3(path_storage + "/" + chosen)) {
 
                 // Loop and Get Data
                 {

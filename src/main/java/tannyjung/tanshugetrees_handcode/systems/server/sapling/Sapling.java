@@ -101,8 +101,6 @@ public class Sapling {
 
         }
 
-        System.out.println("1 -> " + NBTManager.block.getNumber(level_accessor, pos, "countdown"));
-
     }
 
     private static void cancel (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String message) {

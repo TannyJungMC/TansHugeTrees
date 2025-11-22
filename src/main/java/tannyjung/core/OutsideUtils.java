@@ -171,6 +171,34 @@ public class OutsideUtils {
 
     public static class cache {
 
+        public static int sizeMapNumberShort (Map<String, short[]> test) {
+
+            int return_number = 0;
+
+            for (Map.Entry<String, short[]> entry : test.entrySet()) {
+
+                return_number = return_number + entry.getValue().length * Short.BYTES;
+
+            }
+
+            return return_number;
+
+        }
+
+        public static int sizeMapNumberInt (Map<String, int[]> test) {
+
+            int return_number = 0;
+
+            for (Map.Entry<String, int[]> entry : test.entrySet()) {
+
+                return_number = return_number + entry.getValue().length * Integer.BYTES;
+
+            }
+
+            return return_number;
+
+        }
+
         public static int sizeMapText (Map<String, String> test) {
 
             int return_number = 0;
@@ -192,20 +220,6 @@ public class OutsideUtils {
             for (Map.Entry<String, String[]> entry : test.entrySet()) {
 
                 return_number = return_number + entry.getValue().length * Integer.BYTES;
-
-            }
-
-            return return_number;
-
-        }
-
-        public static int sizeMapNumber (Map<String, short[]> test) {
-
-            int return_number = 0;
-
-            for (Map.Entry<String, short[]> entry : test.entrySet()) {
-
-                return_number = return_number + entry.getValue().length * Short.BYTES;
 
             }
 

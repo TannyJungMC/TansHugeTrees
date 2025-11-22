@@ -34,7 +34,7 @@ public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
         BlockState previous_block = Blocks.AIR.defaultBlockState();
         BlockPos pos = null;
         BlockState block = Blocks.AIR.defaultBlockState();
-        RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ (center_pos.getX() * 341873128712L + center_pos.getZ() * 132897987541L));
+        RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((center_pos.getX() * 341873128712L) + (center_pos.getZ() * 132897987541L)));
 
         for (int scanX = startX; scanX <= endX; scanX++) {
 

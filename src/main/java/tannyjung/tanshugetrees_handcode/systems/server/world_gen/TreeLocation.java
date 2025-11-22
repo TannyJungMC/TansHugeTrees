@@ -46,11 +46,9 @@ public class TreeLocation {
 
     public static void run (LevelAccessor level_accessor, String dimension, ChunkPos chunk_pos) {
 
-
         int region_posX = chunk_pos.x >> 5;
         int region_posZ = chunk_pos.z >> 5;
         File file_region = new File(Handcode.path_world_data + "/world_gen/#regions/" + dimension + "/" + region_posX + "," + region_posZ + ".bin");
-        RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ (region_posX * 341873128712L + region_posZ * 132897987541L));
 
         if (file_region.exists() == false) {
 
@@ -60,6 +58,7 @@ public class TreeLocation {
             if (file.exists() == true && file.isDirectory() == false) {
 
                 TanshugetreesMod.LOGGER.info("Generating tree locations for a new region ({} -> {}/{})", dimension.replace("-", ":"), region_posX, region_posZ);
+                RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((region_posX * 341873128712L) + (region_posZ * 132897987541L)));
                 world_gen_overlay_animation = 4;
                 world_gen_overlay_bar = 0;
                 scanning_overlay_loop();
@@ -289,24 +288,22 @@ public class TreeLocation {
                                             // Biome
                                             {
 
+                                                boolean result = false;
+
                                                 if (cache_biome_test.containsKey(GameUtils.biome.toID(biome_center) + "|" + id) == true) {
 
-                                                    if (cache_biome_test.get(GameUtils.biome.toID(biome_center) + "|" + id) == false) {
-
-                                                        continue;
-
-                                                    }
+                                                    result = cache_biome_test.get(GameUtils.biome.toID(biome_center) + "|" + id);
 
                                                 } else {
 
-                                                    boolean result = GameUtils.misc.testCustomBiome(biome_center, biome);
+                                                    result = GameUtils.misc.testCustomBiome(biome_center, biome);
                                                     cache_biome_test.put(GameUtils.biome.toID(biome_center) + "|" + id, result);
 
-                                                    if (result == false) {
+                                                }
 
-                                                        continue;
+                                                if (result == false) {
 
-                                                    }
+                                                    continue;
 
                                                 }
 
@@ -722,19 +719,20 @@ public class TreeLocation {
 
         if (chosen.exists() == true && chosen.isDirectory() == false) {
 
-            short[] get = Cache.getTreeShape(path_storage + "/" + chosen.getName(), 1);
-            int sizeX = get[0];
-            int sizeY = get[1];
-            int sizeZ = get[2];
-            int center_sizeX = get[3];
-            int center_sizeY = get[4];
-            int center_sizeZ = get[5];
-            int count_trunk = get[6];
-            int count_bough = get[6];
-            int count_branch = get[7];
-            int count_limb = get[8];
-            int count_twig = get[9];
-            int count_sprig = get[10];
+            short[] get1 = Cache.getTreeShapePart1(path_storage + "/" + chosen.getName());
+            int sizeX = get1[0];
+            int sizeY = get1[1];
+            int sizeZ = get1[2];
+            int center_sizeX = get1[3];
+            int center_sizeY = get1[4];
+            int center_sizeZ = get1[5];
+            int[] get2 = Cache.getTreeShapePart2(path_storage + "/" + chosen.getName());
+            int count_trunk = get2[0];
+            int count_bough = get2[1];
+            int count_branch = get2[2];
+            int count_limb = get2[3];
+            int count_twig = get2[4];
+            int count_sprig = get2[5];
 
             // Dead Tree
             {
@@ -940,7 +938,7 @@ public class TreeLocation {
 
                 if (Integer.parseInt(dead_tree_level) > 200) {
 
-                    int fallen_direction = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ (center_posX * 341873128712L + center_posZ * 132897987541L)).nextInt(4) + 1;
+                    int fallen_direction = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((center_posX * 341873128712L) + (center_posZ * 132897987541L))).nextInt(4) + 1;
                     int sizeX_save = sizeX;
                     int sizeY_save = sizeY;
                     int sizeZ_save = sizeZ;
