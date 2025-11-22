@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems.server.living_tree_mechanics;
+package tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;

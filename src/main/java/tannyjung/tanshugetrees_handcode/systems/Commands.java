@@ -14,13 +14,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import tannyjung.tanshugetrees_handcode.config.PackCheckUpdate;
 import tannyjung.tanshugetrees_handcode.config.PackUpdate;
-import tannyjung.tanshugetrees_handcode.systems.server.living_tree_mechanics.LivingTreeMechanics;
-import tannyjung.tanshugetrees_handcode.systems.server.living_tree_mechanics.LivingTreeMechanicsLeafDrop;
-import tannyjung.tanshugetrees_handcode.systems.server.living_tree_mechanics.LivingTreeMechanicsLeafLitterRemover;
-import tannyjung.tanshugetrees_handcode.systems.server.living_tree_mechanics.Seasons;
-import tannyjung.tanshugetrees_handcode.systems.server.tree_generator.PresetFixer;
-import tannyjung.tanshugetrees_handcode.systems.server.tree_generator.ShapeFileConverter;
-import tannyjung.tanshugetrees_handcode.systems.server.tree_generator.TreeGenerator;
+import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanics;
+import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanicsLeafDrop;
+import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanicsLeafLitterRemover;
+import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.Seasons;
+import tannyjung.tanshugetrees_handcode.systems.tree_generator.PresetFixer;
+import tannyjung.tanshugetrees_handcode.systems.tree_generator.ShapeFileConverter;
+import tannyjung.tanshugetrees_handcode.systems.tree_generator.TreeGenerator;
 
 @Mod.EventBusSubscriber
 public class Commands {

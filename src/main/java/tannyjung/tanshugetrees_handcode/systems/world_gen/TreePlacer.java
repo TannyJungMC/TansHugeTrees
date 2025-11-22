@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems.server.world_gen;
+package tannyjung.tanshugetrees_handcode.systems.world_gen;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
@@ -21,8 +21,8 @@ import tannyjung.core.game.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
-import tannyjung.tanshugetrees_handcode.systems.server.living_tree_mechanics.LeafLitter;
-import tannyjung.core.game.TXTFunction;
+import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LeafLitter;
+import tannyjung.tanshugetrees_handcode.systems.world_gen.steps.WorldGenLast;
 
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -1121,15 +1121,15 @@ public class TreePlacer {
 
                                             for (String name : Cache.getFunctionTreeDecoration()) {
 
-                                                TXTFunction.start(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), "#TannyJung-Main-Pack/tree_decoration/" + name, false);
-
+                                                WorldGenLast.functions.computeIfAbsent(chunk_pos, test -> new HashMap<>()).computeIfAbsent(pos, test -> new ArrayList<>()).add("#TannyJung-Main-Pack/tree_decoration/" + name);
+                                                
                                             }
 
                                         } else {
 
                                             for (String name : Cache.getFunctionTreeDecorationDecay()) {
 
-                                                TXTFunction.start(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), "#TannyJung-Main-Pack/tree_decoration_decay/" + name, false);
+                                                WorldGenLast.functions.computeIfAbsent(chunk_pos, test -> new HashMap<>()).computeIfAbsent(pos, test -> new ArrayList<>()).add("#TannyJung-Main-Pack/tree_decoration_decay/" + name);
 
                                             }
 
@@ -1149,7 +1149,7 @@ public class TreePlacer {
                                     // Separate like this because start and end function doesn't need to test "can_run_function"
                                     if (can_run_function == true || (type.equals("210") == true || type.equals("220") == true)) {
 
-                                        TXTFunction.start(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), get, false);
+                                        WorldGenLast.functions.computeIfAbsent(chunk_pos, test -> new HashMap<>()).computeIfAbsent(pos, test -> new ArrayList<>()).add(get);
 
                                     }
 

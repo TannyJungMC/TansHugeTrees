@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems.server.sapling;
+package tannyjung.tanshugetrees_handcode.systems.sapling;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

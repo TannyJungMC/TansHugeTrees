@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems.server.world_gen;
+package tannyjung.tanshugetrees_handcode.systems.world_gen;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;

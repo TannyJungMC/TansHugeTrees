@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems.server.tree_generator;
+package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
 import tannyjung.core.FileManager;
 import tannyjung.core.OutsideUtils;

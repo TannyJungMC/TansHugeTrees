@@ -17,6 +17,6 @@ public class BlockPlacerTickProcedure {
 				_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(), "");
 		}
 		BlockPos pos = new BlockPos((int) x, (int) y, (int) z);
-		tannyjung.tanshugetrees_handcode.systems.server.tree_generator.BlockPlacer.start(world, pos);
+		tannyjung.tanshugetrees_handcode.systems.tree_generator.BlockPlacer.start(world, pos);
 	}
 }

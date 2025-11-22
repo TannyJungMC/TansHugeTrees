@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems.server.world_gen;
+package tannyjung.tanshugetrees_handcode.systems.world_gen.steps;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
@@ -9,6 +9,8 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import tannyjung.core.game.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
+import tannyjung.tanshugetrees_handcode.systems.world_gen.TreeLocation;
+import tannyjung.tanshugetrees_handcode.systems.world_gen.TreePlacer;
 
 public class WorldGenBeforePlants extends Feature <NoneFeatureConfiguration> {
 

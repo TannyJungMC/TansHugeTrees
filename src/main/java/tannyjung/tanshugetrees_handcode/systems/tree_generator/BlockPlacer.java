@@ -1,8 +1,7 @@
-package tannyjung.tanshugetrees_handcode.systems.server.tree_generator;
+package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.core.game.NBTManager;
 import tannyjung.core.game.TXTFunction;
