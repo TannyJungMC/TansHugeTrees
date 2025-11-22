@@ -248,7 +248,6 @@ public class TreePlacer {
                                 }
 
                                 int originalY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
-                                center_posY = originalY;
 
                                 // Ground Level
                                 {
@@ -257,13 +256,12 @@ public class TreePlacer {
 
                                     if (chunk != null) {
 
-                                        // Get Y Level
-                                        center_posY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR, center_posX, center_posZ) + 1;
+                                        originalY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR, center_posX, center_posZ) + 1;
 
                                         // Ground Block
                                         {
 
-                                            if (GameUtils.misc.testCustomBlock(chunk.getBlockState(new BlockPos(center_posX, center_posY - 1, center_posZ)), ground_block) == false) {
+                                            if (GameUtils.misc.testCustomBlock(chunk.getBlockState(new BlockPos(center_posX, originalY - 1, center_posZ)), ground_block) == false) {
 
                                                 break test;
 
@@ -277,7 +275,11 @@ public class TreePlacer {
 
                                 if (coarse_woody_debris == false) {
 
-                                    center_posY = center_posY + start_height + start_height_offset;
+                                    center_posY = originalY + start_height + start_height_offset;
+
+                                } else {
+
+                                    center_posY = originalY;
 
                                 }
 
@@ -323,9 +325,10 @@ public class TreePlacer {
 
                                     if (ConfigMain.surface_smoothness_detection == true) {
 
+                                        int testY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
                                         int size = ConfigMain.surface_detection_size;
-                                        int height_up = originalY + ConfigMain.surface_smoothness_detection_height_up;
-                                        int height_down = originalY - ConfigMain.surface_smoothness_detection_height_down;
+                                        int height_up = testY + ConfigMain.surface_smoothness_detection_height_up;
+                                        int height_down = testY - ConfigMain.surface_smoothness_detection_height_down;
 
                                         // Basic Test
                                         {
@@ -334,10 +337,10 @@ public class TreePlacer {
                                             int pos2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
                                             int pos3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
                                             int pos4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
-                                            boolean test1 = (originalY < pos1 && height_up > pos1) || (originalY >= pos1 && pos1 > height_down);
-                                            boolean test2 = (originalY < pos2 && height_up > pos2) || (originalY >= pos2 && pos2 > height_down);
-                                            boolean test3 = (originalY < pos3 && height_up > pos3) || (originalY >= pos3 && pos3 > height_down);
-                                            boolean test4 = (originalY < pos4 && height_up > pos4) || (originalY >= pos4 && pos4 > height_down);
+                                            boolean test1 = (testY < pos1 && height_up > pos1) || (testY >= pos1 && pos1 > height_down);
+                                            boolean test2 = (testY < pos2 && height_up > pos2) || (testY >= pos2 && pos2 > height_down);
+                                            boolean test3 = (testY < pos3 && height_up > pos3) || (testY >= pos3 && pos3 > height_down);
+                                            boolean test4 = (testY < pos4 && height_up > pos4) || (testY >= pos4 && pos4 > height_down);
 
                                             if (test1 == false || test2 == false || test3 == false || test4 == false) {
 
@@ -349,13 +352,13 @@ public class TreePlacer {
 
                                         if (coarse_woody_debris == true) {
 
-                                            int fallen_direction = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ (center_posX * 341873128712L + center_posZ * 132897987541L)).nextInt(4) + 1;
-                                            int[] pos_converted = OutsideUtils.convertPosRotationMirrored(0, originalY + up_sizeY, 0, rotation, mirrored, fallen_direction);
-                                            int pos1 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.5), center_posZ + (int) (pos_converted[2] * 0.5), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
-                                            int pos2 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.75), center_posZ + (int) (pos_converted[2] * 0.75), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
-                                            int pos3 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 1.0), center_posZ + (int) (pos_converted[2] * 1.0), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
+                                            int fallen_direction = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((center_posX * 341873128712L) + (center_posZ * 132897987541L))).nextInt(4) + 1;
+                                            int[] pos_converted = OutsideUtils.convertPosRotationMirrored(0, testY + up_sizeY, 0, rotation, mirrored, fallen_direction);
+                                            int pos1 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.25), center_posZ + (int) (pos_converted[2] * 0.25), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
+                                            int pos2 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.5), center_posZ + (int) (pos_converted[2] * 0.5), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
+                                            int pos3 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.75), center_posZ + (int) (pos_converted[2] * 0.75), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
 
-                                            if (originalY > pos1 && originalY > pos2 && originalY > pos3) {
+                                            if (testY > pos1 && testY > pos2 && testY > pos3) {
 
                                                 break test;
 
