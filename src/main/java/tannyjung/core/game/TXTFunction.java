@@ -10,6 +10,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import tannyjung.core.OutsideUtils;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
 
@@ -45,6 +47,7 @@ public class TXTFunction {
         int maxY = 0;
         int maxZ = 0;
         BlockPos pos = null;
+        ChunkAccess chunk = null;
 
         String variable_text = "";
         boolean variable_logic = false;
@@ -251,9 +254,16 @@ public class TXTFunction {
 
                                                             }
 
-                                                            if (GameUtils.misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == true) {
+                                                            pos = new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ);
+                                                            chunk = level_accessor.getChunk(pos.getX(), pos.getZ(), ChunkStatus.SURFACE, false);
 
-                                                                continue;
+                                                            if (chunk != null) {
+
+                                                                if (GameUtils.misc.testCustomBlock(chunk.getBlockState(pos), variable_text) == true) {
+
+                                                                    continue;
+
+                                                                }
 
                                                             }
 
@@ -267,7 +277,7 @@ public class TXTFunction {
 
                                             } else {
 
-                                                // Functions
+                                                // Run
                                                 {
 
                                                     if (read_all.startsWith("block = ") == true) {
