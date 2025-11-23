@@ -238,7 +238,11 @@ public class GameUtils {
 
 		public static void run (ServerLevel level_server, double posX, double posY, double posZ, String command) {
 
-            level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
+            level_server.getServer().execute(() -> {
+
+                level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
+
+            });
 
 		}
 
