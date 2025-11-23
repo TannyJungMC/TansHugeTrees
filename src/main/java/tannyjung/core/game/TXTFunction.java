@@ -340,7 +340,7 @@ public class TXTFunction {
 
                                                                                     if (variable_logic == true) {
 
-                                                                                        if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == false || level_accessor.isWaterAt(pos) == true) {
+                                                                                        if (level_accessor.getBlockState(pos).isAir() == false) {
 
                                                                                             continue;
 
