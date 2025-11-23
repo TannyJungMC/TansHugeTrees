@@ -22,7 +22,6 @@ import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.config.ConfigMain;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LeafLitter;
-import tannyjung.tanshugetrees_handcode.systems.world_gen.steps.WorldGenLast;
 
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -354,9 +353,9 @@ public class TreePlacer {
 
                                             int fallen_direction = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((center_posX * 341873128712L) + (center_posZ * 132897987541L))).nextInt(4) + 1;
                                             int[] pos_converted = OutsideUtils.convertPosRotationMirrored(0, testY + up_sizeY, 0, rotation, mirrored, fallen_direction);
-                                            int pos1 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.25), center_posZ + (int) (pos_converted[2] * 0.25), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
+                                            int pos1 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.75), center_posZ + (int) (pos_converted[2] * 0.25), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
                                             int pos2 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.5), center_posZ + (int) (pos_converted[2] * 0.5), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
-                                            int pos3 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.75), center_posZ + (int) (pos_converted[2] * 0.75), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
+                                            int pos3 = chunk_generator.getBaseHeight(center_posX + (int) (pos_converted[0] * 0.25), center_posZ + (int) (pos_converted[2] * 0.75), Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
 
                                             if (testY > pos1 && testY > pos2 && testY > pos3) {
 
@@ -1121,15 +1120,15 @@ public class TreePlacer {
 
                                             for (String name : Cache.getFunctionTreeDecoration()) {
 
-                                                WorldGenLast.functions.computeIfAbsent(chunk_pos, test -> new HashMap<>()).computeIfAbsent(pos, test -> new ArrayList<>()).add("#TannyJung-Main-Pack/tree_decoration/" + name);
-                                                
+                                                WorldGenBeforePlants.functionAdd(chunk_pos, pos, "#TannyJung-Main-Pack/tree_decoration/" + name);
+
                                             }
 
                                         } else {
 
                                             for (String name : Cache.getFunctionTreeDecorationDecay()) {
 
-                                                WorldGenLast.functions.computeIfAbsent(chunk_pos, test -> new HashMap<>()).computeIfAbsent(pos, test -> new ArrayList<>()).add("#TannyJung-Main-Pack/tree_decoration_decay/" + name);
+                                                WorldGenBeforePlants.functionAdd(chunk_pos, pos, "#TannyJung-Main-Pack/tree_decoration_decay/" + name);
 
                                             }
 
@@ -1149,7 +1148,7 @@ public class TreePlacer {
                                     // Separate like this because start and end function doesn't need to test "can_run_function"
                                     if (can_run_function == true || (type.equals("210") == true || type.equals("220") == true)) {
 
-                                        WorldGenLast.functions.computeIfAbsent(chunk_pos, test -> new HashMap<>()).computeIfAbsent(pos, test -> new ArrayList<>()).add(get);
+                                        WorldGenBeforePlants.functionAdd(chunk_pos, pos, get);
 
                                     }
 

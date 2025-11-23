@@ -21,7 +21,6 @@ import java.util.*;
 
 public class TreeLocation {
 
-    private static final Object lock = new Object();
     private static final Map<String, List<String>> cache_write_tree_location = new HashMap<>();
     private static final Map<String, List<String>> cache_write_place = new HashMap<>();
     private static final Map<String, List<String>> cache_dead_tree_auto_level = new HashMap<>();
@@ -33,14 +32,10 @@ public class TreeLocation {
 
     public static void start (LevelAccessor level_accessor, String dimension, ChunkPos chunk_pos) {
 
-        synchronized (lock) {
-
-            TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x + 4, chunk_pos.z + 4));
-            TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x + 4, chunk_pos.z - 4));
-            TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x - 4, chunk_pos.z + 4));
-            TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x - 4, chunk_pos.z - 4));
-
-        }
+        TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x + 4, chunk_pos.z + 4));
+        TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x + 4, chunk_pos.z - 4));
+        TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x - 4, chunk_pos.z + 4));
+        TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x - 4, chunk_pos.z - 4));
 
     }
 
