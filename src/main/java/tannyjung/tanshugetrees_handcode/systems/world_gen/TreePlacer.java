@@ -322,10 +322,10 @@ public class TreePlacer {
                                 // Surface Smoothness
                                 {
 
-                                    if (ConfigMain.surface_smoothness_detection == true) {
+                                    if (ConfigMain.surface_smoothness_detection_size > 0) {
 
                                         int testY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
-                                        int size = ConfigMain.surface_detection_size;
+                                        int size = ConfigMain.surface_smoothness_detection_size;
                                         int height_up = testY + ConfigMain.surface_smoothness_detection_height_up;
                                         int height_down = testY - ConfigMain.surface_smoothness_detection_height_down;
 

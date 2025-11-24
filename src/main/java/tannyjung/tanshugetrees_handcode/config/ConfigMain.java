@@ -1,6 +1,5 @@
 package tannyjung.tanshugetrees_handcode.config;
 
-import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.FileManager;
 
@@ -30,10 +29,9 @@ public class ConfigMain {
 	public static double leaf_litter_world_gen_chance_coniferous = 0.0;
 	public static boolean abscission_world_gen = false;
 
-	public static int surface_detection_size = 0;
 	public static boolean waterside_detection = false;
-	public static boolean surface_smoothness_detection = false;
-	public static int surface_smoothness_detection_height_up = 0;
+    public static int surface_smoothness_detection_size = 0;
+    public static int surface_smoothness_detection_height_up = 0;
 	public static int surface_smoothness_detection_height_down = 0;
     public static int structure_detection_size = 0;
 
@@ -149,25 +147,21 @@ public class ConfigMain {
 					World Generation : Surrounding Area Detection
 					----------------------------------------------------------------------------------------------------
 					
-					surface_detection_size = 16
-					| Set size of surface detectors, for all detectors at 8 directions.
-					| Default is [ 16 ]
-					
 					waterside_detection = true
 					| Enable waterside system for trees that use this feature. If disable this, all waterside trees will be skipped and not spawn anywhere.
 					| Default is [ true ]
 					
-					surface_smoothness_detection = true
-					| Force the trees to only spawn on flat areas. Note that this system only detects 8 points around that tree, so it's not 100% perfect.
-					| Default is [ true ]
+					surface_smoothness_detection_size = 16
+					| Force the trees to only spawn on good areas. Note that this system only detects 8 points from this distance number around that tree, so it's not 100% perfect. Set to 0 to disable this feature.
+					| Default is [ 16 ]
 					
 					surface_smoothness_detection_height_up = 16
 					| Set height up of surface smoothness. If the detector detects that the surface is upper than this height, it will cancel that tree.
 					| Default is [ 16 ]
 					
-					surface_smoothness_detection_height_down = 6
+					surface_smoothness_detection_height_down = 8
 					| Set height down of surface smoothness. If the detector detects that the surface is lower than this height, it will cancel that tree.
-					| Default is [ 6 ]
+					| Default is [ 8 ]
 					
 					structure_detection_size = 1
 					| Cancel trees if they detect structure around them. This size is radius, min and max is 0 to 9. Set to 1 for only chunks that marked as having structures. Set to 0 to disable this feature.
@@ -350,9 +344,8 @@ public class ConfigMain {
 		leaf_litter_world_gen_chance_coniferous = Double.parseDouble(data.get("leaf_litter_world_gen_chance_coniferous"));
 		abscission_world_gen = Boolean.parseBoolean(data.get("abscission_world_gen"));
 
-        surface_detection_size = Integer.parseInt(data.get("surface_detection_size"));
 		waterside_detection = Boolean.parseBoolean(data.get("waterside_detection"));
-		surface_smoothness_detection = Boolean.parseBoolean(data.get("surface_smoothness_detection"));
+		surface_smoothness_detection_size = Integer.parseInt(data.get("surface_smoothness_detection_size"));
         surface_smoothness_detection_height_up = Integer.parseInt(data.get("surface_smoothness_detection_height_up"));
         surface_smoothness_detection_height_down = Integer.parseInt(data.get("surface_smoothness_detection_height_down"));
         structure_detection_size = Integer.parseInt(data.get("structure_detection_size"));
