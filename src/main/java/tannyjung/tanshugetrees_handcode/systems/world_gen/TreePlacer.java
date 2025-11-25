@@ -46,7 +46,6 @@ public class TreePlacer {
             int rotation = 0;
             boolean mirrored = false;
             int start_height_offset = 0;
-            int up_sizeY = 0;
             String ground_block = "";
             int dead_tree_level = 0;
 
@@ -63,7 +62,6 @@ public class TreePlacer {
                 rotation = get.get();
                 mirrored = get.get() == 1;
                 start_height_offset = get.getShort();
-                up_sizeY = get.getShort();
                 ground_block = Cache.getDictionary(String.valueOf(get.getShort()), true);
                 dead_tree_level = get.getShort();
 

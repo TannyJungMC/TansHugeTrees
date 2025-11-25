@@ -1037,7 +1037,6 @@ public class TreeLocation {
                     write.add("b" + rotation);
                     write.add("l" + mirrored);
                     write.add("s" + start_height_offset_get);
-                    write.add("s" + (sizeY - center_sizeY));
                     write.add("t" + ground_block);
                     write.add("s" + dead_tree_level);
 
