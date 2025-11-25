@@ -358,7 +358,7 @@ public class TreeLocation {
 
                                             if (testWaterSide(level_accessor, random, center_posX, center_posZ, waterside_chance) == false) {
 
-                                                return;
+                                                continue;
 
                                             }
 
