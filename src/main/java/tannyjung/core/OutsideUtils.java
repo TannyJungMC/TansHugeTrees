@@ -51,71 +51,71 @@ public class OutsideUtils {
 
     }
 
-    public static int[] convertPosRotationMirrored (int posX, int posY, int posZ, int rotation, boolean mirrored, int fallen_direction) {
+    public static int[] convertPosRotationMirrored (int posX, int posY, int posZ, int rotation, boolean mirrored) {
 
         {
 
-            // General
-            {
+            if (mirrored == true) {
 
-                if (mirrored == true) {
-
-                    posX = posX * (-1);
-
-                }
-
-                if (rotation == 2) {
-
-                    int posX_save = posX;
-                    posX = posZ;
-                    posZ = posX_save * (-1);
-
-                } else if (rotation == 3) {
-
-                    posX = posX * (-1);
-                    posZ = posZ * (-1);
-
-                } else if (rotation == 4) {
-
-                    int posX_save = posX;
-                    int posZ_save = posZ;
-                    posX = posZ_save * (-1);
-                    posZ = posX_save;
-
-                }
+                posX = posX * (-1);
 
             }
 
-            // Fallen
-            {
+            if (rotation == 2) {
 
-                if (fallen_direction > 0) {
+                int posX_save = posX;
+                posX = posZ;
+                posZ = posX_save * (-1);
 
-                    int posX_save = posX;
-                    int posY_save = posY;
-                    int posZ_save = posZ;
+            } else if (rotation == 3) {
 
-                    if (fallen_direction == 1) {
+                posX = posX * (-1);
+                posZ = posZ * (-1);
 
-                        posY = posX_save;
-                        posX = posY_save;
+            } else if (rotation == 4) {
 
-                    } else if (fallen_direction == 2) {
+                int posX_save = posX;
+                int posZ_save = posZ;
+                posX = posZ_save * (-1);
+                posZ = posX_save;
 
-                        posY = posZ_save;
-                        posZ = posY_save;
+            }
 
-                    } else if (fallen_direction == 3) {
+        }
 
-                        posY = posX_save;
-                        posX = -posY_save;
+        return new int[]{posX, posY, posZ};
 
-                    } else if (fallen_direction == 4) {
+    }
 
-                        posY = posZ_save;
-                        posZ = -posY_save;
+    public static int[] convertPosFallen (int posX, int posY, int posZ, int fallen_direction) {
 
-                    }
+        {
+
+            if (fallen_direction > 0) {
+
+                int posX_save = posX;
+                int posY_save = posY;
+                int posZ_save = posZ;
+
+                if (fallen_direction == 1) {
+
+                    posY = posX_save;
+                    posX = posY_save;
+
+                } else if (fallen_direction == 2) {
+
+                    posY = posZ_save;
+                    posZ = posY_save;
+
+                } else if (fallen_direction == 3) {
+
+                    posY = posX_save;
+                    posX = -posY_save;
+
+                } else if (fallen_direction == 4) {
+
+                    posY = posZ_save;
+                    posZ = -posY_save;
 
                 }
 
