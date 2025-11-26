@@ -19,7 +19,7 @@ import tannyjung.core.FileManager;
 import tannyjung.core.OutsideUtils;
 import tannyjung.core.game.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LeafLitter;
 
@@ -207,28 +207,13 @@ public class TreePlacer {
 
                 }
 
-                int up_sizeY = 0;
-
-                // Get Size Y
-                {
-
-                    short[] data = Cache.getTreeShapePart1(path_storage + "/" + chosen);
-
-                    if (data.length > 0) {
-
-                        up_sizeY = data[1] - data[4];
-
-                    }
-
-                }
-
                 test:
                 {
 
                     // Structure Detection
                     {
 
-                        int radius = ConfigMain.structure_detection_size;
+                        int radius = FileConfig.structure_detection_size;
 
                         if (radius > 0) {
 
@@ -305,13 +290,61 @@ public class TreePlacer {
 
                     }
 
+                    int center_sizeX = 0;
+                    int center_sizeY = 0;
+                    int center_sizeZ = 0;
+                    int sizeX = 0;
+                    int sizeY = 0;
+                    int sizeZ = 0;
+
+                    // Get Size
+                    {
+
+                        short[] size_data = Cache.getTreeShapePart1(path_storage + "/" + chosen);
+                        sizeX = size_data[0];
+                        sizeY = size_data[1];
+                        sizeZ = size_data[2];
+                        center_sizeX = size_data[3];
+                        center_sizeY = size_data[4];
+                        center_sizeZ = size_data[5];
+
+                        // Rotation and Mirrored
+                        {
+
+                            int[] convert = OutsideUtils.convertSizeRotationMirrored(rotation, mirrored, sizeX, sizeZ, center_sizeX, center_sizeZ);
+                            sizeX = convert[0];
+                            sizeZ = convert[1];
+                            center_sizeX = convert[2];
+                            center_sizeZ = convert[3];
+
+                        }
+
+                        // Fallen
+                        {
+
+                            if (fallen_direction > 0) {
+
+                                int[] convert = OutsideUtils.convertSizeFallen(fallen_direction, sizeX, sizeY, sizeZ, center_sizeX, center_sizeY, center_sizeZ);
+                                sizeX = convert[0];
+                                sizeY = convert[1];
+                                sizeZ = convert[2];
+                                center_sizeX = convert[3];
+                                center_sizeY = convert[4];
+                                center_sizeZ = convert[5];
+
+                            }
+
+                        }
+
+                    }
+
                     // Y Level Test
                     {
 
                         // Build Height Limit
                         {
 
-                            if (center_posY + up_sizeY >= level_accessor.getMaxBuildHeight()) {
+                            if ((sizeY - center_sizeY) + center_posY >= level_accessor.getMaxBuildHeight()) {
 
                                 break test;
 
@@ -328,9 +361,9 @@ public class TreePlacer {
                         // Max Height Spawn
                         {
 
-                            if (ConfigMain.max_height_spawn != 0) {
+                            if (FileConfig.max_height_spawn != 0) {
 
-                                if (originalY > ConfigMain.max_height_spawn) {
+                                if (originalY > FileConfig.max_height_spawn) {
 
                                     break test;
 
@@ -345,286 +378,294 @@ public class TreePlacer {
                     // Surface Smoothness
                     {
 
-                        if (ConfigMain.surface_smoothness_detection_size > 0) {
+                        if (FileConfig.surface_smoothness_detection == true) {
 
-                            // Basic Test
-                            {
+                            if (sizeX != 0 || sizeZ != 0) {
 
-                                int testY = chunk_generator.getBaseHeight(center_posX, center_posZ, Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
-                                int size = ConfigMain.surface_smoothness_detection_size;
-                                int height_up = testY + ConfigMain.surface_smoothness_detection_height_up;
-                                int height_down = testY - ConfigMain.surface_smoothness_detection_height_down;
+                                // Basic Test
+                                {
 
-                                int pos1 = chunk_generator.getBaseHeight(center_posX + size, center_posZ + size, Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
-                                int pos2 = chunk_generator.getBaseHeight(center_posX + size, center_posZ - size, Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
-                                int pos3 = chunk_generator.getBaseHeight(center_posX - size, center_posZ + size, Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
-                                int pos4 = chunk_generator.getBaseHeight(center_posX - size, center_posZ - size, Heightmap.Types.WORLD_SURFACE_WG, level_accessor, level_server.getChunkSource().randomState());
-                                boolean test1 = (testY < pos1 && height_up > pos1) || (testY >= pos1 && pos1 > height_down);
-                                boolean test2 = (testY < pos2 && height_up > pos2) || (testY >= pos2 && pos2 > height_down);
-                                boolean test3 = (testY < pos3 && height_up > pos3) || (testY >= pos3 && pos3 > height_down);
-                                boolean test4 = (testY < pos4 && height_up > pos4) || (testY >= pos4 && pos4 > height_down);
+                                    int height_up = (int) (originalY + ((sizeX - center_sizeX) * (FileConfig.surface_smoothness_detection_height_up * 0.01)));
+                                    int height_down = (int) (originalY - (center_sizeY * (FileConfig.surface_smoothness_detection_height_down * 0.01)));
+                                    double distance_multiply = FileConfig.surface_smoothness_detection_percent * 0.01;
 
-                                if (test1 == false || test2 == false || test3 == false || test4 == false) {
+                                    int test_center_sizeX = (int) Math.ceil(center_sizeX * distance_multiply);
+                                    int test_center_sizeZ = (int) Math.ceil(center_sizeZ * distance_multiply);
+                                    int test_sizeX = (int) Math.ceil((sizeX - center_sizeX) * distance_multiply);
+                                    int test_sizeZ = (int) Math.ceil((sizeZ - center_sizeZ) * distance_multiply);
+                                    int pos1 = chunk_generator.getBaseHeight(center_posX - test_center_sizeX, center_posZ - test_center_sizeZ, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
+                                    int pos2 = chunk_generator.getBaseHeight(center_posX - test_center_sizeX, center_posZ + test_sizeZ, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
+                                    int pos3 = chunk_generator.getBaseHeight(center_posX + test_sizeX, center_posZ - test_center_sizeZ, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
+                                    int pos4 = chunk_generator.getBaseHeight(center_posX + test_sizeX, center_posZ + test_sizeZ, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
 
-                                    break test;
+                                    boolean test1 = (originalY < pos1 && height_up > pos1) || (originalY >= pos1 && pos1 > height_down);
+                                    boolean test2 = (originalY < pos2 && height_up > pos2) || (originalY >= pos2 && pos2 > height_down);
+                                    boolean test3 = (originalY < pos3 && height_up > pos3) || (originalY >= pos3 && pos3 > height_down);
+                                    boolean test4 = (originalY < pos4 && height_up > pos4) || (originalY >= pos4 && pos4 > height_down);
+
+                                    if (test1 == false || test2 == false || test3 == false || test4 == false) {
+
+                                        break test;
+
+                                    }
 
                                 }
 
-                            }
+                                if (coarse_woody_debris == true) {
 
-                            if (coarse_woody_debris == true) {
+                                    {
 
-                                {
+                                        short[] shape = Cache.getTreeShapePart3(path_storage + "/" + chosen);
 
-                                    short[] shape = Cache.getTreeShapePart3(path_storage + "/" + chosen);
+                                        if (shape.length > 0) {
 
-                                    if (shape.length > 0) {
+                                            boolean test_pass = false;
 
-                                        boolean test_pass = false;
+                                            int loop = 0;
+                                            String type = "";
+                                            int posX = 0;
+                                            int posY = 0;
+                                            int posZ = 0;
 
-                                        int loop = 0;
-                                        String type = "";
-                                        int posX = 0;
-                                        int posY = 0;
-                                        int posZ = 0;
+                                            int[] reduce_parts = getPartReduce(level_server, center_posX, center_posZ, path_storage, chosen, dead_tree_level);
+                                            int reduce_trunk = reduce_parts[0];
+                                            int reduce_bough = reduce_parts[1];
+                                            int reduce_branch = reduce_parts[2];
+                                            int reduce_limb = reduce_parts[3];
+                                            int reduce_twig = reduce_parts[4];
+                                            int reduce_sprig = reduce_parts[5];
+                                            int total_block_count = reduce_trunk + reduce_bough + reduce_branch + reduce_limb + reduce_twig + reduce_sprig;
+                                            int dead_tree_level_test = Integer.parseInt(String.valueOf(dead_tree_level).substring(1));
+                                            int left_before_test = (int) (total_block_count * 0.75);
+                                            int distance_skip = (int) Math.floor(left_before_test / 16.0);
+                                            int distance_skip_test = 0;
+                                            Map<String, Integer> previousY = new HashMap<>();
+                                            int testY = 0;
+                                            int[] pos_converted = new int[0];
 
-                                        int[] reduce_parts = getPartReduce(level_server, center_posX, center_posZ, path_storage, chosen, dead_tree_level);
-                                        int reduce_trunk = reduce_parts[0];
-                                        int reduce_bough = reduce_parts[1];
-                                        int reduce_branch = reduce_parts[2];
-                                        int reduce_limb = reduce_parts[3];
-                                        int reduce_twig = reduce_parts[4];
-                                        int reduce_sprig = reduce_parts[5];
-                                        int total_block_count = reduce_trunk + reduce_bough + reduce_branch + reduce_limb + reduce_twig + reduce_sprig;
-                                        int dead_tree_level_test = Integer.parseInt(String.valueOf(dead_tree_level).substring(1));
-                                        int left_before_test = (int) (total_block_count * 0.75);
-                                        int distance_skip = (int) Math.floor(left_before_test / 16.0);
-                                        int distance_skip_test = 0;
-                                        int[] pos_converted = new int[0];
-                                        int testY = 0;
-                                        Map<String, Integer> previousY = new HashMap<>();
+                                            for (short read_all : shape) {
 
-                                        for (short read_all : shape) {
+                                                // Get Data
+                                                {
 
-                                            // Get Data
-                                            {
+                                                    loop = loop + 1;
 
-                                                loop = loop + 1;
+                                                    if (loop == 1) {
 
-                                                if (loop == 1) {
+                                                        type = String.valueOf(read_all);
 
-                                                    type = String.valueOf(read_all);
+                                                    } else if (loop == 2) {
 
-                                                } else if (loop == 2) {
+                                                        posX = read_all;
 
-                                                    posX = read_all;
+                                                    } else if (loop == 3) {
 
-                                                } else if (loop == 3) {
-
-                                                    posY = read_all;
-
-                                                } else {
-
-                                                    posZ = read_all;
-                                                    loop = 0;
-
-                                                }
-
-                                            }
-
-                                            if (loop == 0) {
-
-                                                if (type.startsWith("1") == true) {
-
-                                                    // Skip Roots
-                                                    {
-
-                                                        if (type.startsWith("110") == true || type.startsWith("111") == true || type.startsWith("112") == true || type.startsWith("113") == true) {
-
-                                                            continue;
-
-                                                        }
-
-                                                    }
-
-                                                    // Dead Tree Reduction
-                                                    {
-
-                                                        if (dead_tree_level_test > 0) {
-
-                                                            // Basic Style
-                                                            {
-
-                                                                if (type.startsWith("120") == true) {
-
-                                                                    continue;
-
-                                                                } else if (type.startsWith("119") == true) {
-
-                                                                    if (reduce_sprig > 0) {
-
-                                                                        reduce_sprig = reduce_sprig - 1;
-
-                                                                    } else {
-
-                                                                        continue;
-
-                                                                    }
-
-                                                                } else if (type.startsWith("118") == true) {
-
-                                                                    if (reduce_sprig == 0) {
-
-                                                                        if (reduce_twig > 0) {
-
-                                                                            reduce_twig = reduce_twig - 1;
-
-                                                                        } else {
-
-                                                                            continue;
-
-                                                                        }
-
-                                                                    }
-
-                                                                } else if (type.startsWith("117") == true) {
-
-                                                                    if (reduce_twig == 0) {
-
-                                                                        if (reduce_limb > 0) {
-
-                                                                            reduce_limb = reduce_limb - 1;
-
-                                                                        } else {
-
-                                                                            continue;
-
-                                                                        }
-
-                                                                    }
-
-                                                                } else if (type.startsWith("116") == true) {
-
-                                                                    if (reduce_limb == 0) {
-
-                                                                        if (reduce_branch > 0) {
-
-                                                                            reduce_branch = reduce_branch - 1;
-
-                                                                        } else {
-
-                                                                            continue;
-
-                                                                        }
-
-                                                                    }
-
-                                                                } else if (type.startsWith("115") == true) {
-
-                                                                    if (reduce_branch == 0) {
-
-                                                                        if (reduce_bough > 0) {
-
-                                                                            reduce_bough = reduce_bough - 1;
-
-                                                                        } else {
-
-                                                                            continue;
-
-                                                                        }
-
-                                                                    }
-
-                                                                }
-
-                                                            }
-
-                                                            if (dead_tree_level_test >= 60) {
-
-                                                                // Only Trunk
-                                                                {
-
-                                                                    if (type.startsWith("114") == true) {
-
-                                                                        if (reduce_trunk > 0) {
-
-                                                                            reduce_trunk = reduce_trunk - 1;
-
-                                                                        } else {
-
-                                                                            continue;
-
-                                                                        }
-
-                                                                    }
-
-                                                                }
-
-                                                            }
-
-                                                        }
-
-                                                    }
-
-                                                    if (left_before_test > 0) {
-
-                                                        left_before_test = left_before_test - 1;
+                                                        posY = read_all;
 
                                                     } else {
 
-                                                        if (distance_skip > 0) {
-
-                                                            if (distance_skip_test > 0) {
-
-                                                                distance_skip_test = distance_skip_test - 1;
-                                                                continue;
-
-                                                            } else {
-
-                                                                distance_skip_test = distance_skip;
-
-                                                            }
-
-                                                        }
-
-                                                        pos_converted = OutsideUtils.convertPosRotationMirrored(posX, posY, posZ, rotation, mirrored);
-                                                        pos_converted = OutsideUtils.convertPosFallen(pos_converted[0], pos_converted[1], pos_converted[2], fallen_direction);
-                                                        posX = center_posX + pos_converted[0];
-                                                        posY = center_posY + pos_converted[1];
-                                                        posZ = center_posZ + pos_converted[2];
-
-                                                        if (previousY.containsKey(posX + "/" + posZ) == true) {
-
-                                                            if (previousY.get(posX + "/" + posZ) <= posY) {
-
-                                                                continue;
-
-                                                            }
-
-                                                        }
-
-                                                        previousY.put(posX + "/" + posZ, posY);
-                                                        testY = chunk_generator.getBaseHeight(posX, posZ, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
-
-                                                        if (testY >= posY) {
-
-                                                            test_pass = true;
-                                                            break;
-
-                                                        }
+                                                        posZ = read_all;
+                                                        loop = 0;
 
                                                     }
 
                                                 }
 
+                                                if (loop == 0) {
+
+                                                    if (type.startsWith("1") == true) {
+
+                                                        // Skip Roots
+                                                        {
+
+                                                            if (type.startsWith("110") == true || type.startsWith("111") == true || type.startsWith("112") == true || type.startsWith("113") == true) {
+
+                                                                continue;
+
+                                                            }
+
+                                                        }
+
+                                                        // Dead Tree Reduction
+                                                        {
+
+                                                            if (dead_tree_level_test > 0) {
+
+                                                                // Basic Style
+                                                                {
+
+                                                                    if (type.startsWith("120") == true) {
+
+                                                                        continue;
+
+                                                                    } else if (type.startsWith("119") == true) {
+
+                                                                        if (reduce_sprig > 0) {
+
+                                                                            reduce_sprig = reduce_sprig - 1;
+
+                                                                        } else {
+
+                                                                            continue;
+
+                                                                        }
+
+                                                                    } else if (type.startsWith("118") == true) {
+
+                                                                        if (reduce_sprig == 0) {
+
+                                                                            if (reduce_twig > 0) {
+
+                                                                                reduce_twig = reduce_twig - 1;
+
+                                                                            } else {
+
+                                                                                continue;
+
+                                                                            }
+
+                                                                        }
+
+                                                                    } else if (type.startsWith("117") == true) {
+
+                                                                        if (reduce_twig == 0) {
+
+                                                                            if (reduce_limb > 0) {
+
+                                                                                reduce_limb = reduce_limb - 1;
+
+                                                                            } else {
+
+                                                                                continue;
+
+                                                                            }
+
+                                                                        }
+
+                                                                    } else if (type.startsWith("116") == true) {
+
+                                                                        if (reduce_limb == 0) {
+
+                                                                            if (reduce_branch > 0) {
+
+                                                                                reduce_branch = reduce_branch - 1;
+
+                                                                            } else {
+
+                                                                                continue;
+
+                                                                            }
+
+                                                                        }
+
+                                                                    } else if (type.startsWith("115") == true) {
+
+                                                                        if (reduce_branch == 0) {
+
+                                                                            if (reduce_bough > 0) {
+
+                                                                                reduce_bough = reduce_bough - 1;
+
+                                                                            } else {
+
+                                                                                continue;
+
+                                                                            }
+
+                                                                        }
+
+                                                                    }
+
+                                                                }
+
+                                                                if (dead_tree_level_test >= 60) {
+
+                                                                    // Only Trunk
+                                                                    {
+
+                                                                        if (type.startsWith("114") == true) {
+
+                                                                            if (reduce_trunk > 0) {
+
+                                                                                reduce_trunk = reduce_trunk - 1;
+
+                                                                            } else {
+
+                                                                                continue;
+
+                                                                            }
+
+                                                                        }
+
+                                                                    }
+
+                                                                }
+
+                                                            }
+
+                                                        }
+
+                                                        if (left_before_test > 0) {
+
+                                                            left_before_test = left_before_test - 1;
+
+                                                        } else {
+
+                                                            if (distance_skip > 0) {
+
+                                                                if (distance_skip_test > 0) {
+
+                                                                    distance_skip_test = distance_skip_test - 1;
+                                                                    continue;
+
+                                                                } else {
+
+                                                                    distance_skip_test = distance_skip;
+
+                                                                }
+
+                                                            }
+
+                                                            pos_converted = OutsideUtils.convertPosRotationMirrored(rotation, mirrored, posX, posZ);
+                                                            pos_converted = OutsideUtils.convertPosFallen(fallen_direction, pos_converted[0], posY, pos_converted[1]);
+                                                            posX = center_posX + pos_converted[0];
+                                                            posY = center_posY + pos_converted[1];
+                                                            posZ = center_posZ + pos_converted[2];
+
+                                                            if (previousY.containsKey(posX + "/" + posZ) == true) {
+
+                                                                if (previousY.get(posX + "/" + posZ) <= posY) {
+
+                                                                    continue;
+
+                                                                }
+
+                                                            }
+
+                                                            previousY.put(posX + "/" + posZ, posY);
+                                                            testY = chunk_generator.getBaseHeight(posX, posZ, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
+
+                                                            if (testY >= posY) {
+
+                                                                test_pass = true;
+                                                                break;
+
+                                                            }
+
+                                                        }
+
+                                                    }
+
+
+                                                }
 
                                             }
 
-                                        }
+                                            if (test_pass == false) {
 
-                                        if (test_pass == false) {
+                                                break test;
 
-                                            break test;
+                                            }
 
                                         }
 
@@ -655,7 +696,7 @@ public class TreePlacer {
 
                                     RandomSource random = RandomSource.create(level_server.getSeed() ^ ((center_posX * 341873128712L) + (center_posZ * 132897987541L) + center_posY));
 
-                                    if (random.nextDouble() < ConfigMain.unviable_ecology_skip_chance) {
+                                    if (random.nextDouble() < FileConfig.unviable_ecology_skip_chance) {
 
                                         break test;
 
@@ -740,7 +781,7 @@ public class TreePlacer {
 
                     } else if (dead_tree_level == 80 || dead_tree_level == 90) {
 
-                        reduce_trunk = (int) (Mth.nextDouble(random, 0.0, 0.5) * (double) reduce_trunk);
+                        reduce_trunk = (int) (Mth.nextDouble(random, 0.1, 0.5) * (double) reduce_trunk);
 
                     }
 
@@ -899,11 +940,11 @@ public class TreePlacer {
 
                                             int number = Integer.parseInt(type_id.substring(2)) - 1;
 
-                                            if (ConfigMain.deciduous_leaves_list.contains(value) == true) {
+                                            if (FileConfig.deciduous_leaves_list.contains(value) == true) {
 
                                                 leaves_type[number] = 1;
 
-                                            } else if (ConfigMain.coniferous_leaves_list.contains(value) == true) {
+                                            } else if (FileConfig.coniferous_leaves_list.contains(value) == true) {
 
                                                 leaves_type[number] = 2;
 
@@ -936,7 +977,7 @@ public class TreePlacer {
             }
 
             boolean in_snowy_biome = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX, center_posY, center_posZ)), "forge:is_snowy");
-            boolean no_roots = (ConfigMain.world_gen_roots == false && can_disable_roots);
+            boolean no_roots = (FileConfig.world_gen_roots == false && can_disable_roots);
             boolean coarse_woody_debris = false;
             boolean hollowed = false;
             int reduce_trunk = 0;
@@ -1168,8 +1209,8 @@ public class TreePlacer {
 
                         }
 
-                        pos_converted = OutsideUtils.convertPosRotationMirrored(posX, posY, posZ, rotation, mirrored);
-                        pos_converted = OutsideUtils.convertPosFallen(pos_converted[0], pos_converted[1], pos_converted[2], fallen_direction);
+                        pos_converted = OutsideUtils.convertPosRotationMirrored(rotation, mirrored, posX, posZ);
+                        pos_converted = OutsideUtils.convertPosFallen(fallen_direction, pos_converted[0], posY, pos_converted[1]);
                         pos = new BlockPos(center_posX + pos_converted[0], center_posY + pos_converted[1], center_posZ + pos_converted[2]);
 
                         if (chunk_pos.x == pos.getX() >> 4 && chunk_pos.z == pos.getZ() >> 4) {
@@ -1256,7 +1297,7 @@ public class TreePlacer {
                                             // Pre Leaves Drop
                                             {
 
-                                                if (ConfigMain.leaf_litter == true && ConfigMain.leaf_litter_world_gen == true) {
+                                                if (FileConfig.leaf_litter == true && FileConfig.leaf_litter_world_gen == true) {
 
                                                     if (can_leaves_drop == true) {
 
@@ -1265,11 +1306,11 @@ public class TreePlacer {
 
                                                             if ((type.endsWith("1") == true && leaves_type[0] == 2) || (type.endsWith("2") == true && leaves_type[1] == 2)) {
 
-                                                                leaf_litter_world_gen_chance = ConfigMain.leaf_litter_world_gen_chance_coniferous;
+                                                                leaf_litter_world_gen_chance = FileConfig.leaf_litter_world_gen_chance_coniferous;
 
                                                             } else {
 
-                                                                leaf_litter_world_gen_chance = ConfigMain.leaf_litter_world_gen_chance;
+                                                                leaf_litter_world_gen_chance = FileConfig.leaf_litter_world_gen_chance;
 
                                                             }
 
@@ -1296,7 +1337,7 @@ public class TreePlacer {
                                             // Abscission (World Gen)
                                             {
 
-                                                if (ConfigMain.abscission_world_gen == true) {
+                                                if (FileConfig.abscission_world_gen == true) {
 
                                                     if (in_snowy_biome == true) {
 
@@ -1337,7 +1378,7 @@ public class TreePlacer {
                                     // At Center
                                     if (posX == 0 && posY == 0 && posZ == 0) {
 
-                                        if (ConfigMain.tree_location == true && dead_tree_level == 0) {
+                                        if (FileConfig.tree_location == true && dead_tree_level == 0) {
 
                                             if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
 
