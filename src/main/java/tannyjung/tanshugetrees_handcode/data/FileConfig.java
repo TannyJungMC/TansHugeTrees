@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.config;
+package tannyjung.tanshugetrees_handcode.data;
 
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.core.FileManager;
@@ -6,9 +6,7 @@ import tannyjung.core.FileManager;
 
 import java.util.*;
 
-public class ConfigMain {
-
-	// ----------------------------------------------------------------------------------------------------
+public class FileConfig {
 
 	public static boolean auto_check_update = false;
 	public static boolean auto_update = false;
@@ -28,9 +26,11 @@ public class ConfigMain {
 	public static double leaf_litter_world_gen_chance = 0.0;
 	public static double leaf_litter_world_gen_chance_coniferous = 0.0;
 	public static boolean abscission_world_gen = false;
+    public static Set<String> dead_tree_auto_level = new HashSet<>();
 
 	public static boolean waterside_detection = false;
-    public static int surface_smoothness_detection_size = 0;
+	public static boolean surface_smoothness_detection = false;
+    public static int surface_smoothness_detection_percent = 0;
     public static int surface_smoothness_detection_height_up = 0;
 	public static int surface_smoothness_detection_height_down = 0;
     public static int structure_detection_size = 0;
@@ -51,7 +51,7 @@ public class ConfigMain {
 	public static Set<String> deciduous_leaves_list = null;
 	public static Set<String> coniferous_leaves_list = null;
 
-	public static boolean serene_seasons_compatibility = false;
+	public static boolean compatibility_serene_seasons = false;
 	public static double leaf_drop_chance_spring = 0;
 	public static double leaf_drop_chance_summer = 0.0;
 	public static double leaf_drop_chance_autumn = 0.0;
@@ -71,8 +71,6 @@ public class ConfigMain {
 	public static boolean developer_mode = false;
 	public static boolean world_gen_icon = false;
 
-	// ----------------------------------------------------------------------------------------------------
-	
 	public static void repair () {
 
 		StringBuilder write = new StringBuilder();
@@ -82,8 +80,7 @@ public class ConfigMain {
 			write.append("""
 					Important Notes
 					
-					- To apply this config, run this command [ /TANSHUGETREES config apply ] or restart the world.
-					- To repair missing values, run this command [ /TANSHUGETREES config repair ] or restart the world.
+					- To apply and repair missing values, run this command [ /TANSHUGETREES restart ] or restart the world.
 					
 					----------------------------------------------------------------------------------------------------
 					TannyJung's Main Pack
@@ -143,6 +140,10 @@ public class ConfigMain {
 					| Make all deciduous trees generate with all leaves dropped to the ground, when they are in snowy biomes.
 					| Default is [ true ]
 					
+					dead_tree_auto_level = 11 / 12 / 13 / 14 / 15 / 16 / 17 / 18 / 19 / 21 / 22 / 23 / 24 / 25 / 26 / 27 / 28 / 29 / 31 / 32 / 33 / 34 / 35 / 36 / 37 / 38 / 39
+					| Ramdomly pick these number for trees that set dead tree level as "auto" and "auto_pine". X1 X2 X3 X4 X5 is no leaves, no sprig, no twig, no limb, no branch. X6 X7 is only trunk 50-100% and hollowed. X8 X9 is only trunk 10-50% and hollowed.
+					| Default is [ 11 / 12 / 13 / 14 / 15 / 16 / 17 / 18 / 19 / 21 / 22 / 23 / 24 / 25 / 26 / 27 / 28 / 29 / 31 / 32 / 33 / 34 / 35 / 36 / 37 / 38 / 39 ]
+					
 					----------------------------------------------------------------------------------------------------
 					World Generation : Surrounding Area Detection
 					----------------------------------------------------------------------------------------------------
@@ -151,17 +152,21 @@ public class ConfigMain {
 					| Enable waterside system for trees that use this feature. If disable this, all waterside trees will be skipped and not spawn anywhere.
 					| Default is [ true ]
 					
-					surface_smoothness_detection_size = 16
-					| Force the trees to only spawn on good areas. Note that this system only detects 8 points from this distance number around that tree, so it's not 100% perfect. Set to 0 to disable this feature.
-					| Default is [ 16 ]
+					surface_smoothness_detection = true
+					| Force the trees to only spawn on good areas. Note that this system only detects 4 points around tree center, so it's not 100% perfect.
+					| Default is [ true ]
 					
-					surface_smoothness_detection_height_up = 16
-					| Set height up of surface smoothness. If the detector detects that the surface is upper than this height, it will cancel that tree.
-					| Default is [ 16 ]
+					surface_smoothness_detection_percent = 50
+					| How far detection point is at. Set to 100 for same as tree size.
+					| Default is [ 50 ]
 					
-					surface_smoothness_detection_height_down = 8
-					| Set height down of surface smoothness. If the detector detects that the surface is lower than this height, it will cancel that tree.
-					| Default is [ 8 ]
+					surface_smoothness_detection_height_up = 50
+					| Set height up of surface smoothness. Set to 100 for same as Y size of the tree above its center.
+					| Default is [ 50 ]
+					
+					surface_smoothness_detection_height_down = 50
+					| Set height down of surface smoothness. Set to 100 for same as Y size of the tree below its center.
+					| Default is [ 50 ]
 					
 					structure_detection_size = 1
 					| Cancel trees if they detect structure around them. This size is radius, min and max is 0 to 9. Set to 1 for only chunks that marked as having structures. Set to 0 to disable this feature.
@@ -232,8 +237,8 @@ public class ConfigMain {
 					Living Tree Mechanics : Leaf Cycle and Seasons
 					----------------------------------------------------------------------------------------------------
 					
-					serene_seasons_compatibility = true
-					| Sync the mod seasons to the same from Serene Seasons mod. Using area at world spawn to detect current season.
+					compatibility_serene_seasons = true
+					| Sync seasons to Serene Seasons mod by using area at world spawn, run the test every one minute.
 					| Default is [ true ]
 					
 					leaf_drop_chance_spring = 0.0
@@ -343,9 +348,11 @@ public class ConfigMain {
 		leaf_litter_world_gen_chance = Double.parseDouble(data.get("leaf_litter_world_gen_chance"));
 		leaf_litter_world_gen_chance_coniferous = Double.parseDouble(data.get("leaf_litter_world_gen_chance_coniferous"));
 		abscission_world_gen = Boolean.parseBoolean(data.get("abscission_world_gen"));
+        dead_tree_auto_level = new HashSet<>(List.of(data.get("dead_tree_auto_level").split(" / ")));
 
 		waterside_detection = Boolean.parseBoolean(data.get("waterside_detection"));
-		surface_smoothness_detection_size = Integer.parseInt(data.get("surface_smoothness_detection_size"));
+        surface_smoothness_detection = Boolean.parseBoolean(data.get("surface_smoothness_detection"));
+		surface_smoothness_detection_percent = Integer.parseInt(data.get("surface_smoothness_detection_percent"));
         surface_smoothness_detection_height_up = Integer.parseInt(data.get("surface_smoothness_detection_height_up"));
         surface_smoothness_detection_height_down = Integer.parseInt(data.get("surface_smoothness_detection_height_down"));
         structure_detection_size = Integer.parseInt(data.get("structure_detection_size"));
@@ -366,7 +373,7 @@ public class ConfigMain {
 		deciduous_leaves_list = new HashSet<>(List.of(data.get("deciduous_leaves_list").split(" / ")));
 		coniferous_leaves_list = new HashSet<>(List.of(data.get("coniferous_leaves_list").split(" / ")));
 
-		serene_seasons_compatibility = Boolean.parseBoolean(data.get("serene_seasons_compatibility"));
+		compatibility_serene_seasons = Boolean.parseBoolean(data.get("compatibility_serene_seasons"));
 		leaf_drop_chance_spring = Double.parseDouble(data.get("leaf_drop_chance_spring"));
 		leaf_drop_chance_summer = Double.parseDouble(data.get("leaf_drop_chance_summer"));
 		leaf_drop_chance_autumn = Double.parseDouble(data.get("leaf_drop_chance_autumn"));

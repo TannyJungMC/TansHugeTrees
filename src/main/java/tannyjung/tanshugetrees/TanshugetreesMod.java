@@ -48,7 +48,7 @@ public class TanshugetreesMod {
 		TanshugetreesModItems.REGISTRY.register(bus);
 		TanshugetreesModTabs.REGISTRY.register(bus);
 		// Start of user code block mod init
-		Handcode.runStartGame();
+		Handcode.start();
 		// End of user code block mod init
 	}
 

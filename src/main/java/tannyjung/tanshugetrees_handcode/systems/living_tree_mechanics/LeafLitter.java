@@ -5,7 +5,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.core.game.GameUtils;
-import tannyjung.tanshugetrees_handcode.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 public class LeafLitter {
@@ -14,7 +14,7 @@ public class LeafLitter {
 
         String[] leaf_litter = Cache.getLeafLitter(GameUtils.block.toTextID(block).replace(":", "-"));
 
-        if (ConfigMain.leaf_litter_classic_only == false && leaf_litter.length > 0) {
+        if (FileConfig.leaf_litter_classic_only == false && leaf_litter.length > 0) {
 
             // Get from custom pack for custom
             {
@@ -181,7 +181,7 @@ public class LeafLitter {
 
         } else {
 
-            if (ConfigMain.leaf_litter_classic == true) {
+            if (FileConfig.leaf_litter_classic == true) {
 
                 // Classic Style
                 {

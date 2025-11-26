@@ -14,6 +14,7 @@ import tannyjung.core.OutsideUtils;
 import tannyjung.core.game.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
+import tannyjung.tanshugetrees_handcode.data.FileConfig;
 ;
 
 public class PackCheckUpdate {
@@ -31,7 +32,7 @@ public class PackCheckUpdate {
                 String github = "";
                 String url = "";
 
-                if (ConfigMain.wip_version == false) {
+                if (FileConfig.wip_version == false) {
 
                     github = "https://github.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase();
                     url = "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt";
@@ -128,9 +129,9 @@ public class PackCheckUpdate {
 
                             if (Handcode.DATA_STRUCTURE_VERSION <= url_data_structure_version) {
 
-                                if (ConfigMain.auto_check_update == true) {
+                                if (FileConfig.auto_check_update == true) {
 
-                                    if (ConfigMain.auto_update == true) {
+                                    if (FileConfig.auto_update == true) {
 
                                         GameUtils.misc.sendChatMessage(level_server, "@a", "gold", "THT : Detected new version for TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + "). Starting auto update...");
                                         PackUpdate.start(level_server);

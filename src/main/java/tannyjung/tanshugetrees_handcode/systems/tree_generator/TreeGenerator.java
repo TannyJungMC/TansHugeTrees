@@ -10,7 +10,7 @@ import tannyjung.core.game.NBTManager;
 import tannyjung.core.game.TXTFunction;
 import tannyjung.core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
-import tannyjung.tanshugetrees_handcode.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.data.FileConfig;
 
 public class TreeGenerator {
 
@@ -157,10 +157,10 @@ public class TreeGenerator {
 
         }
 
-        if (ConfigMain.tree_generator_speed_global == true && NBTManager.entity.getLogic(entity, "tree_generator_speed_global") == true) {
+        if (FileConfig.tree_generator_speed_global == true && NBTManager.entity.getLogic(entity, "tree_generator_speed_global") == true) {
 
-            NBTManager.entity.setNumber(entity, "tree_generator_speed_tick", ConfigMain.tree_generator_speed_tick);
-            NBTManager.entity.setNumber(entity, "tree_generator_speed_repeat", ConfigMain.tree_generator_speed_repeat);
+            NBTManager.entity.setNumber(entity, "tree_generator_speed_tick", FileConfig.tree_generator_speed_tick);
+            NBTManager.entity.setNumber(entity, "tree_generator_speed_repeat", FileConfig.tree_generator_speed_repeat);
 
         }
 

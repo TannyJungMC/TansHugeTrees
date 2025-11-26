@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.config;
+package tannyjung.tanshugetrees_handcode.data;
 
 
 import tannyjung.core.OutsideUtils;
@@ -10,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
-public class ConfigWorldGen {
+public class FileConfigWorldGen {
 
     public static void start () {
 
@@ -56,14 +56,14 @@ public class ConfigWorldGen {
                 write.append("""
                         Important Notes
                         
-                        - No need to apply this config, as it automatic applying.
-                        - To repair missing values, run this command [ /TANSHUGETREES config repair ] or restart the world.
+                        - No need to run restart command to apply this config, as it automatic applying.
+                        - To repair missing values, run this command [ /TANSHUGETREES restart ] or restart the world.
                         - Very important! You must lock the trees you have edited, to mark it as don't reset. Do it by change "[]" at font of tree ID to "[LOCK]".
                         
                         Config Description
                         
                         - world_gen : Enable world generation for that tree by set to [ true ], or disable by [ false ].
-                        - biome / ground_block : Change the biome and ground block that tree can place on. Supported both IDs and tags. These config supported multiple conditions, use [ / ] for [ OR ], use [ , ] for [ AND ]. For example, a tree that spawn in 2 main biomes. One is biomes tagged as forest, but not birch forest. Other one is taiga forest. It will be [ #minecraft:is_forest, !minecraft:birch_forest / minecraft:taiga ]. Important note for ground block, it not works with trees bigger than about 80x80 blocks.
+                        - biome / ground_block : Change the biome and ground block that tree can place on. Supported both IDs and tags. These config supported multiple conditions, use [ / ] for [ OR ], use [ , ] for [ AND ]. For example, a tree that spawn in 2 main biomes. One is biomes tagged as forest, but not birch forest. Other one is taiga forest. It will be [ #minecraft:is_forest, !minecraft:birch_forest / minecraft:taiga ]. Important note for ground block, it not works with trees that one side farther than 48 blocks.
                         - rarity : Change how common of that tree. Lower means rarer. Only supported number between 0 and 100 (can be non-integer number).
                         - min_distance : Change distance of trees in the same species. This is distance in block with Y position ignored. Only supported number between 0 to 500.
                         - group_size : Use other placement system to spawn that tree in group style. To use this, set min and max count of trees per group that upper than 1. For example, min 1 and max 5, will be [ 1 <> 5 ]. Be careful to use this, as it can affect scan time. This config also change the way other config options work. Rarity will be how common of the group. Min distance is between trees, not between groups. Waterside config will only detect once at spawn location of that group.

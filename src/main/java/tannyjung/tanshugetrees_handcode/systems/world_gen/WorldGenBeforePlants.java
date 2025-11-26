@@ -10,6 +10,7 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import tannyjung.core.game.GameUtils;
 import tannyjung.core.game.TXTFunction;
+import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +31,8 @@ public class WorldGenBeforePlants extends Feature <NoneFeatureConfiguration> {
 
     @Override
     public boolean place (FeaturePlaceContext <NoneFeatureConfiguration> context) {
+
+        Handcode.world_gen.testPause();
 
         LevelAccessor level_accessor = context.level();
         ServerLevel level_server = context.level().getLevel();

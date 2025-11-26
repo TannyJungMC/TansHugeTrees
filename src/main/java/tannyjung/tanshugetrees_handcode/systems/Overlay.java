@@ -9,7 +9,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import tannyjung.core.game.OverlayMaker;
-import tannyjung.tanshugetrees_handcode.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.TreeLocation;
 
 @Mod.EventBusSubscriber({Dist.CLIENT})
@@ -25,7 +25,7 @@ public class Overlay {
             // World Gen (Out-Game)
             {
 
-                if (ConfigMain.world_gen_icon == true) {
+                if (FileConfig.world_gen_icon == true) {
 
                     if (TreeLocation.world_gen_overlay_animation != 0) {
 
@@ -53,14 +53,14 @@ public class Overlay {
         // // World Gen (In-Game)
         {
 
-            if (ConfigMain.world_gen_icon == true) {
+            if (FileConfig.world_gen_icon == true) {
 
                 if (TreeLocation.world_gen_overlay_animation != 0) {
 
                     OverlayMaker.image(graphic, "inside", "", "tanshugetrees:textures/screens/overlay_region_gen.png", 6, 8, 64, 16, 4, 1, TreeLocation.world_gen_overlay_animation - 1);
                     OverlayMaker.image(graphic, "inside", "", "tanshugetrees:textures/screens/overlay_region_gen_bar.png", 22, 8, 17, 16, 17, 1, (int) Math.round(((double) TreeLocation.world_gen_overlay_bar / 1024) * 16));
 
-                    if (ConfigMain.developer_mode == true) {
+                    if (FileConfig.developer_mode == true) {
 
                         OverlayMaker.text(graphic, "Biome : " + TreeLocation.world_gen_overlay_details_biome, 6, 32, 1.0f, 1.0f, -10066330, false);
                         OverlayMaker.text(graphic, "Tree : " + TreeLocation.world_gen_overlay_details_tree, 6, 44, 1.0f, 1.0f, -11908534, false);

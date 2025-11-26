@@ -14,7 +14,7 @@ import tannyjung.core.game.NBTManager;
 import tannyjung.core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 import java.io.File;
@@ -26,7 +26,7 @@ public class LivingTreeMechanics {
 
     public static void start (Entity entity) {
 
-        if (ConfigMain.developer_mode == true) {
+        if (FileConfig.developer_mode == true) {
 
             GameUtils.command.runEntity(entity, "particle flash ~ ~ ~ 0 0 0 0 1 force");
             GameUtils.command.runEntity(entity, "particle totem_of_undying ~ ~100 ~ 0 25 0 0 300 force");
@@ -99,11 +99,11 @@ public class LivingTreeMechanics {
 
                                         int number = Integer.parseInt(get_short.substring(3)) - 1;
 
-                                        if (ConfigMain.deciduous_leaves_list.contains(get) == true) {
+                                        if (FileConfig.deciduous_leaves_list.contains(get) == true) {
 
                                             leaves_type[number] = 1;
 
-                                        } else if (ConfigMain.coniferous_leaves_list.contains(get) == true) {
+                                        } else if (FileConfig.coniferous_leaves_list.contains(get) == true) {
 
                                             leaves_type[number] = 2;
 
@@ -222,9 +222,9 @@ public class LivingTreeMechanics {
                         // Out of Process Limit
                         {
 
-                            if (ConfigMain.living_tree_mechanics_process_limit > 0) {
+                            if (FileConfig.living_tree_mechanics_process_limit > 0) {
 
-                                if (NBTManager.entity.getNumber(entity, "process_save") + ConfigMain.living_tree_mechanics_process_limit <= process) {
+                                if (NBTManager.entity.getNumber(entity, "process_save") + FileConfig.living_tree_mechanics_process_limit <= process) {
 
                                     NBTManager.entity.setNumber(entity, "process_save", process);
                                     return;
@@ -249,8 +249,8 @@ public class LivingTreeMechanics {
                             {
 
                                 pre_block_data = NBTManager.entity.getText(entity, "pre_block").split("/");
-                                pos_converted = OutsideUtils.convertPosRotationMirrored(Integer.parseInt(pre_block_data[1]), Integer.parseInt(pre_block_data[2]), Integer.parseInt(pre_block_data[3]), rotation, mirrored);
-                                pre_pos = new BlockPos(entity.getBlockX() + pos_converted[0], entity.getBlockY() + pos_converted[1], entity.getBlockZ() + pos_converted[2]);
+                                pos_converted = OutsideUtils.convertPosRotationMirrored(rotation, mirrored, Integer.parseInt(pre_block_data[1]), Integer.parseInt(pre_block_data[3]));
+                                pre_pos = new BlockPos(entity.getBlockX() + pos_converted[0], entity.getBlockY() + Integer.parseInt(pre_block_data[2]), entity.getBlockZ() + pos_converted[1]);
 
                                 // Only Loaded Chunks
                                 {
@@ -267,8 +267,8 @@ public class LivingTreeMechanics {
 
                             }
 
-                            pos_converted = OutsideUtils.convertPosRotationMirrored(posX, posY, posZ, rotation, mirrored);
-                            pos = new BlockPos(entity.getBlockX() + pos_converted[0], entity.getBlockY() + pos_converted[1], entity.getBlockZ() + pos_converted[2]);
+                            pos_converted = OutsideUtils.convertPosRotationMirrored(rotation, mirrored, posX, posZ);
+                            pos = new BlockPos(entity.getBlockX() + pos_converted[0], entity.getBlockY() + posY, entity.getBlockZ() + pos_converted[1]);
                             block = map_block.get(type);
 
                             // Only Loaded Chunks
@@ -389,7 +389,7 @@ public class LivingTreeMechanics {
         // Light Level Detection
         {
 
-            if (ConfigMain.leaf_light_level_detection <= level_accessor.getBrightness(LightLayer.SKY, pos) + 1) {
+            if (FileConfig.leaf_light_level_detection <= level_accessor.getBrightness(LightLayer.SKY, pos) + 1) {
 
                 can_pos_photosynthesis = true;
 
@@ -418,7 +418,7 @@ public class LivingTreeMechanics {
 
                     } else if (can_pos_photosynthesis == false) {
 
-                        chance = ConfigMain.leaf_light_level_detection_drop_chance;
+                        chance = FileConfig.leaf_light_level_detection_drop_chance;
 
                     } else {
 
@@ -430,10 +430,10 @@ public class LivingTreeMechanics {
                                 {
 
                                     chance = switch (current_season) {
-                                        case "Spring" -> ConfigMain.leaf_drop_chance_spring;
-                                        case "Summer" -> ConfigMain.leaf_drop_chance_summer;
-                                        case "Autumn" -> ConfigMain.leaf_drop_chance_autumn;
-                                        case "Winter" -> ConfigMain.leaf_drop_chance_winter;
+                                        case "Spring" -> FileConfig.leaf_drop_chance_spring;
+                                        case "Summer" -> FileConfig.leaf_drop_chance_summer;
+                                        case "Autumn" -> FileConfig.leaf_drop_chance_autumn;
+                                        case "Winter" -> FileConfig.leaf_drop_chance_winter;
                                         default -> chance;
                                     };
 
@@ -441,11 +441,11 @@ public class LivingTreeMechanics {
 
                             } else if (biome_type == 1) {
 
-                                chance = ConfigMain.leaf_drop_chance_winter;
+                                chance = FileConfig.leaf_drop_chance_winter;
 
                             } else if (biome_type == 2) {
 
-                                chance = ConfigMain.leaf_drop_chance_summer;
+                                chance = FileConfig.leaf_drop_chance_summer;
 
                             }
 
@@ -456,7 +456,7 @@ public class LivingTreeMechanics {
 
                                 if (current_season.equals("Summer")) {
 
-                                    chance = ConfigMain.leaf_drop_chance_coniferous;
+                                    chance = FileConfig.leaf_drop_chance_coniferous;
 
                                 }
 
@@ -464,7 +464,7 @@ public class LivingTreeMechanics {
 
                         } else {
 
-                            chance = ConfigMain.leaf_drop_chance_summer;
+                            chance = FileConfig.leaf_drop_chance_summer;
 
                         }
 
@@ -474,14 +474,14 @@ public class LivingTreeMechanics {
 
                         level_accessor.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
 
-                        if (ConfigMain.leaf_litter == true) {
+                        if (FileConfig.leaf_litter == true) {
 
-                            if (Math.random() < ConfigMain.leaf_drop_animation_chance) {
+                            if (Math.random() < FileConfig.leaf_drop_animation_chance) {
 
                                 // Animation
                                 {
 
-                                    if (GameUtils.score.get(level_server, "TANSHUGETREES", "leaf_drop") < ConfigMain.leaf_drop_animation_count_limit) {
+                                    if (GameUtils.score.get(level_server, "TANSHUGETREES", "leaf_drop") < FileConfig.leaf_drop_animation_count_limit) {
 
                                         // Don't create animation, if there's a block below.
                                         if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())), "tanshugetrees:passable_blocks") == true) {
@@ -559,10 +559,10 @@ public class LivingTreeMechanics {
                                 {
 
                                     chance = switch (current_season) {
-                                        case "Spring" -> ConfigMain.leaf_regrowth_chance_spring;
-                                        case "Summer" -> ConfigMain.leaf_regrowth_chance_summer;
-                                        case "Autumn" -> ConfigMain.leaf_regrowth_chance_autumn;
-                                        case "Winter" -> ConfigMain.leaf_regrowth_chance_winter;
+                                        case "Spring" -> FileConfig.leaf_regrowth_chance_spring;
+                                        case "Summer" -> FileConfig.leaf_regrowth_chance_summer;
+                                        case "Autumn" -> FileConfig.leaf_regrowth_chance_autumn;
+                                        case "Winter" -> FileConfig.leaf_regrowth_chance_winter;
                                         default -> chance;
                                     };
 
@@ -570,21 +570,21 @@ public class LivingTreeMechanics {
 
                             } else if (biome_type == 1) {
 
-                                chance = ConfigMain.leaf_regrowth_chance_winter;
+                                chance = FileConfig.leaf_regrowth_chance_winter;
 
                             } else if (biome_type == 2) {
 
-                                chance = ConfigMain.leaf_regrowth_chance_summer;
+                                chance = FileConfig.leaf_regrowth_chance_summer;
 
                             }
 
                         } else if (leaves_type == 2) {
 
-                            chance = ConfigMain.leaf_regrowth_chance_coniferous;
+                            chance = FileConfig.leaf_regrowth_chance_coniferous;
 
                         } else {
 
-                            chance = ConfigMain.leaf_regrowth_chance_summer;
+                            chance = FileConfig.leaf_regrowth_chance_summer;
 
                         }
 
@@ -607,11 +607,11 @@ public class LivingTreeMechanics {
         // Leaf Litter Remover
         {
 
-            if (ConfigMain.leaf_litter == true) {
+            if (FileConfig.leaf_litter == true) {
 
-                if (Math.random() < ConfigMain.leaf_litter_remover_chance) {
+                if (Math.random() < FileConfig.leaf_litter_remover_chance) {
 
-                    if (GameUtils.score.get(level_server, "TANSHUGETREES", "leaf_litter_remover") < ConfigMain.leaf_litter_remover_count_limit) {
+                    if (GameUtils.score.get(level_server, "TANSHUGETREES", "leaf_litter_remover") < FileConfig.leaf_litter_remover_count_limit) {
 
                         GameUtils.score.add(level_server, "TANSHUGETREES", "leaf_litter_remover", 1);
                         String command = GameUtils.command.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-leaf_litter_remover", "Leaf Litter Remover", "ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}");

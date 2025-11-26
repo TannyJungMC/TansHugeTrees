@@ -86,7 +86,7 @@ public class PackUpdate {
         GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
         message(level_server);
 
-        Handcode.runRestart(level_accessor, true, true);
+        Handcode.restart(level_accessor, true, true);
 
     }
 

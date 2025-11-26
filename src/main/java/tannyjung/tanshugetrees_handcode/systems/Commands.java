@@ -28,13 +28,13 @@ public class Commands {
     @SubscribeEvent
     public static void start (RegisterCommandsEvent event) {
 
-        CommandMaker.registry(event, 0, "TANSHUGETREES / commands / seasons / get", run.commands.seasons::get);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / commands / seasons / set / autumn", run.commands.seasons.set::autumn);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / commands / seasons / set / spring", run.commands.seasons.set::spring);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / commands / seasons / set / summer", run.commands.seasons.set::summer);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / commands / seasons / set / winter", run.commands.seasons.set::winter);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / custom_packs / check_update_main", run.custom_packs::check_update_main);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / custom_packs / update_main", run.custom_packs::update_main);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / command / seasons / get", run.command.seasons::get);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / command / seasons / set / autumn", run.command.seasons.set::autumn);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / command / seasons / set / spring", run.command.seasons.set::spring);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / command / seasons / set / summer", run.command.seasons.set::summer);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / command / seasons / set / winter", run.command.seasons.set::winter);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / custom_pack / check_update_main", run.custom_pack::check_update_main);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / custom_pack / update_main", run.custom_pack::update_main);
         CommandMaker.registry(event, 0, "TANSHUGETREES / dev / delayed_command", run.dev::detailed_command);
         CommandMaker.registry(event, 0, "TANSHUGETREES / dev / living_tree_mechanics / leaf_drop", run.dev.living_tree_mechanics::leaf_drop);
         CommandMaker.registry(event, 0, "TANSHUGETREES / dev / living_tree_mechanics / leaf_litter_remover", run.dev.living_tree_mechanics::leaf_litter_remover);
@@ -50,7 +50,7 @@ public class Commands {
 
     private static class run {
 
-        private static class commands {
+        private static class command {
 
             private static class seasons {
 
@@ -97,7 +97,7 @@ public class Commands {
 
         }
 
-        private static class custom_packs {
+        private static class custom_pack {
 
             private static void check_update_main (CommandContext<CommandSourceStack> data) {
 
@@ -234,7 +234,7 @@ public class Commands {
         private static void restart (CommandContext<CommandSourceStack> data) {
 
             LevelAccessor level_accessor = data.getSource().getLevel();
-            Handcode.runRestart(level_accessor, true, true);
+            Handcode.restart(level_accessor, true, true);
 
         }
 

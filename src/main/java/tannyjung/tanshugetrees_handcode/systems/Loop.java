@@ -6,7 +6,7 @@ import tannyjung.core.game.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 
-import tannyjung.tanshugetrees_handcode.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.data.FileConfig;
 
 public class Loop {
 
@@ -64,17 +64,17 @@ public class Loop {
             // Tree Generator
             {
 
-                if (ConfigMain.tree_generator_speed_tick > 0) {
+                if (FileConfig.tree_generator_speed_tick > 0) {
 
                     StringBuilder custom = new StringBuilder();
 
                     if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                        if (ConfigMain.tree_generator_count_limit > 0) {
+                        if (FileConfig.tree_generator_count_limit > 0) {
 
                             custom
                                     .append(",sort=nearest,limit=")
-                                    .append(ConfigMain.tree_generator_count_limit)
+                                    .append(FileConfig.tree_generator_count_limit)
                             ;
 
                         }
@@ -97,15 +97,15 @@ public class Loop {
                 // Main
                 {
 
-                    if (ConfigMain.living_tree_mechanics == true && ConfigMain.living_tree_mechanics_tick > 0) {
+                    if (FileConfig.living_tree_mechanics == true && FileConfig.living_tree_mechanics_tick > 0) {
 
                         living_tree_mechanics_tick = living_tree_mechanics_tick + 1;
 
-                        if (living_tree_mechanics_tick >= ConfigMain.living_tree_mechanics_tick) {
+                        if (living_tree_mechanics_tick >= FileConfig.living_tree_mechanics_tick) {
 
                             living_tree_mechanics_tick = 0;
 
-                            if (Math.random() < (double) GameUtils.score.get(level_server, "TANSHUGETREES", "tree_location") / (double) ConfigMain.living_tree_mechanics_simulation) {
+                            if (Math.random() < (double) GameUtils.score.get(level_server, "TANSHUGETREES", "tree_location") / (double) FileConfig.living_tree_mechanics_simulation) {
 
                                 GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-tree_location,limit=1,sort=random] at @s run TANSHUGETREES dev living_tree_mechanics loop");
 
@@ -147,7 +147,7 @@ public class Loop {
         // Developer Mode
         {
 
-            if (ConfigMain.developer_mode == true) {
+            if (FileConfig.developer_mode == true) {
 
                 GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[type=marker] run particle end_rod ~ ~ ~ 0 0 0 0 1 force");
 
