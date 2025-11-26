@@ -9,10 +9,11 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.*;
 import tannyjung.core.FileManager;
+import tannyjung.core.OutsideUtils;
 import tannyjung.core.game.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.config.ConfigMain;
+import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 import java.io.*;
@@ -71,7 +72,7 @@ public class TreeLocation {
 
                             world_gen_overlay_bar = world_gen_overlay_bar + 1;
 
-                            if (random.nextDouble() < ConfigMain.region_scan_chance) {
+                            if (random.nextDouble() < FileConfig.region_scan_chance) {
 
                                 getData(level_accessor, dimension, random, posX + scanX, posZ + scanZ, config_world_gen);
 
@@ -230,11 +231,11 @@ public class TreeLocation {
 
                                 } else if (read_all.startsWith("waterside_chance = ") == true) {
 
-                                    waterside_chance = Double.parseDouble(read_all.replace("waterside_chance = ", "")) * ConfigMain.multiply_waterside_chance;
+                                    waterside_chance = Double.parseDouble(read_all.replace("waterside_chance = ", "")) * FileConfig.multiply_waterside_chance;
 
                                 } else if (read_all.startsWith("dead_tree_chance = ") == true) {
 
-                                    dead_tree_chance = Double.parseDouble(read_all.replace("dead_tree_chance = ", "")) * ConfigMain.multiply_dead_tree_chance;
+                                    dead_tree_chance = Double.parseDouble(read_all.replace("dead_tree_chance = ", "")) * FileConfig.multiply_dead_tree_chance;
 
                                 } else if (read_all.startsWith("dead_tree_level = ") == true) {
 
@@ -270,7 +271,7 @@ public class TreeLocation {
                                             // Rarity
                                             {
 
-                                                rarity = (rarity * 0.01) * ConfigMain.multiply_rarity;
+                                                rarity = (rarity * 0.01) * FileConfig.multiply_rarity;
 
                                                 if (random.nextDouble() >= rarity) {
 
@@ -307,7 +308,7 @@ public class TreeLocation {
                                             // Min Distance
                                             {
 
-                                                min_distance = (int) Math.ceil(min_distance * ConfigMain.multiply_min_distance);
+                                                min_distance = (int) Math.ceil(min_distance * FileConfig.multiply_min_distance);
 
                                                 if (min_distance > 0) {
 
@@ -327,8 +328,8 @@ public class TreeLocation {
                                                 String[] get = group_size.split(" <> ");
                                                 int min = Integer.parseInt(get[0]);
                                                 int max = Integer.parseInt(get[1]);
-                                                min = (int) Math.ceil(min * ConfigMain.multiply_group_size);
-                                                max = (int) Math.ceil(max * ConfigMain.multiply_group_size);
+                                                min = (int) Math.ceil(min * FileConfig.multiply_group_size);
+                                                max = (int) Math.ceil(max * FileConfig.multiply_group_size);
 
                                                 // Round if lower than 0
                                                 {
@@ -628,7 +629,7 @@ public class TreeLocation {
 
             if (waterside_chance > 0) {
 
-                if (ConfigMain.waterside_detection == false) {
+                if (FileConfig.waterside_detection == false) {
 
                     return_logic = false;
 
@@ -764,58 +765,58 @@ public class TreeLocation {
 
                                 if (count_trunk > 0) {
 
-                                    list.add("180");
-                                    list.add("190");
-                                    list.add("280");
-                                    list.add("290");
-                                    list.add("380");
-                                    list.add("390");
+                                    if (FileConfig.dead_tree_auto_level.contains("18") == true) list.add("180");
+                                    if (FileConfig.dead_tree_auto_level.contains("19") == true) list.add("190");
+                                    if (FileConfig.dead_tree_auto_level.contains("28") == true) list.add("280");
+                                    if (FileConfig.dead_tree_auto_level.contains("29") == true) list.add("290");
+                                    if (FileConfig.dead_tree_auto_level.contains("38") == true) list.add("380");
+                                    if (FileConfig.dead_tree_auto_level.contains("39") == true) list.add("390");
 
                                 }
 
                                 if (count_bough > 0) {
 
-                                    list.add("160");
-                                    list.add("170");
-                                    list.add("260");
-                                    list.add("270");
-                                    list.add("360");
-                                    list.add("370");
-                                    list.add("15" + is_pine);
-                                    list.add("25" + is_pine);
-                                    list.add("35" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("16") == true) list.add("160");
+                                    if (FileConfig.dead_tree_auto_level.contains("17") == true) list.add("170");
+                                    if (FileConfig.dead_tree_auto_level.contains("26") == true) list.add("260");
+                                    if (FileConfig.dead_tree_auto_level.contains("27") == true) list.add("270");
+                                    if (FileConfig.dead_tree_auto_level.contains("36") == true) list.add("360");
+                                    if (FileConfig.dead_tree_auto_level.contains("37") == true) list.add("370");
+                                    if (FileConfig.dead_tree_auto_level.contains("15") == true) list.add("15" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("25") == true) list.add("25" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("35") == true) list.add("35" + is_pine);
 
                                 }
 
                                 if (count_branch > 0) {
 
-                                    list.add("14" + is_pine);
-                                    list.add("24" + is_pine);
-                                    list.add("34" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("14") == true) list.add("14" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("24") == true) list.add("24" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("34") == true) list.add("34" + is_pine);
 
                                 }
 
                                 if (count_limb > 0) {
 
-                                    list.add("13" + is_pine);
-                                    list.add("23" + is_pine);
-                                    list.add("33" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("13") == true) list.add("13" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("23") == true) list.add("23" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("33") == true) list.add("33" + is_pine);
 
                                 }
 
                                 if (count_twig > 0) {
 
-                                    list.add("12" + is_pine);
-                                    list.add("22" + is_pine);
-                                    list.add("32" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("12") == true) list.add("12" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("22") == true) list.add("22" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("32") == true) list.add("32" + is_pine);
 
                                 }
 
                                 if (count_sprig > 0) {
 
-                                    list.add("11" + is_pine);
-                                    list.add("21" + is_pine);
-                                    list.add("31" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("11") == true) list.add("11" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("21") == true) list.add("21" + is_pine);
+                                    if (FileConfig.dead_tree_auto_level.contains("31") == true) list.add("31" + is_pine);
 
                                 }
 
@@ -843,10 +844,10 @@ public class TreeLocation {
 
             }
 
-            // Rotation & Mirrored
+            // Rotation and Mirrored
             {
 
-                // Convert
+                // Apply Value
                 {
 
                     if (rotation.equals("north") == true) {
@@ -871,15 +872,7 @@ public class TreeLocation {
 
                     }
 
-                    if (mirrored.equals("false") == true) {
-
-                        mirrored = "false";
-
-                    } else if (mirrored.equals("true") == true) {
-
-                        mirrored = "true";
-
-                    } else {
+                    if (mirrored.equals("random") == true) {
 
                         mirrored = String.valueOf(random.nextBoolean());
 
@@ -887,43 +880,11 @@ public class TreeLocation {
 
                 }
 
-                // Applying
-                {
-
-                    if (mirrored.equals("true") == true) {
-
-                        center_sizeX = sizeX - center_sizeX;
-
-                    }
-
-                    if (rotation.equals("2") == true) {
-
-                        int center_sizeX_save = center_sizeX;
-                        center_sizeX = center_sizeZ;
-                        center_sizeZ = sizeX - center_sizeX_save;
-
-                        int sizeX_save = sizeX;
-                        sizeX = sizeZ;
-                        sizeZ = sizeX_save;
-
-                    } else if (rotation.equals("3") == true) {
-
-                        center_sizeX = sizeX - center_sizeX;
-                        center_sizeZ = sizeZ - center_sizeZ;
-
-                    } else if (rotation.equals("4") == true) {
-
-                        int center_sizeX_save = center_sizeX;
-                        center_sizeX = sizeZ - center_sizeZ;
-                        center_sizeZ = center_sizeX_save;
-
-                        int sizeX_save = sizeX;
-                        sizeX = sizeZ;
-                        sizeZ = sizeX_save;
-
-                    }
-
-                }
+                int[] convert = OutsideUtils.convertSizeRotationMirrored(Integer.parseInt(rotation), mirrored.equals("true"), sizeX, sizeZ, center_sizeX, center_sizeZ);
+                sizeX = convert[0];
+                sizeZ = convert[1];
+                center_sizeX = convert[2];
+                center_sizeZ = convert[3];
 
             }
 
@@ -933,40 +894,16 @@ public class TreeLocation {
                 if (Integer.parseInt(dead_tree_level) > 200) {
 
                     int fallen_direction = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((center_posX * 341873128712L) + (center_posZ * 132897987541L))).nextInt(4) + 1;
-                    int sizeX_save = sizeX;
-                    int sizeY_save = sizeY;
-                    int sizeZ_save = sizeZ;
-                    int center_sizeX_save = center_sizeX;
-                    int center_sizeY_save = center_sizeY;
-                    int center_sizeZ_save = center_sizeZ;
 
-                    if (fallen_direction == 1) {
+                    if (fallen_direction > 0) {
 
-                        sizeY = sizeX_save;
-                        sizeX = sizeY_save;
-                        center_sizeY = sizeX_save - center_sizeX_save;
-                        center_sizeX = center_sizeY_save;
-
-                    } else if (fallen_direction == 2) {
-
-                        sizeY = sizeZ_save;
-                        sizeZ = sizeY_save;
-                        center_sizeY = sizeZ_save - center_sizeZ_save;
-                        center_sizeZ = center_sizeY_save;
-
-                    } else if (fallen_direction == 3) {
-
-                        sizeY = sizeX_save;
-                        sizeX = sizeY_save;
-                        center_sizeY = center_sizeX_save;
-                        center_sizeX = sizeY_save - center_sizeY_save;
-
-                    } else if (fallen_direction == 4) {
-
-                        sizeY = sizeZ_save;
-                        sizeZ = sizeY_save;
-                        center_sizeY = center_sizeZ_save;
-                        center_sizeZ = sizeY_save - center_sizeY_save;
+                        int[] convert = OutsideUtils.convertSizeFallen(fallen_direction, sizeX, sizeY, sizeZ, center_sizeX, center_sizeY, center_sizeZ);
+                        sizeX = convert[0];
+                        sizeY = convert[1];
+                        sizeZ = convert[2];
+                        center_sizeX = convert[3];
+                        center_sizeY = convert[4];
+                        center_sizeZ = convert[5];
 
                     }
 

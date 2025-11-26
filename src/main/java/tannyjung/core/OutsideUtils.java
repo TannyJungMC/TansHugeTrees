@@ -51,35 +51,63 @@ public class OutsideUtils {
 
     }
 
-    public static int[] convertPosRotationMirrored (int posX, int posY, int posZ, int rotation, boolean mirrored) {
+    public static int[] convertPosRotationMirrored (int rotation, boolean mirrored, int posX, int posZ) {
 
-        {
+        int save_posX = posX;
+        int save_posZ = posZ;
 
-            if (mirrored == true) {
+        if (mirrored == true) {
 
-                posX = posX * (-1);
+            posX = save_posX * (-1);
 
-            }
+        }
 
-            if (rotation == 2) {
+        if (rotation == 2) {
 
-                int posX_save = posX;
-                posX = posZ;
-                posZ = posX_save * (-1);
+            posX = save_posZ;
+            posZ = save_posX * (-1);
 
-            } else if (rotation == 3) {
+        } else if (rotation == 3) {
 
-                posX = posX * (-1);
-                posZ = posZ * (-1);
+            posX = save_posX * (-1);
+            posZ = save_posZ * (-1);
 
-            } else if (rotation == 4) {
+        } else if (rotation == 4) {
 
-                int posX_save = posX;
-                int posZ_save = posZ;
-                posX = posZ_save * (-1);
-                posZ = posX_save;
+            posX = save_posZ * (-1);
+            posZ = save_posX;
 
-            }
+        }
+
+        return new int[]{posX, posZ};
+
+    }
+
+    public static int[] convertPosFallen (int fallen_direction, int posX, int posY, int posZ) {
+
+        int posX_save = posX;
+        int posY_save = posY;
+        int posZ_save = posZ;
+
+        if (fallen_direction == 1) {
+
+            posY = posX_save;
+            posX = posY_save;
+
+        } else if (fallen_direction == 2) {
+
+            posY = posZ_save;
+            posZ = posY_save;
+
+        } else if (fallen_direction == 3) {
+
+            posY = posX_save;
+            posX = -posY_save;
+
+        } else if (fallen_direction == 4) {
+
+            posY = posZ_save;
+            posZ = -posY_save;
 
         }
 
@@ -87,43 +115,84 @@ public class OutsideUtils {
 
     }
 
-    public static int[] convertPosFallen (int posX, int posY, int posZ, int fallen_direction) {
+    public static int[] convertSizeRotationMirrored (int rotation, boolean mirrored, int sizeX, int sizeZ, int center_sizeX, int center_sizeZ) {
 
-        {
+        int save_sizeX = sizeX;
+        int save_sizeZ = sizeZ;
+        int save_center_sizeX = center_sizeX;
+        int save_center_sizeZ = center_sizeZ;
 
-            if (fallen_direction > 0) {
+        if (mirrored == true) {
 
-                int posX_save = posX;
-                int posY_save = posY;
-                int posZ_save = posZ;
-
-                if (fallen_direction == 1) {
-
-                    posY = posX_save;
-                    posX = posY_save;
-
-                } else if (fallen_direction == 2) {
-
-                    posY = posZ_save;
-                    posZ = posY_save;
-
-                } else if (fallen_direction == 3) {
-
-                    posY = posX_save;
-                    posX = -posY_save;
-
-                } else if (fallen_direction == 4) {
-
-                    posY = posZ_save;
-                    posZ = -posY_save;
-
-                }
-
-            }
+            center_sizeX = save_sizeX - save_center_sizeX;
 
         }
 
-        return new int[]{posX, posY, posZ};
+        if (rotation == 2) {
+
+            sizeX = save_sizeZ;
+            sizeZ = save_sizeX;
+            center_sizeX = save_center_sizeZ;
+            center_sizeZ = save_sizeX - save_center_sizeX;
+
+        } else if (rotation == 3) {
+
+            center_sizeX = save_sizeX - save_center_sizeX;
+            center_sizeZ = save_sizeZ - save_center_sizeZ;
+
+        } else if (rotation == 4) {
+
+            sizeX = save_sizeZ;
+            sizeZ = save_sizeX;
+            center_sizeX = save_sizeZ - save_center_sizeZ;
+            center_sizeZ = save_center_sizeX;
+
+        }
+
+        return new int[]{sizeX, sizeZ, center_sizeX, center_sizeZ};
+
+    }
+
+    public static int[] convertSizeFallen (int fallen_direction, int sizeX, int sizeY, int sizeZ, int center_sizeX, int center_sizeY, int center_sizeZ) {
+
+        int save_sizeX = sizeX;
+        int save_sizeY = sizeY;
+        int save_sizeZ = sizeZ;
+        int save_center_sizeX = center_sizeX;
+        int save_center_sizeY = center_sizeY;
+        int save_center_sizeZ = center_sizeZ;
+
+        if (fallen_direction == 1) {
+
+            sizeY = save_sizeX;
+            sizeX = save_sizeY;
+            center_sizeY = save_sizeX - save_center_sizeX;
+            center_sizeX = save_center_sizeY;
+
+        } else if (fallen_direction == 2) {
+
+            sizeY = save_sizeZ;
+            sizeZ = save_sizeY;
+            center_sizeY = save_sizeZ - save_center_sizeZ;
+            center_sizeZ = save_center_sizeY;
+
+        } else if (fallen_direction == 3) {
+
+            sizeY = save_sizeX;
+            sizeX = save_sizeY;
+            center_sizeY = save_center_sizeX;
+            center_sizeX = save_sizeY - save_center_sizeY;
+
+        } else if (fallen_direction == 4) {
+
+            sizeY = save_sizeZ;
+            sizeZ = save_sizeY;
+            center_sizeY = save_center_sizeZ;
+            center_sizeZ = save_sizeY - save_center_sizeY;
+
+        }
+
+        return new int[]{sizeX, sizeY, sizeZ, center_sizeX, center_sizeY, center_sizeZ};
 
     }
 
