@@ -18,13 +18,14 @@ import java.nio.file.Files;
 
 public class OverlayMaker {
 
-    public static void text (GuiGraphics graphic, String text, int posX, int posZ, float scaleX, float scaleZ, int color, boolean shadow) {
+    public static void text (GuiGraphics graphic, int screen_width, int screen_height, String pos_style, int posX, int posZ, double scale, int color, boolean shadow, String text) {
 
-        posX = (int) (posX / scaleX);
-        posZ = (int) (posZ / scaleZ);
+        int[] pos = convertPos(screen_width, screen_height, posX, posZ, pos_style, scale);
+        posX = pos[0];
+        posZ = pos[1];
 
         graphic.pose().pushPose();
-        graphic.pose().scale(scaleX, scaleZ, 1.0f);
+        graphic.pose().scale((float) scale, (float) scale, 1.0f);
         graphic.drawString(Minecraft.getInstance().font, text, posX, posZ, color, shadow);
         graphic.pose().popPose();
 
@@ -138,6 +139,40 @@ public class OverlayMaker {
         int startZ = Mth.clamp(choose * piece_sizeZ, 0, sizeZ - piece_sizeZ);
 
         graphic.blit(location, posX, posZ, startX, startZ, piece_sizeX, piece_sizeZ, sizeX, sizeZ);
+
+    }
+
+    private static int[] convertPos (int screen_width, int screen_height, int posX, int posZ, String pos_style, double scale) {
+
+        int[] pos = new int[2];
+
+        {
+
+            if (pos_style.startsWith("top-") == true) {
+
+                pos[1] = posZ;
+
+            } else if (pos_style.startsWith("bottom-") == true) {
+
+                pos[1] = screen_height - posZ;
+
+            }
+
+            if (pos_style.endsWith("-left") == true) {
+
+                pos[0] = posX;
+
+            } else if (pos_style.endsWith("-right") == true) {
+
+                pos[0] = screen_width - posX;
+
+            }
+
+        }
+
+        pos[0] = (int) (pos[0] / scale);
+        pos[1] = (int) (pos[1] / scale);
+        return pos;
 
     }
 

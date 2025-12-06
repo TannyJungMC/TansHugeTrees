@@ -19,6 +19,8 @@ public class Overlay {
     public static void eventMenu (ScreenEvent.Render.Post event) {
 
         GuiGraphics graphic = event.getGuiGraphics();
+        int width = event.getScreen().width;
+        int height = event.getScreen().height;
 
         if (event.getScreen() instanceof LevelLoadingScreen) {
 
@@ -31,9 +33,9 @@ public class Overlay {
 
                         OverlayMaker.image(graphic, "inside", "", "tanshugetrees:textures/screens/overlay_region_gen.png", 6, 8, 64, 16, 4, 1, TreeLocation.world_gen_overlay_animation - 1);
                         OverlayMaker.image(graphic, "inside", "", "tanshugetrees:textures/screens/overlay_region_gen_bar.png", 22, 8, 17, 16, 17, 1, (int) Math.round(((double) TreeLocation.world_gen_overlay_bar / 1024) * 16));
-                        OverlayMaker.text(graphic, "Biome : " + TreeLocation.world_gen_overlay_details_biome, 6, 32, 1.0f, 1.0f, -1, false);
-                        OverlayMaker.text(graphic, "Tree : " + TreeLocation.world_gen_overlay_details_tree, 6, 44, 1.0f, 1.0f, -3355444, false);
-                        OverlayMaker.text(graphic, "Generating tree locations. This may take a while.", 6, 64, 1.0f, 1.0f, -3381760, false);
+                        OverlayMaker.text(graphic, width, height, "top-left", 6, 32, 1.0, -1, false, "Biome : " + TreeLocation.world_gen_overlay_details_biome);
+                        OverlayMaker.text(graphic, width, height, "top-left", 6, 44, 1.0, -3355444, false, "Tree : " + TreeLocation.world_gen_overlay_details_tree);
+                        OverlayMaker.text(graphic, width, height, "top-left", 6, 64, 1.0, -3381760, false, "Generating tree locations. This may take a while.");
 
                     }
 
@@ -49,6 +51,8 @@ public class Overlay {
     public static void eventInGame (RenderGuiEvent.Post event) {
 
         GuiGraphics graphic = event.getGuiGraphics();
+        int width = event.getWindow().getWidth();
+        int height = event.getWindow().getHeight();
 
         // // World Gen (In-Game)
         {
@@ -62,8 +66,8 @@ public class Overlay {
 
                     if (FileConfig.developer_mode == true) {
 
-                        OverlayMaker.text(graphic, "Biome : " + TreeLocation.world_gen_overlay_details_biome, 6, 32, 1.0f, 1.0f, -10066330, false);
-                        OverlayMaker.text(graphic, "Tree : " + TreeLocation.world_gen_overlay_details_tree, 6, 44, 1.0f, 1.0f, -11908534, false);
+                        OverlayMaker.text(graphic, width, height, "top-left", 6, 32, 1.0, -10066330, false, "Biome : " + TreeLocation.world_gen_overlay_details_biome);
+                        OverlayMaker.text(graphic, width, height, "top-left", 6, 44, 1.0, -11908534, false, "Tree : " + TreeLocation.world_gen_overlay_details_tree);
 
                     }
 
