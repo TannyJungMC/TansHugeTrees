@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import tannyjung.tanshugetrees_handcode.config.PackCheckUpdate;
-import tannyjung.tanshugetrees_handcode.config.PackUpdate;
+import tannyjung.tanshugetrees_handcode.data.TannyPack;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanics;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanicsLeafDrop;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanicsLeafLitterRemover;
@@ -101,15 +101,15 @@ public class Commands {
 
             private static void check_update_main (CommandContext<CommandSourceStack> data) {
 
-                LevelAccessor level_accessor = data.getSource().getLevel();
-                PackCheckUpdate.start(level_accessor, true);
+                ServerLevel level_server = data.getSource().getLevel();
+                PackCheckUpdate.start(level_server);
 
             }
 
             private static void update_main (CommandContext<CommandSourceStack> data) {
 
-                LevelAccessor level_accessor = data.getSource().getLevel();
-                PackUpdate.start(level_accessor);
+                ServerLevel level_server = data.getSource().getLevel();
+                TannyPack.start(level_server);
 
             }
 
@@ -233,8 +233,13 @@ public class Commands {
 
         private static void restart (CommandContext<CommandSourceStack> data) {
 
-            LevelAccessor level_accessor = data.getSource().getLevel();
-            Handcode.restart(level_accessor, true, true);
+            ServerLevel level_server = data.getSource().getLevel();
+
+            Handcode.thread_main.submit(() -> {
+
+                Handcode.restart(level_server, true, true);
+
+            });
 
         }
 

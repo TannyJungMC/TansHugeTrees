@@ -89,7 +89,7 @@ public class ShapeFileConverter {
 
                             if (read_all.startsWith("file_location = ") == true) {
 
-                                file_location = read_all.replace("file_location = ", "").split("/");
+                                file_location = read_all.substring("file_location = ".length()).split("/");
 
                             }
 

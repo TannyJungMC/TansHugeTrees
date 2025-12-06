@@ -126,7 +126,7 @@ public class Cache {
         if (tree_shape_part1.containsKey(id) == false) {
 
             String[] split = id.split("/");
-            ByteBuffer buffer = FileManager.readBIN(Handcode.path_config + "/custom_packs/" + split[0] + "/presets/" + split[1] + "/storage/" + split[2]);
+            ByteBuffer buffer = FileManager.readBIN(Handcode.path_config + "/#dev/temporary/presets/" + split[0] + "/" + split[1] + "/storage/" + split[2]);
 
             if (buffer.remaining() > 0) {
 
@@ -203,7 +203,7 @@ public class Cache {
 
         if (world_gen_settings.containsKey(id) == false) {
 
-            world_gen_settings.put(id, FileManager.readTXT(Handcode.path_config + "/#dev/custom_packs_organized/world_gen/" + id + ".txt"));
+            world_gen_settings.put(id, FileManager.readTXT(Handcode.path_config + "/#dev/temporary/world_gen/" + id + ".txt"));
 
         }
 
@@ -215,7 +215,7 @@ public class Cache {
 
         if (tree_settings.containsKey(id) == false) {
 
-            tree_settings.put(id, FileManager.readTXT(Handcode.path_config + "/#dev/custom_packs_organized/presets/" + id + "_settings.txt"));
+            tree_settings.put(id, FileManager.readTXT(Handcode.path_config + "/#dev/temporary/presets/" + id + "_settings.txt"));
 
         }
 
@@ -227,7 +227,7 @@ public class Cache {
 
         if (functions.containsKey(id) == false) {
 
-            functions.put(id, FileManager.readTXT(Handcode.path_config + "/#dev/custom_packs_organized/functions/" + id + ".txt"));
+            functions.put(id, FileManager.readTXT(Handcode.path_config + "/#dev/temporary/functions/" + id + ".txt"));
 
         }
 
@@ -239,7 +239,7 @@ public class Cache {
 
         if (functions_tree_decoration.length == 0) {
 
-            String[] list = new File(Handcode.path_config + "/#dev/custom_packs_organized/functions/#TannyJung-Main-Pack/tree_decoration").list();
+            String[] list = new File(Handcode.path_config + "/#dev/temporary/functions/#TannyJung-Main-Pack/tree_decoration").list();
 
             if (list != null) {
 
@@ -267,7 +267,7 @@ public class Cache {
 
         if (functions_tree_decoration_decay.length == 0) {
 
-            String[] list = new File(Handcode.path_config + "/#dev/custom_packs_organized/functions/#TannyJung-Main-Pack/tree_decoration_decay").list();
+            String[] list = new File(Handcode.path_config + "/#dev/temporary/functions/#TannyJung-Main-Pack/tree_decoration_decay").list();
 
             if (list != null) {
 
@@ -295,7 +295,7 @@ public class Cache {
 
         if (leaf_litter.containsKey(id) == false) {
 
-            leaf_litter.put(id, FileManager.readTXT(Handcode.path_config + "/#dev/custom_packs_organized/leaf_litter/" + id + ".txt"));
+            leaf_litter.put(id, FileManager.readTXT(Handcode.path_config + "/#dev/temporary/leaf_litter/" + id + ".txt"));
 
         }
 

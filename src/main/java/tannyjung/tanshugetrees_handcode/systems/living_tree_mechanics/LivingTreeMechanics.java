@@ -61,15 +61,15 @@ public class LivingTreeMechanics {
 
                         if (read_all.startsWith("can_leaves_decay = ") == true) {
 
-                            can_leaves_decay = Boolean.parseBoolean(read_all.replace("can_leaves_decay = ", ""));
+                            can_leaves_decay = Boolean.parseBoolean(read_all.substring("can_leaves_decay = ".length()));
 
                         } else if (read_all.startsWith("can_leaves_drop = ") == true) {
 
-                            can_leaves_drop = Boolean.parseBoolean(read_all.replace("can_leaves_drop = ", ""));
+                            can_leaves_drop = Boolean.parseBoolean(read_all.substring("can_leaves_drop = ".length()));
 
                         } else if (read_all.startsWith("can_leaves_regrow = ") == true) {
 
-                            can_leaves_regrow = Boolean.parseBoolean(read_all.replace("can_leaves_regrow = ", ""));
+                            can_leaves_regrow = Boolean.parseBoolean(read_all.substring("can_leaves_regrow = ".length()));
 
                         } else if (read_all.startsWith("Block ") == true) {
 
@@ -128,7 +128,7 @@ public class LivingTreeMechanics {
         String[] file_path_data = NBTManager.entity.getText(entity, "file").split("\\|");
         String path_storage = file_path_data[0];
         String chosen = file_path_data[1];
-        File file = new File(Handcode.path_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage/" + chosen);
+        File file = new File(Handcode.path_config + "/#dev/temporary/presets/" + path_storage + "/storage/" + chosen);
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -173,12 +173,6 @@ public class LivingTreeMechanics {
                 {
 
                     loop = loop + 1;
-
-                    if (loop > 4) {
-
-                        loop = 1;
-
-                    }
 
                     if (loop == 1) {
 

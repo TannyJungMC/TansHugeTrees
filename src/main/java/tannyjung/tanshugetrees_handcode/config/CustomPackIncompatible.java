@@ -72,7 +72,7 @@ public class CustomPackIncompatible {
         // Tree Settings File
         {
 
-            File file = new File(Handcode.path_config + "/#dev/custom_packs_organized/presets");
+            File file = new File(Handcode.path_config + "/#dev/temporary/presets");
 
             if (file.exists() == true) {
 
@@ -109,7 +109,7 @@ public class CustomPackIncompatible {
         // World Gen File
         {
 
-            File file = new File(Handcode.path_config + "/#dev/custom_packs_organized/world_gen");
+            File file = new File(Handcode.path_config + "/#dev/temporary/world_gen");
 
             if (file.exists() == true) {
 
@@ -180,7 +180,7 @@ public class CustomPackIncompatible {
 
                         if (read_all.startsWith("data_structure_version = ")) {
 
-                            data_structure_version = Integer.parseInt(read_all.replace("data_structure_version = ", ""));
+                            data_structure_version = Integer.parseInt(read_all.substring("data_structure_version = ".length()));
                             break;
 
                         }
@@ -191,7 +191,7 @@ public class CustomPackIncompatible {
 
             }
 
-            if (data_structure_version != Handcode.DATA_STRUCTURE_VERSION) {
+            if (data_structure_version != Handcode.data_structure_version) {
 
                 error = "Detected incompatible pack. Caused by unsupported mod version. [ " + pack_name + " ]";
 
@@ -241,7 +241,7 @@ public class CustomPackIncompatible {
 
                         {
 
-                            get = read_all.replace("required_packs = ", "");
+                            get = read_all.substring("required_packs = ".length());
 
                             if (get.equals("none") == false) {
 
@@ -264,7 +264,7 @@ public class CustomPackIncompatible {
 
                         {
 
-                            get = read_all.replace("required_mods = ", "");
+                            get = read_all.substring("required_mods = ".length());
 
                             if (get.equals("none") == false) {
 
@@ -367,7 +367,7 @@ public class CustomPackIncompatible {
         String name_theme = file.getParentFile().getName();
         String name_tree = file.getName().replace("[INCOMPATIBLE] ", "");
         String path_storage = "";
-        String path_tree_settings = "";
+        String path_settings = "";
 
         // Read "World Gen" File
         {
@@ -378,11 +378,11 @@ public class CustomPackIncompatible {
 
                     if (read_all.startsWith("path_storage = ")) {
 
-                        path_storage = read_all.replace("path_storage = ", "");
+                        path_storage = read_all.substring("path_storage = ".length());
 
-                    } else if (read_all.startsWith("path_tree_settings = ")) {
+                    } else if (read_all.startsWith("path_settings = ")) {
 
-                        path_tree_settings = read_all.replace("path_tree_settings = ", "");
+                        path_settings = read_all.substring("path_settings = ".length());
 
                     } else {
 
@@ -420,7 +420,7 @@ public class CustomPackIncompatible {
         // Test Tree Settings
         {
 
-            File file_test = new File(Handcode.path_config + "/#dev/custom_packs_organized/presets/" + path_tree_settings + "_settings.txt");
+            File file_test = new File(Handcode.path_config + "/#dev/temporary/presets/" + path_settings + "_settings.txt");
 
             if (file_test.exists() == false) {
 

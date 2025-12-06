@@ -393,20 +393,11 @@ public class FileConfig {
 		developer_mode = Boolean.parseBoolean(data.get("developer_mode"));
         world_gen_icon = Boolean.parseBoolean(data.get("world_gen_icon"));
 
-		// After Applying
-		{
+        if (wip_version == true) {
 
-			if (wip_version == true) {
+            Handcode.tanny_pack_type = "WIP";
 
-				Handcode.tanny_pack_version_name = "WIP";
-
-			} else {
-
-				Handcode.tanny_pack_version_name = Handcode.TANNY_PACK_VERSION;
-
-			}
-
-		}
+        }
 
 	}
 	

@@ -68,7 +68,7 @@ public class CustomPackFileCount {
 
     private static void countVariation () {
 
-        File file = new File(Handcode.path_config + "/#dev/custom_packs_organized/world_gen");
+        File file = new File(Handcode.path_config + "/#dev/temporary/world_gen");
 
         if (file.exists() == true) {
 

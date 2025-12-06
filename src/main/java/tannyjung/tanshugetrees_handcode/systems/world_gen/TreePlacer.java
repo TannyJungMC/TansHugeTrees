@@ -131,7 +131,7 @@ public class TreePlacer {
         if (already_tested == false || pass == true) {
 
             String path_storage = "";
-            String path_tree_settings = "";
+            String path_settings = "";
 
             // Scan World Gen File
             {
@@ -146,11 +146,11 @@ public class TreePlacer {
 
                             if (read_all.startsWith("path_storage = ") == true) {
 
-                                path_storage = read_all.replace("path_storage = ", "");
+                                path_storage = read_all.substring("path_storage = ".length());
 
-                            } else if (read_all.startsWith("path_tree_settings = ") == true) {
+                            } else if (read_all.startsWith("path_settings = ") == true) {
 
-                                path_tree_settings = read_all.replace("path_tree_settings = ", "");
+                                path_settings = read_all.substring("path_settings = ".length());
                                 break;
 
                             }
@@ -180,7 +180,7 @@ public class TreePlacer {
                 // Scan Tree Settings File
                 {
 
-                    String[] tree_settings = Cache.getTreeSettings(path_tree_settings);
+                    String[] tree_settings = Cache.getTreeSettings(path_settings);
 
                     if (tree_settings.length > 0) {
 
@@ -190,11 +190,11 @@ public class TreePlacer {
 
                                 if (read_all.startsWith("tree_type = ") == true) {
 
-                                    tree_type = read_all.replace("tree_type = ", "");
+                                    tree_type = read_all.substring("tree_type = ".length());
 
                                 } else if (read_all.startsWith("start_height = ") == true) {
 
-                                    start_height = Integer.parseInt(read_all.replace("start_height = ", ""));
+                                    start_height = Integer.parseInt(read_all.substring("start_height = ".length()));
                                     break;
 
                                 }
@@ -745,7 +745,7 @@ public class TreePlacer {
 
             if (pass == true) {
 
-                place(level_accessor, level_server, chunk_pos, id, chosen, path_storage, path_tree_settings, center_posX, center_posY, center_posZ, rotation, mirrored, dead_tree_level, fallen_direction);
+                place(level_accessor, level_server, chunk_pos, id, chosen, path_storage, path_settings, center_posX, center_posY, center_posZ, rotation, mirrored, dead_tree_level, fallen_direction);
 
             }
 
@@ -865,7 +865,7 @@ public class TreePlacer {
 
     }
 
-    private static void place (LevelAccessor level_accessor, ServerLevel level_server, ChunkPos chunk_pos, String id, String chosen, String path_storage, String path_tree_settings, int center_posX, int center_posY, int center_posZ, int rotation, boolean mirrored, int dead_tree_level, int fallen_direction) {
+    private static void place (LevelAccessor level_accessor, ServerLevel level_server, ChunkPos chunk_pos, String id, String chosen, String path_storage, String path_settings, int center_posX, int center_posY, int center_posZ, int rotation, boolean mirrored, int dead_tree_level, int fallen_direction) {
 
         short[] shape = Cache.getTreeShapePart3(path_storage + "/" + chosen);
 
@@ -881,7 +881,7 @@ public class TreePlacer {
             // Get Tree Settings File
             {
 
-                String[] tree_settings = Cache.getTreeSettings(path_tree_settings);
+                String[] tree_settings = Cache.getTreeSettings(path_settings);
 
                 if (tree_settings.length > 0) {
 
@@ -894,19 +894,19 @@ public class TreePlacer {
 
                             if (read_all.startsWith("can_leaves_decay = ") == true) {
 
-                                can_leaves_decay = Boolean.parseBoolean(read_all.replace("can_leaves_decay = ", ""));
+                                can_leaves_decay = Boolean.parseBoolean(read_all.substring("can_leaves_decay = ".length()));
 
                             } else if (read_all.startsWith("can_leaves_drop = ") == true) {
 
-                                can_leaves_drop = Boolean.parseBoolean(read_all.replace("can_leaves_drop = ", ""));
+                                can_leaves_drop = Boolean.parseBoolean(read_all.substring("can_leaves_drop = ".length()));
 
                             } else if (read_all.startsWith("can_leaves_regrow = ") == true) {
 
-                                can_leaves_regrow = Boolean.parseBoolean(read_all.replace("can_leaves_regrow = ", ""));
+                                can_leaves_regrow = Boolean.parseBoolean(read_all.substring("can_leaves_regrow = ".length()));
 
                             } else if (read_all.startsWith("can_disable_roots") == true) {
 
-                                can_disable_roots = Boolean.parseBoolean(read_all.replace("can_disable_roots = ", ""));
+                                can_disable_roots = Boolean.parseBoolean(read_all.substring("can_disable_roots = ".length()));
 
                             } else if (read_all.startsWith("Block ") == true) {
 
@@ -1382,7 +1382,7 @@ public class TreePlacer {
 
                                             if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
 
-                                                String marker_data = "ForgeData:{file:\"" + path_storage + "|" + chosen + "\",tree_settings:\"" + path_tree_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
+                                                String marker_data = "ForgeData:{file:\"" + path_storage + "|" + chosen + "\",tree_settings:\"" + path_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
                                                 GameUtils.command.run(level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.command.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
 
                                             }

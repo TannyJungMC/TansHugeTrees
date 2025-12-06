@@ -85,7 +85,7 @@ public class TXTFunction {
 
                                         try {
 
-                                            get = read_all.replace("debug = ", "").split(" \\| ");
+                                            get = read_all.substring("debug = ".length()).split(" \\| ");
                                             chance = Double.parseDouble(get[0]);
                                             variable_text = get[1];
 
@@ -191,7 +191,7 @@ public class TXTFunction {
 
                                                             try {
 
-                                                                get = read_all.replace("chance = ", "").split(" \\| ");
+                                                                get = read_all.substring("chance = ".length()).split(" \\| ");
                                                                 chance = Double.parseDouble(get[0]);
 
                                                             } catch (Exception ignored) {
@@ -214,7 +214,7 @@ public class TXTFunction {
 
                                                             try {
 
-                                                                get = read_all.replace("biome = ", "").split(" \\| ");
+                                                                get = read_all.substring("biome = ".length()).split(" \\| ");
                                                                 offset_pos = get[0].split("/");
                                                                 offset_posX = Integer.parseInt(offset_pos[0]);
                                                                 offset_posY = Integer.parseInt(offset_pos[1]);
@@ -241,7 +241,7 @@ public class TXTFunction {
 
                                                             try {
 
-                                                                get = read_all.replace("block = ", "").split(" \\| ");
+                                                                get = read_all.substring("block = ".length()).split(" \\| ");
                                                                 offset_pos = get[0].split("/");
                                                                 offset_posX = Integer.parseInt(offset_pos[0]);
                                                                 offset_posY = Integer.parseInt(offset_pos[1]);
@@ -286,7 +286,7 @@ public class TXTFunction {
 
                                                             try {
 
-                                                                get = read_all.replace("block = ", "").split(" \\| ");
+                                                                get = read_all.substring("block = ".length()).split(" \\| ");
                                                                 chance = Double.parseDouble(get[0]);
                                                                 variable_block = GameUtils.block.fromText(get[3]);
                                                                 variable_logic = Boolean.parseBoolean(get[4]);
@@ -370,7 +370,7 @@ public class TXTFunction {
 
                                                             try {
 
-                                                                get = read_all.replace("feature = ", "").split(" \\| ");
+                                                                get = read_all.substring("feature = ".length()).split(" \\| ");
                                                                 chance = Double.parseDouble(get[0]);
                                                                 offset_pos = get[1].split("/");
                                                                 offset_posX = Integer.parseInt(offset_pos[0]);
@@ -407,7 +407,7 @@ public class TXTFunction {
 
                                                             try {
 
-                                                                get = read_all.replace("function = ", "").split(" \\| ");
+                                                                get = read_all.substring("function = ".length()).split(" \\| ");
                                                                 chance = Double.parseDouble(get[0]);
                                                                 offset_pos = get[1].split("/");
                                                                 offset_posX = Integer.parseInt(offset_pos[0]);
@@ -435,7 +435,7 @@ public class TXTFunction {
 
                                                             try {
 
-                                                                get = read_all.replace("command = ", "").split(" \\| ");
+                                                                get = read_all.substring("command = ".length()).split(" \\| ");
                                                                 chance = Double.parseDouble(get[0]);
                                                                 variable_text = get[1];
 
