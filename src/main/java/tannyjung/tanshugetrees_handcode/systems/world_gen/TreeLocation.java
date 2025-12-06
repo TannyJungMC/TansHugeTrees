@@ -25,6 +25,7 @@ public class TreeLocation {
     private static final Map<String, List<String>> cache_write_tree_location = new HashMap<>();
     private static final Map<String, List<String>> cache_write_place = new HashMap<>();
     private static final Map<String, List<String>> cache_dead_tree_auto_level = new HashMap<>();
+    private static final Map<String, ByteBuffer> cache_other_region = new HashMap<>();
     private static final Map<String, Boolean> cache_biome_test = new HashMap<>();
     public static int world_gen_overlay_animation = 0;
     public static int world_gen_overlay_bar = 0;
@@ -109,6 +110,7 @@ public class TreeLocation {
             cache_write_tree_location.clear();
             cache_write_place.clear();
             cache_dead_tree_auto_level.clear();
+            cache_other_region.clear();
             cache_biome_test.clear();
 
         }
@@ -207,51 +209,51 @@ public class TreeLocation {
 
                                 if (read_all.startsWith("world_gen = ") == true) {
 
-                                    world_gen = Boolean.parseBoolean(read_all.replace("world_gen = ", ""));
+                                    world_gen = Boolean.parseBoolean(read_all.substring("world_gen = ".length()));
 
                                 } else if (read_all.startsWith("biome = ") == true) {
 
-                                    biome = read_all.replace("biome = ", "");
+                                    biome = read_all.substring("biome = ".length());
 
                                 } else if (read_all.startsWith("ground_block = ") == true) {
 
-                                    ground_block = read_all.replace("ground_block = ", "");
+                                    ground_block = read_all.substring("ground_block = ".length());
 
                                 } else if (read_all.startsWith("rarity = ") == true) {
 
-                                    rarity = Double.parseDouble(read_all.replace("rarity = ", ""));
+                                    rarity = Double.parseDouble(read_all.substring("rarity = ".length()));
 
                                 } else if (read_all.startsWith("min_distance = ") == true) {
 
-                                    min_distance = Integer.parseInt(read_all.replace("min_distance = ", ""));
+                                    min_distance = Integer.parseInt(read_all.substring("min_distance = ".length()));
 
                                 } else if (read_all.startsWith("group_size = ") == true) {
 
-                                    group_size = read_all.replace("group_size = ", "");
+                                    group_size = read_all.substring("group_size = ".length());
 
                                 } else if (read_all.startsWith("waterside_chance = ") == true) {
 
-                                    waterside_chance = Double.parseDouble(read_all.replace("waterside_chance = ", "")) * FileConfig.multiply_waterside_chance;
+                                    waterside_chance = Double.parseDouble(read_all.substring("waterside_chance = ".length())) * FileConfig.multiply_waterside_chance;
 
                                 } else if (read_all.startsWith("dead_tree_chance = ") == true) {
 
-                                    dead_tree_chance = Double.parseDouble(read_all.replace("dead_tree_chance = ", "")) * FileConfig.multiply_dead_tree_chance;
+                                    dead_tree_chance = Double.parseDouble(read_all.substring("dead_tree_chance = ".length())) * FileConfig.multiply_dead_tree_chance;
 
                                 } else if (read_all.startsWith("dead_tree_level = ") == true) {
 
-                                    dead_tree_level = read_all.replace("dead_tree_level = ", "");
+                                    dead_tree_level = read_all.substring("dead_tree_level = ".length());
 
                                 } else if (read_all.startsWith("start_height_offset = ") == true) {
 
-                                    start_height_offset = read_all.replace("start_height_offset = ", "");
+                                    start_height_offset = read_all.substring("start_height_offset = ".length());
 
                                 } else if (read_all.startsWith("rotation = ") == true) {
 
-                                    rotation = read_all.replace("rotation = ", "");
+                                    rotation = read_all.substring("rotation = ".length());
 
                                 } else if (read_all.startsWith("mirrored = ") == true) {
 
-                                    mirrored = read_all.replace("mirrored = ", "");
+                                    mirrored = read_all.substring("mirrored = ".length());
 
                                     // End of ID
                                     {
@@ -281,6 +283,23 @@ public class TreeLocation {
 
                                             }
 
+                                            // Min Distance
+                                            {
+
+                                                min_distance = (int) Math.ceil(min_distance * FileConfig.multiply_min_distance);
+
+                                                if (min_distance > 0) {
+
+                                                    if (testDistance(dimension, id, center_posX, center_posZ, min_distance) == false) {
+
+                                                        continue;
+
+                                                    }
+
+                                                }
+
+                                            }
+
                                             // Biome
                                             {
 
@@ -300,23 +319,6 @@ public class TreeLocation {
                                                 if (result == false) {
 
                                                     continue;
-
-                                                }
-
-                                            }
-
-                                            // Min Distance
-                                            {
-
-                                                min_distance = (int) Math.ceil(min_distance * FileConfig.multiply_min_distance);
-
-                                                if (min_distance > 0) {
-
-                                                    if (testDistance(dimension, id, center_posX, center_posZ, min_distance) == false) {
-
-                                                        continue;
-
-                                                    }
 
                                                 }
 
@@ -440,9 +442,13 @@ public class TreeLocation {
         int scanZ = 0;
         List<String> already_tested_region = new ArrayList<>();
 
+        int loop = 0;
+        String value = "";
+        String key = "";
         String test_id = "";
         int test_posX = 0;
         int test_posZ = 0;
+        ByteBuffer buffer = null;
 
         for (int step = 1; step <= 9; step++) {
 
@@ -505,9 +511,6 @@ public class TreeLocation {
 
                     // Current Region
                     {
-
-                        int loop = 0;
-                        String value = "";
 
                         for (String read_all : cache_write_tree_location.getOrDefault(scanX + "," + scanZ, new ArrayList<>())) {
 
@@ -572,16 +575,23 @@ public class TreeLocation {
                     // Outside Region (Classic Testing)
                     {
 
+                        key = scanX + "," + scanZ;
 
-                        ByteBuffer read_all = FileManager.readBIN(Handcode.path_world_data + "/world_gen/tree_locations/" + dimension + "/" + scanX + "," + scanZ + ".bin");
+                        if (cache_other_region.containsKey(key) == false) {
 
-                        while (read_all.remaining() > 0) {
+                            cache_other_region.put(key, FileManager.readBIN(Handcode.path_world_data + "/world_gen/tree_locations/" + dimension + "/" + key + ".bin"));
+
+                        }
+
+                        buffer = cache_other_region.get(key);
+
+                        while (buffer.remaining() > 0) {
 
                             try {
 
-                                test_id = Cache.getDictionary(String.valueOf(read_all.getShort()), true);
-                                test_posX = read_all.getInt();
-                                test_posZ = read_all.getInt();
+                                test_id = Cache.getDictionary(String.valueOf(buffer.getShort()), true);
+                                test_posX = buffer.getInt();
+                                test_posZ = buffer.getInt();
 
                             } catch (Exception ignored) {
 
@@ -686,7 +696,7 @@ public class TreeLocation {
 
                     if (read_all.startsWith("path_storage = ") == true) {
 
-                        path_storage = read_all.replace("path_storage = ", "");
+                        path_storage = read_all.substring("path_storage = ".length());
                         break;
 
                     }
@@ -697,7 +707,7 @@ public class TreeLocation {
 
         }
 
-        File chosen = new File(Handcode.path_config + "/custom_packs/" + path_storage.replace("/", "/presets/") + "/storage");
+        File chosen = new File(Handcode.path_config + "/#dev/temporary/presets/" + path_storage + "/storage");
 
         // Random Select File
         {
