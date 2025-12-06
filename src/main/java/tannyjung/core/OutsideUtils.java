@@ -3,7 +3,10 @@ package tannyjung.core;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +49,38 @@ public class OutsideUtils {
 
             exception(new Exception(), exception);
             return false;
+
+        }
+
+    }
+
+    public static void download (String url, String to) {
+
+        if (OutsideUtils.isURLAvailable(url) == true) {
+
+            FileManager.createEmptyFile(to, false);
+
+            {
+
+                try (FileOutputStream output = new FileOutputStream(to)) {
+
+                    BufferedInputStream input = new BufferedInputStream(new URI(url).toURL().openStream());
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+
+                    while ((bytesRead = input.read(buffer, 0, 1024)) != -1) {
+
+                        output.write(buffer, 0, bytesRead);
+
+                    }
+
+                } catch (Exception exception) {
+
+                    OutsideUtils.exception(new Exception(), exception);
+
+                }
+
+            }
 
         }
 
