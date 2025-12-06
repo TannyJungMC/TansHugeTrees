@@ -7,60 +7,147 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Comparator;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 public class FileManager {
 
-	public static void createFolder (String path) {
+	public static void createEmptyFile (String path, boolean is_directory) {
 
-		File folder = new File(path);
+		File file = new File(path);
 
-		if (folder.exists() == false) {
+		if (file.exists() == false) {
 
-			folder.mkdirs();
+            try {
 
-			if (folder.getName().startsWith(".") == true) {
+                if (is_directory == true) {
 
-				try {
+                    file.mkdirs();
 
-					Runtime.getRuntime().exec("attrib +H \"" + Path.of(path).toAbsolutePath() + "\"");
+                } else {
 
-				} catch (Exception exception) {
+                    file.getParentFile().mkdirs();
+                    file.createNewFile();
 
-					OutsideUtils.exception(new Exception(), exception);
+                }
 
-				}
+                if (file.getName().startsWith(".") == true) {
 
-			}
+                    try {
+
+                        Runtime.getRuntime().exec("attrib +H \"" + Path.of(path).toAbsolutePath() + "\"");
+
+                    } catch (Exception exception) {
+
+                        OutsideUtils.exception(new Exception(), exception);
+
+                    }
+
+                }
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception);
+
+            }
 
 		}
 
 	}
 
+    public static void rename (String path, String new_name) {
+
+        File file = new File(path);
+        file.renameTo(new File(file.getParentFile().getPath() + "/" + new_name));
+
+    }
+
+    public static void copy (String from, String to, boolean is_directory) {
+
+        Path path_from = Path.of(from);
+
+        if (is_directory == false) {
+
+            Path path_to = Path.of(to);
+            createEmptyFile(path_to.getParent().toString(), true);
+
+            try {
+
+                Files.copy(path_from, path_to, StandardCopyOption.REPLACE_EXISTING);
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception);
+
+            }
+
+        } else {
+
+            try {
+
+                Files.walk(path_from).forEach(source -> {
+
+                    if (source.toFile().isDirectory() == false) {
+
+                        Path path_to = Path.of(to).resolve(path_from.relativize(source));
+                        createEmptyFile(path_to.getParent().toString(), true);
+
+                        try {
+
+                            Files.copy(source, path_to, StandardCopyOption.REPLACE_EXISTING);
+
+                        } catch (Exception exception) {
+
+                            OutsideUtils.exception(new Exception(), exception);
+
+                        }
+
+                    }
+
+                });
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception);
+
+            }
+
+        }
+
+    }
+
+    public static void delete (String path) {
+
+        File file = new File(path);
+
+        if (file.exists() == true) {
+
+            try {
+
+                Files.walk(file.toPath()).sorted(Comparator.reverseOrder()).forEach(source -> {
+
+                    source.toFile().delete();
+
+                });
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception);
+
+            }
+
+        }
+
+    }
+
 	public static void writeTXT (String path, String write, boolean append) {
 
 		File file = new File(path);
-
-		// Create a File
-		{
-
-			if (file.exists() == false) {
-
-				FileManager.createFolder(file.getParent());
-
-				try {
-
-					file.createNewFile();
-
-				} catch (Exception exception) {
-
-					OutsideUtils.exception(new Exception(), exception);
-
-				}
-
-			}
-
-		}
+        createEmptyFile(file.getPath(), false);
 
 		try {
 
@@ -83,63 +170,58 @@ public class FileManager {
 	public static void writeTXTConfig (String path, String write_get) {
 
 		File file = new File(path);
-		createFolder(file.getParent());
-		boolean old_file_exists = file.exists() == true && file.isDirectory() == false;
+        boolean old_file_exists = file.exists() == true && file.isDirectory() == false;
 
-		// Test and Write
-		{
+        createEmptyFile(file.getPath(), false);
+        StringBuilder write = new StringBuilder();
 
-			StringBuilder write = new StringBuilder();
+        // Read New
+        {
 
-			// Read New
-			{
+            try { BufferedReader buffered_reader = new BufferedReader(new StringReader(write_get), 65536); String read_new = ""; while ((read_new = buffered_reader.readLine()) != null) {
 
-				try { BufferedReader buffered_reader = new BufferedReader(new StringReader(write_get), 65536); String read_new = ""; while ((read_new = buffered_reader.readLine()) != null) {
+                {
 
-					{
+                    if (read_new.contains(" = ") == true) {
 
-						if (read_new.contains(" = ") == true) {
+                        String test = read_new.substring(0, read_new.indexOf(" = "));
 
-							String test = read_new.substring(0, read_new.indexOf(" = "));
+                        if (old_file_exists) {
 
-							if (old_file_exists) {
+                            // Read Old
+                            {
 
-								// Read Old
-								{
+                                try { BufferedReader buffered_reader2 = new BufferedReader(new FileReader(file), 65536); String read_old = ""; while ((read_old = buffered_reader2.readLine()) != null) {
 
-									try { BufferedReader buffered_reader2 = new BufferedReader(new FileReader(file), 65536); String read_old = ""; while ((read_old = buffered_reader2.readLine()) != null) {
+                                    {
 
-										{
+                                        if (read_old.startsWith(test + " = ") == true) {
 
-											if (read_old.startsWith(test + " = ") == true) {
+                                            read_new = read_old;
+                                            break;
 
-												read_new = read_old;
-												break;
+                                        }
 
-											}
+                                    }
 
-										}
+                                } buffered_reader2.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
-									} buffered_reader2.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                            }
 
-								}
+                        }
 
-							}
+                    }
 
-						}
+                    write.append(read_new);
+                    write.append("\n");
 
-						write.append(read_new);
-						write.append("\n");
+                }
 
-					}
+            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
-				} buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+        }
 
-			}
-
-			writeTXT(file.toPath().toString(), write.toString(), false);
-
-		}
+        writeTXT(file.toPath().toString(), write.toString(), false);
 
 	}
 
@@ -168,28 +250,7 @@ public class FileManager {
 
     public static void writeBIN (String path, List<String> write, boolean append) {
 
-        File file = new File(path);
-
-        // Create a File
-        {
-
-            if (file.exists() == false) {
-
-                FileManager.createFolder(file.getParent());
-
-                try {
-
-                    file.createNewFile();
-
-                } catch (Exception exception) {
-
-                    OutsideUtils.exception(new Exception(), exception);
-
-                }
-
-            }
-
-        }
+        createEmptyFile(path, false);
 
         if (write.size() > 0) {
 
@@ -265,6 +326,137 @@ public class FileManager {
         }
 
         return ByteBuffer.wrap(data).order(ByteOrder.BIG_ENDIAN);
+
+    }
+
+    public static void extractZIP (String path_zip, String path_folder, boolean skip_first_folder, String filter) {
+
+        createEmptyFile(path_folder, true);
+
+        try {
+
+            ZipInputStream stream_input = new ZipInputStream(new FileInputStream(path_zip));
+            ZipEntry entry = stream_input.getNextEntry();
+            FileOutputStream stream_output = null;
+            byte[] bytes = new byte[1024];
+            int length = 0;
+            String entry_path = "";
+            int first_folder = 0;
+
+            while (entry != null) {
+
+                if (skip_first_folder == true) {
+
+                    if (first_folder == 0) {
+
+                        first_folder = entry.getName().length();
+
+                    }
+
+                }
+
+                entry_path = entry.getName().substring(first_folder);
+
+                if (entry_path.contains(filter) == true) {
+
+                    if (entry.isDirectory() == true) {
+
+                        createEmptyFile(path_folder + "/" + entry_path, true);
+
+                    } else {
+
+                        createEmptyFile(path_folder + "/" + entry_path, false);
+                        stream_output = new FileOutputStream(path_folder + "/" + entry_path);
+
+                        while ((length = stream_input.read(bytes)) > 0) {
+
+                            stream_output.write(bytes, 0, length);
+
+                        }
+
+                        stream_output.close();
+
+                    }
+
+                }
+
+                entry = stream_input.getNextEntry();
+
+            }
+
+            stream_input.closeEntry();
+            stream_input.close();
+
+        } catch (Exception exception) {
+
+            OutsideUtils.exception(new Exception(), exception);
+
+        }
+
+    }
+
+    public static void compressZIP (String path_zip, File file) {
+
+        createEmptyFile(path_zip, false);
+
+        try {
+
+            ZipOutputStream stream_output = new ZipOutputStream(new FileOutputStream(path_zip));
+            byte[] bytes = new byte[1024];
+
+            if (file.isDirectory() == false) {
+
+                FileInputStream stream_input = new FileInputStream(file);
+                stream_output.putNextEntry(new ZipEntry(file.getName()));
+                int length = 0;
+
+                while ((length = stream_input.read(bytes)) >= 0) {
+
+                    stream_output.write(bytes, 0, length);
+
+                }
+
+                stream_input.close();
+
+            } else {
+
+                Files.walk(file.toPath()).forEach(source -> {
+
+                    if (source.toFile().isDirectory() == false) {
+
+                        try {
+
+                            FileInputStream stream_input = new FileInputStream(source.toFile());
+                            stream_output.putNextEntry(new ZipEntry(file.toPath().relativize(source).toString()));
+                            int length = 0;
+
+                            while ((length = stream_input.read(bytes)) >= 0) {
+
+                                stream_output.write(bytes, 0, length);
+
+                            }
+
+                            stream_input.close();
+
+                        } catch (Exception exception) {
+
+                            OutsideUtils.exception(new Exception(), exception);
+
+                        }
+
+                    }
+
+                });
+
+            }
+
+            stream_output.close();
+
+        } catch (Exception exception) {
+
+            OutsideUtils.exception(new Exception(), exception);
+
+        }
 
     }
 
