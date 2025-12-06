@@ -4,11 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import tannyjung.core.game.GameUtils;
 import tannyjung.core.game.TXTFunction;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
@@ -17,15 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WorldGenBeforePlants extends Feature <NoneFeatureConfiguration> {
+public class WorldGenStepPlants extends Feature <NoneFeatureConfiguration> {
 
-    public WorldGenBeforePlants () {
+    public WorldGenStepPlants() {
 
         super(NoneFeatureConfiguration.CODEC);
 
     }
 
-    private static final Object lock_region_scan = new Object();
     private static final Object lock_function = new Object();
     private static final Map<ChunkPos, Map<BlockPos, List<String>>> functions = new HashMap<>();
 
@@ -36,19 +33,9 @@ public class WorldGenBeforePlants extends Feature <NoneFeatureConfiguration> {
 
         LevelAccessor level_accessor = context.level();
         ServerLevel level_server = context.level().getLevel();
-        ChunkGenerator chunk_generator = context.chunkGenerator();
-        String dimension = GameUtils.misc.getCurrentDimensionID(level_server).replace(":", "-");
         ChunkPos chunk_pos = new ChunkPos(context.origin().getX() >> 4, context.origin().getZ() >> 4);
 
-        synchronized (lock_region_scan) {
-
-            TreeLocation.start(level_accessor, dimension, chunk_pos);
-
-        }
-
-        TreePlacer.start(level_accessor, level_server, chunk_generator, dimension, chunk_pos);
         functionRun(level_accessor, level_server, chunk_pos);
-        DataFolderWorldGenCleaner.start(dimension, chunk_pos);
 
         return true;
 
@@ -65,7 +52,7 @@ public class WorldGenBeforePlants extends Feature <NoneFeatureConfiguration> {
 
                 for (Map.Entry<ChunkPos, Map<BlockPos, List<String>>> entry1 : functions.entrySet()) {
 
-                    if (chunk_pos == entry1.getKey()) {
+                    if (chunk_pos.equals(entry1.getKey()) == true) {
 
                         for (Map.Entry<BlockPos, List<String>> entry2 : entry1.getValue().entrySet()) {
 

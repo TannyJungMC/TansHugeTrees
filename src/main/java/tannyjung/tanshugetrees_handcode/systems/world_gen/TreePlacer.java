@@ -1402,7 +1402,7 @@ public class TreePlacer {
 
                                             for (String name : Cache.getFunctionTreeDecoration()) {
 
-                                                WorldGenBeforePlants.functionAdd(chunk_pos, pos, "#TannyJung-Main-Pack/tree_decoration/" + name);
+                                                WorldGenStepPlants.functionAdd(chunk_pos, pos, "#TannyJung-Main-Pack/tree_decoration/" + name);
 
                                             }
 
@@ -1410,7 +1410,7 @@ public class TreePlacer {
 
                                             for (String name : Cache.getFunctionTreeDecorationDecay()) {
 
-                                                WorldGenBeforePlants.functionAdd(chunk_pos, pos, "#TannyJung-Main-Pack/tree_decoration_decay/" + name);
+                                                WorldGenStepPlants.functionAdd(chunk_pos, pos, "#TannyJung-Main-Pack/tree_decoration_decay/" + name);
 
                                             }
 
@@ -1430,7 +1430,7 @@ public class TreePlacer {
                                     // Separate like this because start and end function doesn't need to test "can_run_function"
                                     if (can_run_function == true || (type.equals("210") == true || type.equals("220") == true)) {
 
-                                        WorldGenBeforePlants.functionAdd(chunk_pos, pos, get);
+                                        WorldGenStepPlants.functionAdd(chunk_pos, pos, get);
 
                                     }
 
