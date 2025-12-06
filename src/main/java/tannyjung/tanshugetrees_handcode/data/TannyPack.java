@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.config;
+package tannyjung.tanshugetrees_handcode.data;
 
 import net.minecraft.server.level.ServerLevel;
 
@@ -11,74 +11,56 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import net.minecraft.world.level.LevelAccessor;
+import tannyjung.core.FileManager;
 import tannyjung.core.OutsideUtils;
 import tannyjung.core.game.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 ;
 
-public class PackUpdate {
+public class TannyPack {
 
-    public static void start (LevelAccessor level_accessor) {
+    public static void start (ServerLevel level_server) {
 
-        Handcode.thread_main.submit(() -> {
+        if (checkModVersion(level_server, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_type.toLowerCase() + "/version.txt") == true) {
 
-            if (level_accessor instanceof ServerLevel level_server) {
+            GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+            GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
 
-                if (checkModVersion(level_server, "https://raw.githubusercontent.com/TannyJungMC/THT-tree_pack/" + Handcode.tanny_pack_version_name.toLowerCase() + "/version.txt") == true) {
+            Handcode.system_pause = true;
+            reinstall(level_server);
 
-                    GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
-                    GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Started the installation, this may take a while.");
-
-                    Handcode.system_pause = true;
-                    run(level_accessor, level_server);
-
-                }
-
-            }
-
-        });
+        }
 
 	}
 
-    private static void run (LevelAccessor level_accessor, ServerLevel level_server) {
+    public static void reinstall (ServerLevel level_server) {
 
-        // Delete Old Folders
-        {
+        String url = "https://github.com/TannyJungMC/THT-tree_pack/archive/refs/heads/" + Handcode.tanny_pack_type.toLowerCase() + ".zip";
 
-            if (deleteOldPackFolder(level_server, Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack") == false) {
-                return;
-            }
-            if (deleteOldPackFolder(level_server, Handcode.path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack") == false) {
-                return;
-            }
+        if (OutsideUtils.isURLAvailable(url) == true) {
 
-        }
+            FileManager.delete(Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack");
+            FileManager.delete(Handcode.path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack");
 
-        // Systems
-        {
+            OutsideUtils.download(url, Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack.zip");
+            FileManager.extractZIP(Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack.zip", Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack", true, "");
+            FileManager.delete(Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack.zip");
 
-            if (createZIP(level_server) == false) {
-                return;
-            }
-            if (createZIP(level_server) == false) {
-                return;
-            }
-            if (download(level_server) == false) {
-                return;
-            }
-            if (unzip(level_server) == false) {
-                return;
-            }
-            if (deleteZIP(level_server) == false) {
-                return;
-            }
-            if (renameFolder(level_server) == false) {
-                return;
-            }
+            // If a config about "ZIP main pack" is true. ZIP is good for lesser space, but might slower to get data.
+            FileManager.compressZIP(Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack.zip", new File(Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack"));
+            FileManager.delete(Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack");
 
         }
+
+
+
+
+
+
+
+
+        /*
 
         GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Install Completed!");
         GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
@@ -86,7 +68,12 @@ public class PackUpdate {
         GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
         message(level_server);
 
-        Handcode.restart(level_accessor, true, true);
+         */
+
+
+
+
+        Handcode.restart(level_server, true, true);
 
     }
 
@@ -131,7 +118,8 @@ public class PackUpdate {
 
 					if (read_all.startsWith("data_structure_version = ")) {
 
-						data_structure_version_url = Integer.parseInt(read_all.replace("data_structure_version = ", ""));
+						data_structure_version_url = Integer.parseInt(read_all.substring("data_structure_version = ".length()));
+                        break;
 
 					}
 
@@ -146,12 +134,12 @@ public class PackUpdate {
             return_logic = false;
             GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't do auto install right now, as the mod can't connect to GitHub.");
 
-        } else if (Handcode.DATA_STRUCTURE_VERSION > data_structure_version_url) {
+        } else if (Handcode.data_structure_version > data_structure_version_url) {
 
 			return_logic = false;
-			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Main Pack (" + Handcode.tanny_pack_version_name + ") haven't updated to support this mod version yet, please wait a bit for the update to be available.");
+			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Seems like you update the mod very fast! TannyJung's Main Pack (" + Handcode.tanny_pack_type + ") haven't updated to support this mod version yet, please wait a bit for the update to be available.");
 
-		} else if (Handcode.DATA_STRUCTURE_VERSION < data_structure_version_url) {
+		} else if (Handcode.data_structure_version < data_structure_version_url) {
 
 			return_logic = false;
 			GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : You're currently using mod version that does not support to new version of the pack. Try update the mod and do it again.");
@@ -160,7 +148,7 @@ public class PackUpdate {
 
 		if (return_logic == false) {
 
-			TanshugetreesMod.LOGGER.info("Your mod data structure version is " + Handcode.DATA_STRUCTURE_VERSION + " but the pack is " + data_structure_version_url);
+			TanshugetreesMod.LOGGER.info("Your mod data structure version is " + Handcode.data_structure_version + " but the pack is " + data_structure_version_url);
 
 		}
 
@@ -216,7 +204,7 @@ public class PackUpdate {
 
 	private static boolean download (ServerLevel level_server) {
 
-		String download_from = "https://github.com/TannyJungMC/THT-tree_pack/archive/refs/heads/" + Handcode.tanny_pack_version_name.toLowerCase() + ".zip";
+		String download_from = "https://github.com/TannyJungMC/THT-tree_pack/archive/refs/heads/" + Handcode.tanny_pack_type.toLowerCase() + ".zip";
 		String download_to = Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack.zip";
 
 		try {
@@ -359,7 +347,7 @@ public class PackUpdate {
 
 	private static boolean renameFolder (ServerLevel level_server) {
 
-		File rename_from = new File(Handcode.path_config + "/custom_packs/THT-tree_pack-" + Handcode.tanny_pack_version_name.toLowerCase());
+		File rename_from = new File(Handcode.path_config + "/custom_packs/THT-tree_pack-" + Handcode.tanny_pack_type.toLowerCase());
 		File rename_to = new File(Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack");
 
 		if (rename_from.renameTo(rename_to) == false) {
