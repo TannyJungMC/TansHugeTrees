@@ -32,11 +32,11 @@ public class DataMigration {
 
             }
 
-            if (Handcode.data_structure_version != previous_version) {
+            if (Handcode.data_structure_version_config != previous_version) {
 
                 if (config.test(previous_version) == true) {
 
-                    FileManager.writeTXT(path, String.valueOf(Handcode.data_structure_version), false);
+                    FileManager.writeTXT(path, String.valueOf(Handcode.data_structure_version_config), false);
 
                 }
 
@@ -101,6 +101,7 @@ public class DataMigration {
 
                 FileManager.rename(Handcode.path_config + "/custom_packs/THT-tree_pack-main", "#TannyJung-Main-Pack");
                 FileManager.rename(Handcode.path_config + "/custom_packs/#TansHugeTrees-Main-Pack", "#TannyJung-Main-Pack");
+                FileManager.rename(Handcode.path_config + "/config_world_gen.txt", "config_worldgen.txt");
                 return true;
 
             }
