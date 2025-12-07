@@ -13,12 +13,12 @@ import java.util.*;
 
 public class CustomPackOrganizing {
 
-    private static final Map<String, String> cache_pack_id = new HashMap<>();
-    private static final Map<String, Map<String, List<String>>> cache_error = new HashMap<>();
+    private static final Map<String, Map<String, List<String>>> cache_errors = new HashMap<>();
+    private static final Map<String, String> pack_ids = new HashMap<>();
 
     public static void start (ServerLevel level_server, String path_config, String pack_separation_single, String pack_separation_multiple) {
 
-        cache_error.clear();
+        cache_errors.clear();
 
         FileManager.delete(path_config + "/#dev/temporary");
         FileManager.createEmptyFile(path_config + "/#dev/temporary", true);
@@ -62,9 +62,7 @@ public class CustomPackOrganizing {
 
         }
 
-        testInfo(path_config);
-
-        // Organizing Info File
+        // Organizing Info
         {
 
             File[] packs = new File(path_config + "/custom_packs").listFiles();
@@ -96,6 +94,9 @@ public class CustomPackOrganizing {
             }
 
         }
+
+        getPackID(path_config);
+        testInfo(path_config);
 
         // Organizing Data
         {
@@ -135,96 +136,158 @@ public class CustomPackOrganizing {
 
                         for (File file : inside) {
 
-                            if (file.isDirectory() == true) {
+                            if (pack_separation_single.contains("/" + file.getName() + "/") == true) {
 
-                                if (file.getName().equals("replace") == true) {
+                                // Single Separation
+                                {
 
-                                    // Replacement
+                                    if (incompatible == false) {
+
+                                        FileManager.copy(file.getPath(), path_config + "/#dev/temporary/" + file.getName(), true);
+
+                                    }
+
+                                }
+
+                            } else if (pack_separation_multiple.contains("/" + file.getName() + "/") == true) {
+
+                                // Multiple Separation
+                                {
+
+                                    Path path_to = Path.of(path_config + "/#dev/temporary/" + file.getName() + "/" + pack_ids.get(pack_name));
+
                                     {
 
-                                        if (incompatible == false) {
+                                        try {
 
-                                            {
+                                            Files.walk(file.toPath()).forEach(source -> {
 
-                                                try {
+                                                if (source.toFile().isDirectory() == false) {
 
-                                                    Files.walk(file.toPath()).forEach(source -> {
+                                                    Path path_copy_to = path_to.resolve(Path.of(path_pack).resolve(file.getName()).relativize(source));
 
+                                                    if (incompatible == true) {
+
+                                                        path_copy_to = path_copy_to.getParent().resolve("[INCOMPATIBLE] " + path_copy_to.toFile().getName());
+
+                                                    }
+
+                                                    FileManager.copy(source.toString(), path_copy_to.toString(), false);
+
+                                                }
+
+                                            });
+
+                                        } catch (Exception exception) {
+
+                                            OutsideUtils.exception(new Exception(), exception);
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        // Organizing Replacement
+        {
+
+            File[] packs = new File(path_config + "/custom_packs").listFiles();
+
+            if (packs != null) {
+
+                for (File pack : packs) {
+
+                    if (pack.getName().startsWith("[INCOMPATIBLE] ") == false) {
+
+                        if (pack.getName().endsWith(".zip") == true) {
+
+                            pack = new File(path_config + "/#dev/temporary/pack_zip/" + pack.getName().replace(".zip", ""));
+
+                        }
+
+                        File file = new File(pack.getPath() + "/replace");
+
+                        if (file.exists() == true && file.isDirectory() == true) {
+
+                            {
+
+                                try {
+
+                                    Files.walk(file.toPath()).forEach(source -> {
+
+                                        {
+
+                                            if (source.toFile().isDirectory() == false) {
+
+                                                String replace_to = Path.of(path_config + "/#dev/temporary").resolve(file.toPath().relativize(source)).toString();
+
+                                                if (source.toString().endsWith(".txt") == true) {
+
+                                                    // Replace TXT with Mode
+                                                    {
+
+                                                        String[] data_old = FileManager.readTXT(replace_to);
+                                                        String[] data_new = FileManager.readTXT(source.toString());
+                                                        String[] data = data_new;
+                                                        boolean specific = false;
+
+                                                        // Get Mode
                                                         {
 
-                                                            if (source.toFile().isDirectory() == false) {
+                                                            for (String read_all : data_new) {
 
-                                                                String replace_to = Path.of(path_config + "/#dev/temporary").resolve(file.toPath().relativize(source)).toString();
+                                                                if (read_all.equals("# SPECIFIC") == true) {
 
-                                                                if (source.toString().endsWith(".txt") == true) {
+                                                                    specific = true;
 
-                                                                    // Replace TXT with Mode
-                                                                    {
+                                                                }
 
-                                                                        String[] data_old = FileManager.readTXT(replace_to);
-                                                                        String[] data_new = FileManager.readTXT(source.toString());
-                                                                        String[] data = data_new;
-                                                                        boolean specific = false;
+                                                                break;
 
-                                                                        // Get Mode
-                                                                        {
+                                                            }
 
-                                                                            for (String read_all : data_new) {
+                                                        }
 
-                                                                                if (read_all.equals("# SPECIFIC") == true) {
+                                                        if (specific == true) {
 
-                                                                                    specific = true;
+                                                            data = data_old;
+                                                            int line = 0;
+                                                            String name = "";
 
-                                                                                }
+                                                            for (String read_all : data_new) {
 
+                                                                if (read_all.equals("") == false) {
+
+                                                                    if (read_all.contains(" = ") == true) {
+
+                                                                        name = read_all.substring(0, read_all.indexOf(" = ") + 3);
+
+                                                                        for (String read_all_old : data) {
+
+                                                                            if (read_all_old.startsWith(name) == true) {
+
+                                                                                data[line] = read_all;
                                                                                 break;
 
                                                                             }
 
-                                                                        }
-
-                                                                        if (specific == true) {
-
-                                                                            data = data_old;
-                                                                            int line = 0;
-                                                                            String name = "";
-
-                                                                            for (String read_all : data_new) {
-
-                                                                                if (read_all.equals("") == false) {
-
-                                                                                    if (read_all.contains(" = ") == true) {
-
-                                                                                        name = read_all.substring(0, read_all.indexOf(" = ") + 3);
-
-                                                                                        for (String read_all_old : data) {
-
-                                                                                            if (read_all_old.startsWith(name) == true) {
-
-                                                                                                data[line] = read_all;
-                                                                                                break;
-
-                                                                                            }
-
-                                                                                            line = line + 1;
-
-                                                                                        }
-
-                                                                                    }
-
-                                                                                }
-
-                                                                            }
+                                                                            line = line + 1;
 
                                                                         }
-
-                                                                        FileManager.writeTXT(replace_to, String.join("\n", data), false);
 
                                                                     }
-
-                                                                } else {
-
-                                                                    FileManager.copy(source.toString(), replace_to, false);
 
                                                                 }
 
@@ -232,11 +295,13 @@ public class CustomPackOrganizing {
 
                                                         }
 
-                                                    });
+                                                        FileManager.writeTXT(replace_to, String.join("\n", data), false);
 
-                                                } catch (Exception exception) {
+                                                    }
 
-                                                    OutsideUtils.exception(new Exception(), exception);
+                                                } else {
+
+                                                    FileManager.copy(source.toString(), replace_to, false);
 
                                                 }
 
@@ -244,59 +309,11 @@ public class CustomPackOrganizing {
 
                                         }
 
-                                    }
+                                    });
 
-                                } else if (pack_separation_single.contains("/" + file.getName() + "/") == true) {
+                                } catch (Exception exception) {
 
-                                    // Single Separation
-                                    {
-
-                                        if (incompatible == false) {
-
-                                            FileManager.copy(file.getPath(), path_config + "/#dev/temporary/" + file.getName(), true);
-
-                                        }
-
-                                    }
-
-                                } else if (pack_separation_multiple.contains("/" + file.getName() + "/") == true) {
-
-                                    // Multiple Separation
-                                    {
-
-                                        Path path_to = Path.of(path_config + "/#dev/temporary/" + file.getName() + "/" + cache_pack_id.get(pack_name));
-
-                                        {
-
-                                            try {
-
-                                                Files.walk(file.toPath()).forEach(source -> {
-
-                                                    if (source.toFile().isDirectory() == false) {
-
-                                                        Path path_copy_to = path_to.resolve(Path.of(path_pack).resolve(file.getName()).relativize(source));
-
-                                                        if (incompatible == true) {
-
-                                                            path_copy_to = path_copy_to.getParent().resolve("[INCOMPATIBLE] " + path_copy_to.toFile().getName());
-
-                                                        }
-
-                                                        FileManager.copy(source.toString(), path_copy_to.toString(), false);
-
-                                                    }
-
-                                                });
-
-                                            } catch (Exception exception) {
-
-                                                OutsideUtils.exception(new Exception(), exception);
-
-                                            }
-
-                                        }
-
-                                    }
+                                    OutsideUtils.exception(new Exception(), exception);
 
                                 }
 
@@ -319,13 +336,13 @@ public class CustomPackOrganizing {
         sendErrorMessage(level_server, "pack");
         sendErrorMessage(level_server, "file");
 
-        cache_pack_id.clear();
+        pack_ids.clear();
 
     }
 
     private static void addError (String type, String error, String path, String troublemaker) {
 
-        cache_error.computeIfAbsent(type, test -> new HashMap<>()).computeIfAbsent(error, test -> new ArrayList<>()).add(troublemaker);
+        cache_errors.computeIfAbsent(type, test -> new HashMap<>()).computeIfAbsent(error, test -> new ArrayList<>()).add(troublemaker);
         File file = new File(path);
 
         if (file.getName().startsWith("[INCOMPATIBLE] ") == false) {
@@ -338,12 +355,12 @@ public class CustomPackOrganizing {
 
     public static void sendErrorMessage (ServerLevel level_server, String type) {
 
-        if (cache_error.containsKey(type) == true) {
+        if (cache_errors.containsKey(type) == true) {
 
             String message = "";
             String[] split = new String[0];
 
-            for (Map.Entry<String, List<String>> entry : cache_error.get(type).entrySet()) {
+            for (Map.Entry<String, List<String>> entry : cache_errors.get(type).entrySet()) {
 
                 split = entry.getKey().split(" / ");
                 message = "Detected incompatible " + split[0] + ". Caused by " + split[1] + ".";
@@ -378,6 +395,35 @@ public class CustomPackOrganizing {
 
     }
 
+    public static void getPackID (String path_config) {
+
+        File[] files = new File(path_config + "/#dev/temporary/info").listFiles();
+
+        if (files != null) {
+
+            for (File file : files) {
+
+                if (file.exists() == true && file.isDirectory() == false) {
+
+                    for (String read_all : FileManager.readTXT(file.getPath())) {
+
+                        if (read_all.startsWith("pack_id = ") == true) {
+
+                            pack_ids.put(file.getName().substring(0, file.getName().length() - ".txt".length()), read_all.substring("pack_id = ".length()));
+                            break;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
     public static void testInfo (String path_config) {
 
         File[] packs = new File(path_config + "/custom_packs").listFiles();
@@ -386,92 +432,18 @@ public class CustomPackOrganizing {
 
             File file = null;
             String pack_id = "";
-
-            // First Test and Pack ID
-            {
-
-                for (File pack : packs) {
-
-                    if (pack.getName().endsWith(".zip") == true) {
-
-                        file = new File(path_config + "/#dev/temporary/pack_zip/" + pack.getName().replace(".zip", "") + "/info.txt");
-
-                    } else {
-
-                        file = new File(pack.getPath() + "/info.txt");
-
-                    }
-
-                    if (file.exists() == true && file.isDirectory() == false) {
-
-                        // Get Pack ID
-                        {
-
-                            for (String read_all : FileManager.readTXT(file.getPath())) {
-
-                                if (read_all.startsWith("pack_id = ") == true) {
-
-                                    pack_id = read_all.substring("pack_id = ".length());
-                                    break;
-
-                                }
-
-                            }
-
-                        }
-
-                        // Test Pack ID
-                        {
-
-                            if (pack_id.equals("") == true) {
-
-                                addError("pack", "pack / pack ID not found", pack.getPath(), pack.getName());
-                                return;
-
-                            }
-
-                            if (cache_pack_id.containsValue(pack_id) == true) {
-
-                                addError("pack", "pack / duplicated pack ID", pack.getPath(), pack.getName() + " > " + pack_id);
-                                continue;
-
-                            }
-
-                        }
-
-                        cache_pack_id.put(pack.getName(), pack_id);
-
-                    } else {
-
-                        addError("pack", "pack / info file not found", pack.getPath(), pack.getName());
-                        return;
-
-                    }
-
-                }
-
-            }
-
+            List<String> pack_id_duplicated_test = new ArrayList<>();
             int data_structure_version = 0;
             String required_packs = "";
             String required_mods = "";
 
-            // Other Test
-            {
+            for (File pack : packs) {
 
-                for (File pack : packs) {
+                file = new File(path_config + "/#dev/temporary/info/" + pack.getName() + ".txt");
 
-                    if (pack.getName().endsWith(".zip") == true) {
+                if (file.exists() == true && file.isDirectory() == false) {
 
-                        file = new File(path_config + "/#dev/temporary/pack_zip/" + pack.getName().replace(".zip", "") + "/info.txt");
-
-                    } else {
-
-                        file = new File(pack.getPath() + "/info.txt");
-
-                    }
-
-                    // Get Other Data
+                    // Get Data
                     {
 
                         for (String read_all : FileManager.readTXT(file.getPath())) {
@@ -494,34 +466,46 @@ public class CustomPackOrganizing {
 
                     }
 
-                    test:
-                    {
+                    pack_id = pack_ids.get(pack.getName());
 
-                        // Test Mod Version
+                    if (pack_id == null) {
+
+                        FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                        addError("pack", "pack / pack ID not found", pack.getPath(), pack.getName());
+
+                    } else if (data_structure_version != Handcode.data_structure_version_config) {
+
+                        FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                        addError("pack", "pack / unsupported mod version", pack.getPath(), pack.getName());
+
+                    } else if (pack_id_duplicated_test.contains(pack_id) == true) {
+
                         {
 
-                            if (data_structure_version != Handcode.data_structure_version) {
+                            FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                            addError("pack", "pack / duplicated pack ID", pack.getPath(), pack.getName() + " > " + pack_id);
 
-                                addError("pack", "pack / unsupported mod version", pack.getPath(), pack.getName());
-                                break test;
+                            while (pack_ids.containsValue(pack_id) == true) {
+
+                                pack_id = pack_id + "X";
 
                             }
 
+                            pack_ids.put(pack.getName(), pack_id);
+
                         }
 
-                        // Test Required Packs
+                    } else if (required_packs.equals("") == false && required_packs.equals("none") == false) {
+
                         {
 
-                            if (required_packs.equals("") == false && required_packs.equals("none") == false) {
+                            for (String value : required_packs.split(", ")) {
 
-                                for (String value : required_packs.split(", ")) {
+                                if (pack_ids.containsValue(value) == false) {
 
-                                    if (cache_pack_id.containsValue(value) == false) {
-
-                                        addError("pack", "pack / required pack not found", pack.getPath(), pack.getName() + " > " + value);
-                                        break test;
-
-                                    }
+                                    FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                                    addError("pack", "pack / required pack not found", pack.getPath(), pack.getName() + " > " + value);
+                                    break;
 
                                 }
 
@@ -529,19 +513,17 @@ public class CustomPackOrganizing {
 
                         }
 
-                        // Test Required Mods
+                    } else if (required_mods.equals("") == false && required_mods.equals("none") == false) {
+
                         {
 
-                            if (required_mods.equals("") == false && required_mods.equals("none") == false) {
+                            for (String value : required_mods.split(", ")) {
 
-                                for (String value : required_mods.split(", ")) {
+                                if (GameUtils.misc.isModLoaded(value) == false) {
 
-                                    if (GameUtils.misc.isModLoaded(value) == false) {
-
-                                        addError("pack", "pack / required mod not found", pack.getPath(), pack.getName() + " > " + value);
-                                        break test;
-
-                                    }
+                                    FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                                    addError("pack", "pack / required mod not found", pack.getPath(), pack.getName() + " > " + value);
+                                    break;
 
                                 }
 
@@ -550,6 +532,13 @@ public class CustomPackOrganizing {
                         }
 
                     }
+
+                    pack_id_duplicated_test.add(pack_id);
+
+                } else {
+
+                    FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                    addError("pack", "pack / info file not found", pack.getPath(), pack.getName());
 
                 }
 

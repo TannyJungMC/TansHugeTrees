@@ -50,7 +50,7 @@ public class TreeLocation {
         if (file_region.exists() == false) {
 
             FileManager.writeBIN(file_region.getPath(), new ArrayList<>(), false);
-            File file = new File(Handcode.path_config + "/config_world_gen.txt");
+            File file = new File(Handcode.path_config + "/config_worldgen.txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 

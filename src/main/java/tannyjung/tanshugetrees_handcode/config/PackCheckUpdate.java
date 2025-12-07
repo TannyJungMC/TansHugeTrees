@@ -9,7 +9,6 @@ import java.io.FileReader;
 
 import net.minecraft.server.level.ServerLevel;
 
-import net.minecraft.world.level.LevelAccessor;
 import tannyjung.core.OutsideUtils;
 import tannyjung.core.game.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
@@ -136,7 +135,7 @@ public class PackCheckUpdate {
 
                                 message(level_server, "error", "Something went wrong with version testing. Maybe website is down or there's a new mod update.");
 
-                            } else if (Handcode.data_structure_version > url_data_structure_version) {
+                            } else if (Handcode.data_structure_version_config > url_data_structure_version) {
 
                                 message(level_server, "error", "Seems like you update the mod very fast! TannyJung's Main Pack (" + Handcode.tanny_pack_type + ") haven't updated to support this mod version yet, please wait a bit for the update to be available.");
 
@@ -172,7 +171,7 @@ public class PackCheckUpdate {
 
                             }
 
-                            TanshugetreesMod.LOGGER.info("Data Structure Version   ->   Mod {} GitHub {}", Handcode.data_structure_version, url_data_structure_version);
+                            TanshugetreesMod.LOGGER.info("Data Structure Version   ->   Mod {} GitHub {}", Handcode.data_structure_version_config, url_data_structure_version);
                             TanshugetreesMod.LOGGER.info("Pack Version   ->   Mod {} GitHub {}", pack_version, url_pack_version);
 
                         }

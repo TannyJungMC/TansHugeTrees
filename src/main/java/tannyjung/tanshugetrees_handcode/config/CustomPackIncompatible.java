@@ -191,7 +191,7 @@ public class CustomPackIncompatible {
 
             }
 
-            if (data_structure_version != Handcode.data_structure_version) {
+            if (data_structure_version != Handcode.data_structure_version_config) {
 
                 error = "Detected incompatible pack. Caused by unsupported mod version. [ " + pack_name + " ]";
 
