@@ -1,4 +1,4 @@
-package tannyjung.core.game;
+package tannyjung.tanshugetrees_core.game;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
-import tannyjung.core.OutsideUtils;
+import tannyjung.tanshugetrees_core.OutsideUtils;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 public class TXTFunction {

@@ -9,8 +9,8 @@ import java.io.FileReader;
 
 import net.minecraft.server.level.ServerLevel;
 
-import tannyjung.core.OutsideUtils;
-import tannyjung.core.game.GameUtils;
+import tannyjung.tanshugetrees_core.OutsideUtils;
+import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.data.FileConfig;

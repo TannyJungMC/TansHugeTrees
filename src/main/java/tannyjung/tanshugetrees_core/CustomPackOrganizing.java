@@ -1,8 +1,8 @@
-package tannyjung.core;
+package tannyjung.tanshugetrees_core;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
-import tannyjung.core.game.GameUtils;
+import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 

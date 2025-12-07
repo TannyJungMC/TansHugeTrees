@@ -1,8 +1,8 @@
 package tannyjung.tanshugetrees_handcode.data;
 
 import net.minecraft.server.level.ServerLevel;
-import tannyjung.core.CustomPackOrganizing;
-import tannyjung.core.FileManager;
+import tannyjung.tanshugetrees_core.CustomPackOrganizing;
+import tannyjung.tanshugetrees_core.FileManager;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.data.migration.DataMigration;
 

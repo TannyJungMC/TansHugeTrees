@@ -1,7 +1,7 @@
 package tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics;
 
 import net.minecraft.server.level.ServerLevel;
-import tannyjung.core.game.GameUtils;
+import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 
 public class Seasons {

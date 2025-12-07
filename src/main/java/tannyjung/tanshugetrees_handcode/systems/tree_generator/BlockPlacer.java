@@ -3,9 +3,9 @@ package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.core.game.NBTManager;
-import tannyjung.core.game.TXTFunction;
-import tannyjung.core.game.GameUtils;
+import tannyjung.tanshugetrees_core.game.NBTManager;
+import tannyjung.tanshugetrees_core.game.TXTFunction;
+import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class BlockPlacer {

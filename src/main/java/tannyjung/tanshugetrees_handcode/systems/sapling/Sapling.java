@@ -6,8 +6,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.core.game.NBTManager;
-import tannyjung.core.game.GameUtils;
+import tannyjung.tanshugetrees_core.game.NBTManager;
+import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.init.TanshugetreesModBlocks;
 import tannyjung.tanshugetrees_handcode.Handcode;
 

@@ -5,8 +5,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.core.game.CommandMaker;
-import tannyjung.core.game.TXTFunction;
+import tannyjung.tanshugetrees_core.game.CommandMaker;
+import tannyjung.tanshugetrees_core.game.TXTFunction;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 import net.minecraftforge.fml.common.Mod;

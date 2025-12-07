@@ -2,7 +2,7 @@ package tannyjung.tanshugetrees_handcode.systems.compatibility;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.core.game.GameUtils;
+import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class CompatibilitySereneSeasons {

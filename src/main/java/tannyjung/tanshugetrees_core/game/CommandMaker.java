@@ -1,4 +1,4 @@
-package tannyjung.core.game;
+package tannyjung.tanshugetrees_core.game;
 
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -6,7 +6,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import tannyjung.core.OutsideUtils;
+import tannyjung.tanshugetrees_core.OutsideUtils;
 
 import java.util.function.Consumer;
 

@@ -8,7 +8,7 @@ import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import tannyjung.core.game.OverlayMaker;
+import tannyjung.tanshugetrees_core.game.OverlayMaker;
 import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.TreeLocation;
 

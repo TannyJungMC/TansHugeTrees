@@ -1,4 +1,4 @@
-package tannyjung.core.game;
+package tannyjung.tanshugetrees_core.game;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

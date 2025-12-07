@@ -7,7 +7,7 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import tannyjung.core.game.GameUtils;
+import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class WorldGenStepBeforePlants extends Feature <NoneFeatureConfiguration> {

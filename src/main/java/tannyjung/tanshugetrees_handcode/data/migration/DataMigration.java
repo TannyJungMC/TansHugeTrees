@@ -1,6 +1,6 @@
 package tannyjung.tanshugetrees_handcode.data.migration;
 
-import tannyjung.core.FileManager;
+import tannyjung.tanshugetrees_core.FileManager;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.*;

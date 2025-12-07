@@ -11,9 +11,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import tannyjung.core.FileManager;
-import tannyjung.core.OutsideUtils;
-import tannyjung.core.game.GameUtils;
+import tannyjung.tanshugetrees_core.FileManager;
+import tannyjung.tanshugetrees_core.OutsideUtils;
+import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_handcode.Handcode;
 ;

@@ -1,4 +1,4 @@
-package tannyjung.core.game;
+package tannyjung.tanshugetrees_core.game;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import tannyjung.core.OutsideUtils;
+import tannyjung.tanshugetrees_core.OutsideUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

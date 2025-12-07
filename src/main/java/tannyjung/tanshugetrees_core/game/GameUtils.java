@@ -1,4 +1,4 @@
-package tannyjung.core.game;
+package tannyjung.tanshugetrees_core.game;
 
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
@@ -32,7 +32,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
-import tannyjung.core.OutsideUtils;
+import tannyjung.tanshugetrees_core.OutsideUtils;
 
 import java.io.BufferedReader;
 import java.io.File;

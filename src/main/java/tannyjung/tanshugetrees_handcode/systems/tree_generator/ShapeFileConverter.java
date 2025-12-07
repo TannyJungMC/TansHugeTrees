@@ -3,10 +3,10 @@ package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.core.FileManager;
-import tannyjung.core.OutsideUtils;
-import tannyjung.core.game.NBTManager;
-import tannyjung.core.game.GameUtils;
+import tannyjung.tanshugetrees_core.FileManager;
+import tannyjung.tanshugetrees_core.OutsideUtils;
+import tannyjung.tanshugetrees_core.game.NBTManager;
+import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
 

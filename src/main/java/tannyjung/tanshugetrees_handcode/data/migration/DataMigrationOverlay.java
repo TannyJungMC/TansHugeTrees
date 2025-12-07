@@ -7,7 +7,7 @@ import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import tannyjung.core.game.OverlayMaker;
+import tannyjung.tanshugetrees_core.game.OverlayMaker;
 
 @Mod.EventBusSubscriber({Dist.CLIENT})
 public class DataMigrationOverlay {

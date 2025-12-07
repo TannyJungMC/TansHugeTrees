@@ -7,7 +7,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import tannyjung.core.game.TXTFunction;
+import tannyjung.tanshugetrees_core.game.TXTFunction;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.util.ArrayList;

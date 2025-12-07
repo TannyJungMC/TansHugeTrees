@@ -5,8 +5,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import tannyjung.core.game.NBTManager;
-import tannyjung.core.game.GameUtils;
+import tannyjung.tanshugetrees_core.game.NBTManager;
+import tannyjung.tanshugetrees_core.game.GameUtils;
 
 public class LivingTreeMechanicsLeafDrop {
 

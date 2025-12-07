@@ -1,7 +1,7 @@
 package tannyjung.tanshugetrees_handcode.systems;
 
-import tannyjung.core.FileManager;
-import tannyjung.core.OutsideUtils;
+import tannyjung.tanshugetrees_core.FileManager;
+import tannyjung.tanshugetrees_core.OutsideUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.File;

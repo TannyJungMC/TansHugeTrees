@@ -2,7 +2,7 @@ package tannyjung.tanshugetrees_handcode.systems;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.core.game.GameUtils;
+import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 
