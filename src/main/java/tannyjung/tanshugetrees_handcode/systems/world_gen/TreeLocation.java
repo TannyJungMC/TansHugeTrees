@@ -73,7 +73,7 @@ public class TreeLocation {
 
                             world_gen_overlay_bar = world_gen_overlay_bar + 1;
 
-                            if (random.nextDouble() < FileConfig.region_scan_chance) {
+                            if (random.nextDouble() < FileConfig.region_scan_percent * 0.01) {
 
                                 getData(level_accessor, dimension, random, posX + scanX, posZ + scanZ, config_world_gen);
 
@@ -260,6 +260,7 @@ public class TreeLocation {
 
                                         world_gen_overlay_details_tree = id;
                                         int group_size_get = 0;
+                                        String biome_id = "";
 
                                         // Test All Data
                                         {
@@ -303,16 +304,17 @@ public class TreeLocation {
                                             // Biome
                                             {
 
+                                                biome_id = GameUtils.biome.toID(biome_center);
                                                 boolean result = false;
 
-                                                if (cache_biome_test.containsKey(GameUtils.biome.toID(biome_center) + "|" + id) == true) {
+                                                if (cache_biome_test.containsKey(biome_id + "|" + id) == true) {
 
-                                                    result = cache_biome_test.get(GameUtils.biome.toID(biome_center) + "|" + id);
+                                                    result = cache_biome_test.get(biome_id + "|" + id);
 
                                                 } else {
 
                                                     result = GameUtils.misc.testCustomBiome(biome_center, biome);
-                                                    cache_biome_test.put(GameUtils.biome.toID(biome_center) + "|" + id, result);
+                                                    cache_biome_test.put(biome_id + "|" + id, result);
 
                                                 }
 
@@ -380,19 +382,6 @@ public class TreeLocation {
                                                     center_posX = center_posX + random.nextInt(-(min_distance + 1), (min_distance + 1) + 1);
                                                     center_posZ = center_posZ + random.nextInt(-(min_distance + 1), (min_distance + 1) + 1);
 
-                                                    // Biome
-                                                    {
-
-                                                        biome_center = level_accessor.getBiome(new BlockPos(center_posX, level_accessor.getMaxBuildHeight(), center_posZ));
-
-                                                        if (GameUtils.misc.testCustomBiome(biome_center, biome) == false) {
-
-                                                            continue;
-
-                                                        }
-
-                                                    }
-
                                                     // Min Distance
                                                     {
 
@@ -403,6 +392,32 @@ public class TreeLocation {
                                                                 continue;
 
                                                             }
+
+                                                        }
+
+                                                    }
+
+                                                    // Biome
+                                                    {
+
+                                                        biome_center = level_accessor.getBiome(new BlockPos(center_posX, level_accessor.getMaxBuildHeight(), center_posZ));
+                                                        biome_id = GameUtils.biome.toID(biome_center);
+                                                        boolean result = false;
+
+                                                        if (cache_biome_test.containsKey(biome_id + "|" + id) == true) {
+
+                                                            result = cache_biome_test.get(biome_id + "|" + id);
+
+                                                        } else {
+
+                                                            result = GameUtils.misc.testCustomBiome(biome_center, biome);
+                                                            cache_biome_test.put(biome_id + "|" + id, result);
+
+                                                        }
+
+                                                        if (result == false) {
+
+                                                            continue;
 
                                                         }
 
@@ -723,19 +738,41 @@ public class TreeLocation {
         if (chosen.exists() == true && chosen.isDirectory() == false) {
 
             short[] get1 = Cache.getTreeShapePart1(path_storage + "/" + chosen.getName());
-            int sizeX = get1[0];
-            int sizeY = get1[1];
-            int sizeZ = get1[2];
-            int center_sizeX = get1[3];
-            int center_sizeY = get1[4];
-            int center_sizeZ = get1[5];
+            int sizeX = 0;
+            int sizeY = 0;
+            int sizeZ = 0;
+            int center_sizeX = 0;
+            int center_sizeY = 0;
+            int center_sizeZ = 0;
             int[] get2 = Cache.getTreeShapePart2(path_storage + "/" + chosen.getName());
-            int count_trunk = get2[0];
-            int count_bough = get2[1];
-            int count_branch = get2[2];
-            int count_limb = get2[3];
-            int count_twig = get2[4];
-            int count_sprig = get2[5];
+            int count_trunk = 0;
+            int count_bough = 0;
+            int count_branch = 0;
+            int count_limb = 0;
+            int count_twig = 0;
+            int count_sprig = 0;
+
+            try {
+
+                sizeX = get1[0];
+                sizeY = get1[1];
+                sizeZ = get1[2];
+                center_sizeX = get1[3];
+                center_sizeY = get1[4];
+                center_sizeZ = get1[5];
+
+                count_trunk = get2[0];
+                count_bough = get2[1];
+                count_branch = get2[2];
+                count_limb = get2[3];
+                count_twig = get2[4];
+                count_sprig = get2[5];
+
+            } catch (Exception ignored) {
+
+                return;
+
+            }
 
             // Dead Tree
             {
