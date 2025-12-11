@@ -12,7 +12,6 @@ import tannyjung.tanshugetrees_handcode.Handcode;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import tannyjung.tanshugetrees_handcode.config.PackCheckUpdate;
 import tannyjung.tanshugetrees_handcode.data.TannyPack;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanics;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanicsLeafDrop;
@@ -33,8 +32,6 @@ public class Commands {
         CommandMaker.registry(event, 0, "TANSHUGETREES / command / seasons / set / spring", run.command.seasons.set::spring);
         CommandMaker.registry(event, 0, "TANSHUGETREES / command / seasons / set / summer", run.command.seasons.set::summer);
         CommandMaker.registry(event, 0, "TANSHUGETREES / command / seasons / set / winter", run.command.seasons.set::winter);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / custom_pack / check_update_main", run.custom_pack::check_update_main);
-        CommandMaker.registry(event, 0, "TANSHUGETREES / custom_pack / update_main", run.custom_pack::update_main);
         CommandMaker.registry(event, 0, "TANSHUGETREES / dev / delayed_command", run.dev::detailed_command);
         CommandMaker.registry(event, 0, "TANSHUGETREES / dev / living_tree_mechanics / leaf_drop", run.dev.living_tree_mechanics::leaf_drop);
         CommandMaker.registry(event, 0, "TANSHUGETREES / dev / living_tree_mechanics / leaf_litter_remover", run.dev.living_tree_mechanics::leaf_litter_remover);
@@ -45,6 +42,8 @@ public class Commands {
         CommandMaker.registry(event, 0, "TANSHUGETREES / dev / tree_generator", run.dev::tree_generator);
         CommandMaker.registry(event, 0, "TANSHUGETREES / dev / txt_function / <text>", run.dev::txt_function);
         CommandMaker.registry(event, 0, "TANSHUGETREES / restart", run::restart);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / tanny_pack / check_update", run.tanny_pack::check_update);
+        CommandMaker.registry(event, 0, "TANSHUGETREES / tanny_pack / update", run.tanny_pack::update);
 
     }
 
@@ -92,24 +91,6 @@ public class Commands {
                     }
 
                 }
-
-            }
-
-        }
-
-        private static class custom_pack {
-
-            private static void check_update_main (CommandContext<CommandSourceStack> data) {
-
-                ServerLevel level_server = data.getSource().getLevel();
-                PackCheckUpdate.start(level_server);
-
-            }
-
-            private static void update_main (CommandContext<CommandSourceStack> data) {
-
-                ServerLevel level_server = data.getSource().getLevel();
-                TannyPack.start(level_server);
 
             }
 
@@ -234,12 +215,32 @@ public class Commands {
         private static void restart (CommandContext<CommandSourceStack> data) {
 
             ServerLevel level_server = data.getSource().getLevel();
+            Entity entity = data.getSource().getEntity();
 
             Handcode.thread_main.submit(() -> {
 
-                Handcode.restart(level_server, true, true);
+                Handcode.restart(level_server, true, entity != null);
 
             });
+
+        }
+
+        private static class tanny_pack {
+
+            private static void check_update (CommandContext<CommandSourceStack> data) {
+
+                ServerLevel level_server = data.getSource().getLevel();
+                TannyPack.checkUpdate(level_server);
+
+            }
+
+            private static void update (CommandContext<CommandSourceStack> data) {
+
+                ServerLevel level_server = data.getSource().getLevel();
+                Entity entity = data.getSource().getEntity();
+                TannyPack.reinstall(level_server, entity != null);
+
+            }
 
         }
 

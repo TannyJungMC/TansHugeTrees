@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.config;
+package tannyjung.tanshugetrees_handcode.data;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;

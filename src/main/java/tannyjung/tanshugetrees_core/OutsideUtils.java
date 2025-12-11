@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 
@@ -245,7 +246,7 @@ public class OutsideUtils {
 
     }
 
-    public static String getQuardtree (int chunkX, int chunkZ) {
+    public static String getQuardtree (int level, int chunkX, int chunkZ) {
 
         StringBuilder return_text = new StringBuilder();
 
@@ -254,9 +255,9 @@ public class OutsideUtils {
             int localX = chunkX & 31;
             int localZ = chunkZ & 31;
 
-            for (int level = 1; level <= 2; level++) {
+            for (int step = 1; step <= level; step++) {
 
-                int size = 32 >> level;
+                int size = 32 >> step;
                 int posX = (localX / size) % 2;
                 int posZ = (localZ / size) % 2;
 
@@ -274,6 +275,20 @@ public class OutsideUtils {
     }
 
     public static class cache {
+
+        public static int sizeMapByteBuffer (Map<String, ByteBuffer> test) {
+
+            int return_number = 0;
+
+            for (Map.Entry<String, ByteBuffer> entry : test.entrySet()) {
+
+                return_number = return_number + entry.getValue().capacity();
+
+            }
+
+            return return_number;
+
+        }
 
         public static int sizeMapNumberShort (Map<String, short[]> test) {
 

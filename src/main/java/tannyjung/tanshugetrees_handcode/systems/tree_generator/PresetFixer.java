@@ -15,21 +15,31 @@ public class PresetFixer {
 
     public static void start () {
 
-        File[] list_preset = null;
+        File template = new File(Handcode.path_config + "/#dev/temporary/preset_template.txt");
 
-        for (File pack : new File(Handcode.path_config + "/custom_packs").listFiles()) {
+        if (template.exists() == true && template.isDirectory() == false) {
 
-            list_preset = new File(Handcode.path_config + "/custom_packs/" + pack.getName() + "/presets").listFiles();
+            File[] packs = new File(Handcode.path_config + "/custom_packs").listFiles();
 
-            if (list_preset != null) {
+            if (packs != null) {
 
-                for (File species : list_preset) {
+                File[] presets = new File[0];
 
-                    for (File preset : species.listFiles()) {
+                for (File pack : packs) {
 
-                        if (preset.isDirectory() == false && preset.getName().endsWith("_settings.txt") == false) {
+                    presets = new File(pack.getPath() + "/prestes").listFiles();
 
-                            fix(preset);
+                    if (presets != null) {
+
+                        for (File preset : presets) {
+
+                            preset = new File(preset.getPath() + "/" + preset.getName() + ".txt");
+
+                            if (preset.exists() == true && preset.isDirectory() == false) {
+
+                                fix(template, preset.getPath());
+
+                            }
 
                         }
 
@@ -37,75 +47,74 @@ public class PresetFixer {
 
                 }
 
+                TanshugetreesMod.LOGGER.info("Fixed all presets in all packs");
+
             }
 
-        }
+        } else {
 
-        TanshugetreesMod.LOGGER.info("Fixed all presets in all packs");
+            TanshugetreesMod.LOGGER.error("Template not found");
+
+        }
 
     }
 
-    private static void fix (File file) {
+    private static void fix (File template, String path) {
 
-        File template = new File(Handcode.path_config + "/custom_packs/#TannyJung-Main-Pack/#dev/preset_template.txt");
+        File file = new File(path);
+        Map<String, String> data = new HashMap<>();
 
-        if (template.exists() == true && template.isDirectory() == false) {
+        // Get Preset Data
+        {
 
-            Map<String, String> data = new HashMap<>();
+            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
 
-            // Get Preset Data
-            {
+                {
 
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                    if (read_all.startsWith(",   ") == true) {
 
-                    {
-
-                        if (read_all.startsWith(",   ") == true) {
-
-                            data.put(read_all.substring(",   ".length(), read_all.indexOf(":")), read_all);
-
-                        }
+                        data.put(read_all.substring(",   ".length(), read_all.indexOf(":")), read_all);
 
                     }
 
-                } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                }
 
-            }
-
-            StringBuilder write = new StringBuilder();
-            String name = "";
-
-            // Read Template
-            {
-
-                try { BufferedReader buffered_reader = new BufferedReader(new FileReader(template), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
-
-                    {
-
-                        if (read_all.startsWith(",") == true) {
-
-                            name = read_all.substring(1, read_all.indexOf(":"));
-
-                            if (data.containsKey(name) == true) {
-
-                                write.append(data.get(name) +  "\n");
-                                continue;
-
-                            }
-
-                        }
-
-                        write.append(read_all + "\n");
-
-                    }
-
-                } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
-
-            }
-
-            FileManager.writeTXT(file.getPath(), write.toString(), false);
+            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
 
         }
+
+        StringBuilder write = new StringBuilder();
+        String name = "";
+
+        // Read Template
+        {
+
+            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(template), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+
+                {
+
+                    if (read_all.startsWith(",") == true) {
+
+                        name = read_all.substring(1, read_all.indexOf(":"));
+
+                        if (data.containsKey(name) == true) {
+
+                            write.append(data.get(name) +  "\n");
+                            continue;
+
+                        }
+
+                    }
+
+                    write.append(read_all + "\n");
+
+                }
+
+            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+
+        }
+
+        FileManager.writeTXT(file.getPath(), write.toString(), false);
 
     }
 

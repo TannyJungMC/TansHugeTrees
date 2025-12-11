@@ -29,7 +29,7 @@ public class WorldGenStepPlants extends Feature <NoneFeatureConfiguration> {
     @Override
     public boolean place (FeaturePlaceContext <NoneFeatureConfiguration> context) {
 
-        Handcode.world_gen.testPause();
+        Handcode.system_pause.test();
 
         LevelAccessor level_accessor = context.level();
         ServerLevel level_server = context.level().getLevel();

@@ -29,25 +29,33 @@ public class Cache {
         {
 
             size = size + OutsideUtils.cache.sizeMapText(dictionary);
-            size = size + OutsideUtils.cache.sizeMapNumberShort(tree_shape_part1);
-            size = size + OutsideUtils.cache.sizeMapNumberInt(tree_shape_part2);
-            size = size + OutsideUtils.cache.sizeMapNumberShort(tree_shape_part3);
-            size = size + OutsideUtils.cache.sizeMapTextList(world_gen_settings);
-            size = size + OutsideUtils.cache.sizeMapTextList(tree_settings);
-            size = size + OutsideUtils.cache.sizeMapTextList(functions);
-            size = size + OutsideUtils.cache.sizeArrayText(functions_tree_decoration);
-            size = size + OutsideUtils.cache.sizeArrayText(functions_tree_decoration_decay);
-            size = size + OutsideUtils.cache.sizeMapTextList(leaf_litter);
-
             dictionary.clear();
+
+            size = size + OutsideUtils.cache.sizeMapNumberShort(tree_shape_part1);
             tree_shape_part1.clear();
+
+            size = size + OutsideUtils.cache.sizeMapNumberInt(tree_shape_part2);
             tree_shape_part2.clear();
+
+            size = size + OutsideUtils.cache.sizeMapNumberShort(tree_shape_part3);
             tree_shape_part3.clear();
+
+            size = size + OutsideUtils.cache.sizeMapTextList(world_gen_settings);
             world_gen_settings.clear();
+
+            size = size + OutsideUtils.cache.sizeMapTextList(tree_settings);
             tree_settings.clear();
+
+            size = size + OutsideUtils.cache.sizeMapTextList(functions);
             functions.clear();
+
+            size = size + OutsideUtils.cache.sizeArrayText(functions_tree_decoration);
             functions_tree_decoration = new String[0];
+
+            size = size + OutsideUtils.cache.sizeArrayText(functions_tree_decoration_decay);
             functions_tree_decoration_decay = new String[0];
+
+            size = size + OutsideUtils.cache.sizeMapTextList(leaf_litter);
             leaf_litter.clear();
 
         }
@@ -126,7 +134,19 @@ public class Cache {
         if (tree_shape_part1.containsKey(id) == false) {
 
             String[] split = id.split("/");
-            ByteBuffer buffer = FileManager.readBIN(Handcode.path_config + "/#dev/temporary/presets/" + split[0] + "/" + split[1] + "/storage/" + split[2]);
+            String part = "";
+
+            try {
+
+                part = split[0] + "/" + split[1] + "/storage/" + split[2];
+
+            } catch (Exception ignored) {
+
+                return;
+
+            }
+
+            ByteBuffer buffer = FileManager.readBIN(Handcode.path_config + "/#dev/temporary/presets/" + part);
 
             if (buffer.remaining() > 0) {
 

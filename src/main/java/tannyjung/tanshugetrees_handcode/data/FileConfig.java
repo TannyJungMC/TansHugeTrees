@@ -12,7 +12,7 @@ public class FileConfig {
 	public static boolean auto_update = false;
 	public static boolean wip_version = false;
 
-	public static double region_scan_chance = 0.0;
+	public static double region_scan_percent = 0.0;
 	public static double multiply_rarity = 0.0;
 	public static double multiply_min_distance = 0.0;
 	public static double multiply_group_size = 0.0;
@@ -102,9 +102,9 @@ public class FileConfig {
 					World Generation
 					----------------------------------------------------------------------------------------------------
 					
-					region_scan_chance = 1.0
-					| Set chance of chunk scan per region, from region pre-location system. One region contains 32x32 chunks, or 1,024 chunks. Lower this can reduce scan time, also lower the chance of all trees.
-					| Default is [ 1.0 ]
+					region_scan_percent = 100
+					| Set percent of chunk scan per region, from region pre-location system. One region contains 32x32 chunks, or 1,024 chunks. Lower this can reduce scan time, also lower the chance of all trees.
+					| Default is [ 100 ]
 					
 					multiply_rarity = 1.0
 					multiply_min_distance = 1.0
@@ -126,9 +126,9 @@ public class FileConfig {
 					| Cancel the trees when their spawn center is above this Y level. As some world gen mods such as ReTerraForged, replacing mountain block and my trees can't detect those new block, make them spawn on blocks that not in the list. Set to 0 to disable this.
 					| Default is [ 0 ]
 					
-					unviable_ecology_skip_chance = 0.0
+					unviable_ecology_skip_chance = 0.9
 					| Skip trees that generate in unviable ecosystems. For example, land trees that generate in water.
-					| Default is [ 0.0 ]
+					| Default is [ 0.9 ]
 					
 					leaf_litter_world_gen = true
 					leaf_litter_world_gen_chance = 0.1
@@ -141,7 +141,7 @@ public class FileConfig {
 					| Default is [ true ]
 					
 					dead_tree_auto_level = 11 / 12 / 13 / 14 / 15 / 16 / 17 / 18 / 19 / 21 / 22 / 23 / 24 / 25 / 26 / 27 / 28 / 29 / 31 / 32 / 33 / 34 / 35 / 36 / 37 / 38 / 39
-					| Ramdomly pick these number for trees that set dead tree level as "auto" and "auto_pine". X1 X2 X3 X4 X5 is no leaves, no sprig, no twig, no limb, no branch. X6 X7 is only trunk 50-100% and hollowed. X8 X9 is only trunk 10-50% and hollowed.
+					| Randomly pick these number for trees that set dead tree level as "auto" and "auto_pine". 1X is normal dead trees. 2X is fallen trees with roots. 3X is fallen trees without roots. X1 X2 X3 X4 X5 is no leaves, no sprig, no twig, no limb, no branch. X6 X7 is only trunk 50-100% and hollowed. X8 X9 is only trunk 10-50% and hollowed.
 					| Default is [ 11 / 12 / 13 / 14 / 15 / 16 / 17 / 18 / 19 / 21 / 22 / 23 / 24 / 25 / 26 / 27 / 28 / 29 / 31 / 32 / 33 / 34 / 35 / 36 / 37 / 38 / 39 ]
 					
 					----------------------------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ public class FileConfig {
 					| Default is [ 50 ]
 					
 					structure_detection_size = 1
-					| Cancel trees if they detect structure around them. This size is radius, min and max is 0 to 9. Set to 1 for only chunks that marked as having structures. Set to 0 to disable this feature.
+					| Cancel trees if they detect structure in their area based from their size. This number will be plus with their size, higher number bigger distance. Note that this feature is not perfect, trees with long size might not be canceled. Only support number between is 0 to 9. Set to 0 for only chunks that marked as having structures. Set to -1 to disable this feature.
 					| Default is [ 1 ]
 					
 					----------------------------------------------------------------------------------------------------
@@ -334,7 +334,7 @@ public class FileConfig {
 		auto_update = Boolean.parseBoolean(data.get("auto_update"));
 		wip_version = Boolean.parseBoolean(data.get("wip_version"));
 
-		region_scan_chance = Double.parseDouble(data.get("region_scan_chance"));
+        region_scan_percent = Double.parseDouble(data.get("region_scan_percent"));
 		multiply_rarity = Double.parseDouble(data.get("multiply_rarity"));
 		multiply_min_distance = Double.parseDouble(data.get("multiply_min_distance"));
 		multiply_group_size = Double.parseDouble(data.get("multiply_group_size"));
@@ -396,6 +396,10 @@ public class FileConfig {
         if (wip_version == true) {
 
             Handcode.tanny_pack_type = "WIP";
+
+        } else {
+
+            Handcode.tanny_pack_type = Handcode.tanny_pack_type_original;
 
         }
 

@@ -31,7 +31,7 @@ public class Loop {
 
         Handcode.createDelayedWorks(1, () -> {
 
-            if (Handcode.system_pause == false) {
+            if (Handcode.system_pause_test == false) {
 
                 run(level_accessor, level_server);
 

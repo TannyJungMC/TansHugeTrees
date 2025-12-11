@@ -103,7 +103,7 @@ public class ShapeFileConverter {
 
         }
 
-        File file = new File(Handcode.path_config + "/custom_packs/" + file_location[0] + "/presets/" + file_location[1] + "/" + file_location[1] + ".txt");
+        File file = new File(Handcode.path_config + "/#dev/temporary/presets/" + file_location[0] + "/" + file_location[1] + "/" + file_location[1] + ".txt");
 
         if (file.exists() == true && file.isDirectory() == false) {
 
