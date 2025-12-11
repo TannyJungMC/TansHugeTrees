@@ -190,7 +190,7 @@ public class GameUtils {
 
 		public static void sendChatMessage (ServerLevel level_server, String target, String color, String text) {
 
-			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(0, 0, 0), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), "tellraw " + target + " [{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}]");
+			command.run(level_server, 0, 0, 0, "tellraw " + target + " [{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}]");
 
 		}
 
