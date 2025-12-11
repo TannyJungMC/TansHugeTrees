@@ -138,7 +138,11 @@ public class TreePlacer {
 
                 String[] world_gen_settings = Cache.getWorldGenSettings(id);
 
-                if (world_gen_settings.length != 0) {
+                if (world_gen_settings.length == 0) {
+
+                    return;
+
+                } else {
 
                     for (String read_all : world_gen_settings) {
 
@@ -151,6 +155,9 @@ public class TreePlacer {
                             } else if (read_all.startsWith("path_settings = ") == true) {
 
                                 path_settings = read_all.substring("path_settings = ".length());
+
+                            } else {
+
                                 break;
 
                             }
@@ -182,7 +189,11 @@ public class TreePlacer {
 
                     String[] tree_settings = Cache.getTreeSettings(path_settings);
 
-                    if (tree_settings.length > 0) {
+                    if (tree_settings.length == 0) {
+
+                        return;
+
+                    } else {
 
                         for (String read_all : tree_settings) {
 
@@ -213,18 +224,18 @@ public class TreePlacer {
                     // Structure Detection
                     {
 
-                        int radius = FileConfig.structure_detection_size;
+                        int size = FileConfig.structure_detection_size;
 
-                        if (radius > 0) {
+                        if (size >= 0) {
 
                             ChunkAccess chunk = null;
                             Map<Structure, LongSet> references = new HashMap<>();
 
-                            for (int scanX = -radius; scanX <= radius; scanX++) {
+                            for (int scanX = from_chunkX - size; scanX <= to_chunkX + size; scanX++) {
 
-                                for (int scanZ = -radius; scanZ <= radius; scanZ++) {
+                                for (int scanZ = from_chunkZ - size; scanZ <= to_chunkZ + size; scanZ++) {
 
-                                    chunk = level_accessor.getChunk(center_chunkX + scanX, center_chunkZ + scanZ, ChunkStatus.STRUCTURE_REFERENCES, false);
+                                    chunk = level_accessor.getChunk(scanX, scanZ, ChunkStatus.STRUCTURE_REFERENCES, false);
 
                                     if (chunk != null) {
 
@@ -301,12 +312,21 @@ public class TreePlacer {
                     {
 
                         short[] size_data = Cache.getTreeShapePart1(path_storage + "/" + chosen);
-                        sizeX = size_data[0];
-                        sizeY = size_data[1];
-                        sizeZ = size_data[2];
-                        center_sizeX = size_data[3];
-                        center_sizeY = size_data[4];
-                        center_sizeZ = size_data[5];
+
+                        try {
+
+                            sizeX = size_data[0];
+                            sizeY = size_data[1];
+                            sizeZ = size_data[2];
+                            center_sizeX = size_data[3];
+                            center_sizeY = size_data[4];
+                            center_sizeZ = size_data[5];
+
+                        } catch (Exception ignored) {
+
+                            return;
+
+                        }
 
                         // Rotation and Mirrored
                         {
@@ -757,6 +777,8 @@ public class TreePlacer {
 
         int[] reduce_parts = new int[6];
         RandomSource random = RandomSource.create(level_server.getSeed() ^ ((center_posX * 341873128712L) + (center_posZ * 132897987541L)));
+        dead_tree_level = Integer.parseInt(String.valueOf(dead_tree_level).substring(1));
+
         int[] block_count = Cache.getTreeShapePart2(path_storage + "/" + chosen);
         int reduce_trunk = 0;
         int reduce_bough = 0;
@@ -764,7 +786,6 @@ public class TreePlacer {
         int reduce_limb = 0;
         int reduce_twig = 0;
         int reduce_sprig = 0;
-        dead_tree_level = Integer.parseInt(String.valueOf(dead_tree_level).substring(1));
 
         {
 
