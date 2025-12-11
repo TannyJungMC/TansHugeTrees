@@ -507,56 +507,52 @@ public class TreeLocation {
 
                 already_tested_region.add(scanX + "," + scanZ);
 
-                if (center_regionX == scanX && center_regionZ == scanZ) {
+                // Cache Test
+                {
 
-                    // Current Region
-                    {
+                    for (String read_all : cache_write_tree_location.getOrDefault(scanX + "," + scanZ, new ArrayList<>())) {
 
-                        for (String read_all : cache_write_tree_location.getOrDefault(scanX + "," + scanZ, new ArrayList<>())) {
+                        loop = loop + 1;
 
-                            loop = loop + 1;
+                        // Get Value
+                        {
 
-                            // Get Value
-                            {
+                            value = read_all.substring(1);
 
-                                value = read_all.substring(1);
+                            if (loop == 1) {
 
-                                if (loop == 1) {
+                                test_id = value;
 
-                                    test_id = value;
+                            } else if (loop == 2) {
 
-                                } else if (loop == 2) {
+                                test_posX = Integer.parseInt(value);
 
-                                    test_posX = Integer.parseInt(value);
+                            } else {
 
-                                } else {
-
-                                    test_posZ = Integer.parseInt(value);
-
-                                }
+                                test_posZ = Integer.parseInt(value);
 
                             }
 
-                            if (loop == 3) {
+                        }
 
-                                loop = 0;
+                        if (loop == 3) {
 
-                                // Test
-                                {
+                            loop = 0;
 
-                                    if (center_posX == test_posX && center_posZ == test_posZ) {
+                            // Test
+                            {
 
-                                        return false;
+                                if (center_posX == test_posX && center_posZ == test_posZ) {
 
-                                    } else {
+                                    return false;
 
-                                        if (id.equals(test_id) == true) {
+                                } else {
 
-                                            if ((Math.abs(center_posX - test_posX) <= min_distance) && (Math.abs(center_posZ - test_posZ) <= min_distance)) {
+                                    if (id.equals(test_id) == true) {
 
-                                                return false;
+                                        if ((Math.abs(center_posX - test_posX) <= min_distance) && (Math.abs(center_posZ - test_posZ) <= min_distance)) {
 
-                                            }
+                                            return false;
 
                                         }
 
@@ -570,9 +566,11 @@ public class TreeLocation {
 
                     }
 
-                } else {
+                }
 
-                    // Outside Region (Classic Testing)
+                if (center_regionX != scanX || center_regionZ != scanZ) {
+
+                    // BIN File Test
                     {
 
                         key = scanX + "," + scanZ;
