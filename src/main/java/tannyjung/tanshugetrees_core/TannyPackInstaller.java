@@ -303,11 +303,11 @@ public class TannyPackInstaller {
 
                 }
 
-                GameUtils.misc.sendChatMessage(level_server, "@a", color, id + " : " + message);
+                GameUtils.misc.sendChatMessage(level_server, null, "@a", color, id + " : " + message);
 
             } else {
 
-                GameUtils.misc.sendChatMessage(level_server, "@a", "white", "");
+                GameUtils.misc.sendChatMessage(level_server, null, "@a", "white", "");
 
             }
 

@@ -8,13 +8,13 @@ public class Seasons {
 
     public static void get (ServerLevel level_server) {
 
-        GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Current Season is " + TanshugetreesModVariables.MapVariables.get(level_server).season);
+        GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Current Season is " + TanshugetreesModVariables.MapVariables.get(level_server).season);
 
     }
 
     public static void set (ServerLevel level_server, String season) {
 
-        GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Set Season To " + season);
+        GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Set Season To " + season);
         TanshugetreesModVariables.MapVariables.get(level_server).season = season;
 
     }

@@ -762,7 +762,7 @@ public class CustomPackOrganizing {
 
                 if (level_server != null) {
 
-                    GameUtils.misc.sendChatMessage(level_server, "@a", "red", prefix + " : " + message);
+                    GameUtils.misc.sendChatMessage(level_server, null, "@a", "red", prefix + " : " + message);
 
                 } else {
 
@@ -774,7 +774,7 @@ public class CustomPackOrganizing {
 
                     if (level_server != null) {
 
-                        GameUtils.misc.sendChatMessage(level_server, "@a", "dark_gray", prefix + " : " + get);
+                        GameUtils.misc.sendChatMessage(level_server, null, "@a", "dark_gray", prefix + " : " + get);
 
                     } else {
 

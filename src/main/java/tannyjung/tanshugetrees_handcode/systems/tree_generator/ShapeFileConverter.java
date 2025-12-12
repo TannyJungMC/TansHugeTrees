@@ -23,12 +23,12 @@ public class ShapeFileConverter {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned ON");
+                GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Turned ON");
 
             }
 
             TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = count;
-            GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
+            GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
@@ -51,18 +51,18 @@ public class ShapeFileConverter {
                 if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 
                     TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = 0;
-                    GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Will turn OFF after this one");
+                    GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Will turn OFF after this one");
 
                 } else {
 
-                    GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Turned OFF");
+                    GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Turned OFF");
                     TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = false;
 
                 }
 
             } else {
 
-                GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Already Turned OFF");
+                GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Already Turned OFF");
 
             }
 
@@ -120,7 +120,7 @@ public class ShapeFileConverter {
 
         } else {
 
-            GameUtils.misc.sendChatMessage(level_server, "@a", "red", "THT : Can't start shape file converter because the file location you wrote cannot be found");
+            GameUtils.misc.sendChatMessage(level_server, null, "@a", "red", "THT : Can't start shape file converter because the file location you wrote cannot be found");
             TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = 0;
             stop(level_accessor);
 
@@ -521,12 +521,12 @@ public class ShapeFileConverter {
         String path = Handcode.path_config + "/#dev/shape_file_converter/" + NBTManager.entity.getText(entity, "name") + "/storage/" + NBTManager.entity.getText(entity, "export_file_name");
         FileManager.writeBIN(path, start_data, false);
         FileManager.writeBIN(path, data, true);
-        GameUtils.misc.sendChatMessage(level_server, "@a", "green", "THT : Completed!");
+        GameUtils.misc.sendChatMessage(level_server, null, "@a", "green", "THT : Completed!");
         export_data.clear();
 
         if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 
-            GameUtils.misc.sendChatMessage(level_server, "@a", "gray", "THT : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
+            GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
             summon(level_accessor, level_server);
 
         } else {

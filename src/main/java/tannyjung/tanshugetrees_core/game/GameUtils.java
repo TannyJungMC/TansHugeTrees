@@ -188,9 +188,17 @@ public class GameUtils {
 
         }
 
-		public static void sendChatMessage (ServerLevel level_server, String target, String color, String text) {
+		public static void sendChatMessage (ServerLevel level_server, Entity entity, String target, String color, String text) {
 
-			command.run(level_server, 0, 0, 0, "tellraw " + target + " [{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}]");
+            if (entity == null) {
+
+                command.run(level_server, 0, 0, 0, "tellraw " + target + " [{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}]");
+
+            } else {
+
+                command.runEntity(entity, "tellraw " + target + " [{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}]");
+
+            }
 
 		}
 
