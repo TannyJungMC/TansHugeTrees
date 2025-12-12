@@ -6,6 +6,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import tannyjung.tanshugetrees_core.OutsideUtils;
 
@@ -184,10 +185,14 @@ public class CommandMaker {
 
         Entity entity = data.getSource().getEntity();
 
-        if (entity != null && entity.hasPermissions(permission) == false) {
+        if (entity instanceof Player player) {
 
-            GameUtils.misc.sendChatMessage(data.getSource().getLevel(), entity, "@s", "red", prefix + " : You must have server permission minimum level " + permission + " to use this command. If you're in singleplayer, try enable cheat mode or temporary open LAN. If you're in multiplayer, try give yourself OP or contact server admin.");
-            return false;
+            if (player.hasPermissions(permission) == false) {
+
+                GameUtils.misc.sendChatMessage(data.getSource().getLevel(), player, "@s", "red", prefix + " : You must have server permission minimum level " + permission + " to use this command. If you're in singleplayer, try enable cheat mode or temporary open LAN. If you're in multiplayer, try give yourself OP or contact server admin.");
+                return false;
+
+            }
 
         }
 

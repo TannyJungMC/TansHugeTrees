@@ -24,7 +24,12 @@ public class TannyPack {
             int data_structure_version_config = Handcode.data_structure_version_config;
             boolean auto_update = FileConfig.auto_update;
             String command_update = "TANSHUGETREES tanny_pack update";
-            TannyPackInstaller.checkUpdate(level_server, logger, path_config, id, pack_link, branch, wiki, data_structure_version_config, auto_update, command_update);
+
+            if (TannyPackInstaller.checkUpdate(level_server, logger, path_config, id, pack_link, branch, wiki, data_structure_version_config, auto_update, command_update) == true) {
+
+                reinstall(level_server, false);
+
+            }
 
         }
 
@@ -38,7 +43,7 @@ public class TannyPack {
 
         {
 
-            Handcode.thread_main.submit(() -> {
+            Runnable runnable = () -> {
 
                 Logger logger = TanshugetreesMod.LOGGER;
                 String path_config = Handcode.path_config;
@@ -48,11 +53,22 @@ public class TannyPack {
 
                 if (TannyPackInstaller.reinstall(level_server, logger, path_config, id, pack_link, branch) == true) {
 
-                    Handcode.restart(level_server, true, by_player);
+                    Handcode.restartConfig(level_server, by_player);
+                    Handcode.restartWorld(level_server, true);
 
                 }
 
-            });
+            };
+
+            if (by_player == false) {
+
+                runnable.run();
+
+            } else {
+
+                Handcode.thread_main.submit(runnable);
+
+            }
 
         }
 

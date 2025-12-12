@@ -86,7 +86,7 @@ public class FileConfigWorldGen {
 
         if (file_organized.exists() == false) {
 
-            // Not found any pack installed
+            // Empty
             {
 
                 StringBuilder write = new StringBuilder();
@@ -96,7 +96,7 @@ public class FileConfigWorldGen {
                     write.append("----------------------------------------------------------------------------------------------------");
                     write.append("\n");
                     write.append("\n");
-                    write.append("Not found any pack installed");
+                    write.append("Start a world to repair the config");
                     write.append("\n");
                     write.append("\n");
 
@@ -133,20 +133,7 @@ public class FileConfigWorldGen {
 
         }
 
-        //  At the end of the file
-        {
-
-            StringBuilder write = new StringBuilder();
-
-            {
-
-                write.append("----------------------------------------------------------------------------------------------------");
-
-            }
-
-            FileManager.writeTXT(file.toPath().toString(), write.toString(), true);
-
-        }
+        FileManager.writeTXT(file.toPath().toString(), "----------------------------------------------------------------------------------------------------", true);
 
     }
 

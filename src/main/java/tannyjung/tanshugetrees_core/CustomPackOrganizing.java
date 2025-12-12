@@ -2,6 +2,7 @@ package tannyjung.tanshugetrees_core;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
+import org.apache.logging.log4j.Logger;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 
 import java.io.File;
@@ -748,7 +749,7 @@ public class CustomPackOrganizing {
 
     }
 
-    public static void sendErrorMessage (ServerLevel level_server, Map<String, Map<String, List<String>>> errors, String prefix, String type) {
+    public static void sendErrorMessage (ServerLevel level_server, Logger logger, String prefix, Map<String, Map<String, List<String>>> errors, String type) {
 
         if (errors.containsKey(type) == true) {
 
@@ -766,7 +767,7 @@ public class CustomPackOrganizing {
 
                 } else {
 
-                    OutsideUtils.logger.error("{} : {}", prefix, message);
+                    logger.error(message);
 
                 }
 
@@ -778,7 +779,7 @@ public class CustomPackOrganizing {
 
                     } else {
 
-                        OutsideUtils.logger.error("- {}", get);
+                        logger.error("- {}", get);
 
                     }
 

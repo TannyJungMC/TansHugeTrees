@@ -277,7 +277,10 @@ public class Commands {
 
                 Handcode.thread_main.submit(() -> {
 
-                    Handcode.restart(level_server, true, entity != null);
+                    Handcode.system_pause.test();
+
+                    Handcode.restartConfig(level_server, entity != null);
+                    Handcode.restartWorld(level_server, true);
 
                 });
 

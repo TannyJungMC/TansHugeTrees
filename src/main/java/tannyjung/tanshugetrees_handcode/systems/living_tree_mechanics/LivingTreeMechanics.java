@@ -402,89 +402,68 @@ public class LivingTreeMechanics {
 
                     if (straighten == true) {
 
-                        BlockState test = level_accessor.getBlockState(new BlockPos(pos.getX(), (int) NBTManager.entity.getNumber(entity, "straighten_highestY"), pos.getZ()));
+                        // Straighten
+                        {
 
-                        if (map_block.get("1201").getBlock() != test.getBlock() && map_block.get("1202").getBlock() != test.getBlock()) {
+                            BlockState test = level_accessor.getBlockState(new BlockPos(pos.getX(), (int) NBTManager.entity.getNumber(entity, "straighten_highestY"), pos.getZ()));
 
-                            chance = 1.0;
+                            if (map_block.get("1201").getBlock() != test.getBlock() && map_block.get("1202").getBlock() != test.getBlock()) {
+
+                                chance = 1.0;
+
+                            }
 
                         }
 
                     } else if (can_pos_photosynthesis == false) {
 
-                        chance = FileConfig.leaf_light_level_detection_drop_chance;
+                        // Photosynthesis
+                        {
 
-                    } else {
-
-                        if (leaves_type == 1) {
-
-                            if (biome_type == 0) {
-
-                                // By Seasons
-                                {
-
-                                    chance = switch (current_season) {
-                                        case "Spring" -> FileConfig.leaf_drop_chance_spring;
-                                        case "Summer" -> FileConfig.leaf_drop_chance_summer;
-                                        case "Autumn" -> FileConfig.leaf_drop_chance_autumn;
-                                        case "Winter" -> FileConfig.leaf_drop_chance_winter;
-                                        default -> chance;
-                                    };
-
-                                }
-
-                            } else if (biome_type == 1) {
-
-                                chance = FileConfig.leaf_drop_chance_winter;
-
-                            } else if (biome_type == 2) {
-
-                                chance = FileConfig.leaf_drop_chance_summer;
-
-                            }
-
-                        } else if (leaves_type == 2) {
-
-                            // Only drop coniferous leaves in summer
-                            {
-
-                                if (current_season.equals("Summer")) {
-
-                                    chance = FileConfig.leaf_drop_chance_coniferous;
-
-                                }
-
-                            }
-
-                        } else {
-
-                            chance = FileConfig.leaf_drop_chance_summer;
+                            chance = FileConfig.leaf_light_level_detection_drop_chance;
 
                         }
 
-                    }
+                    } else {
 
-                    if (Math.random() < chance) {
+                        // General
+                        {
 
-                        level_accessor.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+                            if (leaves_type == 1) {
 
-                        if (FileConfig.leaf_litter == true) {
+                                if (biome_type == 0) {
 
-                            if (Math.random() < FileConfig.leaf_drop_animation_chance) {
+                                    // By Seasons
+                                    {
 
-                                // Animation
+                                        chance = switch (current_season) {
+                                            case "Spring" -> FileConfig.leaf_drop_chance_spring;
+                                            case "Summer" -> FileConfig.leaf_drop_chance_summer;
+                                            case "Autumn" -> FileConfig.leaf_drop_chance_autumn;
+                                            case "Winter" -> FileConfig.leaf_drop_chance_winter;
+                                            default -> chance;
+                                        };
+
+                                    }
+
+                                } else if (biome_type == 1) {
+
+                                    chance = FileConfig.leaf_drop_chance_winter;
+
+                                } else if (biome_type == 2) {
+
+                                    chance = FileConfig.leaf_drop_chance_summer;
+
+                                }
+
+                            } else if (leaves_type == 2) {
+
+                                // Only drop coniferous leaves in summer
                                 {
 
-                                    if (GameUtils.score.get(level_server, "TANSHUGETREES", "leaf_drop") < FileConfig.leaf_drop_animation_count_limit) {
+                                    if (current_season.equals("Summer")) {
 
-                                        // Don't create animation, if there's a block below.
-                                        if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())), "tanshugetrees:passable_blocks") == true) {
-
-                                            GameUtils.score.add(level_server, "TANSHUGETREES", "leaf_drop", 1);
-                                            String command = GameUtils.command.summonEntity("block_display", "TANSHUGETREES / TANSHUGETREES-leaf_drop", "Falling Leaf", "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.block.toTextID(block) + "\"},ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}");
-                                            GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), command);
-
-                                        }
+                                        chance = FileConfig.leaf_drop_chance_coniferous;
 
                                     }
 
@@ -492,14 +471,54 @@ public class LivingTreeMechanics {
 
                             } else {
 
-                                // No Animation
-                                {
+                                chance = FileConfig.leaf_drop_chance_summer;
 
-                                    int height_motion = level_accessor.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
+                            }
 
-                                    if (height_motion != level_accessor.getMinBuildHeight() && height_motion < pos.getY()) {
+                        }
 
-                                        LeafLitter.start(level_accessor, pos.getX(), height_motion, pos.getZ(), block, false);
+                    }
+
+                    if (Math.random() < chance) {
+
+                        {
+
+                            level_accessor.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+
+                            if (FileConfig.leaf_litter == true) {
+
+                                if (Math.random() < FileConfig.leaf_drop_animation_chance) {
+
+                                    // Animation
+                                    {
+
+                                        if (GameUtils.score.get(level_server, "TANSHUGETREES", "leaf_drop") < FileConfig.leaf_drop_animation_count_limit) {
+
+                                            // Don't create animation, if there's a block below.
+                                            if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())), "tanshugetrees:passable_blocks") == true) {
+
+                                                GameUtils.score.add(level_server, "TANSHUGETREES", "leaf_drop", 1);
+                                                String command = GameUtils.command.summonEntity("block_display", "TANSHUGETREES / TANSHUGETREES-leaf_drop", "Falling Leaf", "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.block.toTextID(block) + "\"},ForgeData:{block:\"" + GameUtils.block.toText(block) + "\"}");
+                                                GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), command);
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                } else {
+
+                                    // No Animation
+                                    {
+
+                                        int height_motion = level_accessor.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
+
+                                        if (height_motion != level_accessor.getMinBuildHeight() && height_motion < pos.getY()) {
+
+                                            LeafLitter.start(level_accessor, pos.getX(), height_motion, pos.getZ(), block, false);
+
+                                        }
 
                                     }
 
@@ -545,40 +564,45 @@ public class LivingTreeMechanics {
 
                     } else if (can_pos_photosynthesis == true) {
 
-                        if (leaves_type == 1) {
+                        // General
+                        {
 
-                            if (biome_type == 0) {
+                            if (leaves_type == 1) {
 
-                                // By Seasons
-                                {
+                                if (biome_type == 0) {
 
-                                    chance = switch (current_season) {
-                                        case "Spring" -> FileConfig.leaf_regrowth_chance_spring;
-                                        case "Summer" -> FileConfig.leaf_regrowth_chance_summer;
-                                        case "Autumn" -> FileConfig.leaf_regrowth_chance_autumn;
-                                        case "Winter" -> FileConfig.leaf_regrowth_chance_winter;
-                                        default -> chance;
-                                    };
+                                    // By Seasons
+                                    {
+
+                                        chance = switch (current_season) {
+                                            case "Spring" -> FileConfig.leaf_regrowth_chance_spring;
+                                            case "Summer" -> FileConfig.leaf_regrowth_chance_summer;
+                                            case "Autumn" -> FileConfig.leaf_regrowth_chance_autumn;
+                                            case "Winter" -> FileConfig.leaf_regrowth_chance_winter;
+                                            default -> chance;
+                                        };
+
+                                    }
+
+                                } else if (biome_type == 1) {
+
+                                    chance = FileConfig.leaf_regrowth_chance_winter;
+
+                                } else if (biome_type == 2) {
+
+                                    chance = FileConfig.leaf_regrowth_chance_summer;
 
                                 }
 
-                            } else if (biome_type == 1) {
+                            } else if (leaves_type == 2) {
 
-                                chance = FileConfig.leaf_regrowth_chance_winter;
+                                chance = FileConfig.leaf_regrowth_chance_coniferous;
 
-                            } else if (biome_type == 2) {
+                            } else {
 
                                 chance = FileConfig.leaf_regrowth_chance_summer;
 
                             }
-
-                        } else if (leaves_type == 2) {
-
-                            chance = FileConfig.leaf_regrowth_chance_coniferous;
-
-                        } else {
-
-                            chance = FileConfig.leaf_regrowth_chance_summer;
 
                         }
 
@@ -586,9 +610,13 @@ public class LivingTreeMechanics {
 
                     if (Math.random() < chance) {
 
-                        NBTManager.entity.setLogic(entity, "dormancy", false);
-                        block = GameUtils.block.propertyBooleanSet(block, "persistent", true);
-                        level_accessor.setBlock(pos, block, 2);
+                        {
+
+                            NBTManager.entity.setLogic(entity, "dormancy", false);
+                            block = GameUtils.block.propertyBooleanSet(block, "persistent", true);
+                            level_accessor.setBlock(pos, block, 2);
+
+                        }
 
                     }
 

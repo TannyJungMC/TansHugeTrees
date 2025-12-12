@@ -7,6 +7,7 @@ import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_core.FileManager;
 import tannyjung.tanshugetrees_core.game.OverlayMaker;
 import tannyjung.tanshugetrees_handcode.Handcode;
@@ -20,15 +21,24 @@ public class DataMigration {
 
         public static void run () {
 
+            File folder = new File(Handcode.path_config);
             File file = new File(Handcode.path_config + "/#dev/version.txt");
             int version = Handcode.data_structure_version_config;
             int previous_version = 0;
 
             {
 
-                for (String read_all : FileManager.readTXT(file.getPath())) {
+                if (folder.exists() == false) {
 
-                    previous_version = Integer.parseInt(read_all);
+                    previous_version = -1;
+
+                } else {
+
+                    for (String read_all : FileManager.readTXT(file.getPath())) {
+
+                        previous_version = Integer.parseInt(read_all);
+
+                    }
 
                 }
 
@@ -36,10 +46,10 @@ public class DataMigration {
 
             }
 
-            if (version != previous_version) {
+            if (previous_version >= 0 && version != previous_version) {
 
                 if (previous_version == 0) versions.before160();
-                if (previous_version < 20250000) System.out.println("Test1");
+                if (previous_version < 20250000) TanshugetreesMod.LOGGER.info("Data Migration : Config Test");;
 
             }
 
@@ -53,6 +63,8 @@ public class DataMigration {
                 FileManager.rename(Handcode.path_config + "/custom_packs/TannyJung-Main-Pack", "#TannyJung-Main-Pack");
                 FileManager.rename(Handcode.path_config + "/config_world_gen.txt", "config_worldgen.txt");
 
+                TanshugetreesMod.LOGGER.info("Data Migration : Config Before 1.6.0");
+
             }
 
         }
@@ -63,15 +75,24 @@ public class DataMigration {
 
         public static void run () {
 
+            File folder = new File(Handcode.path_world_data);
             File file = new File(Handcode.path_world_data + "/version.txt");
             int version = Handcode.data_structure_version_world;
             int previous_version = 0;
 
             {
 
-                for (String read_all : FileManager.readTXT(file.getPath())) {
+                if (folder.exists() == false) {
 
-                    previous_version = Integer.parseInt(read_all);
+                    previous_version = -1;
+
+                } else {
+
+                    for (String read_all : FileManager.readTXT(file.getPath())) {
+
+                        previous_version = Integer.parseInt(read_all);
+
+                    }
 
                 }
 
@@ -79,10 +100,10 @@ public class DataMigration {
 
             }
 
-            if (version != previous_version) {
+            if (previous_version >= 0 && version != previous_version) {
 
                 if (previous_version == 0) versions.before160();
-                if (previous_version < 20250000) System.out.println("Test2");
+                if (previous_version < 20250000) TanshugetreesMod.LOGGER.info("Data Migration : World Test");;
 
             }
 
@@ -92,7 +113,7 @@ public class DataMigration {
 
             private static void before160 () {
 
-
+                TanshugetreesMod.LOGGER.info("Data Migration : World Before 1.6.0");
 
             }
 

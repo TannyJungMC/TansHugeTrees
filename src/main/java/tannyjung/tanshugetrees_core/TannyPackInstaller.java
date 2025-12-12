@@ -12,7 +12,7 @@ import java.net.URI;
 
 public class TannyPackInstaller {
 
-    public static void checkUpdate (ServerLevel level_server, Logger logger, String path_config, String id, String pack_link, String branch, String wiki, int data_structure_version_config, boolean auto_update, String command_update) {
+    public static boolean checkUpdate (ServerLevel level_server, Logger logger, String path_config, String id, String pack_link, String branch, String wiki, int data_structure_version_config, boolean auto_update, String command_update) {
 
         File file = null;
 
@@ -120,14 +120,18 @@ public class TannyPackInstaller {
 
                                 message(level_server, logger, id, "error", "Seems like you update the mod very fast! TannyJung's Main Pack (" + branch + ") haven't updated to support this mod version yet, please wait a bit for the update to be available.");
 
-                            } else {
+                            } else if (data_structure_version_config < url_data_structure_version) {
+
+                                message(level_server, logger, id, "error", "Detected new version of TannyJung's Main Pack (" + branch + "), but it requires new mod version. Please update the mod if you want to install it.");
+
+                            } else if (data_structure_version_config == url_data_structure_version) {
 
                                 // Detected New Version
                                 {
 
                                     if (auto_update == true) {
 
-                                        message(level_server, logger, id, "info", "Detected new version for TannyJung's Main Pack (" + branch + "). Starting auto update...");
+                                        message(level_server, logger, id, "info", "Detected new version of TannyJung's Main Pack (" + branch + "). Starting auto update...");
 
                                         if (level_server != null) {
 
@@ -135,7 +139,7 @@ public class TannyPackInstaller {
 
                                         } else {
 
-                                            reinstall(null, logger, path_config, id, pack_link, branch);
+                                            return true;
 
                                         }
 
@@ -143,7 +147,7 @@ public class TannyPackInstaller {
 
                                         if (level_server != null) {
 
-                                            GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"" + id + " : Detected new version for TannyJung's Main Pack (" + branch + "). You can manual update by follow the guide in \",\"color\":\"gold\"},{\"text\":\"Wiki\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + wiki + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:diamond\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + wiki + "\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/" + command_update + "\"}},{\"text\":\" to let the mod install it.\",\"color\":\"gold\"}]");
+                                            GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"" + id + " : Detected new version of TannyJung's Main Pack (" + branch + "). You can manual update by follow the guide in \",\"color\":\"gold\"},{\"text\":\"Wiki\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + wiki + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:diamond\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + wiki + "\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/" + command_update + "\"}},{\"text\":\" to let the mod install it.\",\"color\":\"gold\"}]");
 
                                         } else {
 
@@ -157,10 +161,9 @@ public class TannyPackInstaller {
 
                             }
 
-                            logger.info("Data Structure Version -> Mod {} GitHub {}", data_structure_version_config, url_data_structure_version);
-                            logger.info("Pack Version -> Mod {} GitHub {}", pack_version, url_pack_version);
-
                         }
+
+                        logger.info("Data Structure Version -> Mod {} GitHub {} / Pack Version -> Mod {} GitHub {}", data_structure_version_config, url_data_structure_version, pack_version, url_pack_version);
 
                     } catch (Exception ignored) {
 
@@ -179,19 +182,21 @@ public class TannyPackInstaller {
 
                 if (level_server != null) {
 
-                    GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"" + id + " : Not detected TannyJung's Main Pack (" + branch + ") in custom packs folder. Starting auto download...\",\"color\":\"gold\"}]");
+                    GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"" + id + " : Not detected TannyJung's Main Pack (" + branch + ") in custom packs folder. Starting auto install...\",\"color\":\"gold\"}]");
                     GameUtils.command.run(level_server, 0, 0, 0, command_update);
 
                 } else {
 
-                    logger.info("Not detected TannyJung's Main Pack ({}) in custom packs folder. Starting auto download..", branch);
-                    reinstall(null, logger, path_config, id, pack_link, branch);
+                    logger.info("Not detected TannyJung's Main Pack ({}) in custom packs folder. Starting auto install...", branch);
+                    return true;
 
                 }
 
             }
 
         }
+
+        return false;
 
     }
 
@@ -203,11 +208,11 @@ public class TannyPackInstaller {
 
             if (level_server != null) {
 
-                GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"" + id + " : Downloading ZIP from GitHub. This may take a while. \",\"color\":\"gray\"},{\"text\":\"URL\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + url + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:diamond\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + url + "\\\"'}}\"}}}]");
+                GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"" + id + " : Installing ZIP from GitHub. This may take a while. \",\"color\":\"gray\"},{\"text\":\"URL\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + url + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:diamond\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + url + "\\\"'}}\"}}}]");
 
             } else {
 
-                logger.info("Downloading ZIP from GitHub. This may take a while. ({})", url);
+                logger.info("Installing ZIP from GitHub. This may take a while. ({})", url);
 
             }
 
