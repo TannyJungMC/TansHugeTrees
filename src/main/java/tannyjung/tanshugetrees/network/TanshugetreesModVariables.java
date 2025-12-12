@@ -106,10 +106,7 @@ public class TanshugetreesModVariables {
 		public static final String DATA_NAME = "tanshugetrees_mapvars";
 		boolean _syncDirty = false;
 		public boolean shape_file_converter = false;
-		public boolean shape_file_converter_chat_messages = false;
-		public double shape_file_converter_cooldown = 0;
 		public double shape_file_converter_count = 0;
-		public String shape_file_converter_back_position = "";
 		public String season = "Summer";
 
 		public static MapVariables load(CompoundTag tag) {
@@ -120,20 +117,14 @@ public class TanshugetreesModVariables {
 
 		public void read(CompoundTag nbt) {
 			shape_file_converter = nbt.getBoolean("shape_file_converter");
-			shape_file_converter_chat_messages = nbt.getBoolean("shape_file_converter_chat_messages");
-			shape_file_converter_cooldown = nbt.getDouble("shape_file_converter_cooldown");
 			shape_file_converter_count = nbt.getDouble("shape_file_converter_count");
-			shape_file_converter_back_position = nbt.getString("shape_file_converter_back_position");
 			season = nbt.getString("season");
 		}
 
 		@Override
 		public CompoundTag save(CompoundTag nbt) {
 			nbt.putBoolean("shape_file_converter", shape_file_converter);
-			nbt.putBoolean("shape_file_converter_chat_messages", shape_file_converter_chat_messages);
-			nbt.putDouble("shape_file_converter_cooldown", shape_file_converter_cooldown);
 			nbt.putDouble("shape_file_converter_count", shape_file_converter_count);
-			nbt.putString("shape_file_converter_back_position", shape_file_converter_back_position);
 			nbt.putString("season", season);
 			return nbt;
 		}

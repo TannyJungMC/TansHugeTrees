@@ -19,13 +19,13 @@ public class TanshugetreesModTabs {
 			() -> CreativeModeTab.builder().title(Component.translatable("item_group.tanshugetrees.tab")).icon(() -> new ItemStack(TanshugetreesModBlocks.SAPLING_YOKAI.get())).displayItems((parameters, tabData) -> {
 				tabData.accept(TanshugetreesModBlocks.WAYPOINT_FLOWER.get().asItem());
 				tabData.accept(TanshugetreesModBlocks.TREE_GENERATOR.get().asItem());
-				tabData.accept(TanshugetreesModBlocks.SAPLING_HALCYON.get().asItem());
-				tabData.accept(TanshugetreesModBlocks.SAPLING_YOKAI.get().asItem());
-				tabData.accept(TanshugetreesModBlocks.SAPLING_REDWOOD.get().asItem());
-				tabData.accept(TanshugetreesModBlocks.SAPLING_MALUS_DOMESTICA.get().asItem());
-				tabData.accept(TanshugetreesModBlocks.SAPLING_WENDY.get().asItem());
-				tabData.accept(TanshugetreesModBlocks.SAPLING_MANGROVE.get().asItem());
 				tabData.accept(TanshugetreesModBlocks.SAPLING_FALCON.get().asItem());
+				tabData.accept(TanshugetreesModBlocks.SAPLING_HALCYON.get().asItem());
+				tabData.accept(TanshugetreesModBlocks.SAPLING_MALUS_DOMESTICA.get().asItem());
+				tabData.accept(TanshugetreesModBlocks.SAPLING_MANGROVE.get().asItem());
+				tabData.accept(TanshugetreesModBlocks.SAPLING_REDWOOD.get().asItem());
 				tabData.accept(TanshugetreesModBlocks.SAPLING_SKY_ISLAND_CHAIN.get().asItem());
+				tabData.accept(TanshugetreesModBlocks.SAPLING_WENDY.get().asItem());
+				tabData.accept(TanshugetreesModBlocks.SAPLING_YOKAI.get().asItem());
 			}).build());
 }
