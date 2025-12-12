@@ -5,6 +5,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.MessageArgument;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import tannyjung.tanshugetrees_core.OutsideUtils;
 
@@ -12,7 +13,7 @@ import java.util.function.Consumer;
 
 public class CommandMaker {
 
-    public static void registry (RegisterCommandsEvent event, int permission, String structure, Consumer<CommandContext<CommandSourceStack>> data) {
+    public static void create (RegisterCommandsEvent event, String structure, Consumer<CommandContext<CommandSourceStack>> data) {
 
         String[] split = structure.split(" / ");
         String structure_short = "";
@@ -61,7 +62,7 @@ public class CommandMaker {
 
                 {
 
-                    event.getDispatcher().register(Commands.literal(split[0]).requires(test -> test.hasPermission(permission)).then(Commands.literal(split[1]).executes(arguments -> {
+                    event.getDispatcher().register(Commands.literal(split[0]).requires(test -> test.hasPermission(0)).then(Commands.literal(split[1]).executes(arguments -> {
 
                         data.accept(arguments);
                         return 0;
@@ -74,7 +75,7 @@ public class CommandMaker {
 
                 {
 
-                    event.getDispatcher().register(Commands.literal(split[0]).requires(test -> test.hasPermission(permission)).then(Commands.literal(split[1]).then(Commands.literal(split[2]).executes(arguments -> {
+                    event.getDispatcher().register(Commands.literal(split[0]).requires(test -> test.hasPermission(0)).then(Commands.literal(split[1]).then(Commands.literal(split[2]).executes(arguments -> {
 
                         data.accept(arguments);
                         return 0;
@@ -87,7 +88,7 @@ public class CommandMaker {
 
                 {
 
-                    event.getDispatcher().register(Commands.literal(split[0]).requires(test -> test.hasPermission(permission)).then(Commands.literal(split[1]).then(Commands.literal(split[2]).then(Commands.literal(split[3]).executes(arguments -> {
+                    event.getDispatcher().register(Commands.literal(split[0]).requires(test -> test.hasPermission(0)).then(Commands.literal(split[1]).then(Commands.literal(split[2]).then(Commands.literal(split[3]).executes(arguments -> {
 
                         data.accept(arguments);
                         return 0;
@@ -100,7 +101,7 @@ public class CommandMaker {
 
                 {
 
-                    event.getDispatcher().register(Commands.literal(split[0]).requires(test -> test.hasPermission(permission)).then(Commands.literal(split[1]).then(Commands.literal(split[2]).then(Commands.literal(split[3]).then(Commands.literal(split[4]).executes(arguments -> {
+                    event.getDispatcher().register(Commands.literal(split[0]).requires(test -> test.hasPermission(0)).then(Commands.literal(split[1]).then(Commands.literal(split[2]).then(Commands.literal(split[3]).then(Commands.literal(split[4]).executes(arguments -> {
 
                         data.accept(arguments);
                         return 0;
@@ -113,7 +114,7 @@ public class CommandMaker {
 
                 {
 
-                    event.getDispatcher().register(Commands.literal(split[0]).requires(s -> s.hasPermission(permission)).then(Commands.literal(split[1]).then(Commands.literal(split[2]).then(Commands.literal(split[3]).then(Commands.argument("number", DoubleArgumentType.doubleArg()).executes(arguments -> {
+                    event.getDispatcher().register(Commands.literal(split[0]).requires(s -> s.hasPermission(0)).then(Commands.literal(split[1]).then(Commands.literal(split[2]).then(Commands.literal(split[3]).then(Commands.argument("number", DoubleArgumentType.doubleArg()).executes(arguments -> {
 
                         data.accept(arguments);
                         return 0;
@@ -126,7 +127,7 @@ public class CommandMaker {
 
                 {
 
-                    event.getDispatcher().register(Commands.literal(split[0]).requires(s -> s.hasPermission(permission)).then(Commands.literal(split[1]).then(Commands.literal(split[2]).then(Commands.argument("text", MessageArgument.message()).executes(arguments -> {
+                    event.getDispatcher().register(Commands.literal(split[0]).requires(s -> s.hasPermission(0)).then(Commands.literal(split[1]).then(Commands.literal(split[2]).then(Commands.argument("text", MessageArgument.message()).executes(arguments -> {
 
                         data.accept(arguments);
                         return 0;
@@ -176,6 +177,21 @@ public class CommandMaker {
             return return_text;
 
         }
+
+    }
+
+    public static boolean testPermission (CommandContext<CommandSourceStack> data, String prefix, int permission) {
+
+        Entity entity = data.getSource().getEntity();
+
+        if (entity != null && entity.hasPermissions(permission) == false) {
+
+            GameUtils.misc.sendChatMessage(data.getSource().getLevel(), entity, "@s", "red", prefix + " : You must have server permission minimum level " + permission + " to use this command. If you're in singleplayer, try enable cheat mode or temporary open LAN. If you're in multiplayer, try give yourself OP or contact server admin.");
+            return false;
+
+        }
+
+        return true;
 
     }
 
