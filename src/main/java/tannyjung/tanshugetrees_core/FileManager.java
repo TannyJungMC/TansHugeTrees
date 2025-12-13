@@ -167,64 +167,6 @@ public class FileManager {
 
 	}
 
-	public static void writeTXTConfig (String path, String write_get) {
-
-		File file = new File(path);
-        boolean old_file_exists = file.exists() == true && file.isDirectory() == false;
-
-        createEmptyFile(file.getPath(), false);
-        StringBuilder write = new StringBuilder();
-
-        // Read New
-        {
-
-            try { BufferedReader buffered_reader = new BufferedReader(new StringReader(write_get), 65536); String read_new = ""; while ((read_new = buffered_reader.readLine()) != null) {
-
-                {
-
-                    if (read_new.contains(" = ") == true) {
-
-                        String test = read_new.substring(0, read_new.indexOf(" = "));
-
-                        if (old_file_exists) {
-
-                            // Read Old
-                            {
-
-                                try { BufferedReader buffered_reader2 = new BufferedReader(new FileReader(file), 65536); String read_old = ""; while ((read_old = buffered_reader2.readLine()) != null) {
-
-                                    {
-
-                                        if (read_old.startsWith(test + " = ") == true) {
-
-                                            read_new = read_old;
-                                            break;
-
-                                        }
-
-                                    }
-
-                                } buffered_reader2.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
-
-                            }
-
-                        }
-
-                    }
-
-                    write.append(read_new);
-                    write.append("\n");
-
-                }
-
-            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
-
-        }
-
-        writeTXT(file.toPath().toString(), write.toString(), false);
-
-	}
-
 	public static String[] readTXT (String path) {
 
 		String[] return_array = new String[0];

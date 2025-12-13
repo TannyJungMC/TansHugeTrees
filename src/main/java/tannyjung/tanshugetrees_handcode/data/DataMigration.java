@@ -23,7 +23,6 @@ public class DataMigration {
 
             File folder = new File(Handcode.path_config);
             File file = new File(Handcode.path_config + "/#dev/version.txt");
-            int version = Handcode.data_structure_version_config;
             int previous_version = 0;
 
             {
@@ -42,11 +41,11 @@ public class DataMigration {
 
                 }
 
-                FileManager.writeTXT(file.getPath(), String.valueOf(version), false);
+                FileManager.writeTXT(file.getPath(), String.valueOf(Handcode.data_structure_version), false);
 
             }
 
-            if (previous_version >= 0 && version != previous_version) {
+            if (previous_version >= 0 && Handcode.data_structure_version != previous_version) {
 
                 if (previous_version == 0) versions.before160();
                 if (previous_version < 20250000) TanshugetreesMod.LOGGER.info("Data Migration : Config Test");;
@@ -77,7 +76,6 @@ public class DataMigration {
 
             File folder = new File(Handcode.path_world_data);
             File file = new File(Handcode.path_world_data + "/version.txt");
-            int version = Handcode.data_structure_version_world;
             int previous_version = 0;
 
             {
@@ -96,11 +94,11 @@ public class DataMigration {
 
                 }
 
-                FileManager.writeTXT(file.getPath(), String.valueOf(version), false);
+                FileManager.writeTXT(file.getPath(), String.valueOf(Handcode.data_structure_version), false);
 
             }
 
-            if (previous_version >= 0 && version != previous_version) {
+            if (previous_version >= 0 && Handcode.data_structure_version != previous_version) {
 
                 if (previous_version == 0) versions.before160();
                 if (previous_version < 20250000) TanshugetreesMod.LOGGER.info("Data Migration : World Test");;

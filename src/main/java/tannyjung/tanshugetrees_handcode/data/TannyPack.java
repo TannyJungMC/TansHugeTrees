@@ -21,11 +21,11 @@ public class TannyPack {
             String pack_link = "TannyJungMC/THT-tree_pack";
             String branch = Handcode.tanny_pack_type;
             String wiki = "https://sites.google.com/view/tannyjung/minecraft-projects/tans-huge-trees/installation";
-            int data_structure_version_config = Handcode.data_structure_version_config;
+            int data_structure_version = Handcode.data_structure_version_pack;
             boolean auto_update = FileConfig.auto_update;
             String command_update = "TANSHUGETREES tanny_pack update";
 
-            if (TannyPackInstaller.checkUpdate(level_server, logger, path_config, id, pack_link, branch, wiki, data_structure_version_config, auto_update, command_update) == true) {
+            if (TannyPackInstaller.checkUpdate(level_server, logger, path_config, id, pack_link, branch, wiki, data_structure_version, auto_update, command_update) == true) {
 
                 reinstall(level_server, false);
 

@@ -15,7 +15,7 @@ public class CustomPackOrganizing {
     private static final Map<String, Map<String, List<String>>> cache_errors = new HashMap<>();
     private static final Map<String, String> cache_pack_ids = new HashMap<>();
 
-    public static Map<String, Map<String, List<String>>> start (String path_config, String pack_separation_single, String pack_separation_multiple, int data_structure_version_config) {
+    public static Map<String, Map<String, List<String>>> start (String path_config, String pack_separation_single, String pack_separation_multiple, int data_structure_version) {
 
         FileManager.delete(path_config + "/#dev/temporary");
         FileManager.createEmptyFile(path_config + "/#dev/temporary", true);
@@ -93,7 +93,7 @@ public class CustomPackOrganizing {
         }
 
         getPackID(path_config);
-        testInfo(path_config, data_structure_version_config);
+        testInfo(path_config, data_structure_version);
 
         // Organizing Data
         {

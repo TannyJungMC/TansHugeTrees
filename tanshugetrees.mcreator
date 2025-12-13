@@ -1098,10 +1098,10 @@
   "workspaceSettings": {
     "modid": "tanshugetrees",
     "modName": "Tan\u0027s Huge Trees",
-    "version": "1.6.0-BETA",
+    "version": "1.6.0",
     "description": "Generate trees and nature stuffs around the world",
     "author": "TannyJung",
-    "websiteURL": "https://legacy.curseforge.com/minecraft/mc-mods/tans-huge-trees",
+    "websiteURL": "https://www.curseforge.com/minecraft/mc-mods/tans-huge-trees",
     "license": "All Rights Reserved",
     "serverSideOnly": false,
     "modPicture": "logo",

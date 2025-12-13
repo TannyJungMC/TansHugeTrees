@@ -232,17 +232,17 @@ public class OutsideUtils {
 
     }
 
-    public static short[] convertShortListToArray (List<Short> list) {
+    public static String[] convertListToArray (List<String> list) {
 
-        short[] return_number = new short[list.size()];
+        String[] array = new String[list.size()];
 
         for (int count = 0; count < list.size(); count++) {
 
-            return_number[count] = list.get(count);
+            array[count] = list.get(count);
 
         }
 
-        return return_number;
+        return array;
 
     }
 
