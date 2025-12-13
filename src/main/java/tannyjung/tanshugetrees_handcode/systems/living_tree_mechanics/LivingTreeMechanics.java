@@ -26,15 +26,21 @@ public class LivingTreeMechanics {
 
     public static void start (Entity entity) {
 
-        if (FileConfig.developer_mode == true) {
+        LevelAccessor level_accessor = entity.level();
+        ServerLevel level_server = (ServerLevel) level_accessor;
+        BlockPos center_pos = new BlockPos(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
 
-            GameUtils.command.runEntity(entity, "particle flash ~ ~ ~ 0 0 0 0 1 force");
-            GameUtils.command.runEntity(entity, "particle totem_of_undying ~ ~100 ~ 0 25 0 0 300 force");
+        // Only Loaded Chunks
+        {
+
+            if (level_server.isLoaded(center_pos) == false) {
+
+                return;
+
+            }
 
         }
 
-        LevelAccessor level_accessor = entity.level();
-        ServerLevel level_server = (ServerLevel) entity.level();
         Map<String, BlockState> map_block = new HashMap<>();
         int[] leaves_type = new int[2];
         boolean can_leaves_decay = false;
@@ -132,7 +138,13 @@ public class LivingTreeMechanics {
 
         if (file.exists() == true && file.isDirectory() == false) {
 
-            BlockPos center_pos = new BlockPos(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
+            if (FileConfig.developer_mode == true) {
+
+                GameUtils.command.runEntity(entity, "particle flash ~ ~ ~ 0 0 0 0 1 force");
+                GameUtils.command.runEntity(entity, "particle totem_of_undying ~ ~100 ~ 0 25 0 0 300 force");
+
+            }
+
             boolean have_center_block = level_accessor.getBlockState(center_pos).isAir() == false;
             int rotation = (int) NBTManager.entity.getNumber(entity, "rotation");
             boolean mirrored = NBTManager.entity.getLogic(entity, "mirrored");
