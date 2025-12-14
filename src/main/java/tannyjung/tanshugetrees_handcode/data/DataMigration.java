@@ -58,11 +58,12 @@ public class DataMigration {
 
             private static void before160 () {
 
+                TanshugetreesMod.LOGGER.info("Data Migration : Config Before 1.6.0");
+
                 FileManager.rename(Handcode.path_config + "/custom_packs/THT-tree_pack-main", "#TannyJung-Main-Pack");
                 FileManager.rename(Handcode.path_config + "/custom_packs/TannyJung-Main-Pack", "#TannyJung-Main-Pack");
                 FileManager.rename(Handcode.path_config + "/config_world_gen.txt", "config_worldgen.txt");
-
-                TanshugetreesMod.LOGGER.info("Data Migration : Config Before 1.6.0");
+                FileManager.delete(Handcode.path_config + "/#dev/custom_packs_organized");
 
             }
 
