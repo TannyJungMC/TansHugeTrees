@@ -145,7 +145,7 @@ public class FileConfig {
                 surface_smoothness_detection_height_up = 50
                 | Set height up of surface smoothness. Set to 100 for same as Y size of the tree above its center.
                 
-                surface_smoothness_detection_height_down = 50
+                surface_smoothness_detection_height_down = 25
                 | Set height down of surface smoothness. Set to 100 for same as Y size of the tree below its center.
                 
                 structure_detection_size = 1

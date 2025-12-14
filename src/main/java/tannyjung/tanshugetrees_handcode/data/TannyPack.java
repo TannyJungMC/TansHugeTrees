@@ -54,7 +54,13 @@ public class TannyPack {
                 if (TannyPackInstaller.reinstall(level_server, logger, path_config, id, pack_link, branch) == true) {
 
                     Handcode.restartConfig(level_server, by_player);
-                    Handcode.restartWorld(level_server, true);
+
+                    if (level_server != null) {
+
+                        Handcode.restartWorld(level_server, true);
+                        message(level_server);
+
+                    }
 
                 }
 
@@ -73,6 +79,14 @@ public class TannyPack {
         }
 
         Handcode.system_pause.runContinue();
+
+    }
+
+    public static void message (ServerLevel level_server) {
+
+        String pack_link = "TannyJungMC/THT-tree_pack";
+        String branch = Handcode.tanny_pack_type;
+        TannyPackInstaller.messageOnlineNews(level_server, pack_link, branch);
 
     }
 

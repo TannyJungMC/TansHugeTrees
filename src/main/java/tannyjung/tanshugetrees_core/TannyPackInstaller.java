@@ -237,7 +237,6 @@ public class TannyPackInstaller {
             }
 
             message(level_server, logger, id, "info", "Install Completed!");
-            messageNews(level_server, logger, id, pack_link, branch);
             return true;
 
         } else {
@@ -250,39 +249,44 @@ public class TannyPackInstaller {
 
     }
 
-    public static void messageNews (ServerLevel level_server, Logger logger, String id, String pack_link, String branch) {
+    public static void messageOnlineNews (ServerLevel level_server, String pack_link, String branch) {
 
         String url = "https://raw.githubusercontent.com/" + pack_link + "/" + branch.toLowerCase() + "/info.txt";
 
-        if (OutsideUtils.isURLAvailable(url) == false) {
+        if (OutsideUtils.isURLAvailable(url) == true) {
 
             String message = "";
 
             // Read File From GitHub
             {
 
-                try { BufferedReader buffered_reader = new BufferedReader(new InputStreamReader(new URI(url).toURL().openStream()), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+                try {
+                    BufferedReader buffered_reader = new BufferedReader(new InputStreamReader(new URI(url).toURL().openStream()), 65536);
+                    String read_all = "";
+                    while ((read_all = buffered_reader.readLine()) != null) {
 
-                    {
+                        {
 
-                        if (read_all.startsWith("message = ")) {
+                            if (read_all.startsWith("message = ")) {
 
-                            message = read_all.substring("message = ".length());
-                            break;
+                                message = read_all.substring("message = ".length());
+                                break;
+
+                            }
 
                         }
 
                     }
-
-                } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                    buffered_reader.close();
+                } catch (Exception exception) {
+                    OutsideUtils.exception(new Exception(), exception);
+                }
 
             }
 
             if (message.equals("") == false) {
 
-                message(level_server, logger, id, "info", "");
                 GameUtils.command.run(level_server, 0, 0, 0, message);
-                message(level_server, logger, id, "info", "");
 
             }
 
