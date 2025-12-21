@@ -1,9 +1,0 @@
-{
-  "feature": "tanshugetrees:world_gen_plants",
-  "placement": [
-    {
-      "type": "minecraft:count",
-      "count": 1
-    }
-  ]
-}
