@@ -18,6 +18,7 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import tannyjung.tanshugetrees_core.FileManager;
 import tannyjung.tanshugetrees_core.OutsideUtils;
 import tannyjung.tanshugetrees_core.game.GameUtils;
+import tannyjung.tanshugetrees_core.game.TXTFunction;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
@@ -67,8 +68,9 @@ public class TreePlacer {
                 ground_block = Cache.getDictionary(String.valueOf(get.getShort()), true);
                 dead_tree_level = get.getShort();
 
-            } catch (Exception ignored) {
+            } catch (Exception exception) {
 
+                OutsideUtils.exception(new Exception(), exception, "");
                 return;
 
             }
@@ -92,80 +94,43 @@ public class TreePlacer {
         int center_posY = 0;
         int center_chunkX = center_posX >> 4;
         int center_chunkZ = center_posZ >> 4;
+        boolean coarse_woody_debris = dead_tree_level > 200;
+        int fallen_direction = 0;
+        String path_storage = "";
+        String path_settings = "";
 
-        // Already Tested
-        {
+        if (coarse_woody_debris == true) {
 
-            ByteBuffer detailed_detection = FileManager.readBIN(Handcode.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + ".bin");
-            boolean get_pass = false;
-            int get_posX = 0;
-            int get_posY = 0;
-            int get_posZ = 0;
-            int get_dead_tree_level = 0;
-
-            while (detailed_detection.remaining() > 0) {
-
-                try {
-
-                    get_pass = detailed_detection.get() == 1;
-                    get_posX = detailed_detection.getInt();
-                    get_posY = detailed_detection.getInt();
-                    get_posZ = detailed_detection.getInt();
-                    get_dead_tree_level = detailed_detection.getShort();
-
-                } catch (Exception ignored) {
-
-                    return;
-
-                }
-
-                if (center_posX == get_posX && center_posZ == get_posZ) {
-
-                    already_tested = true;
-                    pass = get_pass;
-                    center_posY = get_posY;
-                    dead_tree_level = get_dead_tree_level;
-                    break;
-
-                }
-
-            }
+            fallen_direction = RandomSource.create(level_server.getSeed() ^ ((center_posX * 341873128712L) + (center_posZ * 132897987541L))).nextInt(4) + 1;
 
         }
 
-        if (already_tested == false || pass == true) {
+        // Scan World Gen File
+        {
 
-            String path_storage = "";
-            String path_settings = "";
+            String[] world_gen_settings = Cache.getWorldGenSettings(id);
 
-            // Scan World Gen File
-            {
+            if (world_gen_settings.length == 0) {
 
-                String[] world_gen_settings = Cache.getWorldGenSettings(id);
+                return;
 
-                if (world_gen_settings.length == 0) {
+            } else {
 
-                    return;
+                for (String read_all : world_gen_settings) {
 
-                } else {
+                    {
 
-                    for (String read_all : world_gen_settings) {
+                        if (read_all.startsWith("path_storage = ") == true) {
 
-                        {
+                            path_storage = read_all.substring("path_storage = ".length());
 
-                            if (read_all.startsWith("path_storage = ") == true) {
+                        } else if (read_all.startsWith("path_settings = ") == true) {
 
-                                path_storage = read_all.substring("path_storage = ".length());
+                            path_settings = read_all.substring("path_settings = ".length());
 
-                            } else if (read_all.startsWith("path_settings = ") == true) {
+                        } else {
 
-                                path_settings = read_all.substring("path_settings = ".length());
-
-                            } else {
-
-                                break;
-
-                            }
+                            break;
 
                         }
 
@@ -175,12 +140,48 @@ public class TreePlacer {
 
             }
 
-            boolean coarse_woody_debris = dead_tree_level > 200;
-            int fallen_direction = 0;
+        }
 
-            if (coarse_woody_debris == true) {
+        synchronized (lock) {
 
-                fallen_direction = RandomSource.create(level_server.getSeed() ^ ((center_posX * 341873128712L) + (center_posZ * 132897987541L))).nextInt(4) + 1;
+            // Already Tested
+            {
+
+                ByteBuffer detailed_detection = FileManager.readBIN(Handcode.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + ".bin");
+                boolean get_pass = false;
+                int get_posX = 0;
+                int get_posY = 0;
+                int get_posZ = 0;
+                int get_dead_tree_level = 0;
+
+                while (detailed_detection.remaining() > 0) {
+
+                    try {
+
+                        get_pass = detailed_detection.get() == 1;
+                        get_posX = detailed_detection.getInt();
+                        get_posY = detailed_detection.getInt();
+                        get_posZ = detailed_detection.getInt();
+                        get_dead_tree_level = detailed_detection.getShort();
+
+                    } catch (Exception exception) {
+
+                        OutsideUtils.exception(new Exception(), exception, "");
+                        return;
+
+                    }
+
+                    if (center_posX == get_posX && center_posZ == get_posZ) {
+
+                        already_tested = true;
+                        pass = get_pass;
+                        center_posY = get_posY;
+                        dead_tree_level = get_dead_tree_level;
+                        break;
+
+                    }
+
+                }
 
             }
 
@@ -327,8 +328,9 @@ public class TreePlacer {
                             center_sizeY = size_data[4];
                             center_sizeZ = size_data[5];
 
-                        } catch (Exception ignored) {
+                        } catch (Exception exception) {
 
+                            OutsideUtils.exception(new Exception(), exception, "ID = " + path_storage + "/" + chosen);
                             return;
 
                         }
@@ -410,8 +412,8 @@ public class TreePlacer {
                                 // Basic Test
                                 {
 
-                                    int height_up = (int) (originalY + ((sizeX - center_sizeX) * (FileConfig.surface_smoothness_detection_height_up * 0.01)));
-                                    int height_down = (int) (originalY - (center_sizeY * (FileConfig.surface_smoothness_detection_height_down * 0.01)));
+                                    int height_up = (int) Math.ceil(originalY + ((sizeX - center_sizeX) * (FileConfig.surface_smoothness_detection_height_up * 0.01)));
+                                    int height_down = (int) Math.ceil(originalY - (center_sizeY * (FileConfig.surface_smoothness_detection_height_down * 0.01)));
                                     double distance_multiply = FileConfig.surface_smoothness_detection_percent * 0.01;
 
                                     int test_center_sizeX = (int) Math.ceil(center_sizeX * distance_multiply);
@@ -768,11 +770,11 @@ public class TreePlacer {
 
             }
 
-            if (pass == true) {
+        }
 
-                place(level_accessor, level_server, chunk_pos, id, chosen, path_storage, path_settings, center_posX, center_posY, center_posZ, rotation, mirrored, dead_tree_level, fallen_direction);
+        if (pass == true) {
 
-            }
+            place(level_accessor, level_server, chunk_pos, id, chosen, path_storage, path_settings, center_posX, center_posY, center_posZ, rotation, mirrored, dead_tree_level, fallen_direction);
 
         }
 
@@ -1246,7 +1248,7 @@ public class TreePlacer {
 
                                 get = map_block.getOrDefault(type, "");
 
-                                if (get.equals("") == true) {
+                                if (get.isEmpty() == true) {
 
                                     continue;
 
@@ -1327,18 +1329,13 @@ public class TreePlacer {
 
                                                     if (can_leaves_drop == true) {
 
-                                                        // Get "Chance" Value
-                                                        {
+                                                        if ((type.endsWith("1") == true && leaves_type[0] == 2) || (type.endsWith("2") == true && leaves_type[1] == 2)) {
 
-                                                            if ((type.endsWith("1") == true && leaves_type[0] == 2) || (type.endsWith("2") == true && leaves_type[1] == 2)) {
+                                                            leaf_litter_world_gen_chance = FileConfig.leaf_litter_world_gen_chance_coniferous;
 
-                                                                leaf_litter_world_gen_chance = FileConfig.leaf_litter_world_gen_chance_coniferous;
+                                                        } else {
 
-                                                            } else {
-
-                                                                leaf_litter_world_gen_chance = FileConfig.leaf_litter_world_gen_chance;
-
-                                                            }
+                                                            leaf_litter_world_gen_chance = FileConfig.leaf_litter_world_gen_chance;
 
                                                         }
 
@@ -1348,7 +1345,7 @@ public class TreePlacer {
 
                                                             if (height_motion != level_accessor.getMinBuildHeight() && height_motion < pos.getY()) {
 
-                                                                LeafLitter.start(level_accessor, pos.getX(), height_motion, pos.getZ(), block, false);
+                                                                LeafLitter.create(level_accessor, level_server, pos.getX(), height_motion, pos.getZ(), block, false);
 
                                                             }
 
@@ -1409,7 +1406,7 @@ public class TreePlacer {
                                             if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
 
                                                 String marker_data = "ForgeData:{file:\"" + path_storage + "|" + chosen + "\",tree_settings:\"" + path_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}";
-                                                GameUtils.command.run(level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.command.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
+                                                GameUtils.command.run(true, level_server, center_posX + 0.5, center_posY + 0.5, center_posZ + 0.5, GameUtils.command.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_location", id, marker_data));
 
                                             }
 
@@ -1426,17 +1423,17 @@ public class TreePlacer {
 
                                         if (dead_tree_level == 0) {
 
-                                            for (String name : Cache.getFunctionTreeDecoration()) {
+                                            for (String name : Cache.getTreeDecorationList("normal")) {
 
-                                                WorldGenStepPlants.functionAdd(chunk_pos, pos, "#TannyJung-Main-Pack/tree_decoration/" + name);
+                                                functionAdd(chunk_pos, pos, "tree_decoration/" + name);
 
                                             }
 
                                         } else {
 
-                                            for (String name : Cache.getFunctionTreeDecorationDecay()) {
+                                            for (String name : Cache.getTreeDecorationList("decay")) {
 
-                                                WorldGenStepPlants.functionAdd(chunk_pos, pos, "#TannyJung-Main-Pack/tree_decoration_decay/" + name);
+                                                functionAdd(chunk_pos, pos, "tree_decoration/" + name);
 
                                             }
 
@@ -1456,13 +1453,23 @@ public class TreePlacer {
                                     // Separate like this because start and end function doesn't need to test "can_run_function"
                                     if (can_run_function == true || (type.equals("210") == true || type.equals("220") == true)) {
 
-                                        WorldGenStepPlants.functionAdd(chunk_pos, pos, get);
+                                        functionAdd(chunk_pos, pos, "functions/" + get);
 
                                     }
 
                                 }
 
                             }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
 
     }
 
