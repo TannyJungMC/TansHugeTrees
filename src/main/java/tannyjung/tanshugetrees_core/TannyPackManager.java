@@ -10,36 +10,11 @@ import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.net.URI;
 
-public class TannyPackInstaller {
+public class TannyPackManager {
 
     public static boolean checkUpdate (ServerLevel level_server, Logger logger, String path_config, String id, String pack_link, String branch, String wiki, int data_structure_version_config, boolean auto_update, String command_update) {
 
-        File file = null;
-
-        // Get Path
-        {
-
-            file = new File(path_config + "/custom_packs/#TannyJung-Main-Pack.zip");
-
-            if (file.exists() == false) {
-
-                file = new File(path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack.zip");
-
-            }
-
-            if (file.exists() == false) {
-
-                file = new File(path_config + "/custom_packs/#TannyJung-Main-Pack");
-
-            }
-
-            if (file.exists() == false) {
-
-                file = new File(path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack");
-
-            }
-
-        }
+        File file = getCurrentFile(path_config);
 
         if (file.exists() == true) {
 
@@ -52,7 +27,15 @@ public class TannyPackInstaller {
 
                 if (OutsideUtils.isURLAvailable(url) == false) {
 
-                    message(level_server, logger, id, "error", "Can't check for update right now, as the mod can't connect to GitHub.");
+                    if (level_server != null) {
+
+                        GameUtils.command.run(false, level_server, 0, 0, 0, "tellraw @a [{\"text\":\"" + id + " : Can't check for update right now, because the mod can't connect to GitHub. This maybe the website is currently down or there's a new mod update. The most serious case is your country blocked GitHub website, that will need to manual install with VPN enabled. Here is \",\"color\":\"red\"},{\"text\":\"Installation Wiki\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + wiki + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:diamond\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + wiki + "\\\"'}}\"}}},{\"text\":\" if you want to manual install.\",\"color\":\"red\"}]");
+
+                    } else {
+
+                        logger.error("Can't check for update right now, because the mod can't connect to GitHub. This maybe the website is currently down or there's a new mod update. The most serious case is your country blocked GitHub website, that will need to manual install with VPN enabled. Here is installation wiki if you want to manual install ({}).", wiki);
+
+                    }
 
                 } else {
 
@@ -78,7 +61,7 @@ public class TannyPackInstaller {
 
                                 }
 
-                            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception, ""); }
 
                         }
 
@@ -102,7 +85,7 @@ public class TannyPackInstaller {
 
                                 }
 
-                            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception, ""); }
 
                         }
 
@@ -135,7 +118,7 @@ public class TannyPackInstaller {
 
                                         if (level_server != null) {
 
-                                            GameUtils.command.run(level_server, 0, 0, 0, command_update);
+                                            GameUtils.command.run(false, level_server, 0, 0, 0, command_update);
 
                                         } else {
 
@@ -147,11 +130,11 @@ public class TannyPackInstaller {
 
                                         if (level_server != null) {
 
-                                            GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"" + id + " : Detected new version of TannyJung's Main Pack (" + branch + "). You can manual update by follow the guide in \",\"color\":\"gold\"},{\"text\":\"Wiki\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + wiki + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:diamond\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + wiki + "\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/" + command_update + "\"}},{\"text\":\" to let the mod install it.\",\"color\":\"gold\"}]");
+                                            GameUtils.command.run(false, level_server, 0, 0, 0, "tellraw @a [{\"text\":\"" + id + " : Detected new version of TannyJung's Main Pack (" + branch + "). You can manual update by follow the guide in \",\"color\":\"gold\"},{\"text\":\"Wiki\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + wiki + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:diamond\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + wiki + "\\\"'}}\"}}},{\"text\":\" or click \",\"color\":\"gold\"},{\"text\":\"[here]\",\"color\":\"white\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/" + command_update + "\"}},{\"text\":\" to let the mod install it.\",\"color\":\"gold\"}]");
 
                                         } else {
 
-                                            logger.info("Detected new version for TannyJung's Main Pack (" + branch + "). You can manual update by follow the guide in wiki (" + wiki + ") or join a world and let the mod install it.");
+                                            logger.info("Detected new version for TannyJung's Main Pack ({}). You can manual update by follow the guide in wiki ({}) or join a world and let the mod install it.", branch, wiki);
 
                                         }
 
@@ -165,8 +148,9 @@ public class TannyPackInstaller {
 
                         logger.info("Data Structure Version -> Mod {} GitHub {} / Pack Version -> Mod {} GitHub {}", data_structure_version_config, url_data_structure_version, pack_version, url_pack_version);
 
-                    } catch (Exception ignored) {
+                    } catch (Exception exception) {
 
+                        OutsideUtils.exception(new Exception(), exception, "");
                         message(level_server, logger, id, "error", "Can't check the update right now, try again later.");
 
                     }
@@ -182,8 +166,8 @@ public class TannyPackInstaller {
 
                 if (level_server != null) {
 
-                    GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"" + id + " : Not detected TannyJung's Main Pack (" + branch + ") in custom packs folder. Starting auto install...\",\"color\":\"gold\"}]");
-                    GameUtils.command.run(level_server, 0, 0, 0, command_update);
+                    GameUtils.command.run(false, level_server, 0, 0, 0, "tellraw @a [{\"text\":\"" + id + " : Not detected TannyJung's Main Pack (" + branch + ") in custom packs folder. Starting auto install...\",\"color\":\"gold\"}]");
+                    GameUtils.command.run(false, level_server, 0, 0, 0, command_update);
 
                 } else {
 
@@ -200,52 +184,77 @@ public class TannyPackInstaller {
 
     }
 
-    public static boolean reinstall (ServerLevel level_server, Logger logger, String path_config, String id, String pack_link, String branch) {
+    public static boolean reinstall (ServerLevel level_server, Logger logger, String path_config, String id, String pack_link, String branch, String wiki) {
 
         String url = "https://github.com/" + pack_link + "/archive/refs/heads/" + branch.toLowerCase() + ".zip";
 
-        if (OutsideUtils.isURLAvailable(url) == true) {
+        if (level_server != null) {
 
-            if (level_server != null) {
+            GameUtils.command.run(false, level_server, 0, 0, 0, "tellraw @a [{\"text\":\"" + id + " : Installing ZIP from GitHub. This may take a while. \",\"color\":\"gray\"},{\"text\":\"URL\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + url + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:diamond\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + url + "\\\"'}}\"}}}]");
 
-                GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [{\"text\":\"" + id + " : Installing ZIP from GitHub. This may take a while. \",\"color\":\"gray\"},{\"text\":\"URL\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + url + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:diamond\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + url + "\\\"'}}\"}}}]");
+        } else {
 
-            } else {
+            logger.info("Installing ZIP from GitHub. This may take a while. ({})", url);
 
-                logger.info("Installing ZIP from GitHub. This may take a while. ({})", url);
+        }
 
-            }
+        String path = path_config + "/custom_packs/#TannyJung-Main-Pack";
+        FileManager.delete(path_config + "/custom_packs/#TannyJung-Main-Pack");
+        FileManager.delete(path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack");
+        FileManager.delete(path_config + "/custom_packs/#TannyJung-Main-Pack.zip");
+        FileManager.delete(path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack.zip");
 
-            // Download and Extract
-            {
+        if (OutsideUtils.download(url, path + ".zip") == true) {
 
-                String path = path_config + "/custom_packs/#TannyJung-Main-Pack";
-
-                FileManager.delete(path_config + "/custom_packs/#TannyJung-Main-Pack");
-                FileManager.delete(path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack");
-                FileManager.delete(path_config + "/custom_packs/#TannyJung-Main-Pack.zip");
-                FileManager.delete(path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack.zip");
-
-                OutsideUtils.download(url, path + ".zip");
-                FileManager.extractZIP(path + ".zip", path, true, "");
-                FileManager.delete(path + ".zip");
-
-                // If a config about "ZIP main pack" is true. ZIP is good for lesser space, but might slower to get data.
-                FileManager.compressZIP(path + ".zip", new File(path));
-                FileManager.delete(path);
-
-            }
+            FileManager.extractZIP(path + ".zip", path, true, "");
+            FileManager.delete(path + ".zip");
+            FileManager.compressZIP(path + ".zip", new File(path));
+            FileManager.delete(path);
 
             message(level_server, logger, id, "info", "Install Completed!");
             return true;
 
         } else {
 
-            message(level_server, logger, id, "error", "Can't update right now, as the mod can't connect to GitHub.");
+            if (level_server != null) {
+
+                GameUtils.command.run(false, level_server, 0, 0, 0, "tellraw @a [{\"text\":\"" + id + " : Can't install right now, because the mod can't connect to GitHub. This maybe the website is currently down or there's a new mod update. The most serious case is your country blocked GitHub website, that will need to manual install with VPN enabled. Here is \",\"color\":\"red\"},{\"text\":\"Installation Wiki\",\"color\":\"white\",\"underlined\":\"true\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"" + wiki + "\"},\"hoverEvent\":{\"action\":\"show_item\",\"contents\":{\"id\":\"minecraft:diamond\",\"count\":1,\"tag\":\"{display:{Name:'\\\"" + wiki + "\\\"'}}\"}}},{\"text\":\" if you want to manual install.\",\"color\":\"red\"}]");
+
+            } else {
+
+                logger.error("Can't install right now, because the mod can't connect to GitHub. This maybe the website is currently down or there's a new mod update. The most serious case is your country blocked GitHub website, that will need to manual install with VPN enabled. Here is installation wiki if you want to manual install ({}).", wiki);
+
+            }
 
         }
 
         return false;
+
+    }
+
+    public static File getCurrentFile (String path_config) {
+
+        File file = new File(path_config + "/custom_packs/#TannyJung-Main-Pack.zip");
+
+        if (file.exists() == false) {
+
+            file = new File(path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack.zip");
+
+        }
+
+        if (file.exists() == false) {
+
+            file = new File(path_config + "/custom_packs/#TannyJung-Main-Pack");
+
+        }
+
+        if (file.exists() == false) {
+
+            file = new File(path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack");
+
+        }
+
+        return file;
 
     }
 
@@ -279,14 +288,14 @@ public class TannyPackInstaller {
                     }
                     buffered_reader.close();
                 } catch (Exception exception) {
-                    OutsideUtils.exception(new Exception(), exception);
+                    OutsideUtils.exception(new Exception(), exception, "");
                 }
 
             }
 
-            if (message.equals("") == false) {
+            if (message.isEmpty() == false) {
 
-                GameUtils.command.run(level_server, 0, 0, 0, message);
+                GameUtils.command.run(false, level_server, 0, 0, 0, message);
 
             }
 
@@ -298,7 +307,7 @@ public class TannyPackInstaller {
 
         if (level_server != null) {
 
-            if (message.equals("") == false) {
+            if (message.isEmpty() == false) {
 
                 String color = "";
 
