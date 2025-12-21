@@ -18,7 +18,40 @@ import java.util.Locale;
 
 public class TreeGenerator {
 
-    public static void start (LevelAccessor level_accessor, Entity entity) {
+    public static void create (ServerLevel level_server, Entity entity, int posX, int posY, int posZ, String path) {
+
+        String[] split = path.split("/");
+
+        try {
+
+            path = Handcode.path_config + "/#dev/temporary/presets/" + split[0] + "/" + split[1] + "/" + split[1] + ".txt";
+
+        } catch (Exception ignored) {
+
+
+
+        }
+
+        File file = new File(path);
+
+        if (file.exists() == true && file.isDirectory() == false) {
+
+            GameUtils.command.run(false, level_server, posX, posY, posZ, "execute positioned ~0.5 ~0.5 ~0.5 run " + GameUtils.command.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", ""));
+            GameUtils.command.run(false, level_server, posX, posY, posZ, "data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {" + GameUtils.misc.getForgeDataFromFile(path) + "}");
+
+        } else {
+
+            if (entity != null) {
+
+                GameUtils.misc.sendChatMessage(level_server, entity, "@s", "red", "THT : Path Not Found");
+
+            }
+
+        }
+
+    }
+
+    public static void run (LevelAccessor level_accessor, Entity entity) {
 
         ServerLevel level_server = (ServerLevel) level_accessor;
         GameUtils.command.runEntity(entity, "particle composter ~ ~ ~ 0 0 0 0 1 force");
@@ -495,10 +528,10 @@ public class TreeGenerator {
 
                                 }
 
-                                vertical = Double.parseDouble(String.format("%.2f", Mth.nextDouble(RandomSource.create(), -(vertical), vertical)));
-                                horizontal = Double.parseDouble(String.format("%.2f", Mth.nextDouble(RandomSource.create(), -(horizontal), horizontal)));
-                                height = Double.parseDouble(String.format("%.2f", height));
-                                forward = Double.parseDouble(String.format("%.2f", forward));
+                                vertical = Double.parseDouble(String.format(Locale.US, "%.2f", Mth.nextDouble(RandomSource.create(), -(vertical), vertical)));
+                                horizontal = Double.parseDouble(String.format(Locale.US, "%.2f", Mth.nextDouble(RandomSource.create(), -(horizontal), horizontal)));
+                                height = Double.parseDouble(String.format(Locale.US, "%.2f", height));
+                                forward = Double.parseDouble(String.format(Locale.US, "%.2f", forward));
                                 positioned = "positioned ^" + horizontal + " ^" + vertical + " ^" + forward + " positioned ~ ~" + height + " ~";
 
                             }
@@ -1253,6 +1286,10 @@ public class TreeGenerator {
                                 if (inner_level >= 1 || Math.random() < inner_level) {
 
                                     block = "inner";
+
+                                } else {
+
+                                    block = "core";
 
                                 }
 
