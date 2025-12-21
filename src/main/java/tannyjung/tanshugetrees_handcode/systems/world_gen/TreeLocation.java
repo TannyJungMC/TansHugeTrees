@@ -19,6 +19,7 @@ import tannyjung.tanshugetrees_handcode.systems.Cache;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class TreeLocation {
 
@@ -58,7 +59,12 @@ public class TreeLocation {
                 RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((region_posX * 341873128712L) + (region_posZ * 132897987541L)));
                 world_gen_overlay_animation = 4;
                 world_gen_overlay_bar = 0;
-                scanning_overlay_loop();
+
+                if (FileConfig.world_gen_icon == true) {
+
+                    CompletableFuture.runAsync(TreeLocation::scanning_overlay_loop);
+
+                }
 
                 // Region Scanning
                 {
@@ -119,12 +125,6 @@ public class TreeLocation {
 
     private static void scanning_overlay_loop () {
 
-        Handcode.createDelayedWorks(20, () -> {
-
-            scanning_overlay_loop();
-
-        });
-
         if (world_gen_overlay_animation != 0) {
 
             if (world_gen_overlay_animation < 4) {
@@ -136,6 +136,8 @@ public class TreeLocation {
                 world_gen_overlay_animation = 1;
 
             }
+
+            Handcode.createDelayedWorks(true, 20, TreeLocation::scanning_overlay_loop);
 
         }
 
@@ -169,7 +171,7 @@ public class TreeLocation {
 
             {
 
-                if (read_all.equals("") == false) {
+                if (read_all.isEmpty() == false) {
 
                     if (start_test == false) {
 
@@ -464,6 +466,7 @@ public class TreeLocation {
         int test_posX = 0;
         int test_posZ = 0;
         ByteBuffer buffer = null;
+        String id_dictionary = Cache.getDictionary(id, false);
 
         for (int step = 1; step <= 9; step++) {
 
@@ -563,7 +566,7 @@ public class TreeLocation {
 
                                 } else {
 
-                                    if (id.equals(test_id) == true) {
+                                    if (id_dictionary.equals(test_id) == true) {
 
                                         if ((Math.abs(center_posX - test_posX) <= min_distance) && (Math.abs(center_posZ - test_posZ) <= min_distance)) {
 
@@ -602,12 +605,13 @@ public class TreeLocation {
 
                             try {
 
-                                test_id = Cache.getDictionary(String.valueOf(buffer.getShort()), true);
+                                test_id = String.valueOf(buffer.getShort());
                                 test_posX = buffer.getInt();
                                 test_posZ = buffer.getInt();
 
-                            } catch (Exception ignored) {
+                            } catch (Exception exception) {
 
+                                OutsideUtils.exception(new Exception(), exception, "");
                                 return false;
 
                             }
@@ -618,7 +622,7 @@ public class TreeLocation {
 
                             } else {
 
-                                if (id.equals(test_id) == true) {
+                                if (id_dictionary.equals(test_id) == true) {
 
                                     if ((Math.abs(center_posX - test_posX) <= min_distance) && (Math.abs(center_posZ - test_posZ) <= min_distance)) {
 
@@ -768,8 +772,9 @@ public class TreeLocation {
                 count_twig = get2[4];
                 count_sprig = get2[5];
 
-            } catch (Exception ignored) {
+            } catch (Exception exception) {
 
+                OutsideUtils.exception(new Exception(), exception, "");
                 return;
 
             }
@@ -997,7 +1002,7 @@ public class TreeLocation {
                 {
 
                     List<String> write = new ArrayList<>();
-                    write.add("t" + id);
+                    write.add("s" + Cache.getDictionary(id, false));
                     write.add("i" + center_posX);
                     write.add("i" + center_posZ);
                     cache_write_tree_location.computeIfAbsent(regionX + "," + regionZ, test -> new ArrayList<>()).addAll(write);
@@ -1012,14 +1017,14 @@ public class TreeLocation {
                     write.add("i" + from_chunkZ);
                     write.add("i" + to_chunkX);
                     write.add("i" + to_chunkZ);
-                    write.add("t" + id);
-                    write.add("t" + chosen.getName());
+                    write.add("s" + Cache.getDictionary(id, false));
+                    write.add("s" + Cache.getDictionary(chosen.getName(), false));
                     write.add("i" + center_posX);
                     write.add("i" + center_posZ);
                     write.add("b" + rotation);
                     write.add("l" + mirrored);
                     write.add("s" + start_height_offset_get);
-                    write.add("t" + ground_block);
+                    write.add("s" + Cache.getDictionary(ground_block, false));
                     write.add("s" + dead_tree_level);
 
                     int from_chunkX_test = from_chunkX >> 5;

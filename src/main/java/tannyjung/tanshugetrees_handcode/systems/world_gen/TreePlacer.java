@@ -28,6 +28,9 @@ import java.util.*;
 
 public class TreePlacer {
 
+    private static final Object lock = new Object();
+    private static final Map<ChunkPos, Map<BlockPos, List<String>>> functions = new HashMap<>();
+
     public static void start (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos) {
 
         ByteBuffer get = FileManager.readBIN(Handcode.path_world_data + "/world_gen/place/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + ".bin");
@@ -77,6 +80,8 @@ public class TreePlacer {
             }
 
         }
+
+        functionRun(level_accessor, level_server, chunk_pos);
 
     }
 
@@ -1459,11 +1464,47 @@ public class TreePlacer {
 
                             }
 
+    }
+
+    private static void functionAdd (ChunkPos chunk_pos, BlockPos pos, String path) {
+
+        synchronized (lock) {
+
+            functions.computeIfAbsent(chunk_pos, test -> new HashMap<>()).computeIfAbsent(pos, test -> new ArrayList<>()).add(path);
+
+        }
+
+    }
+
+    private static void functionRun (LevelAccessor level_accessor, ServerLevel level_server, ChunkPos chunk_pos) {
+
+        synchronized (lock) {
+
+            // Run Functions
+            {
+
+                BlockPos pos = null;
+
+                for (Map.Entry<ChunkPos, Map<BlockPos, List<String>>> entry1 : functions.entrySet()) {
+
+                    if (chunk_pos.equals(entry1.getKey()) == true) {
+
+                        for (Map.Entry<BlockPos, List<String>> entry2 : entry1.getValue().entrySet()) {
+
+                            for (String get : entry2.getValue()) {
+
+                                pos = entry2.getKey();
+                                TXTFunction.run(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), get, false);
+
+                            }
+
                         }
 
                     }
 
                 }
+
+                functions.remove(chunk_pos);
 
             }
 

@@ -18,12 +18,10 @@ public class WorldGenStepBeforePlants extends Feature <NoneFeatureConfiguration>
 
     }
 
-    private static final Object lock_region_scan = new Object();
+    private static final Object lock = new Object();
 
     @Override
     public boolean place (FeaturePlaceContext <NoneFeatureConfiguration> context) {
-
-        Handcode.system_pause.test();
 
         LevelAccessor level_accessor = context.level();
         ServerLevel level_server = context.level().getLevel();
@@ -31,14 +29,19 @@ public class WorldGenStepBeforePlants extends Feature <NoneFeatureConfiguration>
         String dimension = GameUtils.misc.getCurrentDimensionID(level_server).replace(":", "-");
         ChunkPos chunk_pos = new ChunkPos(context.origin().getX() >> 4, context.origin().getZ() >> 4);
 
-        synchronized (lock_region_scan) {
+        Handcode.thread_locking.test();
+
+        synchronized (lock) {
+
+            Handcode.thread_locking.runPause();
 
             TreeLocation.start(level_accessor, dimension, chunk_pos);
+
+            Handcode.thread_locking.runContinue();
 
         }
 
         TreePlacer.start(level_accessor, level_server, chunk_generator, dimension, chunk_pos);
-        DataFolderWorldGenCleaner.start(dimension, chunk_pos);
 
         return true;
 
