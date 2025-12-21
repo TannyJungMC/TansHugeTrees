@@ -17,9 +17,7 @@ import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTree
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanicsLeafDrop;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanicsLeafLitterRemover;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.Seasons;
-import tannyjung.tanshugetrees_handcode.systems.tree_generator.PresetFixer;
-import tannyjung.tanshugetrees_handcode.systems.tree_generator.ShapeFileConverter;
-import tannyjung.tanshugetrees_handcode.systems.tree_generator.TreeGenerator;
+import tannyjung.tanshugetrees_handcode.systems.tree_generator.*;
 
 @Mod.EventBusSubscriber
 public class Commands {
@@ -27,20 +25,22 @@ public class Commands {
     @SubscribeEvent
     public static void start (RegisterCommandsEvent event) {
 
+        CommandMaker.create(event, "TANSHUGETREES / command / preset_fixer", run.command::preset_fixer);
         CommandMaker.create(event, "TANSHUGETREES / command / seasons / get", run.command.seasons::get);
         CommandMaker.create(event, "TANSHUGETREES / command / seasons / set / autumn", run.command.seasons.set::autumn);
         CommandMaker.create(event, "TANSHUGETREES / command / seasons / set / spring", run.command.seasons.set::spring);
         CommandMaker.create(event, "TANSHUGETREES / command / seasons / set / summer", run.command.seasons.set::summer);
         CommandMaker.create(event, "TANSHUGETREES / command / seasons / set / winter", run.command.seasons.set::winter);
-        CommandMaker.create(event, "TANSHUGETREES / dev / delayed_command", run.dev::detailed_command);
+        CommandMaker.create(event, "TANSHUGETREES / command / shape_file_converter / start / <number>", run.command.shape_file_converter::start);
+        CommandMaker.create(event, "TANSHUGETREES / command / shape_file_converter / stop", run.command.shape_file_converter::stop);
+        CommandMaker.create(event, "TANSHUGETREES / command / summon_tree / <text>", run.command::summon_tree);
+        CommandMaker.create(event, "TANSHUGETREES / command / summon_sapling_trader", run.command::summon_sapling_trader);
+        CommandMaker.create(event, "TANSHUGETREES / command / txt_function / <text>", run.command::txt_function);
+        CommandMaker.create(event, "TANSHUGETREES / dev / delayed_command", run.dev::delayed_command);
         CommandMaker.create(event, "TANSHUGETREES / dev / living_tree_mechanics / leaf_drop", run.dev.living_tree_mechanics::leaf_drop);
         CommandMaker.create(event, "TANSHUGETREES / dev / living_tree_mechanics / leaf_litter_remover", run.dev.living_tree_mechanics::leaf_litter_remover);
         CommandMaker.create(event, "TANSHUGETREES / dev / living_tree_mechanics / loop", run.dev.living_tree_mechanics::loop);
-        CommandMaker.create(event, "TANSHUGETREES / dev / preset_fixer", run.dev::preset_fixer);
-        CommandMaker.create(event, "TANSHUGETREES / dev / shape_file_converter / start / <number>", run.dev.shape_file_converter::start);
-        CommandMaker.create(event, "TANSHUGETREES / dev / shape_file_converter / stop", run.dev.shape_file_converter::stop);
         CommandMaker.create(event, "TANSHUGETREES / dev / tree_generator", run.dev::tree_generator);
-        CommandMaker.create(event, "TANSHUGETREES / dev / txt_function / <text>", run.dev::txt_function);
         CommandMaker.create(event, "TANSHUGETREES / restart", run::restart);
         CommandMaker.create(event, "TANSHUGETREES / tanny_pack / check_update", run.tanny_pack::check_update);
         CommandMaker.create(event, "TANSHUGETREES / tanny_pack / update", run.tanny_pack::update);
@@ -50,6 +50,16 @@ public class Commands {
     private static class run {
 
         private static class command {
+
+            private static void preset_fixer (CommandContext<CommandSourceStack> data) {
+
+                if (CommandMaker.testPermission(data, "THT", 2) == true) {
+
+                    PresetFixer.start();
+
+                }
+
+            }
 
             private static class seasons {
 
@@ -114,11 +124,85 @@ public class Commands {
 
             }
 
+            private static class shape_file_converter {
+
+                private static void start (CommandContext<CommandSourceStack> data) {
+
+                    if (CommandMaker.testPermission(data, "THT", 2) == true) {
+
+                        LevelAccessor level_accessor = data.getSource().getLevel();
+                        int variable_number = CommandMaker.argument.getNumber(data);
+                        ShapeFileConverter.start(level_accessor, variable_number);
+
+                    }
+
+                }
+
+                private static void stop (CommandContext<CommandSourceStack> data) {
+
+                    if (CommandMaker.testPermission(data, "THT", 2) == true) {
+
+                        LevelAccessor level_accessor = data.getSource().getLevel();
+                        ShapeFileConverter.stop(level_accessor);
+
+                    }
+
+                }
+
+            }
+
+            private static void summon_tree (CommandContext<CommandSourceStack> data) {
+
+                if (CommandMaker.testPermission(data, "THT", 2) == true) {
+
+                    ServerLevel level_server = data.getSource().getLevel();
+                    Entity entity = data.getSource().getEntity();
+                    int posX = (int) Math.floor(data.getSource().getPosition().x());
+                    int posY = (int) Math.floor(data.getSource().getPosition().y());
+                    int posZ = (int) Math.floor(data.getSource().getPosition().z());
+                    String variable_text = CommandMaker.argument.getText(data);
+                    TreeGenerator.create(level_server, entity, posX, posY, posZ, variable_text);
+
+                }
+
+            }
+
+            private static void summon_sapling_trader (CommandContext<CommandSourceStack> data) {
+
+                if (CommandMaker.testPermission(data, "THT", 2) == true) {
+
+                    LevelAccessor level_accessor = data.getSource().getLevel();
+                    ServerLevel level_server = data.getSource().getLevel();
+                    int posX = (int) Math.floor(data.getSource().getPosition().x());
+                    int posY = (int) Math.floor(data.getSource().getPosition().y());
+                    int posZ = (int) Math.floor(data.getSource().getPosition().z());
+                    SaplingTrader.summonTrader(level_accessor, level_server, posX, posY, posZ);
+
+                }
+
+            }
+
+            private static void txt_function (CommandContext<CommandSourceStack> data) {
+
+                if (CommandMaker.testPermission(data, "THT", 2) == true) {
+
+                    LevelAccessor level_accessor = data.getSource().getLevel();
+                    ServerLevel level_server = data.getSource().getLevel();
+                    int posX = (int) Math.floor(data.getSource().getPosition().x());
+                    int posY = (int) Math.floor(data.getSource().getPosition().y());
+                    int posZ = (int) Math.floor(data.getSource().getPosition().z());
+                    String variable_text = CommandMaker.argument.getText(data);
+                    TXTFunction.run(level_accessor, level_server, posX, posY, posZ, variable_text, true);
+
+                }
+
+            }
+
         }
 
         private static class dev {
 
-            private static void detailed_command (CommandContext<CommandSourceStack> data) {
+            private static void delayed_command (CommandContext<CommandSourceStack> data) {
 
                 if (CommandMaker.testPermission(data, "THT", 2) == true) {
 
@@ -194,43 +278,6 @@ public class Commands {
 
             }
 
-            private static void preset_fixer (CommandContext<CommandSourceStack> data) {
-
-                if (CommandMaker.testPermission(data, "THT", 2) == true) {
-
-                    PresetFixer.start();
-
-                }
-
-            }
-
-            private static class shape_file_converter {
-
-                private static void start (CommandContext<CommandSourceStack> data) {
-
-                    if (CommandMaker.testPermission(data, "THT", 2) == true) {
-
-                        LevelAccessor level_accessor = data.getSource().getLevel();
-                        int number = CommandMaker.argument.getNumber(data);
-                        ShapeFileConverter.start(level_accessor, number);
-
-                    }
-
-                }
-
-                private static void stop (CommandContext<CommandSourceStack> data) {
-
-                    if (CommandMaker.testPermission(data, "THT", 2) == true) {
-
-                        LevelAccessor level_accessor = data.getSource().getLevel();
-                        ShapeFileConverter.stop(level_accessor);
-
-                    }
-
-                }
-
-            }
-
             private static void tree_generator (CommandContext<CommandSourceStack> data) {
 
                 if (CommandMaker.testPermission(data, "THT", 2) == true) {
@@ -244,23 +291,7 @@ public class Commands {
 
                     }
 
-                    TreeGenerator.start(level_accessor, entity);
-
-                }
-
-            }
-
-            private static void txt_function (CommandContext<CommandSourceStack> data) {
-
-                if (CommandMaker.testPermission(data, "THT", 2) == true) {
-
-                    LevelAccessor level_accessor = data.getSource().getLevel();
-                    ServerLevel level_server = data.getSource().getLevel();
-                    int posX = (int) data.getSource().getPosition().x();
-                    int posY = (int) data.getSource().getPosition().y();
-                    int posZ = (int) data.getSource().getPosition().z();
-                    String text = CommandMaker.argument.getText(data);
-                    TXTFunction.start(level_accessor, level_server, posX, posY, posZ, text, true);
+                    TreeGenerator.run(level_accessor, entity);
 
                 }
 
@@ -277,10 +308,7 @@ public class Commands {
 
                 Handcode.thread_main.submit(() -> {
 
-                    Handcode.system_pause.test();
-
-                    Handcode.restartConfig(level_server, entity != null);
-                    Handcode.restartWorld(level_server, true);
+                    Handcode.restart(level_server, "config / world", entity != null);
 
                 });
 
@@ -306,8 +334,7 @@ public class Commands {
                 if (CommandMaker.testPermission(data, "THT", 2) == true) {
 
                     ServerLevel level_server = data.getSource().getLevel();
-                    Entity entity = data.getSource().getEntity();
-                    TannyPack.reinstall(level_server, entity != null);
+                    TannyPack.reinstall(level_server);
 
                 }
 
