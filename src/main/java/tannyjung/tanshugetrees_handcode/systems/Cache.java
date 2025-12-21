@@ -11,315 +11,336 @@ import java.util.*;
 
 public class Cache {
 
-    private static final Map<String, String> dictionary = new HashMap<>();
-    private static final Map<String, short[]> tree_shape_part1 = new HashMap<>();
-    private static final Map<String, int[]> tree_shape_part2 = new HashMap<>();
-    private static final Map<String, short[]> tree_shape_part3 = new HashMap<>();
-    private static final Map<String, String[]> world_gen_settings = new HashMap<>();
-    private static final Map<String, String[]> tree_settings = new HashMap<>();
-    private static final Map<String, String[]> functions = new HashMap<>();
-    private static String[] functions_tree_decoration = new String[0];
-    private static String[] functions_tree_decoration_decay = new String[0];
-    private static final Map<String, String[]> leaf_litter = new HashMap<>();
+    private static final Map<String, Map<String, String>> cache_string = new HashMap<>();
+    private static final Map<String, Map<String, String[]>> cache_string_list = new HashMap<>();
+    private static final Map<String, Map<String, short[]>> cache_number_short_list = new HashMap<>();
+    private static final Map<String, Map<String, int[]>> cache_number_int_list = new HashMap<>();
 
-    public static double clear () {
+    public static double clear() {
 
-        double size = 0;
+        int size = 0;
 
         {
 
-            size = size + OutsideUtils.cache.sizeMapText(dictionary);
-            dictionary.clear();
+            size = size + OutsideUtils.cache.sizeMapText(cache_string);
+            cache_string.clear();
 
-            size = size + OutsideUtils.cache.sizeMapNumberShort(tree_shape_part1);
-            tree_shape_part1.clear();
+            size = size + OutsideUtils.cache.sizeMapTextList(cache_string_list);
+            cache_string_list.clear();
 
-            size = size + OutsideUtils.cache.sizeMapNumberInt(tree_shape_part2);
-            tree_shape_part2.clear();
+            size = size + OutsideUtils.cache.sizeMapNumberShort(cache_number_short_list);
+            cache_number_short_list.clear();
 
-            size = size + OutsideUtils.cache.sizeMapNumberShort(tree_shape_part3);
-            tree_shape_part3.clear();
-
-            size = size + OutsideUtils.cache.sizeMapTextList(world_gen_settings);
-            world_gen_settings.clear();
-
-            size = size + OutsideUtils.cache.sizeMapTextList(tree_settings);
-            tree_settings.clear();
-
-            size = size + OutsideUtils.cache.sizeMapTextList(functions);
-            functions.clear();
-
-            size = size + OutsideUtils.cache.sizeArrayText(functions_tree_decoration);
-            functions_tree_decoration = new String[0];
-
-            size = size + OutsideUtils.cache.sizeArrayText(functions_tree_decoration_decay);
-            functions_tree_decoration_decay = new String[0];
-
-            size = size + OutsideUtils.cache.sizeMapTextList(leaf_litter);
-            leaf_litter.clear();
+            size = size + OutsideUtils.cache.sizeMapNumberInt(cache_number_int_list);
+            cache_number_int_list.clear();
 
         }
 
-        return Double.parseDouble(String.format("%.2f", size / (1024 * 1024)));
+        return Double.parseDouble(String.format(Locale.US, "%.2f", (double) size / (1024 * 1024)));
 
     }
 
-    public static String getDictionary (String key, boolean id) {
+    public static String getDictionary(String key, boolean id) {
 
-        if (key.equals("") == false) {
+        if (cache_string.containsKey("dictionary") == false) {
 
-            if (dictionary.containsKey(key) == false) {
+            cache_string.put("dictionary", new HashMap<>());
 
-                {
+        }
 
-                    String path = Handcode.path_world_data + "/dictionary.txt";
-                    String[] data = FileManager.readTXT(path);
-                    String value_id = "";
-                    String value_text = "";
+        if (cache_string.get("dictionary").containsKey(key) == false) {
 
-                    for (String read_all : data) {
+            String value_id = "";
+            String value_text = "";
 
-                        if (id == true) {
+            // Get Data
+            {
 
-                            if (read_all.startsWith(key + "|") == true) {
+                String path = Handcode.path_world_data + "/dictionary.txt";
+                String[] data = FileManager.readTXT(path);
 
-                                value_id = key;
-                                value_text = read_all.substring(read_all.indexOf("|") + 1);
-                                break;
+                for (String read_all : data) {
 
-                            }
+                    if (id == true) {
 
-                        } else {
+                        if (read_all.startsWith(key + "|") == true) {
 
-                            if (read_all.endsWith("|" + key) == true) {
+                            value_id = key;
+                            value_text = read_all.substring(read_all.indexOf("|") + 1);
+                            break;
 
-                                value_id = read_all.substring(0, read_all.indexOf("|"));
-                                value_text = key;
-                                break;
+                        }
 
-                            }
+                    } else {
+
+                        if (read_all.endsWith("|" + key) == true) {
+
+                            value_id = read_all.substring(0, read_all.indexOf("|"));
+                            value_text = key;
+                            break;
 
                         }
 
                     }
 
-                    if (value_id.equals("") == true && value_text.equals("") == true) {
+                }
 
-                        if (id == false) {
+                if (value_id.isEmpty() == true && value_text.isEmpty() == true) {
 
-                            value_text = key;
+                    if (id == false) {
 
-                        }
+                        value_text = key;
+
+                    }
+
+                    if (value_text.isEmpty() == false) {
 
                         value_id = String.valueOf(data.length + 1);
                         FileManager.writeTXT(path, value_id + "|" + value_text + "\n", true);
 
                     }
 
-                    dictionary.put(value_id, value_text);
-                    dictionary.put(value_text, value_id);
-
                 }
 
             }
 
+            cache_string.get("dictionary").put(value_id, value_text);
+            cache_string.get("dictionary").put(value_text, value_id);
+
         }
 
-        return dictionary.getOrDefault(key, "");
+        return cache_string.get("dictionary").get(key);
 
     }
 
-    private static void getTreeShape (String id) {
+    private static void getTreeShape(String id) {
 
-        if (tree_shape_part1.containsKey(id) == false) {
+        if (cache_number_short_list.containsKey("tree_shape_part1") == false) {
 
-            String[] split = id.split("/");
-            String part = "";
+            cache_number_short_list.put("tree_shape_part1", new HashMap<>());
+            cache_number_int_list.put("tree_shape_part2", new HashMap<>());
+            cache_number_short_list.put("tree_shape_part3", new HashMap<>());
 
-            try {
+        }
 
-                part = split[0] + "/" + split[1] + "/storage/" + split[2];
+        if (cache_number_short_list.get("tree_shape_part1").containsKey(id) == false) {
 
-            } catch (Exception ignored) {
+            short[] data1 = new short[0];
+            int[] data2 = new int[0];
+            short[] data3 = new short[0];
 
-                return;
+            get_data:
+            {
 
-            }
+                String[] split = id.split("/");
+                String path = "";
 
-            ByteBuffer buffer = FileManager.readBIN(Handcode.path_config + "/#dev/temporary/presets/" + part);
+                try {
 
-            if (buffer.remaining() > 0) {
+                    path = Handcode.path_config + "/#dev/temporary/presets/" + split[0] + "/" + split[1] + "/storage/" + split[2];
 
-                // Part 1
-                {
+                } catch (Exception exception) {
 
-                    int count = 6;
-                    short[] data = new short[count];
+                    OutsideUtils.exception(new Exception(), exception, "");
+                    break get_data;
 
-                    for (int number = 0; number < count; number++) {
+                }
 
-                        data[number] = buffer.getShort();
+                ByteBuffer buffer = FileManager.readBIN(path);
+
+                if (buffer.remaining() > 0) {
+
+                    // Part 1
+                    {
+
+                        int count = 6;
+                        data1 = new short[count];
+
+                        for (int number = 0; number < count; number++) {
+
+                            data1[number] = buffer.getShort();
+
+                        }
 
                     }
 
-                    tree_shape_part1.put(id, data);
+                    // Part 2
+                    {
 
-                }
+                        int count = 6;
+                        data2 = new int[count];
 
-                // Part 2
-                {
+                        for (int number = 0; number < count; number++) {
 
-                    int count = 6;
-                    int[] data = new int[count];
+                            data2[number] = buffer.getInt();
 
-                    for (int number = 0; number < count; number++) {
-
-                        data[number] = buffer.getInt();
+                        }
 
                     }
 
-                    tree_shape_part2.put(id, data);
+                    // Part 3
+                    {
 
-                }
+                        ShortBuffer buffer_convert = buffer.asShortBuffer();
+                        data3 = new short[buffer_convert.remaining()];
+                        buffer_convert.get(data3);
 
-                // Part 3
-                {
-
-                    ShortBuffer buffer_convert = buffer.asShortBuffer();
-                    short[] data = new short[buffer_convert.remaining()];
-                    buffer_convert.get(data);
-                    tree_shape_part3.put(id, data);
+                    }
 
                 }
 
             }
 
+            cache_number_short_list.get("tree_shape_part1").put(id, data1);
+            cache_number_int_list.get("tree_shape_part2").put(id, data2);
+            cache_number_short_list.get("tree_shape_part3").put(id, data3);
+
         }
 
     }
 
-    public static short[] getTreeShapePart1 (String id) {
+    public static short[] getTreeShapePart1(String id) {
 
         getTreeShape(id);
-        return tree_shape_part1.getOrDefault(id, new short[0]);
+        return cache_number_short_list.get("tree_shape_part1").get(id);
 
     }
 
-    public static int[] getTreeShapePart2 (String id) {
+    public static int[] getTreeShapePart2(String id) {
 
         getTreeShape(id);
-        return tree_shape_part2.getOrDefault(id, new int[0]);
+        return cache_number_int_list.get("tree_shape_part2").get(id);
 
     }
 
-    public static short[] getTreeShapePart3 (String id) {
+    public static short[] getTreeShapePart3(String id) {
 
         getTreeShape(id);
-        return tree_shape_part3.getOrDefault(id, new short[0]);
+        return cache_number_short_list.get("tree_shape_part3").get(id);
 
     }
 
-    public static String[] getWorldGenSettings (String id) {
+    public static String[] getWorldGenSettings(String id) {
 
-        if (world_gen_settings.containsKey(id) == false) {
+        if (cache_string_list.containsKey("world_gen_settings") == false) {
 
-            world_gen_settings.put(id, FileManager.readTXT(Handcode.path_config + "/#dev/temporary/world_gen/" + id + ".txt"));
+            cache_string_list.put("world_gen_settings", new HashMap<>());
 
         }
 
-        return world_gen_settings.getOrDefault(id, new String[0]);
+        if (cache_string_list.get("world_gen_settings").containsKey(id) == false) {
 
-    }
-
-    public static String[] getTreeSettings (String id) {
-
-        if (tree_settings.containsKey(id) == false) {
-
-            tree_settings.put(id, FileManager.readTXT(Handcode.path_config + "/#dev/temporary/presets/" + id + "_settings.txt"));
+            String[] data = FileManager.readTXT(Handcode.path_config + "/#dev/temporary/world_gen/" + id + ".txt");
+            cache_string_list.get("world_gen_settings").put(id, data);
 
         }
 
-        return tree_settings.getOrDefault(id, new String[0]);
+        return cache_string_list.get("world_gen_settings").get(id);
 
     }
 
-    public static String[] getFunction (String id) {
+    public static String[] getTreeSettings(String id) {
 
-        if (functions.containsKey(id) == false) {
+        if (cache_string_list.containsKey("tree_settings") == false) {
 
-            functions.put(id, FileManager.readTXT(Handcode.path_config + "/#dev/temporary/functions/" + id + ".txt"));
+            cache_string_list.put("tree_settings", new HashMap<>());
 
         }
 
-        return functions.getOrDefault(id, new String[0]);
+        if (cache_string_list.get("tree_settings").containsKey(id) == false) {
+
+            String[] data = FileManager.readTXT(Handcode.path_config + "/#dev/temporary/presets/" + id + "_settings.txt");
+            cache_string_list.get("tree_settings").put(id, data);
+
+        }
+
+        return cache_string_list.get("tree_settings").get(id);
 
     }
 
-    public static String[] getFunctionTreeDecoration () {
+    public static String[] getFunction(String id) {
 
-        if (functions_tree_decoration.length == 0) {
+        if (cache_string_list.containsKey("functions") == false) {
 
-            String[] list = new File(Handcode.path_config + "/#dev/temporary/functions/#TannyJung-Main-Pack/tree_decoration").list();
+            cache_string_list.put("functions", new HashMap<>());
 
-            if (list != null) {
+        }
 
-                String[] convert = new String[list.length];
-                int loop = 0;
+        if (cache_string_list.get("functions").containsKey(id) == false) {
 
-                while (loop < list.length) {
+            String[] data = FileManager.readTXT(Handcode.path_config + "/#dev/temporary/" + id + ".txt");
+            cache_string_list.get("functions").put(id, data);
 
-                    convert[loop] = list[loop].replace(".txt", "");
-                    loop = loop + 1;
+        }
+
+        return cache_string_list.get("functions").get(id);
+
+    }
+
+    public static String[] getTreeDecorationList(String id) {
+
+        if (cache_string_list.containsKey("tree_decoration") == false) {
+
+            cache_string_list.put("tree_decoration", new HashMap<>());
+
+        }
+
+        if (cache_string_list.get("tree_decoration").containsKey(id) == false) {
+
+            String[] data = new String[0];
+
+            // Get Data
+            {
+
+                File[] packs = new File(Handcode.path_config + "/#dev/temporary/tree_decoration").listFiles();
+
+                if (packs != null) {
+
+                    List<String> names = new ArrayList<>();
+                    File[] files = new File[0];
+                    String path_prefix = "";
+
+                    for (File pack : packs) {
+
+                        if (id.equals("decay") == true) {
+
+                            path_prefix = pack.getName() + "/decay";
+
+                        } else {
+
+                            path_prefix = pack.getName();
+
+                        }
+
+                        files = new File(Handcode.path_config + "/#dev/temporary/tree_decoration/" + path_prefix).listFiles();
+
+                        if (files != null) {
+
+                            for (File file : files) {
+
+                                if (file.isDirectory() == false) {
+
+                                    names.add(path_prefix + "/" + file.getName().replace(".txt", ""));
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    data = OutsideUtils.convertListToArray(names);
 
                 }
 
-                functions_tree_decoration = convert;
-
             }
 
-        }
-
-        return functions_tree_decoration;
-
-    }
-
-    public static String[] getFunctionTreeDecorationDecay () {
-
-        if (functions_tree_decoration_decay.length == 0) {
-
-            String[] list = new File(Handcode.path_config + "/#dev/temporary/functions/#TannyJung-Main-Pack/tree_decoration_decay").list();
-
-            if (list != null) {
-
-                String[] convert = new String[list.length];
-                int loop = 0;
-
-                while (loop < list.length) {
-
-                    convert[loop] = list[loop].replace(".txt", "");
-                    loop = loop + 1;
-
-                }
-
-                functions_tree_decoration_decay = convert;
-
-            }
+            cache_string_list.get("tree_decoration").put(id, data);
 
         }
 
-        return functions_tree_decoration_decay;
-
-    }
-
-    public static String[] getLeafLitter (String id) {
-
-        if (leaf_litter.containsKey(id) == false) {
-
-            leaf_litter.put(id, FileManager.readTXT(Handcode.path_config + "/#dev/temporary/leaf_litter/" + id + ".txt"));
-
-        }
-
-        return leaf_litter.getOrDefault(id, new String[0]);
+        return cache_string_list.get("tree_decoration").get(id);
 
     }
 
