@@ -255,7 +255,7 @@ public class TXTFunction {
                                                             }
 
                                                             pos = new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ);
-                                                            chunk = level_accessor.getChunk(pos.getX(), pos.getZ(), ChunkStatus.SURFACE, false);
+                                                            chunk = level_accessor.getChunk(pos.getX() >> 4, pos.getZ() >> 4, ChunkStatus.SURFACE, false);
 
                                                             if (chunk != null) {
 
