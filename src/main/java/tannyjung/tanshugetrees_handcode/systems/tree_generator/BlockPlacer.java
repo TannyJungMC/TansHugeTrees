@@ -23,7 +23,7 @@ public class BlockPlacer {
             // Test Function
             {
 
-                if (function.equals("") == false) {
+                if (function.isEmpty() == false) {
 
                     String[] styles = NBTManager.block.getText(level_accessor, pos, "function_style").split("/");
                     boolean pass = false;
@@ -98,11 +98,11 @@ public class BlockPlacer {
 
                     level_accessor.setBlock(pos, GameUtils.block.fromText(NBTManager.block.getText(level_accessor, pos, "block")), 2);
 
-                    if (function.equals("") == false) {
+                    if (function.isEmpty() == false) {
 
-                        Handcode.createDelayedWorks(20, () -> {
+                        Handcode.createDelayedWorks(false, 20, () -> {
 
-                            TXTFunction.start(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), function, true);
+                            TXTFunction.run(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), "functions/" + function, true);
 
                         });
 

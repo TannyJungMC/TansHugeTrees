@@ -16,8 +16,8 @@ public class DataRepair {
 
     public static void start () {
 
-        String pack_separation_single = "leaf_litter";
-        String pack_separation_multiple = "functions/presets/world_gen";
+        String pack_separation_single = "leaf_litter/sapling_trader";
+        String pack_separation_multiple = "functions/presets/tree_decoration/world_gen";
         cache_pack_errors = CustomPackOrganizing.start(Handcode.path_config, pack_separation_single, pack_separation_multiple, Handcode.data_structure_version_pack);
 
         FileManager.createEmptyFile(Handcode.path_config + "/#dev/shape_file_converter", true);

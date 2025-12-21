@@ -2,6 +2,7 @@ package tannyjung.tanshugetrees_core.game;
 
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
@@ -62,7 +64,11 @@ public class GameUtils {
 
             boolean return_logic = false;
 
-            {
+            if (config_value.equals("all") == true) {
+
+                return_logic = true;
+
+            } else {
 
                 String biome_centerID = GameUtils.biome.toID(biome_center);
 
@@ -76,15 +82,7 @@ public class GameUtils {
 
                         {
 
-                            if (split2.contains("#") == false) {
-
-                                if (biome_centerID.equals(split_get) == false) {
-
-                                    return_logic = false;
-
-                                }
-
-                            } else {
+                            if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
 
                                 if (GameUtils.biome.isTaggedAs(biome_center, split_get) == false) {
 
@@ -92,9 +90,17 @@ public class GameUtils {
 
                                 }
 
+                            } else {
+
+                                if (biome_centerID.equals(split_get) == false) {
+
+                                    return_logic = false;
+
+                                }
+
                             }
 
-                            if (split2.contains("!") == true) {
+                            if (split2.startsWith("!") == true) {
 
                                 return_logic = !return_logic;
 
@@ -128,7 +134,13 @@ public class GameUtils {
 
             boolean return_logic = false;
 
-            {
+            if (config_value.equals("all") == true) {
+
+                return_logic = true;
+
+            } else {
+
+                String value = "";
 
                 for (String split : config_value.split(" / ")) {
 
@@ -136,13 +148,13 @@ public class GameUtils {
 
                     for (String split2 : split.split(", ")) {
 
-                        String split_get = split2.replaceAll("[#!]", "");
+                        value = split2.replaceAll("[#!]", "");
 
                         {
 
-                            if (split2.contains("#") == false) {
+                            if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
 
-                                if (ForgeRegistries.BLOCKS.getKey(test_block.getBlock()).toString().equals(split_get) == false) {
+                                if (GameUtils.block.isTaggedAs(test_block, value) == false) {
 
                                     return_logic = false;
 
@@ -150,7 +162,7 @@ public class GameUtils {
 
                             } else {
 
-                                if (GameUtils.block.isTaggedAs(test_block, split_get) == false) {
+                                if (test_block.equals(block.fromText(value)) == false) {
 
                                     return_logic = false;
 
@@ -158,7 +170,7 @@ public class GameUtils {
 
                             }
 
-                            if (split2.contains("!") == true) {
+                            if (split2.startsWith("!") == true) {
 
                                 return_logic = !return_logic;
 
@@ -190,17 +202,15 @@ public class GameUtils {
 
 		public static void sendChatMessage (ServerLevel level_server, Entity entity, String target, String color, String text) {
 
-            if (entity == null) {
+            command.run(false, level_server, 0, 0, 0, "tellraw " + target + " [{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}]");
 
-                command.run(level_server, 0, 0, 0, "tellraw " + target + " [{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}]");
+        }
 
-            } else {
+        public static void sendChatMessagePrivate (Entity entity, String color, String text) {
 
-                command.runEntity(entity, "tellraw " + target + " [{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}]");
+            command.runEntity(entity, "tellraw @s [{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}]");
 
-            }
-
-		}
+        }
 
 		public static String getCurrentDimensionID (Level level) {
 
@@ -208,7 +218,7 @@ public class GameUtils {
 
 		}
 
-        public static String getForgeDataFromGiveFile (String path) {
+        public static String getForgeDataFromFile (String path) {
 
             String return_text = "";
             File file = new File(path);
@@ -228,7 +238,7 @@ public class GameUtils {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception, ""); }
 
                 }
 
@@ -240,33 +250,41 @@ public class GameUtils {
 
         }
 
+        public static BlockPos getBlockLook (Entity entity, double distance) {
+
+            return entity.level().clip(new ClipContext(entity.getEyePosition(1f), entity.getEyePosition(1f).add(entity.getViewVector(1f).scale(distance)), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, entity)).getBlockPos();
+
+        }
+
 	}
 
 	public static class command {
 
-		public static void run (ServerLevel level_server, double posX, double posY, double posZ, String command) {
+		public static void run (boolean safe_mode, ServerLevel level_server, double posX, double posY, double posZ, String command) {
 
-            level_server.getServer().execute(() -> {
+            Runnable runnable = () -> level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
 
-                level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
+            if (safe_mode == true) {
 
-            });
+                level_server.getServer().execute(runnable);
+
+            } else {
+
+                runnable.run();
+
+            }
 
 		}
 
 		public static void runEntity (Entity entity, String command) {
 
-			if (entity.level() instanceof ServerLevel level_server) {
+            if (entity.level() instanceof ServerLevel level_server) {
 
-                level_server.getServer().execute(() -> {
+                level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, entity.position(), entity.getRotationVector(), level_server, 4, entity.getName().getString(), entity.getDisplayName(), level_server.getServer(), entity), command);
 
-                    level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, entity.position(), entity.getRotationVector(), level_server, 4, entity.getName().getString(), entity.getDisplayName(), level_server.getServer(), entity), command);
+            }
 
-                });
-
-			}
-
-		}
+        }
 
 		public static boolean result (ServerLevel level_server, int posX, int posY, int posZ, String command) {
 
@@ -384,7 +402,7 @@ public class GameUtils {
                     .append(" ~ ~ ~ {Tags:[\"TANNYJUNG\",\"")
             ;
 
-            if (tag.equals("") == false) {
+            if (tag.isEmpty() == false) {
 
                 return_text.append(tag.replace(" / ", "\",\""));
 
@@ -392,7 +410,7 @@ public class GameUtils {
 
             return_text.append("\"]");
 
-            if (name.equals("") == false) {
+            if (name.isEmpty() == false) {
 
                 return_text
                         .append(",CustomName:'{\"text\":\"")
@@ -402,7 +420,7 @@ public class GameUtils {
 
             }
 
-            if (custom.equals("") == false) {
+            if (custom.isEmpty() == false) {
 
                 return_text
                         .append(",")
@@ -466,7 +484,7 @@ public class GameUtils {
 
 			} catch (Exception exception) {
 
-				OutsideUtils.exception(new Exception(), exception);
+				OutsideUtils.exception(new Exception(), exception, "");
 
 			}
 
@@ -486,7 +504,7 @@ public class GameUtils {
 
 			} catch (Exception exception) {
 
-				OutsideUtils.exception(new Exception(), exception);
+				OutsideUtils.exception(new Exception(), exception, "");
 
 			}
 
@@ -556,7 +574,7 @@ public class GameUtils {
 
 			} catch (Exception exception) {
 
-				OutsideUtils.exception(new Exception(), exception);
+				OutsideUtils.exception(new Exception(), exception, "");
 
 			}
 
@@ -715,7 +733,7 @@ public class GameUtils {
 
 		}
 
-		public static ItemStack itemGet (Entity entity, EquipmentSlot equipment_slot) {
+		public static ItemStack getItemSlot (Entity entity, EquipmentSlot equipment_slot) {
 
 			if (entity instanceof LivingEntity living_entity) {
 

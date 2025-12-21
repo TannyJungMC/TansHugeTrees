@@ -1,6 +1,6 @@
 package tannyjung.tanshugetrees.procedures;
 
-import tannyjung.tanshugetrees_handcode.systems.sapling.SaplingTick;
+import tannyjung.tanshugetrees_handcode.systems.tree_generator.Sapling;
 
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.Vec2;
@@ -16,6 +16,6 @@ public class SaplingTickProcedure {
 			if (world instanceof ServerLevel _level)
 				_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(), "");
 		}
-		SaplingTick.start(world, x, y, z);
+		Sapling.tick(world, x, y, z);
 	}
 }

@@ -38,7 +38,7 @@ public class LivingTreeMechanicsLeafLitterRemover {
 
         } else {
 
-            LeafLitter.start(level_server, posX, posY + 1, posZ, GameUtils.block.fromText(NBTManager.entity.getText(entity, "block")), true);
+            LeafLitter.create(level_server, level_server, posX, posY + 1, posZ, GameUtils.block.fromText(NBTManager.entity.getText(entity, "block")), true);
             GameUtils.command.runEntity(entity, "kill @s");
 
         }

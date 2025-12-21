@@ -58,7 +58,7 @@ public class ConfigMaker {
 
                     for (int loop = 0; loop < options.size(); loop++) {
 
-                        if (defaults.get(loop).equals("") == true) {
+                        if (defaults.get(loop).isEmpty() == true) {
 
                             keep = false;
 
@@ -126,7 +126,7 @@ public class ConfigMaker {
 
                     }
 
-                } else if (read_all.equals("") == true && written_values.size() > 0) {
+                } else if (read_all.isEmpty() == true && written_values.size() > 0) {
 
                     // Write Default
                     {
@@ -173,7 +173,7 @@ public class ConfigMaker {
 
                 {
 
-                    if (read_all.equals("") == false) {
+                    if (read_all.isEmpty() == false) {
 
                         if (read_all.contains(" = ") == true) {
 

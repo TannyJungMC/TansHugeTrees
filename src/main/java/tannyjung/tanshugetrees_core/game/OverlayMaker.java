@@ -33,7 +33,7 @@ public class OverlayMaker {
 
     public static void image (GuiGraphics graphic, String type, String name, String path, int posX, int posZ, int sizeX, int sizeZ, int piece_countX, int piece_countZ, int choose) {
 
-        if (name.equals("") == true) {
+        if (name.isEmpty() == true) {
 
             name = path;
 
@@ -54,6 +54,7 @@ public class OverlayMaker {
                 texture = Minecraft.getInstance().getTextureManager().getTexture(location);
 
             } catch (Exception ignored) {
+
 
 
             }
@@ -98,7 +99,7 @@ public class OverlayMaker {
 
                         } catch (Exception exception) {
 
-                            OutsideUtils.exception(new Exception(), exception);
+                            OutsideUtils.exception(new Exception(), exception, "");
 
                         }
 
@@ -121,7 +122,7 @@ public class OverlayMaker {
 
                         } catch (Exception exception) {
 
-                            OutsideUtils.exception(new Exception(), exception);
+                            OutsideUtils.exception(new Exception(), exception, "");
 
                         }
 

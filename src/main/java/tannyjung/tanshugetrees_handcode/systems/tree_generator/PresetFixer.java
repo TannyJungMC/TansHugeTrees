@@ -27,17 +27,21 @@ public class PresetFixer {
 
                 for (File pack : packs) {
 
-                    presets = new File(pack.getPath() + "/prestes").listFiles();
+                    if (pack.getName().endsWith(".zip") == false) {
 
-                    if (presets != null) {
+                        presets = new File(pack.getPath() + "/presets").listFiles();
 
-                        for (File preset : presets) {
+                        if (presets != null) {
 
-                            preset = new File(preset.getPath() + "/" + preset.getName() + ".txt");
+                            for (File preset : presets) {
 
-                            if (preset.exists() == true && preset.isDirectory() == false) {
+                                preset = new File(preset.getPath() + "/" + preset.getName() + ".txt");
 
-                                fix(template, preset.getPath());
+                                if (preset.exists() == true && preset.isDirectory() == false) {
+
+                                    fix(template, preset.getPath());
+
+                                }
 
                             }
 
@@ -79,7 +83,7 @@ public class PresetFixer {
 
                 }
 
-            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception, ""); }
 
         }
 
@@ -99,18 +103,18 @@ public class PresetFixer {
 
                         if (data.containsKey(name) == true) {
 
-                            write.append(data.get(name) +  "\n");
+                            write.append(data.get(name)).append("\n");
                             continue;
 
                         }
 
                     }
 
-                    write.append(read_all + "\n");
+                    write.append(read_all).append("\n");
 
                 }
 
-            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+            } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception, ""); }
 
         }
 

@@ -39,11 +39,11 @@
       }
     ],
     "customProperties": [],
-    "name": "Waypoint Flower (Unavailable)",
+    "name": "Waypoint Flower",
     "specialInformation": {
       "fixedValue": [
         "§8--------------------------------------------------",
-        "§8Place on ground to summon the sapling trader from Tan's Huge Trees mod, only available for saplings from TannyJung's Main Pack. Needed a minute to summon him.",
+        "§8Place on ground to summon a sapling trader from Tan's Huge Trees mod. Needed a minute to summon him. Note that only available for some saplings.",
         "§8--------------------------------------------------"
       ]
     },

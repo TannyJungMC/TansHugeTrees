@@ -48,14 +48,14 @@ public class OutsideUtils {
 
         } catch (Exception exception) {
 
-            exception(new Exception(), exception);
+            exception(new Exception(), exception, "");
             return false;
 
         }
 
     }
 
-    public static void download (String url, String to) {
+    public static boolean download (String url, String to) {
 
         if (OutsideUtils.isURLAvailable(url) == true) {
 
@@ -77,13 +77,18 @@ public class OutsideUtils {
 
                 } catch (Exception exception) {
 
-                    OutsideUtils.exception(new Exception(), exception);
+                    OutsideUtils.exception(new Exception(), exception, "");
+
+                    FileManager.delete(to);
+                    return false;
 
                 }
 
             }
 
         }
+
+        return true;
 
     }
 
@@ -290,13 +295,17 @@ public class OutsideUtils {
 
         }
 
-        public static int sizeMapNumberShort (Map<String, short[]> test) {
+        public static int sizeMapNumberShort (Map<String, Map<String, short[]>> test) {
 
             int return_number = 0;
 
-            for (Map.Entry<String, short[]> entry : test.entrySet()) {
+            for (Map.Entry<String, Map<String, short[]>> entry1 : test.entrySet()) {
 
-                return_number = return_number + entry.getValue().length * Short.BYTES;
+                for (Map.Entry<String, short[]> entry2 : entry1.getValue().entrySet()) {
+
+                    return_number = return_number + entry2.getValue().length * Short.BYTES;
+
+                }
 
             }
 
@@ -304,13 +313,17 @@ public class OutsideUtils {
 
         }
 
-        public static int sizeMapNumberInt (Map<String, int[]> test) {
+        public static int sizeMapNumberInt (Map<String, Map<String, int[]>> test) {
 
             int return_number = 0;
 
-            for (Map.Entry<String, int[]> entry : test.entrySet()) {
+            for (Map.Entry<String, Map<String, int[]>> entry1 : test.entrySet()) {
 
-                return_number = return_number + entry.getValue().length * Integer.BYTES;
+                for (Map.Entry<String, int[]> entry2 : entry1.getValue().entrySet()) {
+
+                    return_number = return_number + entry2.getValue().length * Integer.BYTES;
+
+                }
 
             }
 
@@ -318,13 +331,17 @@ public class OutsideUtils {
 
         }
 
-        public static int sizeMapText (Map<String, String> test) {
+        public static int sizeMapText (Map<String, Map<String, String>> test) {
 
             int return_number = 0;
 
-            for (Map.Entry<String, String> entry : test.entrySet()) {
+            for (Map.Entry<String, Map<String, String>> entry1 : test.entrySet()) {
 
-                return_number = return_number + entry.getValue().length() * Character.BYTES;
+                for (Map.Entry<String, String> entry2 : entry1.getValue().entrySet()) {
+
+                    return_number = return_number + entry2.getValue().length() * Character.BYTES;
+
+                }
 
             }
 
@@ -332,13 +349,17 @@ public class OutsideUtils {
 
         }
 
-        public static int sizeMapTextList (Map<String, String[]> test) {
+        public static int sizeMapTextList (Map<String, Map<String, String[]>> test) {
 
             int return_number = 0;
 
-            for (Map.Entry<String, String[]> entry : test.entrySet()) {
+            for (Map.Entry<String, Map<String, String[]>> entry1 : test.entrySet()) {
 
-                return_number = return_number + entry.getValue().length * Integer.BYTES;
+                for (Map.Entry<String, String[]> entry2 : entry1.getValue().entrySet()) {
+
+                    return_number = return_number + entry2.getValue().length * Integer.BYTES;
+
+                }
 
             }
 

@@ -165,7 +165,7 @@ public class CommandMaker {
 
                     } catch (Exception exception) {
 
-                        OutsideUtils.exception(new Exception(), exception);
+                        OutsideUtils.exception(new Exception(), exception, "");
 
                     }
 

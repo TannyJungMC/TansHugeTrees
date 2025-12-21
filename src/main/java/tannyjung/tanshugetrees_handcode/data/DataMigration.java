@@ -41,16 +41,16 @@ public class DataMigration {
 
                 }
 
-                FileManager.writeTXT(file.getPath(), String.valueOf(Handcode.data_structure_version), false);
-
             }
 
             if (previous_version >= 0 && Handcode.data_structure_version != previous_version) {
 
                 if (previous_version == 0) versions.before160();
-                if (previous_version < 20250000) TanshugetreesMod.LOGGER.info("Data Migration : Config Test");;
+                if (previous_version < 20250000) TanshugetreesMod.LOGGER.info("Data Migration : Config Test");
 
             }
+
+            FileManager.writeTXT(file.getPath(), String.valueOf(Handcode.data_structure_version), false);
 
         }
 
@@ -58,7 +58,7 @@ public class DataMigration {
 
             private static void before160 () {
 
-                TanshugetreesMod.LOGGER.info("Data Migration : Config Before 1.6.0");
+                TanshugetreesMod.LOGGER.info("Running data migration for config before " + "1.6.0 update");
 
                 FileManager.rename(Handcode.path_config + "/custom_packs/THT-tree_pack-main", "#TannyJung-Main-Pack");
                 FileManager.rename(Handcode.path_config + "/custom_packs/TannyJung-Main-Pack", "#TannyJung-Main-Pack");
@@ -95,16 +95,16 @@ public class DataMigration {
 
                 }
 
-                FileManager.writeTXT(file.getPath(), String.valueOf(Handcode.data_structure_version), false);
-
             }
 
             if (previous_version >= 0 && Handcode.data_structure_version != previous_version) {
 
                 if (previous_version == 0) versions.before160();
-                if (previous_version < 20250000) TanshugetreesMod.LOGGER.info("Data Migration : World Test");;
+                if (previous_version < 20251216) versions.before20251216();
 
             }
+
+            FileManager.writeTXT(file.getPath(), String.valueOf(Handcode.data_structure_version), false);
 
         }
 
@@ -112,7 +112,15 @@ public class DataMigration {
 
             private static void before160 () {
 
-                TanshugetreesMod.LOGGER.info("Data Migration : World Before 1.6.0");
+                TanshugetreesMod.LOGGER.info("Running data migration for world before " + "1.6.0 update");
+                FileManager.delete(Handcode.path_world_data);
+
+            }
+
+            private static void before20251216 () {
+
+                TanshugetreesMod.LOGGER.info("Running data migration for world before " + "20251216");
+                FileManager.delete(Handcode.path_world_data);
 
             }
 

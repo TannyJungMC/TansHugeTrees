@@ -33,7 +33,7 @@ public class FileConfigWorldGen {
 
             } catch (Exception exception) {
 
-                OutsideUtils.exception(new Exception(), exception);
+                OutsideUtils.exception(new Exception(), exception, "");
 
             }
 
@@ -56,7 +56,7 @@ public class FileConfigWorldGen {
                 write.append("""
                         Important Notes
                         
-                        - No need to run restart command to apply this config, as it automatic applying.
+                        - No need to run restart command to apply this config, as it's automatic applying.
                         - To repair missing values, run this command [ /TANSHUGETREES restart ] or restart the world.
                         - Very important! You must lock the trees you have edited, to mark it as don't reset. Do it by change "[]" at font of tree ID to "[LOCK]".
                         
@@ -96,7 +96,7 @@ public class FileConfigWorldGen {
                     write.append("----------------------------------------------------------------------------------------------------");
                     write.append("\n");
                     write.append("\n");
-                    write.append("Start a world to repair the config");
+                    write.append("Not found any pack installed");
                     write.append("\n");
                     write.append("\n");
 
@@ -125,7 +125,7 @@ public class FileConfigWorldGen {
 
                 } catch (Exception exception) {
 
-                    OutsideUtils.exception(new Exception(), exception);
+                    OutsideUtils.exception(new Exception(), exception, "");
 
                 }
 
@@ -219,7 +219,7 @@ public class FileConfigWorldGen {
 
                 {
 
-                    if (read_all.equals("") == false) {
+                    if (read_all.isEmpty() == false) {
 
                         if (read_all.startsWith("path_") == false) {
 
@@ -305,7 +305,7 @@ public class FileConfigWorldGen {
 
             } catch (Exception exception) {
 
-                OutsideUtils.exception(new Exception(), exception);
+                OutsideUtils.exception(new Exception(), exception, "");
 
             }
 

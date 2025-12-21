@@ -95,7 +95,7 @@ public class ShapeFileConverter {
 
                         }
 
-                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception); }
+                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception, ""); }
 
                 }
 
@@ -112,9 +112,9 @@ public class ShapeFileConverter {
             // Summon
             {
 
-                GameUtils.command.run(level_server, 0, 0, 0, "execute at @p positioned ~ 1000 ~ run " + GameUtils.command.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", GameUtils.misc.getForgeDataFromGiveFile(file.getPath())));
-                String data_modify = "debug_mode:false,tree_generator_speed_global:false,tree_generator_speed_tick:1,tree_generator_speed_repeat:0";
-                GameUtils.command.run(level_server, 0, 0, 0, "execute at @p positioned ~ 1000 ~ run data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
+                GameUtils.command.run(false, level_server, 0, 0, 0, "execute at @p positioned ~ 1000 ~ run " + GameUtils.command.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", GameUtils.misc.getForgeDataFromFile(file.getPath())));
+                String data_modify = "debug_mode:false,tree_generator_speed_global:false,tree_generator_speed_tick:1,tree_generator_speed_repeat:0,name:\"" + file_location[1] + "\"";
+                GameUtils.command.run(false, level_server, 0, 0, 0, "execute at @p positioned ~ 1000 ~ run data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
 
             }
 
@@ -133,7 +133,7 @@ public class ShapeFileConverter {
         String name = NBTManager.entity.getText(entity, "name");
         String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss-SSS").format(Calendar.getInstance().getTime());
         NBTManager.entity.setText(entity, "export_file_name", name + "_" + time + ".bin");
-        GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [\"\",{\"text\":\"THT : Generating \",\"color\":\"aqua\"},{\"text\":\"" + NBTManager.entity.getText(entity, "export_file_name").replace(" (generating)", "") + "\",\"color\":\"white\"}]");
+        GameUtils.command.run(false, level_server, 0, 0, 0, "tellraw @a [\"\",{\"text\":\"THT : Generating \",\"color\":\"aqua\"},{\"text\":\"" + NBTManager.entity.getText(entity, "export_file_name").replace(" (generating)", "") + "\",\"color\":\"white\"}]");
 
         // Write Settings
         {
@@ -142,57 +142,38 @@ public class ShapeFileConverter {
 
             {
 
-                // Settings
-                {
-
-                    write
-                            .append("tree_type = ").append(NBTManager.entity.getText(entity, "tree_type")).append("\n")
-                            .append("start_height = ").append((int) NBTManager.entity.getNumber(entity, "start_height")).append("\n")
-                            .append("can_disable_roots = ").append(NBTManager.entity.getLogic(entity, "can_disable_roots")).append("\n")
-                            .append("can_leaves_decay = ").append(NBTManager.entity.getLogic(entity, "can_leaves_decay")).append("\n")
-                            .append("can_leaves_drop = ").append(NBTManager.entity.getLogic(entity, "can_leaves_drop")).append("\n")
-                            .append("can_leaves_regrow = ").append(NBTManager.entity.getLogic(entity, "can_leaves_regrow")).append("\n")
-                    ;
-
-                }
-
-                write.append("\n");
-
-                // Blocks
-                {
-
-                    write
-                            .append(settingsWriteBlock(entity, 110, "taproot"))
-                            .append(settingsWriteBlock(entity, 111, "secondary_root"))
-                            .append(settingsWriteBlock(entity, 112, "tertiary_root"))
-                            .append(settingsWriteBlock(entity, 113, "fine_root"))
-                            .append(settingsWriteBlock(entity, 114, "trunk"))
-                            .append(settingsWriteBlock(entity, 115, "bough"))
-                            .append(settingsWriteBlock(entity, 116, "branch"))
-                            .append(settingsWriteBlock(entity, 117, "limb"))
-                            .append(settingsWriteBlock(entity, 118, "twig"))
-                            .append(settingsWriteBlock(entity, 119, "sprig"))
-                            .append(settingsWriteBlock(entity, 120, "leaves"))
-                    ;
-
-                }
-
-                write.append("\n");
-
-                // Functions
-                {
-
-                    write
-                            .append("Function fs 210 = ").append(NBTManager.entity.getText(entity, "function_start")).append("\n")
-                            .append("Function fe 220 = ").append(NBTManager.entity.getText(entity, "function_end")).append("\n")
-                            .append("Function f1 201 = ").append(NBTManager.entity.getText(entity, "function_way1")).append("\n")
-                            .append("Function f2 202 = ").append(NBTManager.entity.getText(entity, "function_way2")).append("\n")
-                            .append("Function f3 203 = ").append(NBTManager.entity.getText(entity, "function_way3")).append("\n")
-                            .append("Function f4 204 = ").append(NBTManager.entity.getText(entity, "function_way4")).append("\n")
-                            .append("Function f5 205 = ").append(NBTManager.entity.getText(entity, "function_way5")).append("\n")
-                    ;
-
-                }
+                write
+                        .append("tree_type = ").append(NBTManager.entity.getText(entity, "tree_type")).append("\n")
+                        .append("start_height = ").append((int) NBTManager.entity.getNumber(entity, "start_height")).append("\n")
+                        .append("can_disable_roots = ").append(NBTManager.entity.getLogic(entity, "can_disable_roots")).append("\n")
+                        .append("can_leaves_decay = ").append(NBTManager.entity.getLogic(entity, "can_leaves_decay")).append("\n")
+                        .append("can_leaves_drop = ").append(NBTManager.entity.getLogic(entity, "can_leaves_drop")).append("\n")
+                        .append("can_leaves_regrow = ").append(NBTManager.entity.getLogic(entity, "can_leaves_regrow")).append("\n")
+                        .append("\n")
+                        .append(settingsWriteBlock(entity, 110, "taproot"))
+                        .append(settingsWriteBlock(entity, 111, "secondary_root"))
+                        .append(settingsWriteBlock(entity, 112, "tertiary_root"))
+                        .append(settingsWriteBlock(entity, 113, "fine_root"))
+                        .append(settingsWriteBlock(entity, 114, "trunk"))
+                        .append(settingsWriteBlock(entity, 115, "bough"))
+                        .append(settingsWriteBlock(entity, 116, "branch"))
+                        .append(settingsWriteBlock(entity, 117, "limb"))
+                        .append(settingsWriteBlock(entity, 118, "twig"))
+                        .append(settingsWriteBlock(entity, 119, "sprig"))
+                        .append(settingsWriteBlock(entity, 120, "leaves"))
+                        .append("\n")
+                        .append("Function fs 210 = ").append(NBTManager.entity.getText(entity, "function_start")).append("\n")
+                        .append("Function fe 220 = ").append(NBTManager.entity.getText(entity, "function_end")).append("\n")
+                        .append("Function f1 201 = ").append(NBTManager.entity.getText(entity, "function_way1")).append("\n")
+                        .append("Function f2 202 = ").append(NBTManager.entity.getText(entity, "function_way2")).append("\n")
+                        .append("Function f3 203 = ").append(NBTManager.entity.getText(entity, "function_way3")).append("\n")
+                        .append("Function f4 204 = ").append(NBTManager.entity.getText(entity, "function_way4")).append("\n")
+                        .append("Function f5 205 = ").append(NBTManager.entity.getText(entity, "function_way5")).append("\n")
+                        .append("Function f5 206 = ").append(NBTManager.entity.getText(entity, "function_way6")).append("\n")
+                        .append("Function f5 207 = ").append(NBTManager.entity.getText(entity, "function_way7")).append("\n")
+                        .append("Function f5 208 = ").append(NBTManager.entity.getText(entity, "function_way8")).append("\n")
+                        .append("Function f5 209 = ").append(NBTManager.entity.getText(entity, "function_way9")).append("\n")
+                ;
 
             }
 
@@ -524,16 +505,20 @@ public class ShapeFileConverter {
         GameUtils.misc.sendChatMessage(level_server, null, "@a", "green", "THT : Completed!");
         export_data.clear();
 
-        if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
+        Handcode.createDelayedWorks(true, 1, () -> {
 
-            GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
-            summon(level_accessor, level_server);
+            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 
-        } else {
+                GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
+                summon(level_accessor, level_server);
 
-            stop(level_accessor);
+            } else {
 
-        }
+                stop(level_accessor);
+
+            }
+
+        });
 
     }
 

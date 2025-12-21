@@ -10,7 +10,11 @@ import tannyjung.tanshugetrees_core.game.NBTManager;
 import tannyjung.tanshugetrees_core.game.TXTFunction;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
+import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.data.FileConfig;
+
+import java.io.File;
+import java.util.Locale;
 
 public class TreeGenerator {
 
@@ -116,7 +120,7 @@ public class TreeGenerator {
 
         if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-            TXTFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), NBTManager.entity.getText(entity, "function_start"), true);
+            TXTFunction.run(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), "functions/" + NBTManager.entity.getText(entity, "function_start"), true);
 
         } else {
 
@@ -434,7 +438,7 @@ public class TreeGenerator {
                                 double forward = 0.0;
                                 double height = 0.0;
 
-                                if (NBTManager.entity.getText(entity, type + "_center_direction_from").equals("") == true) {
+                                if (NBTManager.entity.getText(entity, type + "_center_direction_from").isEmpty() == true) {
 
                                     // Non Center Direction
                                     {
@@ -509,19 +513,19 @@ public class TreeGenerator {
 
                 }
 
-                GameUtils.command.run(level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-" + at_part + "] " + positioned + " run " + GameUtils.command.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-" + id + " / TANSHUGETREES-generator_" + type, "Tree Generator - Part", ""));
+                GameUtils.command.run(false, level_server, 0, 0, 0, "execute at @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-" + at_part + "] " + positioned + " run " + GameUtils.command.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-" + id + " / TANSHUGETREES-generator_" + type, "Tree Generator - Part", ""));
 
                 if (is_taproot_trunk == true) {
 
                     int direction = Mth.nextInt(RandomSource.create(), (int) NBTManager.entity.getNumber(entity, type + "_start_direction_min"), (int) NBTManager.entity.getNumber(entity, type + "_start_direction_max"));
                     int gravity = Mth.nextInt(RandomSource.create(), (int) NBTManager.entity.getNumber(entity, type + "_start_gravity_max"), (int) NBTManager.entity.getNumber(entity, type + "_start_gravity_min"));
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ~ ~ ~ " + direction + " " + gravity);
+                    GameUtils.command.run(false, level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ~ ~ ~ " + direction + " " + gravity);
 
                 } else {
 
                     String type_current = "tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type;
                     String type_pre = "tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type_pre_next[0];
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[" + type_current + "] at @s facing entity @e[" + type_pre + ",limit=1] feet positioned as @e[" + type_pre + ",limit=1] run tp @s ~ ~ ~ facing ^ ^ ^-1");
+                    GameUtils.command.run(false, level_server, 0, 0, 0, "execute as @e[" + type_current + "] at @s facing entity @e[" + type_pre + ",limit=1] feet positioned as @e[" + type_pre + ",limit=1] run tp @s ~ ~ ~ facing ^ ^ ^-1");
 
                 }
 
@@ -551,7 +555,7 @@ public class TreeGenerator {
             double return_number = 1.0;
             String from = NBTManager.entity.getText(entity, type + "_" + step + "_from");
 
-            if (from.equals("") == false) {
+            if (from.isEmpty() == false) {
 
                 int length = (int) NBTManager.entity.getNumber(entity, from + "_length");
                 int length_save = (int) NBTManager.entity.getNumber(entity, from + "_length_save");
@@ -653,7 +657,7 @@ public class TreeGenerator {
 
                                 vertical = Mth.nextDouble(RandomSource.create(), -(vertical), vertical);
                                 horizontal = Mth.nextDouble(RandomSource.create(), -(horizontal), horizontal);
-                                GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ~ ~ ~ ~" + horizontal + " ~" + vertical);
+                                GameUtils.command.run(false, level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ~ ~ ~ ~" + horizontal + " ~" + vertical);
 
                             }
 
@@ -664,7 +668,7 @@ public class TreeGenerator {
                         // Gravity
                         {
 
-                            int weightiness = (int) NBTManager.entity.getNumber(entity, type + "_gravity_weightiness");
+                            double weightiness = NBTManager.entity.getNumber(entity, type + "_gravity_weightiness");
 
                             if (weightiness != 0) {
 
@@ -673,14 +677,14 @@ public class TreeGenerator {
 
                                 if (GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",x_rotation=" + min + "..90]") == true) {
 
-                                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ~ ~ ~ ~ ~-" + weightiness);
+                                    GameUtils.command.run(false, level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ~ ~ ~ ~ ~-" + weightiness);
                                     gravity_run = true;
 
                                 }
 
                                 if (GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",x_rotation=-90.." + max + "]") == true) {
 
-                                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ~ ~ ~ ~ ~" + weightiness);
+                                    GameUtils.command.run(false, level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ~ ~ ~ ~ ~" + weightiness);
                                     gravity_run = true;
 
                                 }
@@ -699,9 +703,9 @@ public class TreeGenerator {
                                 if (centripetal != 0.0) {
 
                                     String old_pos = pos[0] + " " + pos[1] + " " + pos[2];
-                                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ^ ^ ^1");
-                                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s facing entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_trunk] feet run tp @s ^ ^ ^-" + centripetal);
-                                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s facing " + old_pos + " positioned " + old_pos + " run tp @s ~ ~ ~ facing ^ ^ ^-1");
+                                    GameUtils.command.run(false, level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ^ ^ ^1");
+                                    GameUtils.command.run(false, level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s facing entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_trunk] feet run tp @s ^ ^ ^-" + centripetal);
+                                    GameUtils.command.run(false, level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s facing " + old_pos + " positioned " + old_pos + " run tp @s ~ ~ ~ facing ^ ^ ^-1");
 
                                 }
 
@@ -716,7 +720,7 @@ public class TreeGenerator {
 
                     }
 
-                    GameUtils.command.run(level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ^ ^ ^1");
+                    GameUtils.command.run(false, level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ^ ^ ^1");
                     NBTManager.entity.addNumber(entity, type + "_length", -1);
                     NBTManager.entity.setText(entity, "step", "build");
 
@@ -1258,7 +1262,7 @@ public class TreeGenerator {
 
                     }
 
-                    if (previous_block.equals("") == false) {
+                    if (previous_block.isEmpty() == false) {
 
                         String type_short = type.substring(0, 2);
                         String previous_block_short = previous_block.substring(0, 2);
@@ -1504,11 +1508,11 @@ public class TreeGenerator {
 
         private static boolean buildPlaceBlock (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, BlockPos pos, String type, String block_type, String previous_block, boolean replace) {
 
-            if (block_type.equals("") == false) {
+            if (block_type.isEmpty() == false) {
 
                 boolean remove_then_add = false;
 
-                if (previous_block.equals("") == false) {
+                if (previous_block.isEmpty() == false) {
 
                     if (replace == false) {
 
@@ -1532,7 +1536,7 @@ public class TreeGenerator {
 
                 }
 
-                if (NBTManager.entity.getText(entity, block).equals("") == false) {
+                if (NBTManager.entity.getText(entity, block).isEmpty() == false) {
 
                     // Place
                     {
@@ -1541,7 +1545,7 @@ public class TreeGenerator {
 
                         if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                            GameUtils.command.run(level_server, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
+                            GameUtils.command.run(false, level_server, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
                             level_accessor.setBlock(pos, GameUtils.block.fromText("tanshugetrees:block_placer_" + block_placer), 2);
 
                             NBTManager.block.setText(level_accessor, pos, "block", NBTManager.entity.getText(entity, block));
@@ -1560,7 +1564,7 @@ public class TreeGenerator {
 
                             ShapeFileConverter.export_data.put("B" + key, type_short);
 
-                            if (function[0].equals("") == false) {
+                            if (function[0].isEmpty() == false) {
 
                                 if (remove_then_add == true) {
 
@@ -1594,7 +1598,7 @@ public class TreeGenerator {
             String at_type = "";
             String style = "";
 
-            for (int number = 1; number <= 3; number++) {
+            for (int number = 1; number <= 9; number++) {
 
                 function = "function_way" + number;
 
@@ -1604,7 +1608,7 @@ public class TreeGenerator {
                     at_type = NBTManager.entity.getText(entity, function + "_type");
                     style = NBTManager.entity.getText(entity, function + "_style");
 
-                    if (path.equals("") == false && at_type.equals(type) == true) {
+                    if (path.isEmpty() == false && at_type.equals(type) == true) {
 
                         if (NBTManager.entity.getNumber(entity, function + "_max") >= 0) {
 
@@ -1662,7 +1666,7 @@ public class TreeGenerator {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                TXTFunction.start(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), NBTManager.entity.getText(entity, "function_end"), true);
+                TXTFunction.run(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), "functions/" + NBTManager.entity.getText(entity, "function_end"), true);
 
             } else {
 
@@ -1675,7 +1679,7 @@ public class TreeGenerator {
             GameUtils.command.runEntity(entity, firework_position + "summon firework_rocket ~20 ~10 ~-20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
             GameUtils.command.runEntity(entity, firework_position + "summon firework_rocket ~-20 ~10 ~20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
             GameUtils.command.runEntity(entity, firework_position + "summon firework_rocket ~-20 ~10 ~-20 {LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
-            GameUtils.command.run(level_server, 0, 0, 0, "kill @e[tag=TANSHUGETREES-" + id + "]");
+            GameUtils.command.run(false, level_server, 0, 0, 0, "kill @e[tag=TANSHUGETREES-" + id + "]");
 
         }
 

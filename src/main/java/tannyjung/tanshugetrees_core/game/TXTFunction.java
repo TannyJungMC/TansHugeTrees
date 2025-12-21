@@ -17,7 +17,7 @@ import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 public class TXTFunction {
 
-	public static void start (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String path, boolean randomly) {
+	public static void run (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String path, boolean randomly) {
 
         WorldGenLevel world_gen = (WorldGenLevel) level_accessor;
         boolean chunk_loaded = level_server.isPositionEntityTicking(new BlockPos(posX, posY, posZ));
@@ -58,7 +58,7 @@ public class TXTFunction {
 
             {
 
-                if (read_all.equals("") == false) {
+                if (read_all.isEmpty() == false) {
 
                     if (read_all.equals("[") == true || read_all.equals("]") == true) {
 
@@ -423,7 +423,7 @@ public class TXTFunction {
 
                                                             if (random.nextDouble() < chance) {
 
-                                                                TXTFunction.start(level_accessor, level_server, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, variable_text, false);
+                                                                TXTFunction.run(level_accessor, level_server, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, variable_text, false);
 
                                                             }
 
@@ -449,7 +449,7 @@ public class TXTFunction {
 
                                                                 if (chunk_loaded == true) {
 
-                                                                    GameUtils.command.run(level_server, posX, posY, posZ, variable_text);
+                                                                    GameUtils.command.run(true, level_server, posX, posY, posZ, variable_text);
 
                                                                 } else {
 
@@ -499,7 +499,7 @@ public class TXTFunction {
                 }
 
                 command = command.replace("'", "*").replace("\"", "$");
-                GameUtils.command.run(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, GameUtils.command.summonEntity("marker", "TANNYJUNG / TANNYJUNG-delayed_command", "Delayed Command", "ForgeData:{command:\"" + command + "\"}"));
+                GameUtils.command.run(true, level_server, posX + 0.5, posY + 0.5, posZ + 0.5, GameUtils.command.summonEntity("marker", "TANNYJUNG / TANNYJUNG-delayed_command", "Delayed Command", "ForgeData:{command:\"" + command + "\"}"));
 
             }
 
@@ -517,7 +517,7 @@ public class TXTFunction {
 
                 for (String command : NBTManager.entity.getText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
 
-                    GameUtils.command.run(level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), command);
+                    GameUtils.command.run(true, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), command);
 
 
                 }

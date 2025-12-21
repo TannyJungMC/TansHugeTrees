@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
+import tannyjung.tanshugetrees_handcode.systems.Loop;
 
 public class CompatibilitySereneSeasons {
 
@@ -11,25 +12,16 @@ public class CompatibilitySereneSeasons {
 
     public static void start (LevelAccessor level_accessor, ServerLevel level_server) {
 
-        level_server.getServer().execute(() -> {
+        if (Handcode.restart_loop == false) {
 
+            Handcode.createDelayedWorks(false, 1200, () -> start(level_accessor, level_server));
             run(level_accessor, level_server);
 
-        });
+        }
 
     }
 
     private static void run (LevelAccessor level_accessor, ServerLevel level_server) {
-
-        Handcode.createDelayedWorks(200, () -> {
-
-            if (Handcode.system_pause_test == false) {
-
-                run(level_accessor, level_server);
-
-            }
-
-        });
 
         season_detector_tick = season_detector_tick + 1;
         int posX = level_accessor.getLevelData().getXSpawn();
@@ -38,7 +30,7 @@ public class CompatibilitySereneSeasons {
 
         if (season_detector_tick == 1 || season_detector_tick == 3 || season_detector_tick == 5 || season_detector_tick == 7 || season_detector_tick == 9) {
 
-            GameUtils.command.run(level_server, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
+            GameUtils.command.run(false, level_server, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
 
             if (season_detector_tick == 60) {
 
@@ -72,10 +64,10 @@ public class CompatibilitySereneSeasons {
 
             }
 
-            if (season.equals("") == false) {
+            if (season.isEmpty() == false) {
 
-                GameUtils.command.run(level_server, posX, posY, posZ, "setblock ~ ~ ~ command_block{Command:\"TANSHUGETREES command season set " + season + "\"}");
-                GameUtils.command.run(level_server, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
+                GameUtils.command.run(false, level_server, posX, posY, posZ, "setblock ~ ~ ~ command_block{Command:\"TANSHUGETREES command season set " + season + "\"}");
+                GameUtils.command.run(false, level_server, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
 
             }
 

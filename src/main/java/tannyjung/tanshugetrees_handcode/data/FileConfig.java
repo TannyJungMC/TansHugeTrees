@@ -48,9 +48,7 @@ public class FileConfig {
 	public static double leaf_drop_animation_chance = 0.0;
 	public static int leaf_drop_animation_count_limit = 0;
 	public static int leaf_light_level_detection = 0;
-	public static double leaf_light_level_detection_drop_chance = 0.0;
-	public static Set<String> deciduous_leaves_list = null;
-	public static Set<String> coniferous_leaves_list = null;
+	public static double leaf_dead_drop_chance = 0.0;
 
 	public static boolean compatibility_serene_seasons = false;
 	public static double leaf_drop_chance_spring = 0;
@@ -63,6 +61,8 @@ public class FileConfig {
 	public static double leaf_regrowth_chance_winter = 0;
 	public static double leaf_drop_chance_coniferous = 0.0;
 	public static double leaf_regrowth_chance_coniferous = 0.0;
+	public static Set<String> deciduous_leaves_list = null;
+	public static Set<String> coniferous_leaves_list = null;
 
 	public static boolean tree_generator_speed_global = false;
 	public static int tree_generator_speed_tick = 0;
@@ -191,12 +191,8 @@ public class FileConfig {
                 leaf_light_level_detection = 7
                 | Minimum light level of leaves can survive. Leaves will drop themselves if light level is under this value. Set to 15 for only full bright level. Set to 0 for no light level affect.
                 
-                leaf_light_level_detection_drop_chance = 0.001
-                | Chance of leaves to drop themselves when light level is under the config
-                
-                deciduous_leaves_list = minecraft:oak_leaves / minecraft:birch_leaves
-                coniferous_leaves_list = minecraft:spruce_leaves
-                | List of deciduous and coniferous leaves blocks. Deciduous is oak trees and similar. They will drop their leaves before winter, but note that they will not do that in tropical biomes. Coniferous is pine trees. They will drop their leaves only in summer and almost very rare.
+                leaf_dead_drop_chance = 0.001
+                | Chance of leaves to drop themselves when they're dead by light level and missing center block
                 
                 ----------------------------------------------------------------------------------------------------
                 Living Tree Mechanics : Leaf Cycle and Seasons
@@ -219,6 +215,10 @@ public class FileConfig {
                 leaf_regrowth_chance_coniferous = 0.005
                 | Chance of coniferous leaves to drop in summer and regrow in any season
                 
+                deciduous_leaves_list = minecraft:oak_leaves / minecraft:birch_leaves
+                coniferous_leaves_list = minecraft:spruce_leaves
+                | List of deciduous and coniferous leaves blocks. Deciduous is oak trees and similar. They will drop their leaves before winter, but note that they will not do that in tropical biomes. Coniferous is pine trees. They will drop their leaves only in summer and almost very rare.
+                
                 ----------------------------------------------------------------------------------------------------
                 Tree Generator
                 ----------------------------------------------------------------------------------------------------
@@ -229,10 +229,10 @@ public class FileConfig {
                 tree_generator_speed_tick = 1
                 | How fast of generators in tick. Increase this will make them slower. Set to 0 for temporary pause all generators.
                 
-                tree_generator_speed_repeat = 1000
+                tree_generator_speed_repeat = 100
                 | How many processes the generators run in a time. Increase this will make them generate faster but also can cause lag. Set to 0 for one time generation that can freeze the game.
                 
-                tree_generator_count_limit = 1
+                tree_generator_count_limit = 3
                 | How many generators will generate in the same time. Set to 0 for no limit.
                 
                 ----------------------------------------------------------------------------------------------------
@@ -295,9 +295,7 @@ public class FileConfig {
 		leaf_drop_animation_chance = Double.parseDouble(data.get("leaf_drop_animation_chance"));
 		leaf_drop_animation_count_limit = Integer.parseInt(data.get("leaf_drop_animation_count_limit"));
 		leaf_light_level_detection = Integer.parseInt(data.get("leaf_light_level_detection"));
-		leaf_light_level_detection_drop_chance = Double.parseDouble(data.get("leaf_light_level_detection_drop_chance"));
-		deciduous_leaves_list = new HashSet<>(List.of(data.get("deciduous_leaves_list").split(" / ")));
-		coniferous_leaves_list = new HashSet<>(List.of(data.get("coniferous_leaves_list").split(" / ")));
+		leaf_dead_drop_chance = Double.parseDouble(data.get("leaf_dead_drop_chance"));
 
 		compatibility_serene_seasons = Boolean.parseBoolean(data.get("compatibility_serene_seasons"));
 		leaf_drop_chance_spring = Double.parseDouble(data.get("leaf_drop_chance_spring"));
@@ -310,6 +308,8 @@ public class FileConfig {
 		leaf_regrowth_chance_winter = Double.parseDouble(data.get("leaf_regrowth_chance_winter"));
 		leaf_drop_chance_coniferous = Double.parseDouble(data.get("leaf_drop_chance_coniferous"));
 		leaf_regrowth_chance_coniferous = Double.parseDouble(data.get("leaf_regrowth_chance_coniferous"));
+		deciduous_leaves_list = new HashSet<>(List.of(data.get("deciduous_leaves_list").split(" / ")));
+		coniferous_leaves_list = new HashSet<>(List.of(data.get("coniferous_leaves_list").split(" / ")));
 
 		tree_generator_speed_global = Boolean.parseBoolean(data.get("tree_generator_speed_global"));
 		tree_generator_speed_tick = Integer.parseInt(data.get("tree_generator_speed_tick"));

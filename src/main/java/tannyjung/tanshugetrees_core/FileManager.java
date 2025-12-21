@@ -1,7 +1,5 @@
 package tannyjung.tanshugetrees_core;
 
-import tannyjung.tanshugetrees_handcode.systems.Cache;
-
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -43,7 +41,7 @@ public class FileManager {
 
                     } catch (Exception exception) {
 
-                        OutsideUtils.exception(new Exception(), exception);
+                        OutsideUtils.exception(new Exception(), exception, "");
 
                     }
 
@@ -51,7 +49,7 @@ public class FileManager {
 
             } catch (Exception exception) {
 
-                OutsideUtils.exception(new Exception(), exception);
+                OutsideUtils.exception(new Exception(), exception, "");
 
             }
 
@@ -81,7 +79,7 @@ public class FileManager {
 
             } catch (Exception exception) {
 
-                OutsideUtils.exception(new Exception(), exception);
+                OutsideUtils.exception(new Exception(), exception, "");
 
             }
 
@@ -102,7 +100,7 @@ public class FileManager {
 
                         } catch (Exception exception) {
 
-                            OutsideUtils.exception(new Exception(), exception);
+                            OutsideUtils.exception(new Exception(), exception, "");
 
                         }
 
@@ -112,7 +110,7 @@ public class FileManager {
 
             } catch (Exception exception) {
 
-                OutsideUtils.exception(new Exception(), exception);
+                OutsideUtils.exception(new Exception(), exception, "");
 
             }
 
@@ -136,7 +134,7 @@ public class FileManager {
 
             } catch (Exception exception) {
 
-                OutsideUtils.exception(new Exception(), exception);
+                OutsideUtils.exception(new Exception(), exception, "");
 
             }
 
@@ -161,7 +159,7 @@ public class FileManager {
 
 		} catch (Exception exception) {
 
-			OutsideUtils.exception(new Exception(), exception);
+			OutsideUtils.exception(new Exception(), exception, "");
 
 		}
 
@@ -180,7 +178,7 @@ public class FileManager {
 
 			} catch (Exception exception) {
 
-				OutsideUtils.exception(new Exception(), exception);
+				OutsideUtils.exception(new Exception(), exception, "");
 
 			}
 
@@ -226,10 +224,6 @@ public class FileManager {
 
                             file_bin.writeBoolean(Boolean.parseBoolean(value));
 
-                        } else if (type.equals("t") == true) {
-
-                            file_bin.writeShort(Short.parseShort(Cache.getDictionary(value, false)));
-
                         }
 
                     }
@@ -240,7 +234,7 @@ public class FileManager {
 
             } catch (Exception exception) {
 
-                OutsideUtils.exception(new Exception(), exception);
+                OutsideUtils.exception(new Exception(), exception, "");
 
             }
 
@@ -261,7 +255,7 @@ public class FileManager {
 
             } catch (Exception exception) {
 
-                OutsideUtils.exception(new Exception(), exception);
+                OutsideUtils.exception(new Exception(), exception, "");
 
             }
 
@@ -331,7 +325,7 @@ public class FileManager {
 
         } catch (Exception exception) {
 
-            OutsideUtils.exception(new Exception(), exception);
+            OutsideUtils.exception(new Exception(), exception, "");
 
         }
 
@@ -382,7 +376,7 @@ public class FileManager {
 
                         } catch (Exception exception) {
 
-                            OutsideUtils.exception(new Exception(), exception);
+                            OutsideUtils.exception(new Exception(), exception, "");
 
                         }
 
@@ -396,7 +390,7 @@ public class FileManager {
 
         } catch (Exception exception) {
 
-            OutsideUtils.exception(new Exception(), exception);
+            OutsideUtils.exception(new Exception(), exception, "");
 
         }
 
