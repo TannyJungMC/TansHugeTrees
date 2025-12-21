@@ -16,18 +16,35 @@ public class OutsideUtils {
 
     public static final Logger logger = LogManager.getLogger("TannyJung");
 
-    public static void exception (Exception from, Exception exception) {
+    public static void exception (Exception from, Exception exception, String details) {
 
         logger.error("----------------------------------------------------------------------------------------------------");
 
-        StackTraceElement from_get = from.getStackTrace()[0];
+        {
 
-        logger.error("Found an error reported from {} -> {} -> {}", from_get.getClassName(), from_get.getMethodName(), from_get.getLineNumber());
-        logger.error(exception.getMessage());
+            StackTraceElement from_get = from.getStackTrace()[0];
+            logger.error("Found an error reported from {} -> {} -> {}", from_get.getClassName(), from_get.getMethodName(), from_get.getLineNumber());
+            logger.error(exception.getMessage());
 
-        for (StackTraceElement get : exception.getStackTrace()) {
+            for (StackTraceElement get : exception.getStackTrace()) {
 
-            logger.error(get);
+                if (get.toString().contains("tannyjung") == true) {
+
+                    logger.error(get);
+
+                }
+
+            }
+
+            if (details.isEmpty() == false) {
+
+                for (String get : details.split(" / ")) {
+
+                    logger.error(get);
+
+                }
+
+            }
 
         }
 

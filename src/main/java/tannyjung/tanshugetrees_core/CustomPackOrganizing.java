@@ -94,6 +94,8 @@ public class CustomPackOrganizing {
 
         getPackID(path_config);
         testInfo(path_config, data_structure_version);
+        pack_separation_single = "/" + pack_separation_single + "/";
+        pack_separation_multiple = "/" + pack_separation_multiple + "/";
 
         // Organizing Data
         {
@@ -102,92 +104,19 @@ public class CustomPackOrganizing {
 
             if (packs != null) {
 
-                File[] inside = new File[0];
-                String pack_name = "";
-                pack_separation_single = "/" + pack_separation_single + "/";
-                pack_separation_multiple = "/" + pack_separation_multiple + "/";
+                File tanny_pack = TannyPackManager.getCurrentFile(path_config);
+
+                if (tanny_pack.exists() == true) {
+
+                    organizingData(path_config, tanny_pack, pack_separation_single, pack_separation_multiple);
+
+                }
 
                 for (File pack : packs) {
 
-                    boolean incompatible = pack.getName().startsWith("[INCOMPATIBLE] ");
+                    if (pack != tanny_pack) {
 
-                    if (incompatible == true) {
-
-                        pack = new File(pack.getParent() + "/" + pack.getName().replace("[INCOMPATIBLE] ", ""));
-
-                    }
-
-                    pack_name = pack.getName();
-
-                    if (pack.getName().endsWith(".zip") == true) {
-
-                        pack = new File(path_config + "/#dev/temporary/pack_zip/" + pack.getName().replace(".zip", ""));
-
-                    }
-
-                    inside = pack.listFiles();
-
-                    if (inside != null) {
-
-                        String path_pack = pack.getPath();
-
-                        for (File file : inside) {
-
-                            if (pack_separation_single.contains("/" + file.getName() + "/") == true) {
-
-                                // Single Separation
-                                {
-
-                                    if (incompatible == false) {
-
-                                        FileManager.copy(file.getPath(), path_config + "/#dev/temporary/" + file.getName(), true);
-
-                                    }
-
-                                }
-
-                            } else if (pack_separation_multiple.contains("/" + file.getName() + "/") == true) {
-
-                                // Multiple Separation
-                                {
-
-                                    Path path_to = Path.of(path_config + "/#dev/temporary/" + file.getName() + "/" + cache_pack_ids.get(pack_name));
-
-                                    {
-
-                                        try {
-
-                                            Files.walk(file.toPath()).forEach(source -> {
-
-                                                if (source.toFile().isDirectory() == false) {
-
-                                                    Path path_copy_to = path_to.resolve(Path.of(path_pack).resolve(file.getName()).relativize(source));
-
-                                                    if (incompatible == true) {
-
-                                                        path_copy_to = path_copy_to.getParent().resolve("[INCOMPATIBLE] " + path_copy_to.toFile().getName());
-
-                                                    }
-
-                                                    FileManager.copy(source.toString(), path_copy_to.toString(), false);
-
-                                                }
-
-                                            });
-
-                                        } catch (Exception exception) {
-
-                                            OutsideUtils.exception(new Exception(), exception);
-
-                                        }
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
+                        organizingData(path_config, pack, pack_separation_single, pack_separation_multiple);
 
                     }
 
@@ -268,7 +197,7 @@ public class CustomPackOrganizing {
 
                                                             for (String read_all : data_new) {
 
-                                                                if (read_all.equals("") == false) {
+                                                                if (read_all.isEmpty() == false) {
 
                                                                     if (read_all.contains(" = ") == true) {
 
@@ -314,7 +243,7 @@ public class CustomPackOrganizing {
 
                                 } catch (Exception exception) {
 
-                                    OutsideUtils.exception(new Exception(), exception);
+                                    OutsideUtils.exception(new Exception(), exception, "");
 
                                 }
 
@@ -370,7 +299,7 @@ public class CustomPackOrganizing {
 
                             } catch (Exception exception) {
 
-                                OutsideUtils.exception(new Exception(), exception);
+                                OutsideUtils.exception(new Exception(), exception, "");
 
                             }
 
@@ -395,7 +324,7 @@ public class CustomPackOrganizing {
 
     }
 
-    public static void getPackID (String path_config) {
+    private static void getPackID (String path_config) {
 
         File[] files = new File(path_config + "/#dev/temporary/info").listFiles();
 
@@ -421,6 +350,12 @@ public class CustomPackOrganizing {
             }
 
         }
+
+    }
+
+    private static void a () {
+
+
 
     }
 
@@ -521,7 +456,7 @@ public class CustomPackOrganizing {
                         // Required Packs
                         {
 
-                            if (required_packs.equals("") == false && required_packs.equals("none") == false) {
+                            if (required_packs.isEmpty() == false && required_packs.equals("none") == false) {
 
                                 for (String value : required_packs.split(" / ")) {
 
@@ -542,7 +477,7 @@ public class CustomPackOrganizing {
                         // Required Mods
                         {
 
-                            if (required_mods.equals("") == false && required_mods.equals("none") == false) {
+                            if (required_mods.isEmpty() == false && required_mods.equals("none") == false) {
 
                                 for (String value : required_mods.split(" / ")) {
 
@@ -604,7 +539,7 @@ public class CustomPackOrganizing {
 
                                         value = read_all.substring(read_all.indexOf(" = ") + 3);
 
-                                        if (value.equals("") == false) {
+                                        if (value.isEmpty() == false) {
 
                                             if (GameUtils.block.fromText(value.replace(" keep", "")).getBlock() == Blocks.AIR) {
 
@@ -623,7 +558,7 @@ public class CustomPackOrganizing {
 
                                         value = read_all.substring(read_all.indexOf(" = ") + 3);
 
-                                        if (value.equals("") == false) {
+                                        if (value.isEmpty() == false) {
 
                                             if (new File(path_config + "/#dev/temporary/functions/" + value + ".txt").exists() == false) {
 
@@ -648,7 +583,7 @@ public class CustomPackOrganizing {
 
             } catch (Exception exception) {
 
-                OutsideUtils.exception(new Exception(), exception);
+                OutsideUtils.exception(new Exception(), exception, "");
 
             }
 
@@ -728,7 +663,93 @@ public class CustomPackOrganizing {
 
             } catch (Exception exception) {
 
-                OutsideUtils.exception(new Exception(), exception);
+                OutsideUtils.exception(new Exception(), exception, "");
+
+            }
+
+        }
+
+    }
+
+    private static void organizingData (String path_config, File pack, String pack_separation_single, String pack_separation_multiple) {
+
+        boolean incompatible = pack.getName().startsWith("[INCOMPATIBLE] ");
+
+        if (incompatible == true) {
+
+            pack = new File(pack.getParent() + "/" + pack.getName().replace("[INCOMPATIBLE] ", ""));
+
+        }
+
+        String pack_name = pack.getName();
+
+        if (pack.getName().endsWith(".zip") == true) {
+
+            pack = new File(path_config + "/#dev/temporary/pack_zip/" + pack.getName().replace(".zip", ""));
+
+        }
+
+        File[] inside = pack.listFiles();
+
+        if (inside != null) {
+
+            String path_pack = pack.getPath();
+
+            for (File file : inside) {
+
+                if (pack_separation_single.contains("/" + file.getName() + "/") == true) {
+
+                    // Single Separation
+                    {
+
+                        if (incompatible == false) {
+
+                            FileManager.copy(file.getPath(), path_config + "/#dev/temporary/" + file.getName(), true);
+
+                        }
+
+                    }
+
+                } else if (pack_separation_multiple.contains("/" + file.getName() + "/") == true) {
+
+                    // Multiple Separation
+                    {
+
+                        Path path_to = Path.of(path_config + "/#dev/temporary/" + file.getName() + "/" + cache_pack_ids.get(pack_name));
+
+                        {
+
+                            try {
+
+                                Files.walk(file.toPath()).forEach(source -> {
+
+                                    if (source.toFile().isDirectory() == false) {
+
+                                        Path path_copy_to = path_to.resolve(Path.of(path_pack).resolve(file.getName()).relativize(source));
+
+                                        if (incompatible == true) {
+
+                                            path_copy_to = path_copy_to.getParent().resolve("[INCOMPATIBLE] " + path_copy_to.toFile().getName());
+
+                                        }
+
+                                        FileManager.copy(source.toString(), path_copy_to.toString(), false);
+
+                                    }
+
+                                });
+
+                            } catch (Exception exception) {
+
+                                OutsideUtils.exception(new Exception(), exception, "");
+
+                            }
+
+                        }
+
+                    }
+
+                }
 
             }
 
