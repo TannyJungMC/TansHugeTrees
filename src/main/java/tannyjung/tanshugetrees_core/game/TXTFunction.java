@@ -289,7 +289,7 @@ public class TXTFunction {
                                                                 get = read_all.substring("block = ".length()).split(" \\| ");
                                                                 chance = Double.parseDouble(get[0]);
                                                                 variable_block = GameUtils.block.fromText(get[3]);
-                                                                variable_logic = Boolean.parseBoolean(get[4]);
+                                                                variable_text = get[4];
 
                                                             } catch (Exception ignored) {
 
@@ -335,18 +335,9 @@ public class TXTFunction {
 
                                                                             if (level_accessor.hasChunk(pos.getX() >> 4, pos.getZ() >> 4) == true) {
 
-                                                                                // Keep
-                                                                                {
+                                                                                if (GameUtils.misc.testCustomBlock(level_accessor.getBlockState(pos), variable_text) == false) {
 
-                                                                                    if (variable_logic == true) {
-
-                                                                                        if (level_accessor.getBlockState(pos).isAir() == false) {
-
-                                                                                            continue;
-
-                                                                                        }
-
-                                                                                    }
+                                                                                    continue;
 
                                                                                 }
 
