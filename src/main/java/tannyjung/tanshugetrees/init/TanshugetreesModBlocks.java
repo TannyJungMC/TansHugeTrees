@@ -56,6 +56,21 @@ public class TanshugetreesModBlocks {
 	public static final RegistryObject<Block> SAPLING_MANGROVE;
 	public static final RegistryObject<Block> SAPLING_FALCON;
 	public static final RegistryObject<Block> SAPLING_SKY_ISLAND_CHAIN;
+	public static final RegistryObject<Block> SAPLING_CHRISTMAS_TREE;
+	public static final RegistryObject<Block> SAPLING_BAOBAB;
+	public static final RegistryObject<Block> SAPLING_LEGION;
+	public static final RegistryObject<Block> SAPLING_OLD_WITCH;
+	public static final RegistryObject<Block> SAPLING_GIANT_PUMPKIN;
+	public static final RegistryObject<Block> SAPLING_RUST;
+	public static final RegistryObject<Block> SAPLING_THE_ASPIRANT;
+	public static final RegistryObject<Block> SAPLING_WHITE_FAIRY;
+	public static final RegistryObject<Block> SAPLING_AGATHOS;
+	public static final RegistryObject<Block> SAPLING_PALM;
+	public static final RegistryObject<Block> SAPLING_COCONUT_TREE;
+	public static final RegistryObject<Block> SAPLING_BEAN_STALK;
+	public static final RegistryObject<Block> SAPLING_BEE_KEEPER;
+	public static final RegistryObject<Block> SAPLING_WALKING_TREE;
+	public static final RegistryObject<Block> SAPLING_CATALYST;
 	static {
 		WAYPOINT_FLOWER = REGISTRY.register("waypoint_flower", WaypointFlowerBlock::new);
 		BLOCK_PLACER_TAPROOT_OUTER = REGISTRY.register("block_placer_taproot_outer", BlockPlacerTaprootOuterBlock::new);
@@ -99,6 +114,21 @@ public class TanshugetreesModBlocks {
 		SAPLING_MANGROVE = REGISTRY.register("sapling_mangrove", SaplingMangroveBlock::new);
 		SAPLING_FALCON = REGISTRY.register("sapling_falcon", SaplingFalconBlock::new);
 		SAPLING_SKY_ISLAND_CHAIN = REGISTRY.register("sapling_sky_island_chain", SaplingSkyIslandChainBlock::new);
+		SAPLING_CHRISTMAS_TREE = REGISTRY.register("sapling_christmas_tree", SaplingChristmasTreeBlock::new);
+		SAPLING_BAOBAB = REGISTRY.register("sapling_baobab", SaplingBaobabBlock::new);
+		SAPLING_LEGION = REGISTRY.register("sapling_legion", SaplingLegionBlock::new);
+		SAPLING_OLD_WITCH = REGISTRY.register("sapling_old_witch", SaplingOldWitchBlock::new);
+		SAPLING_GIANT_PUMPKIN = REGISTRY.register("sapling_giant_pumpkin", SaplingGiantPumpkinBlock::new);
+		SAPLING_RUST = REGISTRY.register("sapling_rust", SaplingRustBlock::new);
+		SAPLING_THE_ASPIRANT = REGISTRY.register("sapling_the_aspirant", SaplingTheAspirantBlock::new);
+		SAPLING_WHITE_FAIRY = REGISTRY.register("sapling_white_fairy", SaplingWhiteFairyBlock::new);
+		SAPLING_AGATHOS = REGISTRY.register("sapling_agathos", SaplingAgathosBlock::new);
+		SAPLING_PALM = REGISTRY.register("sapling_palm", SaplingPalmBlock::new);
+		SAPLING_COCONUT_TREE = REGISTRY.register("sapling_coconut_tree", SaplingCoconutTreeBlock::new);
+		SAPLING_BEAN_STALK = REGISTRY.register("sapling_bean_stalk", SaplingBeanStalkBlock::new);
+		SAPLING_BEE_KEEPER = REGISTRY.register("sapling_bee_keeper", SaplingBeeKeeperBlock::new);
+		SAPLING_WALKING_TREE = REGISTRY.register("sapling_walking_tree", SaplingWalkingTreeBlock::new);
+		SAPLING_CATALYST = REGISTRY.register("sapling_catalyst", SaplingCatalystBlock::new);
 	}
 	// Start of user code block custom blocks
 	// End of user code block custom blocks

@@ -1,0 +1,66 @@
+{
+  "_fv": 79,
+  "_type": "gui",
+  "definition": {
+    "type": 0,
+    "width": 0,
+    "height": 0,
+    "inventoryOffsetX": 0,
+    "inventoryOffsetY": 0,
+    "renderBgLayer": true,
+    "doesPauseGame": false,
+    "components": [
+      {
+        "type": "textfield",
+        "data": {
+          "placeholder": "Example : #TannyJung-Main-Pack/redwood",
+          "name": "path",
+          "width": 352,
+          "height": 20,
+          "x": 38,
+          "y": 88,
+          "locked": false
+        }
+      },
+      {
+        "type": "button",
+        "data": {
+          "name": "button_apply",
+          "text": "Apply",
+          "isUndecorated": false,
+          "onClick": {
+            "name": "TreeSummonerStaffGUIApply"
+          },
+          "width": 48,
+          "height": 20,
+          "x": 342,
+          "y": 112,
+          "locked": false
+        }
+      },
+      {
+        "type": "button",
+        "data": {
+          "name": "button_restore",
+          "text": "Restore",
+          "isUndecorated": false,
+          "onClick": {
+            "name": "TreeSummonerStaffGUIWhenOpen"
+          },
+          "width": 48,
+          "height": 20,
+          "x": 38,
+          "y": 112,
+          "locked": false
+        }
+      }
+    ],
+    "gridSettings": {
+      "sx": 16,
+      "sy": 16,
+      "ox": 11,
+      "oy": 15,
+      "snapOnGrid": true
+    }
+  }
+}

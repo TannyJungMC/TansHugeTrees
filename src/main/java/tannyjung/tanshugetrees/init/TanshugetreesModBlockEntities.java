@@ -68,6 +68,21 @@ public class TanshugetreesModBlockEntities {
 	public static final RegistryObject<BlockEntityType<SaplingMangroveBlockEntity>> SAPLING_MANGROVE = register("sapling_mangrove", TanshugetreesModBlocks.SAPLING_MANGROVE, SaplingMangroveBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<SaplingFalconBlockEntity>> SAPLING_FALCON = register("sapling_falcon", TanshugetreesModBlocks.SAPLING_FALCON, SaplingFalconBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<SaplingSkyIslandChainBlockEntity>> SAPLING_SKY_ISLAND_CHAIN = register("sapling_sky_island_chain", TanshugetreesModBlocks.SAPLING_SKY_ISLAND_CHAIN, SaplingSkyIslandChainBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingChristmasTreeBlockEntity>> SAPLING_CHRISTMAS_TREE = register("sapling_christmas_tree", TanshugetreesModBlocks.SAPLING_CHRISTMAS_TREE, SaplingChristmasTreeBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingBaobabBlockEntity>> SAPLING_BAOBAB = register("sapling_baobab", TanshugetreesModBlocks.SAPLING_BAOBAB, SaplingBaobabBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingLegionBlockEntity>> SAPLING_LEGION = register("sapling_legion", TanshugetreesModBlocks.SAPLING_LEGION, SaplingLegionBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingOldWitchBlockEntity>> SAPLING_OLD_WITCH = register("sapling_old_witch", TanshugetreesModBlocks.SAPLING_OLD_WITCH, SaplingOldWitchBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingGiantPumpkinBlockEntity>> SAPLING_GIANT_PUMPKIN = register("sapling_giant_pumpkin", TanshugetreesModBlocks.SAPLING_GIANT_PUMPKIN, SaplingGiantPumpkinBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingRustBlockEntity>> SAPLING_RUST = register("sapling_rust", TanshugetreesModBlocks.SAPLING_RUST, SaplingRustBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingTheAspirantBlockEntity>> SAPLING_THE_ASPIRANT = register("sapling_the_aspirant", TanshugetreesModBlocks.SAPLING_THE_ASPIRANT, SaplingTheAspirantBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingWhiteFairyBlockEntity>> SAPLING_WHITE_FAIRY = register("sapling_white_fairy", TanshugetreesModBlocks.SAPLING_WHITE_FAIRY, SaplingWhiteFairyBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingAgathosBlockEntity>> SAPLING_AGATHOS = register("sapling_agathos", TanshugetreesModBlocks.SAPLING_AGATHOS, SaplingAgathosBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingPalmBlockEntity>> SAPLING_PALM = register("sapling_palm", TanshugetreesModBlocks.SAPLING_PALM, SaplingPalmBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingCoconutTreeBlockEntity>> SAPLING_COCONUT_TREE = register("sapling_coconut_tree", TanshugetreesModBlocks.SAPLING_COCONUT_TREE, SaplingCoconutTreeBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingBeanStalkBlockEntity>> SAPLING_BEAN_STALK = register("sapling_bean_stalk", TanshugetreesModBlocks.SAPLING_BEAN_STALK, SaplingBeanStalkBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingBeeKeeperBlockEntity>> SAPLING_BEE_KEEPER = register("sapling_bee_keeper", TanshugetreesModBlocks.SAPLING_BEE_KEEPER, SaplingBeeKeeperBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingWalkingTreeBlockEntity>> SAPLING_WALKING_TREE = register("sapling_walking_tree", TanshugetreesModBlocks.SAPLING_WALKING_TREE, SaplingWalkingTreeBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<SaplingCatalystBlockEntity>> SAPLING_CATALYST = register("sapling_catalyst", TanshugetreesModBlocks.SAPLING_CATALYST, SaplingCatalystBlockEntity::new);
 
 	// Start of user code block custom block entities
 	// End of user code block custom block entities

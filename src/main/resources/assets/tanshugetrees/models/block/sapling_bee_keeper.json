@@ -1,0 +1,8 @@
+{
+  "parent": "block/cross",
+  "textures": {
+    "cross": "tanshugetrees:block/sapling_beekeeper",
+    "particle": "tanshugetrees:block/sapling_beekeeper"
+  },
+  "render_type": "cutout"
+}
