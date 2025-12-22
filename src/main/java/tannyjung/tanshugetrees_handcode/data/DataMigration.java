@@ -100,7 +100,7 @@ public class DataMigration {
             if (previous_version >= 0 && Handcode.data_structure_version != previous_version) {
 
                 if (previous_version == 0) versions.before160();
-                if (previous_version < 20251216) versions.before20251216();
+                if (previous_version < 20250000) TanshugetreesMod.LOGGER.info("Data Migration : World Test");
 
             }
 
@@ -113,13 +113,6 @@ public class DataMigration {
             private static void before160 () {
 
                 TanshugetreesMod.LOGGER.info("Running data migration for world before " + "1.6.0 update");
-                FileManager.delete(Handcode.path_world_data);
-
-            }
-
-            private static void before20251216 () {
-
-                TanshugetreesMod.LOGGER.info("Running data migration for world before " + "20251216");
                 FileManager.delete(Handcode.path_world_data);
 
             }
