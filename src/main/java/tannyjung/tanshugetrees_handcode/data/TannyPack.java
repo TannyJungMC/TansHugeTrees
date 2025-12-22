@@ -33,29 +33,26 @@ public class TannyPack {
 
         Runnable runnable = () -> {
 
-            Logger logger = TanshugetreesMod.LOGGER;
-            String path_config = Handcode.path_config;
-            String id = "THT";
-            String pack_link = "TannyJungMC/THT-tree_pack";
-            String branch = Handcode.tanny_pack_type;
-            String wiki = "https://sites.google.com/view/tannyjung/minecraft-projects/tans-huge-trees/installation";
+            synchronized (Handcode.global_locking) {
 
-            Handcode.thread_locking.runPause();
+                Logger logger = TanshugetreesMod.LOGGER;
+                String path_config = Handcode.path_config;
+                String id = "THT";
+                String pack_link = "TannyJungMC/THT-tree_pack";
+                String branch = Handcode.tanny_pack_type;
+                String wiki = "https://sites.google.com/view/tannyjung/minecraft-projects/tans-huge-trees/installation";
 
-            if (TannyPackManager.reinstall(level_server, logger, path_config, id, pack_link, branch, wiki) == true) {
+                if (TannyPackManager.reinstall(level_server, logger, path_config, id, pack_link, branch, wiki) == true) {
 
-                Handcode.thread_locking.runContinue();
-                Handcode.restart(level_server, "config / world", true);
+                    Handcode.restart(level_server, "config / world", true);
 
-                if (level_server != null) {
+                    if (level_server != null) {
 
-                    message(level_server);
+                        message(level_server);
+
+                    }
 
                 }
-
-            } else {
-
-                Handcode.thread_locking.runContinue();
 
             }
 

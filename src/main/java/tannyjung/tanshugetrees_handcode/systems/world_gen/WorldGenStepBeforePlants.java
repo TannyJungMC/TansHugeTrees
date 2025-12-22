@@ -18,8 +18,6 @@ public class WorldGenStepBeforePlants extends Feature <NoneFeatureConfiguration>
 
     }
 
-    private static final Object lock = new Object();
-
     @Override
     public boolean place (FeaturePlaceContext <NoneFeatureConfiguration> context) {
 
@@ -29,15 +27,9 @@ public class WorldGenStepBeforePlants extends Feature <NoneFeatureConfiguration>
         String dimension = GameUtils.misc.getCurrentDimensionID(level_server).replace(":", "-");
         ChunkPos chunk_pos = new ChunkPos(context.origin().getX() >> 4, context.origin().getZ() >> 4);
 
-        Handcode.thread_locking.test();
-
-        synchronized (lock) {
-
-            Handcode.thread_locking.runPause();
+        synchronized (Handcode.global_locking) {
 
             TreeLocation.start(level_accessor, dimension, chunk_pos);
-
-            Handcode.thread_locking.runContinue();
 
         }
 
