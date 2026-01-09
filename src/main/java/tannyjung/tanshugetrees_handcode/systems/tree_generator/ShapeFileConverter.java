@@ -3,12 +3,11 @@ package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.tanshugetrees_core.FileManager;
-import tannyjung.tanshugetrees_core.OutsideUtils;
-import tannyjung.tanshugetrees_core.game.NBTManager;
+import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.outside.FileManager;
+import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
-import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.*;
 import java.util.*;
@@ -23,12 +22,12 @@ public class ShapeFileConverter {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Turned ON");
+                GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", Core.mod_id_short + " : Turned ON");
 
             }
 
             TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = count;
-            GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
+            GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", Core.mod_id_short + " : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
@@ -51,18 +50,18 @@ public class ShapeFileConverter {
                 if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 
                     TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = 0;
-                    GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Will turn OFF after this one");
+                    GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", Core.mod_id_short + " : Will turn OFF after this one");
 
                 } else {
 
-                    GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Turned OFF");
+                    GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", Core.mod_id_short + " : Turned OFF");
                     TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = false;
 
                 }
 
             } else {
 
-                GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Already Turned OFF");
+                GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", Core.mod_id_short + " : Already Turned OFF");
 
             }
 
@@ -77,7 +76,7 @@ public class ShapeFileConverter {
         // Get data
         {
 
-            File file = new File(Handcode.path_config + "/#dev/shape_file_converter/#shape_file_converter.txt");
+            File file = new File(Core.path_config + "/#dev/shape_file_converter/#shape_file_converter.txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -103,7 +102,7 @@ public class ShapeFileConverter {
 
         }
 
-        File file = new File(Handcode.path_config + "/#dev/temporary/presets/" + file_location[0] + "/" + file_location[1] + "/" + file_location[1] + ".txt");
+        File file = new File(Core.path_config + "/#dev/temporary/presets/" + file_location[0] + "/" + file_location[1] + "/" + file_location[1] + ".txt");
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -120,7 +119,7 @@ public class ShapeFileConverter {
 
         } else {
 
-            GameUtils.misc.sendChatMessage(level_server, null, "@a", "red", "THT : Can't start shape file converter because the file location you wrote cannot be found");
+            GameUtils.misc.sendChatMessage(level_server, null, "@a", "red", Core.mod_id_short + " : Can't start shape file converter because the file location you wrote cannot be found");
             TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = 0;
             stop(level_accessor);
 
@@ -130,10 +129,10 @@ public class ShapeFileConverter {
 
     public static void whenTreeStart (ServerLevel level_server, Entity entity) {
 
-        String name = NBTManager.entity.getText(entity, "name");
+        String name = GameUtils.nbt.entity.getText(entity, "name");
         String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss-SSS").format(Calendar.getInstance().getTime());
-        NBTManager.entity.setText(entity, "export_file_name", name + "_" + time + ".bin");
-        GameUtils.command.run(false, level_server, 0, 0, 0, "tellraw @a [\"\",{\"text\":\"THT : Generating \",\"color\":\"aqua\"},{\"text\":\"" + NBTManager.entity.getText(entity, "export_file_name").replace(" (generating)", "") + "\",\"color\":\"white\"}]");
+        GameUtils.nbt.entity.setText(entity, "export_file_name", name + "_" + time + ".bin");
+        GameUtils.command.run(false, level_server, 0, 0, 0, "tellraw @a [\"\",{\"text\":\"" + Core.mod_id_short + " : Generating \",\"color\":\"aqua\"},{\"text\":\"" + GameUtils.nbt.entity.getText(entity, "export_file_name").replace(" (generating)", "") + "\",\"color\":\"white\"}]");
 
         // Write Settings
         {
@@ -143,12 +142,12 @@ public class ShapeFileConverter {
             {
 
                 write
-                        .append("tree_type = ").append(NBTManager.entity.getText(entity, "tree_type")).append("\n")
-                        .append("start_height = ").append((int) NBTManager.entity.getNumber(entity, "start_height")).append("\n")
-                        .append("can_disable_roots = ").append(NBTManager.entity.getLogic(entity, "can_disable_roots")).append("\n")
-                        .append("can_leaves_decay = ").append(NBTManager.entity.getLogic(entity, "can_leaves_decay")).append("\n")
-                        .append("can_leaves_drop = ").append(NBTManager.entity.getLogic(entity, "can_leaves_drop")).append("\n")
-                        .append("can_leaves_regrow = ").append(NBTManager.entity.getLogic(entity, "can_leaves_regrow")).append("\n")
+                        .append("tree_type = ").append(GameUtils.nbt.entity.getText(entity, "tree_type")).append("\n")
+                        .append("start_height = ").append((int) GameUtils.nbt.entity.getNumber(entity, "start_height")).append("\n")
+                        .append("can_disable_roots = ").append(GameUtils.nbt.entity.getLogic(entity, "can_disable_roots")).append("\n")
+                        .append("can_leaves_decay = ").append(GameUtils.nbt.entity.getLogic(entity, "can_leaves_decay")).append("\n")
+                        .append("can_leaves_drop = ").append(GameUtils.nbt.entity.getLogic(entity, "can_leaves_drop")).append("\n")
+                        .append("can_leaves_regrow = ").append(GameUtils.nbt.entity.getLogic(entity, "can_leaves_regrow")).append("\n")
                         .append("\n")
                         .append(settingsWriteBlock(entity, 110, "taproot"))
                         .append(settingsWriteBlock(entity, 111, "secondary_root"))
@@ -162,22 +161,22 @@ public class ShapeFileConverter {
                         .append(settingsWriteBlock(entity, 119, "sprig"))
                         .append(settingsWriteBlock(entity, 120, "leaves"))
                         .append("\n")
-                        .append("Function fs 210 = ").append(NBTManager.entity.getText(entity, "function_start")).append("\n")
-                        .append("Function fe 220 = ").append(NBTManager.entity.getText(entity, "function_end")).append("\n")
-                        .append("Function f1 201 = ").append(NBTManager.entity.getText(entity, "function_way1")).append("\n")
-                        .append("Function f2 202 = ").append(NBTManager.entity.getText(entity, "function_way2")).append("\n")
-                        .append("Function f3 203 = ").append(NBTManager.entity.getText(entity, "function_way3")).append("\n")
-                        .append("Function f4 204 = ").append(NBTManager.entity.getText(entity, "function_way4")).append("\n")
-                        .append("Function f5 205 = ").append(NBTManager.entity.getText(entity, "function_way5")).append("\n")
-                        .append("Function f5 206 = ").append(NBTManager.entity.getText(entity, "function_way6")).append("\n")
-                        .append("Function f5 207 = ").append(NBTManager.entity.getText(entity, "function_way7")).append("\n")
-                        .append("Function f5 208 = ").append(NBTManager.entity.getText(entity, "function_way8")).append("\n")
-                        .append("Function f5 209 = ").append(NBTManager.entity.getText(entity, "function_way9")).append("\n")
+                        .append("Function fs 210 = ").append(GameUtils.nbt.entity.getText(entity, "function_start")).append("\n")
+                        .append("Function fe 220 = ").append(GameUtils.nbt.entity.getText(entity, "function_end")).append("\n")
+                        .append("Function f1 201 = ").append(GameUtils.nbt.entity.getText(entity, "function_way1")).append("\n")
+                        .append("Function f2 202 = ").append(GameUtils.nbt.entity.getText(entity, "function_way2")).append("\n")
+                        .append("Function f3 203 = ").append(GameUtils.nbt.entity.getText(entity, "function_way3")).append("\n")
+                        .append("Function f4 204 = ").append(GameUtils.nbt.entity.getText(entity, "function_way4")).append("\n")
+                        .append("Function f5 205 = ").append(GameUtils.nbt.entity.getText(entity, "function_way5")).append("\n")
+                        .append("Function f5 206 = ").append(GameUtils.nbt.entity.getText(entity, "function_way6")).append("\n")
+                        .append("Function f5 207 = ").append(GameUtils.nbt.entity.getText(entity, "function_way7")).append("\n")
+                        .append("Function f5 208 = ").append(GameUtils.nbt.entity.getText(entity, "function_way8")).append("\n")
+                        .append("Function f5 209 = ").append(GameUtils.nbt.entity.getText(entity, "function_way9")).append("\n")
                 ;
 
             }
 
-            FileManager.writeTXT(Handcode.path_config + "/#dev/shape_file_converter/" + name + "/" + name + "_settings.txt", write.toString(), false);
+            FileManager.writeTXT(Core.path_config + "/#dev/shape_file_converter/" + name + "/" + name + "_settings.txt", write.toString(), false);
 
         }
 
@@ -188,7 +187,7 @@ public class ShapeFileConverter {
         String retuen_text = type.substring(0, 2);
         String keep = "";
 
-        if (NBTManager.entity.getLogic(entity, type + "_replace") == false) {
+        if (GameUtils.nbt.entity.getLogic(entity, type + "_replace") == false) {
 
             keep = " keep";
 
@@ -199,9 +198,9 @@ public class ShapeFileConverter {
             // General Blocks
             {
 
-                String outer = NBTManager.entity.getText(entity, type + "_outer") + keep;
-                String inner = NBTManager.entity.getText(entity, type + "_inner") + keep;
-                String core = NBTManager.entity.getText(entity, type + "_core") + keep;
+                String outer = GameUtils.nbt.entity.getText(entity, type + "_outer") + keep;
+                String inner = GameUtils.nbt.entity.getText(entity, type + "_inner") + keep;
+                String core = GameUtils.nbt.entity.getText(entity, type + "_core") + keep;
 
                 if (outer.equals(keep) == true) {
 
@@ -233,8 +232,8 @@ public class ShapeFileConverter {
             // Leaves
             {
 
-                String leaves1 = NBTManager.entity.getText(entity, "leaves1") + keep;
-                String leaves2 = NBTManager.entity.getText(entity, "leaves2") + keep;
+                String leaves1 = GameUtils.nbt.entity.getText(entity, "leaves1") + keep;
+                String leaves2 = GameUtils.nbt.entity.getText(entity, "leaves2") + keep;
 
                 if (leaves1.equals(keep) == true) {
 
@@ -499,17 +498,17 @@ public class ShapeFileConverter {
 
         }
 
-        String path = Handcode.path_config + "/#dev/shape_file_converter/" + NBTManager.entity.getText(entity, "name") + "/storage/" + NBTManager.entity.getText(entity, "export_file_name");
+        String path = Core.path_config + "/#dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "name") + "/storage/" + GameUtils.nbt.entity.getText(entity, "export_file_name");
         FileManager.writeBIN(path, start_data, false);
         FileManager.writeBIN(path, data, true);
-        GameUtils.misc.sendChatMessage(level_server, null, "@a", "green", "THT : Completed!");
+        GameUtils.misc.sendChatMessage(level_server, null, "@a", "green", Core.mod_id_short + " : Completed!");
         export_data.clear();
 
-        Handcode.createDelayedWorks(true, 1, () -> {
+        Core.delayed_works.create(true, 1, () -> {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 
-                GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", "THT : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
+                GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", Core.mod_id_short + " : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
                 summon(level_accessor, level_server);
 
             } else {

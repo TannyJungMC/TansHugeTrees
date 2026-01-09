@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": {
+    "type": "neoforge:any"
+  },
+  "features": "tanshugetrees:world_gen_before_plants",
+  "step": "underground_decoration"
+}

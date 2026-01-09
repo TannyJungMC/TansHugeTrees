@@ -3,21 +3,20 @@ package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.tanshugetrees_core.game.NBTManager;
+import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.TXTFunction;
 import tannyjung.tanshugetrees_core.game.GameUtils;
-import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class BlockPlacer {
 
     public static void start (LevelAccessor level_accessor, BlockPos pos) {
 
         ServerLevel level_server = (ServerLevel) level_accessor;
-        String function = NBTManager.block.getText(level_accessor, pos, "function");
+        String function = GameUtils.nbt.block.getText(level_accessor, pos, "function");
 
-        if (NBTManager.block.getLogic(level_accessor, pos, "delay1") == false) {
+        if (GameUtils.nbt.block.getLogic(level_accessor, pos, "delay1") == false) {
 
-            NBTManager.block.setLogic(level_accessor, pos, "delay1", true);
+            GameUtils.nbt.block.setLogic(level_accessor, pos, "delay1", true);
             level_server.scheduleTick(pos, level_server.getBlockState(pos).getBlock(), 100);
 
             // Test Function
@@ -25,7 +24,7 @@ public class BlockPlacer {
 
                 if (function.isEmpty() == false) {
 
-                    String[] styles = NBTManager.block.getText(level_accessor, pos, "function_style").split("/");
+                    String[] styles = GameUtils.nbt.block.getText(level_accessor, pos, "function_style").split("/");
                     boolean pass = false;
 
                     for (String style : styles) {
@@ -76,7 +75,7 @@ public class BlockPlacer {
 
                     if (pass == false) {
 
-                        NBTManager.block.setText(level_accessor, pos, "function", "");
+                        GameUtils.nbt.block.setText(level_accessor, pos, "function", "");
 
                     }
 
@@ -89,18 +88,18 @@ public class BlockPlacer {
             // Normal
             {
 
-                if (NBTManager.block.getLogic(level_accessor, pos, "delay2") == false) {
+                if (GameUtils.nbt.block.getLogic(level_accessor, pos, "delay2") == false) {
 
-                    NBTManager.block.setLogic(level_accessor, pos, "delay2", true);
+                    GameUtils.nbt.block.setLogic(level_accessor, pos, "delay2", true);
                     level_server.scheduleTick(pos, level_server.getBlockState(pos).getBlock(), 100);
 
                 } else {
 
-                    level_accessor.setBlock(pos, GameUtils.block.fromText(NBTManager.block.getText(level_accessor, pos, "block")), 2);
+                    level_accessor.setBlock(pos, GameUtils.block.fromText(GameUtils.nbt.block.getText(level_accessor, pos, "block")), 2);
 
                     if (function.isEmpty() == false) {
 
-                        Handcode.createDelayedWorks(false, 20, () -> {
+                        Core.delayed_works.create(false, 20, () -> {
 
                             TXTFunction.run(level_server, level_server, pos.getX(), pos.getY(), pos.getZ(), "functions/" + function, true);
 

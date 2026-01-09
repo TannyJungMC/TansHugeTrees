@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_core;
+package tannyjung.tanshugetrees_core.outside;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -16,7 +16,7 @@ public class FileManager {
 
 	public static void createEmptyFile (String path, boolean is_directory) {
 
-		File file = new File(path);
+        File file = new File(path);
 
 		if (file.exists() == false) {
 
@@ -30,20 +30,6 @@ public class FileManager {
 
                     file.getParentFile().mkdirs();
                     file.createNewFile();
-
-                }
-
-                if (file.getName().startsWith(".") == true) {
-
-                    try {
-
-                        Runtime.getRuntime().exec("attrib +H \"" + Path.of(path).toAbsolutePath() + "\"");
-
-                    } catch (Exception exception) {
-
-                        OutsideUtils.exception(new Exception(), exception, "");
-
-                    }
 
                 }
 
@@ -67,10 +53,10 @@ public class FileManager {
     public static void copy (String from, String to, boolean is_directory) {
 
         Path path_from = Path.of(from);
+        Path path_to = Path.of(to);
 
         if (is_directory == false) {
 
-            Path path_to = Path.of(to);
             createEmptyFile(path_to.getParent().toString(), true);
 
             try {
@@ -91,12 +77,12 @@ public class FileManager {
 
                     if (source.toFile().isDirectory() == false) {
 
-                        Path path_to = Path.of(to).resolve(path_from.relativize(source));
-                        createEmptyFile(path_to.getParent().toString(), true);
+                        Path path_new = path_to.resolve(path_from.relativize(source));
+                        createEmptyFile(path_new.getParent().toString(), true);
 
                         try {
 
-                            Files.copy(source, path_to, StandardCopyOption.REPLACE_EXISTING);
+                            Files.copy(source, path_new, StandardCopyOption.REPLACE_EXISTING);
 
                         } catch (Exception exception) {
 

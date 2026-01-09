@@ -6,11 +6,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.tanshugetrees_core.game.NBTManager;
+import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.TXTFunction;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
-import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.data.FileConfig;
 
 import java.io.File;
@@ -24,7 +23,7 @@ public class TreeGenerator {
 
         try {
 
-            path = Handcode.path_config + "/#dev/temporary/presets/" + split[0] + "/" + split[1] + "/" + split[1] + ".txt";
+            path = Core.path_config + "/#dev/temporary/presets/" + split[0] + "/" + split[1] + "/" + split[1] + ".txt";
 
         } catch (Exception ignored) {
 
@@ -43,7 +42,7 @@ public class TreeGenerator {
 
             if (entity != null) {
 
-                GameUtils.misc.sendChatMessage(level_server, entity, "@s", "red", "THT : Path Not Found");
+                GameUtils.misc.sendChatMessage(level_server, entity, "@s", "red", Core.mod_id_short + " : Path Not Found");
 
             }
 
@@ -56,18 +55,18 @@ public class TreeGenerator {
         ServerLevel level_server = (ServerLevel) level_accessor;
         GameUtils.command.runEntity(entity, "particle composter ~ ~ ~ 0 0 0 0 1 force");
 
-        if (NBTManager.entity.getLogic(entity, "start") == false) {
+        if (GameUtils.nbt.entity.getLogic(entity, "start") == false) {
 
-            NBTManager.entity.setLogic(entity, "start", true);
+            GameUtils.nbt.entity.setLogic(entity, "start", true);
             beforeRunSystem(level_accessor, level_server, entity);
 
         } else {
 
-            NBTManager.entity.addNumber(entity, "tree_generator_speed_tick_test", 1);
+            GameUtils.nbt.entity.addNumber(entity, "tree_generator_speed_tick_test", 1);
 
-            if (NBTManager.entity.getNumber(entity, "tree_generator_speed_tick_test") >= NBTManager.entity.getNumber(entity, "tree_generator_speed_tick")) {
+            if (GameUtils.nbt.entity.getNumber(entity, "tree_generator_speed_tick_test") >= GameUtils.nbt.entity.getNumber(entity, "tree_generator_speed_tick")) {
 
-                NBTManager.entity.setNumber(entity, "tree_generator_speed_tick_test", 0);
+                GameUtils.nbt.entity.setNumber(entity, "tree_generator_speed_tick_test", 0);
                 runSystem(level_accessor, level_server, entity);
 
             }
@@ -82,56 +81,56 @@ public class TreeGenerator {
 
         if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-            GameUtils.command.runEntity(entity, "tp ~ ~" + NBTManager.entity.getNumber(entity, "start_height") + " ~");
+            GameUtils.command.runEntity(entity, "tp ~ ~" + GameUtils.nbt.entity.getNumber(entity, "start_height") + " ~");
 
         }
 
-        NBTManager.entity.setText(entity, "id", entity.getUUID().toString());
-        GameUtils.command.runEntity(entity, "tag @s add TANSHUGETREES-" + NBTManager.entity.getText(entity, "id"));
-        NBTManager.entity.setText(entity, "type", "taproot");
-        NBTManager.entity.setText(entity, "step", "summon");
-        NBTManager.entity.setNumber(entity, "taproot_count", Mth.nextInt(RandomSource.create(), (int) NBTManager.entity.getNumber(entity, "taproot_count_min"), (int) NBTManager.entity.getNumber(entity, "taproot_count_max")));
-        NBTManager.entity.setNumber(entity, "trunk_count", Mth.nextInt(RandomSource.create(), (int) NBTManager.entity.getNumber(entity, "trunk_count_min"), (int) NBTManager.entity.getNumber(entity, "trunk_count_max")));
+        GameUtils.nbt.entity.setText(entity, "id", entity.getUUID().toString());
+        GameUtils.command.runEntity(entity, "tag @s add TANSHUGETREES-" + GameUtils.nbt.entity.getText(entity, "id"));
+        GameUtils.nbt.entity.setText(entity, "type", "taproot");
+        GameUtils.nbt.entity.setText(entity, "step", "summon");
+        GameUtils.nbt.entity.setNumber(entity, "taproot_count", Mth.nextInt(RandomSource.create(), (int) GameUtils.nbt.entity.getNumber(entity, "taproot_count_min"), (int) GameUtils.nbt.entity.getNumber(entity, "taproot_count_max")));
+        GameUtils.nbt.entity.setNumber(entity, "trunk_count", Mth.nextInt(RandomSource.create(), (int) GameUtils.nbt.entity.getNumber(entity, "trunk_count_min"), (int) GameUtils.nbt.entity.getNumber(entity, "trunk_count_max")));
 
         // Debug Mode
         {
 
-            if (NBTManager.entity.getLogic(entity, "debug_mode") == true) {
+            if (GameUtils.nbt.entity.getLogic(entity, "debug_mode") == true) {
 
-                NBTManager.entity.setText(entity, "taproot_outer", "purple_concrete");
-                NBTManager.entity.setText(entity, "taproot_inner", "purple_terracotta");
-                NBTManager.entity.setText(entity, "taproot_core", "purple_stained_glass");
-                NBTManager.entity.setText(entity, "secondary_root_outer", "magenta_concrete");
-                NBTManager.entity.setText(entity, "secondary_root_inner", "magenta_terracotta");
-                NBTManager.entity.setText(entity, "secondary_root_core", "magenta_stained_glass");
-                NBTManager.entity.setText(entity, "tertiary_root_outer", "pink_concrete");
-                NBTManager.entity.setText(entity, "tertiary_root_inner", "pink_terracotta");
-                NBTManager.entity.setText(entity, "tertiary_root_core", "pink_stained_glass");
-                NBTManager.entity.setText(entity, "fine_root_outer", "light_blue_concrete");
-                NBTManager.entity.setText(entity, "fine_root_inner", "light_blue_terracotta");
-                NBTManager.entity.setText(entity, "fine_root_core", "light_blue_stained_glass");
+                GameUtils.nbt.entity.setText(entity, "taproot_outer", "purple_concrete");
+                GameUtils.nbt.entity.setText(entity, "taproot_inner", "purple_terracotta");
+                GameUtils.nbt.entity.setText(entity, "taproot_core", "purple_stained_glass");
+                GameUtils.nbt.entity.setText(entity, "secondary_root_outer", "magenta_concrete");
+                GameUtils.nbt.entity.setText(entity, "secondary_root_inner", "magenta_terracotta");
+                GameUtils.nbt.entity.setText(entity, "secondary_root_core", "magenta_stained_glass");
+                GameUtils.nbt.entity.setText(entity, "tertiary_root_outer", "pink_concrete");
+                GameUtils.nbt.entity.setText(entity, "tertiary_root_inner", "pink_terracotta");
+                GameUtils.nbt.entity.setText(entity, "tertiary_root_core", "pink_stained_glass");
+                GameUtils.nbt.entity.setText(entity, "fine_root_outer", "light_blue_concrete");
+                GameUtils.nbt.entity.setText(entity, "fine_root_inner", "light_blue_terracotta");
+                GameUtils.nbt.entity.setText(entity, "fine_root_core", "light_blue_stained_glass");
 
-                NBTManager.entity.setText(entity, "trunk_outer", "red_concrete");
-                NBTManager.entity.setText(entity, "trunk_inner", "red_terracotta");
-                NBTManager.entity.setText(entity, "trunk_core", "red_stained_glass");
-                NBTManager.entity.setText(entity, "bough_outer", "orange_concrete");
-                NBTManager.entity.setText(entity, "bough_inner", "orange_terracotta");
-                NBTManager.entity.setText(entity, "bough_core", "orange_stained_glass");
-                NBTManager.entity.setText(entity, "branch_outer", "yellow_concrete");
-                NBTManager.entity.setText(entity, "branch_inner", "yellow_terracotta");
-                NBTManager.entity.setText(entity, "branch_core", "yellow_stained_glass");
-                NBTManager.entity.setText(entity, "limb_outer", "lime_concrete");
-                NBTManager.entity.setText(entity, "limb_inner", "lime_terracotta");
-                NBTManager.entity.setText(entity, "limb_core", "lime_stained_glass");
-                NBTManager.entity.setText(entity, "twig_outer", "green_concrete");
-                NBTManager.entity.setText(entity, "twig_inner", "green_terracotta");
-                NBTManager.entity.setText(entity, "twig_core", "green_stained_glass");
-                NBTManager.entity.setText(entity, "sprig_outer", "white_concrete");
-                NBTManager.entity.setText(entity, "sprig_inner", "white_terracotta");
-                NBTManager.entity.setText(entity, "sprig_core", "white_stained_glass");
+                GameUtils.nbt.entity.setText(entity, "trunk_outer", "red_concrete");
+                GameUtils.nbt.entity.setText(entity, "trunk_inner", "red_terracotta");
+                GameUtils.nbt.entity.setText(entity, "trunk_core", "red_stained_glass");
+                GameUtils.nbt.entity.setText(entity, "bough_outer", "orange_concrete");
+                GameUtils.nbt.entity.setText(entity, "bough_inner", "orange_terracotta");
+                GameUtils.nbt.entity.setText(entity, "bough_core", "orange_stained_glass");
+                GameUtils.nbt.entity.setText(entity, "branch_outer", "yellow_concrete");
+                GameUtils.nbt.entity.setText(entity, "branch_inner", "yellow_terracotta");
+                GameUtils.nbt.entity.setText(entity, "branch_core", "yellow_stained_glass");
+                GameUtils.nbt.entity.setText(entity, "limb_outer", "lime_concrete");
+                GameUtils.nbt.entity.setText(entity, "limb_inner", "lime_terracotta");
+                GameUtils.nbt.entity.setText(entity, "limb_core", "lime_stained_glass");
+                GameUtils.nbt.entity.setText(entity, "twig_outer", "green_concrete");
+                GameUtils.nbt.entity.setText(entity, "twig_inner", "green_terracotta");
+                GameUtils.nbt.entity.setText(entity, "twig_core", "green_stained_glass");
+                GameUtils.nbt.entity.setText(entity, "sprig_outer", "white_concrete");
+                GameUtils.nbt.entity.setText(entity, "sprig_inner", "white_terracotta");
+                GameUtils.nbt.entity.setText(entity, "sprig_core", "white_stained_glass");
 
-                NBTManager.entity.setText(entity, "leaves1", "white_stained_glass");
-                NBTManager.entity.setText(entity, "leaves2", "black_stained_glass");
+                GameUtils.nbt.entity.setText(entity, "leaves1", "white_stained_glass");
+                GameUtils.nbt.entity.setText(entity, "leaves2", "black_stained_glass");
 
             }
 
@@ -140,20 +139,20 @@ public class TreeGenerator {
         // No Roots
         {
 
-            if (NBTManager.entity.getNumber(entity, "taproot_count") == 0) {
+            if (GameUtils.nbt.entity.getNumber(entity, "taproot_count") == 0) {
 
-                NBTManager.entity.setText(entity, "type", "trunk");
+                GameUtils.nbt.entity.setText(entity, "type", "trunk");
 
             }
 
         }
 
         // Summon Status Display
-        GameUtils.command.runEntity(entity, "execute positioned ~ ~1 ~ run " + GameUtils.command.summonEntity("text_display",  "TANSHUGETREES / TANSHUGETREES-" + NBTManager.entity.getText(entity, "id") + " / TANSHUGETREES-tree_generator_status", "Tree Generator Status", "see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"In Progress...\",\"color\":\"white\"}'"));
+        GameUtils.command.runEntity(entity, "execute positioned ~ ~1 ~ run " + GameUtils.command.summonEntity("text_display",  "TANSHUGETREES / TANSHUGETREES-" + GameUtils.nbt.entity.getText(entity, "id") + " / TANSHUGETREES-tree_generator_status", "Tree Generator Status", "see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"In Progress...\",\"color\":\"white\"}'"));
 
         if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-            TXTFunction.run(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), "functions/" + NBTManager.entity.getText(entity, "function_start"), true);
+            TXTFunction.run(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), "functions/" + GameUtils.nbt.entity.getText(entity, "function_start"), true);
 
         } else {
 
@@ -165,9 +164,9 @@ public class TreeGenerator {
 
     private static void runSystem (LevelAccessor level_accessor, ServerLevel level_server, Entity entity) {
 
-        String id = NBTManager.entity.getText(entity, "id");
-        String type = NBTManager.entity.getText(entity, "type");
-        String step = NBTManager.entity.getText(entity, "step");
+        String id = GameUtils.nbt.entity.getText(entity, "id");
+        String type = GameUtils.nbt.entity.getText(entity, "type");
+        String step = GameUtils.nbt.entity.getText(entity, "step");
         String[] type_pre_next = new String[0];
 
         // Status Display
@@ -176,35 +175,35 @@ public class TreeGenerator {
             StringBuilder command = new StringBuilder();
 
             command
-                    .append("Total Processes : ").append((int) NBTManager.entity.getNumber(entity, "total_processes"))
+                    .append("Total Processes : ").append((int) GameUtils.nbt.entity.getNumber(entity, "total_processes"))
                     .append("\n")
                     .append("Generating : ").append(type)
                     .append("\n")
                     .append("\n")
                     .append("Step : ").append(step)
                     .append("\n")
-                    .append("Count : ").append((int) NBTManager.entity.getNumber(entity, type + "_count"))
+                    .append("Count : ").append((int) GameUtils.nbt.entity.getNumber(entity, type + "_count"))
                     .append("\n")
-                    .append("Length : ").append((int) NBTManager.entity.getNumber(entity, type + "_length")).append(" / ").append((int) NBTManager.entity.getNumber(entity, type + "_length_save"))
+                    .append("Length : ").append((int) GameUtils.nbt.entity.getNumber(entity, type + "_length")).append(" / ").append((int) GameUtils.nbt.entity.getNumber(entity, type + "_length_save"))
                     .append("\n")
-                    .append("Thickness : ").append(NBTManager.entity.getNumber(entity, type + "_thickness")).append(" / ").append(NBTManager.entity.getNumber(entity, type + "_thickness_start"))
+                    .append("Thickness : ").append(GameUtils.nbt.entity.getNumber(entity, type + "_thickness")).append(" / ").append(GameUtils.nbt.entity.getNumber(entity, type + "_thickness_start"))
             ;
 
             GameUtils.command.runEntity(entity, "execute positioned ~ ~1 ~ run data merge entity @e[tag=TANSHUGETREES-tree_generator_status,distance=..1,limit=1,sort=nearest] {text:'{\"text\":\"" + command + "\",\"color\":\"white\"}'}");
 
         }
 
-        if (FileConfig.tree_generator_speed_global == true && NBTManager.entity.getLogic(entity, "tree_generator_speed_global") == true) {
+        if (FileConfig.tree_generator_speed_global == true && GameUtils.nbt.entity.getLogic(entity, "tree_generator_speed_global") == true) {
 
-            NBTManager.entity.setNumber(entity, "tree_generator_speed_tick", FileConfig.tree_generator_speed_tick);
-            NBTManager.entity.setNumber(entity, "tree_generator_speed_repeat", FileConfig.tree_generator_speed_repeat);
+            GameUtils.nbt.entity.setNumber(entity, "tree_generator_speed_tick", FileConfig.tree_generator_speed_tick);
+            GameUtils.nbt.entity.setNumber(entity, "tree_generator_speed_repeat", FileConfig.tree_generator_speed_repeat);
 
         }
 
         while (true) {
 
-            type = NBTManager.entity.getText(entity, "type");
-            step = NBTManager.entity.getText(entity, "step");
+            type = GameUtils.nbt.entity.getText(entity, "type");
+            step = GameUtils.nbt.entity.getText(entity, "step");
             type_pre_next = typePreNext(entity);
 
             if (step.equals("summon") == true) {
@@ -226,7 +225,7 @@ public class TreeGenerator {
 
             }
 
-            NBTManager.entity.addNumber(entity, "total_processes", 1);
+            GameUtils.nbt.entity.addNumber(entity, "total_processes", 1);
 
             // Break Out
             {
@@ -247,15 +246,15 @@ public class TreeGenerator {
 
         boolean return_logic = false;
 
-        if (NBTManager.entity.getNumber(entity, "tree_generator_speed_repeat") != 0) {
+        if (GameUtils.nbt.entity.getNumber(entity, "tree_generator_speed_repeat") != 0) {
 
-            if (NBTManager.entity.getNumber(entity, "tree_generator_speed_repeat_test") < NBTManager.entity.getNumber(entity, "tree_generator_speed_repeat")) {
+            if (GameUtils.nbt.entity.getNumber(entity, "tree_generator_speed_repeat_test") < GameUtils.nbt.entity.getNumber(entity, "tree_generator_speed_repeat")) {
 
-                NBTManager.entity.addNumber(entity, "tree_generator_speed_repeat_test", 1);
+                GameUtils.nbt.entity.addNumber(entity, "tree_generator_speed_repeat_test", 1);
 
             } else {
 
-                NBTManager.entity.setNumber(entity, "tree_generator_speed_repeat_test", 0);
+                GameUtils.nbt.entity.setNumber(entity, "tree_generator_speed_repeat_test", 0);
                 return_logic = true;
 
             }
@@ -269,7 +268,7 @@ public class TreeGenerator {
     private static String[] typePreNext (Entity entity) {
 
         String[] return_text = new String[2];
-        String type = NBTManager.entity.getText(entity, "type");
+        String type = GameUtils.nbt.entity.getText(entity, "type");
 
         // Roots
         {
@@ -355,15 +354,15 @@ public class TreeGenerator {
                 // Length and Thickness
                 {
 
-                    double length = Mth.nextInt(RandomSource.create(), (int) NBTManager.entity.getNumber(entity, type + "_length_min"), (int) NBTManager.entity.getNumber(entity, type + "_length_max"));
+                    double length = Mth.nextInt(RandomSource.create(), (int) GameUtils.nbt.entity.getNumber(entity, type + "_length_min"), (int) GameUtils.nbt.entity.getNumber(entity, type + "_length_max"));
                     length = Math.ceil(length * summonReduction(entity, type, "length_reduce"));
-                    NBTManager.entity.setNumber(entity, type + "_length", length);
-                    NBTManager.entity.setNumber(entity, type + "_length_save", length);
+                    GameUtils.nbt.entity.setNumber(entity, type + "_length", length);
+                    GameUtils.nbt.entity.setNumber(entity, type + "_length_save", length);
 
-                    double thickness = NBTManager.entity.getNumber(entity, type + "_thickness_start") - NBTManager.entity.getNumber(entity, type + "_thickness_end");
+                    double thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_start") - GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end");
                     thickness = thickness * summonReduction(entity, type, "thickness_reduce");
-                    thickness = NBTManager.entity.getNumber(entity, type + "_thickness_end") + thickness;
-                    NBTManager.entity.setNumber(entity, type + "_thickness", thickness);
+                    thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end") + thickness;
+                    GameUtils.nbt.entity.setNumber(entity, type + "_thickness", thickness);
 
                 }
 
@@ -372,35 +371,35 @@ public class TreeGenerator {
                     // Next Part Settings
                     {
 
-                        int count = Mth.nextInt(RandomSource.create(), (int) NBTManager.entity.getNumber(entity, type_pre_next[1] + "_count_min"), (int) NBTManager.entity.getNumber(entity, type_pre_next[1] + "_count_max"));
+                        int count = Mth.nextInt(RandomSource.create(), (int) GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count_min"), (int) GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count_max"));
                         count = (int) Math.ceil((double) count * summonReduction(entity, type_pre_next[1], "count_reduce"));
-                        NBTManager.entity.setNumber(entity, type_pre_next[1] + "_count", count);
-                        NBTManager.entity.setNumber(entity, type_pre_next[1] + "_count_save", count);
+                        GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_count", count);
+                        GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_count_save", count);
 
                     }
 
                     // Auto Distance
                     {
 
-                        if (NBTManager.entity.getNumber(entity, type_pre_next[1] + "_count") > 0) {
+                        if (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count") > 0) {
 
                             double distance = 0.0;
 
-                            if (NBTManager.entity.getLogic(entity, type_pre_next[1] + "_chance_auto") == true) {
+                            if (GameUtils.nbt.entity.getLogic(entity, type_pre_next[1] + "_chance_auto") == true) {
 
-                                double count_available = NBTManager.entity.getNumber(entity, type_pre_next[1] + "_count_save") - NBTManager.entity.getNumber(entity, type_pre_next[1] + "_min_last_count");
+                                double count_available = GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count_save") - GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_min_last_count");
 
                                 if (count_available > 0) {
 
-                                    double length_percent = Math.ceil(NBTManager.entity.getNumber(entity, type + "_length_save") * (NBTManager.entity.getNumber(entity, type_pre_next[1] + "_chance_percent") * 0.01));
+                                    double length_percent = Math.ceil(GameUtils.nbt.entity.getNumber(entity, type + "_length_save") * (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance_percent") * 0.01));
                                     distance = length_percent / count_available;
 
                                 }
 
                             }
 
-                            NBTManager.entity.setNumber(entity, type_pre_next[1] + "_chance_auto_distance", distance);
-                            NBTManager.entity.setNumber(entity, type_pre_next[1] + "_chance_distance_left", 0);
+                            GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_chance_auto_distance", distance);
+                            GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_chance_distance_left", 0);
 
                         }
 
@@ -411,13 +410,13 @@ public class TreeGenerator {
                     // Leaves Settings
                     {
 
-                        NBTManager.entity.setNumber(entity, "leaves_count", 1);
-                        NBTManager.entity.setNumber(entity, "leaves_length", 1);
-                        NBTManager.entity.setNumber(entity, "leaves_length_save", 1);
+                        GameUtils.nbt.entity.setNumber(entity, "leaves_count", 1);
+                        GameUtils.nbt.entity.setNumber(entity, "leaves_length", 1);
+                        GameUtils.nbt.entity.setNumber(entity, "leaves_length_save", 1);
 
-                        double size = Mth.nextDouble(RandomSource.create(), NBTManager.entity.getNumber(entity, "leaves_size_min"), NBTManager.entity.getNumber(entity, "leaves_size_max"));
+                        double size = Mth.nextDouble(RandomSource.create(), GameUtils.nbt.entity.getNumber(entity, "leaves_size_min"), GameUtils.nbt.entity.getNumber(entity, "leaves_size_max"));
                         size = size * summonReduction(entity, "leaves", "size_reduce");
-                        NBTManager.entity.setNumber(entity, "leaves_size", size);
+                        GameUtils.nbt.entity.setNumber(entity, "leaves_size", size);
 
                     }
 
@@ -428,13 +427,13 @@ public class TreeGenerator {
 
                     if (is_taproot_trunk == false) {
 
-                        double chance = NBTManager.entity.getNumber(entity, type + "_continue_chance");
+                        double chance = GameUtils.nbt.entity.getNumber(entity, type + "_continue_chance");
                         chance = chance * summonReduction(entity, type, "continue_reduce");
                         chance = 1.0 - chance;
 
                         if (Math.random() < chance) {
 
-                            NBTManager.entity.setNumber(entity, type_pre_next[1] + "_count", 0);
+                            GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_count", 0);
 
                         }
 
@@ -471,22 +470,22 @@ public class TreeGenerator {
                                 double forward = 0.0;
                                 double height = 0.0;
 
-                                if (NBTManager.entity.getText(entity, type + "_center_direction_from").isEmpty() == true) {
+                                if (GameUtils.nbt.entity.getText(entity, type + "_center_direction_from").isEmpty() == true) {
 
                                     // Non Center Direction
                                     {
 
-                                        if (NBTManager.entity.getNumber(entity, type + "_min_last_count") > 0 && NBTManager.entity.getNumber(entity, type + "_count") <= 1) {
+                                        if (GameUtils.nbt.entity.getNumber(entity, type + "_min_last_count") > 0 && GameUtils.nbt.entity.getNumber(entity, type + "_count") <= 1) {
 
                                             // Make last part facing same as previous part
                                             forward = 1;
 
                                         } else {
 
-                                            vertical = NBTManager.entity.getNumber(entity, type + "_start_vertical");
-                                            horizontal = NBTManager.entity.getNumber(entity, type + "_start_horizontal");
-                                            height = Mth.nextDouble(RandomSource.create(), NBTManager.entity.getNumber(entity, type + "_start_height_min"), NBTManager.entity.getNumber(entity, type + "_start_height_max"));
-                                            forward = Mth.nextDouble(RandomSource.create(), NBTManager.entity.getNumber(entity, type + "_start_forward_min"), NBTManager.entity.getNumber(entity, type + "_start_forward_max"));
+                                            vertical = GameUtils.nbt.entity.getNumber(entity, type + "_start_vertical");
+                                            horizontal = GameUtils.nbt.entity.getNumber(entity, type + "_start_horizontal");
+                                            height = Mth.nextDouble(RandomSource.create(), GameUtils.nbt.entity.getNumber(entity, type + "_start_height_min"), GameUtils.nbt.entity.getNumber(entity, type + "_start_height_max"));
+                                            forward = Mth.nextDouble(RandomSource.create(), GameUtils.nbt.entity.getNumber(entity, type + "_start_forward_min"), GameUtils.nbt.entity.getNumber(entity, type + "_start_forward_max"));
 
                                         }
 
@@ -497,9 +496,9 @@ public class TreeGenerator {
                                     // Center Direction
                                     {
 
-                                        int length = (int) NBTManager.entity.getNumber(entity, type_pre_next[0] + "_length");
-                                        int length_save = (int) NBTManager.entity.getNumber(entity, type_pre_next[0] + "_length_save");
-                                        double center = NBTManager.entity.getNumber(entity, type + "_center_direction_center") * 0.01;
+                                        int length = (int) GameUtils.nbt.entity.getNumber(entity, type_pre_next[0] + "_length");
+                                        int length_save = (int) GameUtils.nbt.entity.getNumber(entity, type_pre_next[0] + "_length_save");
+                                        double center = GameUtils.nbt.entity.getNumber(entity, type + "_center_direction_center") * 0.01;
                                         int length_below = (int) (length_save * center);
                                         int length_above = length_save - length_below;
                                         double percent = 0.0;
@@ -519,10 +518,10 @@ public class TreeGenerator {
 
                                         }
 
-                                        vertical = 1.0 + ((NBTManager.entity.getNumber(entity, type + "_center_direction_vertical_" + above_or_below) - 1.0) * percent);
-                                        horizontal = 1.0 + ((NBTManager.entity.getNumber(entity, type + "_center_direction_horizontal_" + above_or_below) - 1.0) * percent);
-                                        height = NBTManager.entity.getNumber(entity, type + "_center_direction_height_" + above_or_below) * percent;
-                                        forward = NBTManager.entity.getNumber(entity, type + "_center_direction_forward_" + above_or_below) * percent;
+                                        vertical = 1.0 + ((GameUtils.nbt.entity.getNumber(entity, type + "_center_direction_vertical_" + above_or_below) - 1.0) * percent);
+                                        horizontal = 1.0 + ((GameUtils.nbt.entity.getNumber(entity, type + "_center_direction_horizontal_" + above_or_below) - 1.0) * percent);
+                                        height = GameUtils.nbt.entity.getNumber(entity, type + "_center_direction_height_" + above_or_below) * percent;
+                                        forward = GameUtils.nbt.entity.getNumber(entity, type + "_center_direction_forward_" + above_or_below) * percent;
 
                                     }
 
@@ -550,8 +549,8 @@ public class TreeGenerator {
 
                 if (is_taproot_trunk == true) {
 
-                    int direction = Mth.nextInt(RandomSource.create(), (int) NBTManager.entity.getNumber(entity, type + "_start_direction_min"), (int) NBTManager.entity.getNumber(entity, type + "_start_direction_max"));
-                    int gravity = Mth.nextInt(RandomSource.create(), (int) NBTManager.entity.getNumber(entity, type + "_start_gravity_max"), (int) NBTManager.entity.getNumber(entity, type + "_start_gravity_min"));
+                    int direction = Mth.nextInt(RandomSource.create(), (int) GameUtils.nbt.entity.getNumber(entity, type + "_start_direction_min"), (int) GameUtils.nbt.entity.getNumber(entity, type + "_start_direction_max"));
+                    int gravity = Mth.nextInt(RandomSource.create(), (int) GameUtils.nbt.entity.getNumber(entity, type + "_start_gravity_max"), (int) GameUtils.nbt.entity.getNumber(entity, type + "_start_gravity_min"));
                     GameUtils.command.run(false, level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ~ ~ ~ " + direction + " " + gravity);
 
                 } else {
@@ -569,30 +568,30 @@ public class TreeGenerator {
 
                 if (is_taproot_trunk == true) {
 
-                    NBTManager.entity.setText(entity, "step", "build");
+                    GameUtils.nbt.entity.setText(entity, "step", "build");
 
                 } else {
 
-                    NBTManager.entity.setText(entity, "step", "calculation");
+                    GameUtils.nbt.entity.setText(entity, "step", "calculation");
 
                 }
 
             }
 
-            NBTManager.entity.addNumber(entity, type + "_count", -1);
+            GameUtils.nbt.entity.addNumber(entity, type + "_count", -1);
 
         }
 
         private static double summonReduction (Entity entity, String type, String step) {
 
             double return_number = 1.0;
-            String from = NBTManager.entity.getText(entity, type + "_" + step + "_from");
+            String from = GameUtils.nbt.entity.getText(entity, type + "_" + step + "_from");
 
             if (from.isEmpty() == false) {
 
-                int length = (int) NBTManager.entity.getNumber(entity, from + "_length");
-                int length_save = (int) NBTManager.entity.getNumber(entity, from + "_length_save");
-                double center = NBTManager.entity.getNumber(entity, type + "_" + step + "_center") * 0.01;
+                int length = (int) GameUtils.nbt.entity.getNumber(entity, from + "_length");
+                int length_save = (int) GameUtils.nbt.entity.getNumber(entity, from + "_length_save");
+                double center = GameUtils.nbt.entity.getNumber(entity, type + "_" + step + "_center") * 0.01;
                 int length_below = (int) ((double) length_save * center);
                 int length_above = length_save - length_below;
 
@@ -613,8 +612,8 @@ public class TreeGenerator {
 
                 }
 
-                double start = NBTManager.entity.getNumber(entity, type + "_" + step + "_" + above_below + "_start");
-                double end = NBTManager.entity.getNumber(entity, type + "_" + step + "_" + above_below + "_end");
+                double start = GameUtils.nbt.entity.getNumber(entity, type + "_" + step + "_" + above_below + "_start");
+                double end = GameUtils.nbt.entity.getNumber(entity, type + "_" + step + "_" + above_below + "_end");
                 return_number = (start - end) * percent;
                 return_number = end + return_number;
                 return_number = return_number * 0.01;
@@ -627,33 +626,33 @@ public class TreeGenerator {
         private static void calculation (ServerLevel level_server, Entity entity, String id, String type, String[] type_pre_next) {
 
             GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.previous_pos set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",limit=1] Pos");
-            double[] pos = NBTManager.entity.getListNumber(entity, "previous_pos");
-            NBTManager.entity.setNumber(entity, "previous_posX", pos[0]);
-            NBTManager.entity.setNumber(entity, "previous_posY", pos[1]);
-            NBTManager.entity.setNumber(entity, "previous_posZ", pos[2]);
+            double[] pos = GameUtils.nbt.entity.getListNumber(entity, "previous_pos");
+            GameUtils.nbt.entity.setNumber(entity, "previous_posX", pos[0]);
+            GameUtils.nbt.entity.setNumber(entity, "previous_posY", pos[1]);
+            GameUtils.nbt.entity.setNumber(entity, "previous_posZ", pos[2]);
 
             boolean go_next = false;
 
             // Test
             {
 
-                if (NBTManager.entity.getNumber(entity, type + "_length") > 0) {
+                if (GameUtils.nbt.entity.getNumber(entity, type + "_length") > 0) {
 
-                    if (NBTManager.entity.getNumber(entity, type_pre_next[1] + "_count") > NBTManager.entity.getNumber(entity, type_pre_next[1] + "_min_last_count")) {
+                    if (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count") > GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_min_last_count")) {
 
                         // Length Range
-                        if (NBTManager.entity.getNumber(entity, type + "_length") / NBTManager.entity.getNumber(entity, type + "_length_save") <= NBTManager.entity.getNumber(entity, type_pre_next[1] + "_chance_percent") * 0.01) {
+                        if (GameUtils.nbt.entity.getNumber(entity, type + "_length") / GameUtils.nbt.entity.getNumber(entity, type + "_length_save") <= GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance_percent") * 0.01) {
 
-                            if (NBTManager.entity.getNumber(entity, type_pre_next[1] + "_chance_distance_left") > 0) {
+                            if (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance_distance_left") > 0) {
 
-                                NBTManager.entity.addNumber(entity, type_pre_next[1] + "_chance_distance_left", -1);
+                                GameUtils.nbt.entity.addNumber(entity, type_pre_next[1] + "_chance_distance_left", -1);
 
                             } else {
 
-                                NBTManager.entity.setNumber(entity, type_pre_next[1] + "_chance_distance_left", NBTManager.entity.getNumber(entity, type_pre_next[1] + "_chance_auto_distance"));
+                                GameUtils.nbt.entity.setNumber(entity, type_pre_next[1] + "_chance_distance_left", GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance_auto_distance"));
 
                                 // Chance
-                                if (Math.random() < NBTManager.entity.getNumber(entity, type_pre_next[1] + "_chance")) {
+                                if (Math.random() < GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_chance")) {
 
                                     go_next = true;
 
@@ -683,8 +682,8 @@ public class TreeGenerator {
                         // Curvature
                         {
 
-                            double vertical = NBTManager.entity.getNumber(entity, type + "_curvature_vertical");
-                            double horizontal = NBTManager.entity.getNumber(entity, type + "_curvature_horizontal");
+                            double vertical = GameUtils.nbt.entity.getNumber(entity, type + "_curvature_vertical");
+                            double horizontal = GameUtils.nbt.entity.getNumber(entity, type + "_curvature_horizontal");
 
                             if (vertical != 0 || horizontal != 0) {
 
@@ -701,12 +700,12 @@ public class TreeGenerator {
                         // Gravity
                         {
 
-                            double weightiness = NBTManager.entity.getNumber(entity, type + "_gravity_weightiness");
+                            double weightiness = GameUtils.nbt.entity.getNumber(entity, type + "_gravity_weightiness");
 
                             if (weightiness != 0) {
 
-                                int min = (int) NBTManager.entity.getNumber(entity, type + "_gravity_min");
-                                int max = (int) NBTManager.entity.getNumber(entity, type + "_gravity_max");
+                                int min = (int) GameUtils.nbt.entity.getNumber(entity, type + "_gravity_min");
+                                int max = (int) GameUtils.nbt.entity.getNumber(entity, type + "_gravity_max");
 
                                 if (GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",x_rotation=" + min + "..90]") == true) {
 
@@ -731,7 +730,7 @@ public class TreeGenerator {
                             // Centripetal
                             {
 
-                                double centripetal = NBTManager.entity.getNumber(entity, type + "_centripetal") * 0.01;
+                                double centripetal = GameUtils.nbt.entity.getNumber(entity, type + "_centripetal") * 0.01;
 
                                 if (centripetal != 0.0) {
 
@@ -746,16 +745,16 @@ public class TreeGenerator {
 
                         }
 
-                        double thickness = NBTManager.entity.getNumber(entity, type + "_thickness_start") - NBTManager.entity.getNumber(entity, type + "_thickness_end");
-                        double length_percent = NBTManager.entity.getNumber(entity, type + "_length") / NBTManager.entity.getNumber(entity, type + "_length_save");
-                        thickness = NBTManager.entity.getNumber(entity, type + "_thickness_end") + (thickness * length_percent);
-                        NBTManager.entity.setNumber(entity, type + "_thickness", thickness);
+                        double thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_start") - GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end");
+                        double length_percent = GameUtils.nbt.entity.getNumber(entity, type + "_length") / GameUtils.nbt.entity.getNumber(entity, type + "_length_save");
+                        thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness_end") + (thickness * length_percent);
+                        GameUtils.nbt.entity.setNumber(entity, type + "_thickness", thickness);
 
                     }
 
                     GameUtils.command.run(false, level_server, 0, 0, 0, "execute as @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + "] at @s run tp @s ^ ^ ^1");
-                    NBTManager.entity.addNumber(entity, type + "_length", -1);
-                    NBTManager.entity.setText(entity, "step", "build");
+                    GameUtils.nbt.entity.addNumber(entity, type + "_length", -1);
+                    GameUtils.nbt.entity.setText(entity, "step", "build");
 
                 }
 
@@ -764,13 +763,13 @@ public class TreeGenerator {
                 // Next Part
                 {
 
-                    if (NBTManager.entity.getNumber(entity, type_pre_next[1] + "_count") > 0) {
+                    if (GameUtils.nbt.entity.getNumber(entity, type_pre_next[1] + "_count") > 0) {
 
                         // Up
                         {
 
-                            NBTManager.entity.setText(entity, "type", type_pre_next[1]);
-                            NBTManager.entity.setText(entity, "step", "summon");
+                            GameUtils.nbt.entity.setText(entity, "type", type_pre_next[1]);
+                            GameUtils.nbt.entity.setText(entity, "step", "summon");
 
                         }
 
@@ -783,20 +782,20 @@ public class TreeGenerator {
 
                             if (type.equals("taproot") == true) {
 
-                                if (NBTManager.entity.getNumber(entity, type + "_count") > 0) {
+                                if (GameUtils.nbt.entity.getNumber(entity, type + "_count") > 0) {
 
-                                    NBTManager.entity.setText(entity, "step", "summon");
+                                    GameUtils.nbt.entity.setText(entity, "step", "summon");
 
                                 } else {
 
-                                    if (NBTManager.entity.getNumber(entity, type_pre_next[0] + "_count") > 0) {
+                                    if (GameUtils.nbt.entity.getNumber(entity, type_pre_next[0] + "_count") > 0) {
 
-                                        NBTManager.entity.setText(entity, "step", "summon");
-                                        NBTManager.entity.setText(entity, "type", type_pre_next[0]);
+                                        GameUtils.nbt.entity.setText(entity, "step", "summon");
+                                        GameUtils.nbt.entity.setText(entity, "type", type_pre_next[0]);
 
                                     } else {
 
-                                        NBTManager.entity.setText(entity, "step", "end");
+                                        GameUtils.nbt.entity.setText(entity, "step", "end");
 
                                     }
 
@@ -804,19 +803,19 @@ public class TreeGenerator {
 
                             } else if (type.equals("trunk") == true) {
 
-                                if (NBTManager.entity.getNumber(entity, type + "_count") > 0) {
+                                if (GameUtils.nbt.entity.getNumber(entity, type + "_count") > 0) {
 
-                                    NBTManager.entity.setText(entity, "step", "summon");
+                                    GameUtils.nbt.entity.setText(entity, "step", "summon");
 
                                 } else {
 
-                                    NBTManager.entity.setText(entity, "step", "end");
+                                    GameUtils.nbt.entity.setText(entity, "step", "end");
 
                                 }
 
                             } else {
 
-                                NBTManager.entity.setText(entity, "type", type_pre_next[0]);
+                                GameUtils.nbt.entity.setText(entity, "type", type_pre_next[0]);
 
                             }
 
@@ -832,7 +831,7 @@ public class TreeGenerator {
 
         private static void build (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, String id, String type) {
 
-            double thickness = NBTManager.entity.getNumber(entity, type + "_thickness");
+            double thickness = GameUtils.nbt.entity.getNumber(entity, type + "_thickness");
             double size = 0.0;
 
             // Get Size and Radius
@@ -844,7 +843,7 @@ public class TreeGenerator {
 
                 } else {
 
-                    size = NBTManager.entity.getNumber(entity, "leaves_size");
+                    size = GameUtils.nbt.entity.getNumber(entity, "leaves_size");
 
                 }
 
@@ -862,23 +861,23 @@ public class TreeGenerator {
 
                 double radius = size * 0.5;
                 double radius_ceil = Math.ceil(radius);
-                String generator_type = NBTManager.entity.getText(entity, type + "_generator_type");
+                String generator_type = GameUtils.nbt.entity.getText(entity, type + "_generator_type");
 
                 // First Settings
                 {
 
-                    if (NBTManager.entity.getLogic(entity, "still_building") == false) {
+                    if (GameUtils.nbt.entity.getLogic(entity, "still_building") == false) {
 
-                        NBTManager.entity.setLogic(entity, "still_building", true);
+                        GameUtils.nbt.entity.setLogic(entity, "still_building", true);
 
                         // Get Center Pos
                         {
 
                             GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.build_center set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_" + type + ",limit=1] Pos");
-                            double[] pos = NBTManager.entity.getListNumber(entity, "build_center");
-                            NBTManager.entity.setNumber(entity, "build_centerX", pos[0]);
-                            NBTManager.entity.setNumber(entity, "build_centerY", pos[1]);
-                            NBTManager.entity.setNumber(entity, "build_centerZ", pos[2]);
+                            double[] pos = GameUtils.nbt.entity.getListNumber(entity, "build_center");
+                            GameUtils.nbt.entity.setNumber(entity, "build_centerX", pos[0]);
+                            GameUtils.nbt.entity.setNumber(entity, "build_centerY", pos[1]);
+                            GameUtils.nbt.entity.setNumber(entity, "build_centerZ", pos[2]);
 
                         }
 
@@ -888,14 +887,14 @@ public class TreeGenerator {
                             if (generator_type.equals("sphere_zone") == true) {
 
                                 GameUtils.command.runEntity(entity, "data modify entity @s ForgeData.builder_yaw_pitch set from entity @e[tag=TANSHUGETREES-" + id + ",tag=TANSHUGETREES-generator_sprig,limit=1] Rotation");
-                                double[] yaw_pitch = NBTManager.entity.getListNumberFloat(entity, "builder_yaw_pitch");
+                                double[] yaw_pitch = GameUtils.nbt.entity.getListNumberFloat(entity, "builder_yaw_pitch");
                                 double yaw = Math.toRadians(((yaw_pitch[0] + 180) + 90) % 360);
                                 double pitch = yaw_pitch[1];
 
                                 // Min Pitch
                                 {
 
-                                    int pitch_min = (int) NBTManager.entity.getNumber(entity, type + "_sphere_zone_pitch_min");
+                                    int pitch_min = (int) GameUtils.nbt.entity.getNumber(entity, type + "_sphere_zone_pitch_min");
 
                                     if (pitch > pitch_min) {
 
@@ -907,19 +906,19 @@ public class TreeGenerator {
 
                                 pitch = Math.toRadians(pitch);
                                 double distance = radius;
-                                int sphere_zone_size = (int) NBTManager.entity.getNumber(entity, type + "_sphere_zone_size");
+                                int sphere_zone_size = (int) GameUtils.nbt.entity.getNumber(entity, type + "_sphere_zone_size");
 
-                                NBTManager.entity.setNumber(entity, "sphere_zone_posX", distance * Math.cos(pitch) * Math.cos(yaw));
-                                NBTManager.entity.setNumber(entity, "sphere_zone_posY", distance * Math.sin(pitch));
-                                NBTManager.entity.setNumber(entity, "sphere_zone_posZ", distance * Math.cos(pitch) * Math.sin(yaw));
+                                GameUtils.nbt.entity.setNumber(entity, "sphere_zone_posX", distance * Math.cos(pitch) * Math.cos(yaw));
+                                GameUtils.nbt.entity.setNumber(entity, "sphere_zone_posY", distance * Math.sin(pitch));
+                                GameUtils.nbt.entity.setNumber(entity, "sphere_zone_posZ", distance * Math.cos(pitch) * Math.sin(yaw));
 
                                 // Change Build Center
                                 {
 
                                     distance = distance - sphere_zone_size;
-                                    NBTManager.entity.addNumber(entity, "build_centerX", distance * Math.cos(pitch) * Math.cos(yaw));
-                                    NBTManager.entity.addNumber(entity, "build_centerY", distance * Math.sin(pitch));
-                                    NBTManager.entity.addNumber(entity, "build_centerZ", distance * Math.cos(pitch) * Math.sin(yaw));
+                                    GameUtils.nbt.entity.addNumber(entity, "build_centerX", distance * Math.cos(pitch) * Math.cos(yaw));
+                                    GameUtils.nbt.entity.addNumber(entity, "build_centerY", distance * Math.sin(pitch));
+                                    GameUtils.nbt.entity.addNumber(entity, "build_centerZ", distance * Math.cos(pitch) * Math.sin(yaw));
 
                                 }
 
@@ -934,7 +933,7 @@ public class TreeGenerator {
 
                                     }
 
-                                    NBTManager.entity.setNumber(entity, "sphere_zone_area", sphere_zone_area * sphere_zone_area);
+                                    GameUtils.nbt.entity.setNumber(entity, "sphere_zone_area", sphere_zone_area * sphere_zone_area);
 
                                 }
 
@@ -942,9 +941,9 @@ public class TreeGenerator {
 
                         }
 
-                        NBTManager.entity.setNumber(entity, "build_saveX", -(radius));
-                        NBTManager.entity.setNumber(entity, "build_saveY", -(radius));
-                        NBTManager.entity.setNumber(entity, "build_saveZ", -(radius));
+                        GameUtils.nbt.entity.setNumber(entity, "build_saveX", -(radius));
+                        GameUtils.nbt.entity.setNumber(entity, "build_saveY", -(radius));
+                        GameUtils.nbt.entity.setNumber(entity, "build_saveZ", -(radius));
 
                     }
 
@@ -955,8 +954,8 @@ public class TreeGenerator {
 
                 if (generator_type.equals("sphere_zone") == true) {
 
-                    sphere_zone_area = NBTManager.entity.getNumber(entity, "sphere_zone_area");
-                    sphere_zone_pos = new double[]{NBTManager.entity.getNumber(entity, "sphere_zone_posX"), NBTManager.entity.getNumber(entity, "sphere_zone_posY"), NBTManager.entity.getNumber(entity, "sphere_zone_posZ")};
+                    sphere_zone_area = GameUtils.nbt.entity.getNumber(entity, "sphere_zone_area");
+                    sphere_zone_pos = new double[]{GameUtils.nbt.entity.getNumber(entity, "sphere_zone_posX"), GameUtils.nbt.entity.getNumber(entity, "sphere_zone_posY"), GameUtils.nbt.entity.getNumber(entity, "sphere_zone_posZ")};
 
                 }
 
@@ -968,8 +967,8 @@ public class TreeGenerator {
 
                 }
 
-                double[] center_pos = new double[]{NBTManager.entity.getNumber(entity, "build_centerX"), NBTManager.entity.getNumber(entity, "build_centerY"), NBTManager.entity.getNumber(entity, "build_centerZ")};
-                boolean replace = NBTManager.entity.getLogic(entity, type + "_replace");
+                double[] center_pos = new double[]{GameUtils.nbt.entity.getNumber(entity, "build_centerX"), GameUtils.nbt.entity.getNumber(entity, "build_centerY"), GameUtils.nbt.entity.getNumber(entity, "build_centerZ")};
+                boolean replace = GameUtils.nbt.entity.getLogic(entity, type + "_replace");
                 double sphere_area = (radius + 0.35) * (radius + 0.35);
                 double build_area = 0.0;
                 double build_saveX = 0;
@@ -984,9 +983,9 @@ public class TreeGenerator {
                     // Building
                     {
 
-                        build_saveX = NBTManager.entity.getNumber(entity, "build_saveX");
-                        build_saveY = NBTManager.entity.getNumber(entity, "build_saveY");
-                        build_saveZ = NBTManager.entity.getNumber(entity, "build_saveZ");
+                        build_saveX = GameUtils.nbt.entity.getNumber(entity, "build_saveX");
+                        build_saveY = GameUtils.nbt.entity.getNumber(entity, "build_saveY");
+                        build_saveZ = GameUtils.nbt.entity.getNumber(entity, "build_saveZ");
 
                         if (build_saveY > scan_end) {
 
@@ -996,19 +995,19 @@ public class TreeGenerator {
 
                             if (build_saveX > scan_end) {
 
-                                NBTManager.entity.setNumber(entity, "build_saveX", -(scan_start));
-                                NBTManager.entity.addNumber(entity, "build_saveY", scan_change);
+                                GameUtils.nbt.entity.setNumber(entity, "build_saveX", -(scan_start));
+                                GameUtils.nbt.entity.addNumber(entity, "build_saveY", scan_change);
 
                             } else {
 
                                 if (build_saveZ > scan_end) {
 
-                                    NBTManager.entity.setNumber(entity, "build_saveZ", -(scan_start));
-                                    NBTManager.entity.addNumber(entity, "build_saveX", scan_change);
+                                    GameUtils.nbt.entity.setNumber(entity, "build_saveZ", -(scan_start));
+                                    GameUtils.nbt.entity.addNumber(entity, "build_saveX", scan_change);
 
                                 } else {
 
-                                    NBTManager.entity.addNumber(entity, "build_saveZ", scan_change);
+                                    GameUtils.nbt.entity.addNumber(entity, "build_saveZ", scan_change);
 
                                     // Shaping
                                     {
@@ -1069,16 +1068,16 @@ public class TreeGenerator {
                                             // Leaves
                                             {
 
-                                                if (Math.random() < NBTManager.entity.getNumber(entity, "leaves_density") * 0.01) {
+                                                if (Math.random() < GameUtils.nbt.entity.getNumber(entity, "leaves_density") * 0.01) {
 
                                                     String previous_block = "";
                                                     String block_type = "";
                                                     BlockPos pos_leaves = null;
                                                     int deep = 0;
 
-                                                    if (Math.random() < NBTManager.entity.getNumber(entity, "leaves_straighten_chance")) {
+                                                    if (Math.random() < GameUtils.nbt.entity.getNumber(entity, "leaves_straighten_chance")) {
 
-                                                        deep = Mth.nextInt(RandomSource.create(), (int) NBTManager.entity.getNumber(entity, "leaves_straighten_min"), (int) NBTManager.entity.getNumber(entity, "leaves_straighten_max"));
+                                                        deep = Mth.nextInt(RandomSource.create(), (int) GameUtils.nbt.entity.getNumber(entity, "leaves_straighten_min"), (int) GameUtils.nbt.entity.getNumber(entity, "leaves_straighten_max"));
 
                                                     }
 
@@ -1119,16 +1118,16 @@ public class TreeGenerator {
             }
 
             // If it builds to the end without any break
-            NBTManager.entity.setLogic(entity, "still_building", false);
-            NBTManager.entity.setText(entity, "step", "calculation");
+            GameUtils.nbt.entity.setLogic(entity, "still_building", false);
+            GameUtils.nbt.entity.setText(entity, "step", "calculation");
 
         }
 
         private static void buildBlockConnector (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, double[] center_pos, BlockPos pos, String type, String generator_type, double radius, double build_area, boolean replace) {
 
-            double block_connector_posX = NBTManager.entity.getNumber(entity, "previous_posX");
-            double block_connector_posY = NBTManager.entity.getNumber(entity, "previous_posY");
-            double block_connector_posZ = NBTManager.entity.getNumber(entity, "previous_posZ");
+            double block_connector_posX = GameUtils.nbt.entity.getNumber(entity, "previous_posX");
+            double block_connector_posY = GameUtils.nbt.entity.getNumber(entity, "previous_posY");
+            double block_connector_posZ = GameUtils.nbt.entity.getNumber(entity, "previous_posZ");
             int testX = (int) (Math.floor(center_pos[0]) - Math.floor(block_connector_posX));
             int testY = (int) (Math.floor(center_pos[1]) - Math.floor(block_connector_posY));
             int testZ = (int) (Math.floor(center_pos[2]) - Math.floor(block_connector_posZ));
@@ -1209,8 +1208,8 @@ public class TreeGenerator {
                     // Get Outer-Inner-Core
                     {
 
-                        double outer_level = NBTManager.entity.getNumber(entity, type + "_outer_level");
-                        double inner_level = NBTManager.entity.getNumber(entity, type + "_inner_level");
+                        double outer_level = GameUtils.nbt.entity.getNumber(entity, type + "_outer_level");
+                        double inner_level = GameUtils.nbt.entity.getNumber(entity, type + "_inner_level");
                         double outer_level_area = outer_level;
                         double inner_level_area = inner_level;
 
@@ -1471,7 +1470,7 @@ public class TreeGenerator {
                 // Leaves
                 {
 
-                    if (Math.random() < NBTManager.entity.getNumber(entity, "leaves2_chance")) {
+                    if (Math.random() < GameUtils.nbt.entity.getNumber(entity, "leaves2_chance")) {
 
                         block = "2";
 
@@ -1573,7 +1572,7 @@ public class TreeGenerator {
 
                 }
 
-                if (NBTManager.entity.getText(entity, block).isEmpty() == false) {
+                if (GameUtils.nbt.entity.getText(entity, block).isEmpty() == false) {
 
                     // Place
                     {
@@ -1585,9 +1584,9 @@ public class TreeGenerator {
                             GameUtils.command.run(false, level_server, pos.getX(), pos.getY(), pos.getZ(), "particle flash ~ ~ ~ 0 0 0 0 1 force");
                             level_accessor.setBlock(pos, GameUtils.block.fromText("tanshugetrees:block_placer_" + block_placer), 2);
 
-                            NBTManager.block.setText(level_accessor, pos, "block", NBTManager.entity.getText(entity, block));
-                            NBTManager.block.setText(level_accessor, pos, "function", function[1]);
-                            NBTManager.block.setText(level_accessor, pos, "function_style", function[2]);
+                            GameUtils.nbt.block.setText(level_accessor, pos, "block", GameUtils.nbt.entity.getText(entity, block));
+                            GameUtils.nbt.block.setText(level_accessor, pos, "function", function[1]);
+                            GameUtils.nbt.block.setText(level_accessor, pos, "function_style", function[2]);
 
                         } else {
 
@@ -1639,23 +1638,23 @@ public class TreeGenerator {
 
                 function = "function_way" + number;
 
-                if (Math.random() < NBTManager.entity.getNumber(entity, function + "_chance")) {
+                if (Math.random() < GameUtils.nbt.entity.getNumber(entity, function + "_chance")) {
 
-                    path = NBTManager.entity.getText(entity, function);
-                    at_type = NBTManager.entity.getText(entity, function + "_type");
-                    style = NBTManager.entity.getText(entity, function + "_style");
+                    path = GameUtils.nbt.entity.getText(entity, function);
+                    at_type = GameUtils.nbt.entity.getText(entity, function + "_type");
+                    style = GameUtils.nbt.entity.getText(entity, function + "_style");
 
                     if (path.isEmpty() == false && at_type.equals(type) == true) {
 
-                        if (NBTManager.entity.getNumber(entity, function + "_max") >= 0) {
+                        if (GameUtils.nbt.entity.getNumber(entity, function + "_max") >= 0) {
 
-                            double range_min = NBTManager.entity.getNumber(entity, function + "_range_min") * 0.01;
-                            double range_max = NBTManager.entity.getNumber(entity, function + "_range_max") * 0.01;
+                            double range_min = GameUtils.nbt.entity.getNumber(entity, function + "_range_min") * 0.01;
+                            double range_max = GameUtils.nbt.entity.getNumber(entity, function + "_range_max") * 0.01;
                             double length_percent = 1.0;
 
-                            if (NBTManager.entity.getNumber(entity, at_type + "_length_save") > 0) {
+                            if (GameUtils.nbt.entity.getNumber(entity, at_type + "_length_save") > 0) {
 
-                                length_percent = 1.0 - (NBTManager.entity.getNumber(entity, at_type + "_length") / NBTManager.entity.getNumber(entity, at_type + "_length_save"));
+                                length_percent = 1.0 - (GameUtils.nbt.entity.getNumber(entity, at_type + "_length") / GameUtils.nbt.entity.getNumber(entity, at_type + "_length_save"));
 
                             }
 
@@ -1664,13 +1663,13 @@ public class TreeGenerator {
                                 // Count Limitation
                                 {
 
-                                    if (NBTManager.entity.getNumber(entity, function + "_max") > 0) {
+                                    if (GameUtils.nbt.entity.getNumber(entity, function + "_max") > 0) {
 
-                                        NBTManager.entity.addNumber(entity, function + "_max", -1);
+                                        GameUtils.nbt.entity.addNumber(entity, function + "_max", -1);
 
-                                        if (NBTManager.entity.getNumber(entity, function + "_max") == 0) {
+                                        if (GameUtils.nbt.entity.getNumber(entity, function + "_max") == 0) {
 
-                                            NBTManager.entity.setNumber(entity, function + "_max", -1);
+                                            GameUtils.nbt.entity.setNumber(entity, function + "_max", -1);
 
                                         }
 
@@ -1703,7 +1702,7 @@ public class TreeGenerator {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                TXTFunction.run(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), "functions/" + NBTManager.entity.getText(entity, "function_end"), true);
+                TXTFunction.run(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), "functions/" + GameUtils.nbt.entity.getText(entity, "function_end"), true);
 
             } else {
 

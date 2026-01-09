@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_core.game.TXTFunction;
+import tannyjung.tanshugetrees_core.outside.CacheManager;
 import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
 
@@ -16,7 +17,7 @@ public class LeafLitter {
 
         String function_id = "leaf_litter/" + GameUtils.block.toTextID(block).replace(":", "-");
 
-        if (FileConfig.leaf_litter_classic_only == false && Cache.getFunction(function_id).length > 0) {
+        if (FileConfig.leaf_litter_classic_only == false && CacheManager.getFunction(function_id).length > 0) {
 
             TXTFunction.run(level_accessor, level_server, posX, posY, posZ, function_id, true);
 

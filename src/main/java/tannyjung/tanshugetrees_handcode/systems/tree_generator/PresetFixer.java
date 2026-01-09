@@ -1,9 +1,9 @@
 package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
-import tannyjung.tanshugetrees_core.FileManager;
-import tannyjung.tanshugetrees_core.OutsideUtils;
+import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.outside.FileManager;
+import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
-import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,11 +15,11 @@ public class PresetFixer {
 
     public static void start () {
 
-        File template = new File(Handcode.path_config + "/#dev/temporary/preset_template.txt");
+        File template = new File(Core.path_config + "/#dev/temporary/preset_template.txt");
 
         if (template.exists() == true && template.isDirectory() == false) {
 
-            File[] packs = new File(Handcode.path_config + "/custom_packs").listFiles();
+            File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 
             if (packs != null) {
 

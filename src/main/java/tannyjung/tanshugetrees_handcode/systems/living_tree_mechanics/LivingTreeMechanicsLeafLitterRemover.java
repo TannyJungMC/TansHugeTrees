@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import tannyjung.tanshugetrees_core.game.NBTManager;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 
 public class LivingTreeMechanicsLeafLitterRemover {
@@ -38,7 +37,7 @@ public class LivingTreeMechanicsLeafLitterRemover {
 
         } else {
 
-            LeafLitter.create(level_server, level_server, posX, posY + 1, posZ, GameUtils.block.fromText(NBTManager.entity.getText(entity, "block")), true);
+            LeafLitter.create(level_server, level_server, posX, posY + 1, posZ, GameUtils.block.fromText(GameUtils.nbt.entity.getText(entity, "block")), true);
             GameUtils.command.runEntity(entity, "kill @s");
 
         }

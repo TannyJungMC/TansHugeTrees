@@ -1324,7 +1324,9 @@
     ],
     "BIOMES:mod:tropical_biomes": [
       "#forge:is_hot",
-      "#forge:is_wet"
+      "#forge:is_wet",
+      "#neoforge:is_hot",
+      "#neoforge:is_wet"
     ],
     "BLOCKS:mod:passable_blocks": [
       "TAG:minecraft:replaceable_by_trees",

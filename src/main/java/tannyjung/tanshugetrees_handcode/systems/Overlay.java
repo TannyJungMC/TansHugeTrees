@@ -1,75 +1,62 @@
 package tannyjung.tanshugetrees_handcode.systems;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.DatapackLoadFailureScreen;
 import net.minecraft.client.gui.screens.LevelLoadingScreen;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGuiEvent;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.TitleScreen;
 import tannyjung.tanshugetrees_core.game.OverlayMaker;
 import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.TreeLocation;
 
-@Mod.EventBusSubscriber({Dist.CLIENT})
 public class Overlay {
+    
+    public static void eventMenu (Screen screen, GuiGraphics graphic, int screen_width, int screen_height) {
 
-    @SubscribeEvent(priority = EventPriority.NORMAL)
-    public static void eventMenu (ScreenEvent.Render.Post event) {
+        if (screen instanceof TitleScreen) {
 
-        GuiGraphics graphic = event.getGuiGraphics();
-        int width = event.getScreen().width;
-        int height = event.getScreen().height;
+            OverlayMaker.createImage(graphic, true, "https://cdn.modrinth.com/data/WRxnjKgn/images/2060ba0dc071e60ea941d8a5ca546f7f6af60b7c.png", "", 10, 10, 1920 >> 3, 991 >> 3, 1, 1, 0);
 
-        if (event.getScreen() instanceof LevelLoadingScreen) {
-
-            // World Gen (Out-Game)
-            {
-
-                if (FileConfig.world_gen_icon == true) {
-
-                    if (TreeLocation.world_gen_overlay_animation != 0) {
-
-                        OverlayMaker.image(graphic, "inside", "", "tanshugetrees:textures/screens/overlay_region_gen.png", 8, 8, 64, 16, 4, 1, TreeLocation.world_gen_overlay_animation - 1);
-                        OverlayMaker.image(graphic, "inside", "", "tanshugetrees:textures/screens/overlay_region_gen_bar.png", 27, 8, 17, 16, 17, 1, (int) Math.round(((double) TreeLocation.world_gen_overlay_bar / 1024) * 16));
-                        OverlayMaker.text(graphic, width, height, "top-left", 8, 32, 1.0, -10066330, false, "Biome : " + TreeLocation.world_gen_overlay_details_biome);
-                        OverlayMaker.text(graphic, width, height, "top-left", 8, 44, 1.0, -10066330, false, "Tree : " + TreeLocation.world_gen_overlay_details_tree);
-                        OverlayMaker.text(graphic, width, height, "top-left", 8, 64, 1.0, -3381760, false, "Generating tree locations. This may take a while.");
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
-
-    @SubscribeEvent(priority = EventPriority.NORMAL)
-    public static void eventInGame (RenderGuiEvent.Post event) {
-
-        GuiGraphics graphic = event.getGuiGraphics();
-        int width = event.getWindow().getWidth();
-        int height = event.getWindow().getHeight();
-
-        // // World Gen (In-Game)
-        {
+        } else if (screen instanceof LevelLoadingScreen) {
 
             if (FileConfig.world_gen_icon == true) {
 
                 if (TreeLocation.world_gen_overlay_animation != 0) {
 
-                    OverlayMaker.image(graphic, "inside", "", "tanshugetrees:textures/screens/overlay_region_gen.png", 8, 8, 64, 16, 4, 1, TreeLocation.world_gen_overlay_animation - 1);
-                    OverlayMaker.image(graphic, "inside", "", "tanshugetrees:textures/screens/overlay_region_gen_bar.png", 27, 8, 17, 16, 17, 1, (int) Math.round(((double) TreeLocation.world_gen_overlay_bar / 1024) * 16));
+                    OverlayMaker.createImage(graphic, false, "tanshugetrees:textures/screens/overlay_region_gen.png", "", 8, 8, 64, 16, 4, 1, TreeLocation.world_gen_overlay_animation - 1);
+                    OverlayMaker.createImage(graphic, false, "tanshugetrees:textures/screens/overlay_region_gen_bar.png", "", 27, 8, 17, 16, 17, 1, (int) Math.round(((double) TreeLocation.world_gen_overlay_bar / 1024) * 16));
+                    OverlayMaker.createText(graphic, screen_width, screen_height, "top-left", 8, 32, 1.0, -10066330, false, "Biome : " + TreeLocation.world_gen_overlay_details_biome);
+                    OverlayMaker.createText(graphic, screen_width, screen_height, "top-left", 8, 44, 1.0, -10066330, false, "Tree : " + TreeLocation.world_gen_overlay_details_tree);
+                    OverlayMaker.createText(graphic, screen_width, screen_height, "top-left", 8, 64, 1.0, -3381760, false, "Generating tree locations. This may take a while.");
 
-                    if (FileConfig.developer_mode == true) {
+                }
 
-                        OverlayMaker.text(graphic, width, height, "top-left", 8, 32, 1.0, -10066330, false, "Biome : " + TreeLocation.world_gen_overlay_details_biome);
-                        OverlayMaker.text(graphic, width, height, "top-left", 8, 44, 1.0, -11908534, false, "Tree : " + TreeLocation.world_gen_overlay_details_tree);
+            }
 
-                    }
+        } else if (screen instanceof DatapackLoadFailureScreen) {
+
+            OverlayMaker.createText(graphic, screen_width, screen_height, "bottom-left", 6, 24, 0.75, -3381760, false, "If this is a world you played with Tan's Huge Trees mod version before 2025, then this is incompatible error.");
+            OverlayMaker.createText(graphic, screen_width, screen_height, "bottom-left", 6, 16, 0.75, -3381760, false, "I would recommended to go back to older version if you want to continue playing this world.");
+            OverlayMaker.createText(graphic, screen_width, screen_height, "bottom-left", 6, 56, 1.0, -3381760, false, "สวัสดีชาวโลก");
+            OverlayMaker.createText(graphic, screen_width, screen_height, "bottom-left", 6, 48, 1.0, -3381760, false, "ฉันคือ มะนาวต่างดุด");
+
+        }
+
+    }
+
+    public static void eventInGame (GuiGraphics graphic, int screen_width, int screen_height) {
+
+        if (FileConfig.world_gen_icon == true) {
+
+            if (TreeLocation.world_gen_overlay_animation != 0) {
+
+                OverlayMaker.createImage(graphic, false, "tanshugetrees:textures/screens/overlay_region_gen.png", "", 8, 8, 64, 16, 4, 1, TreeLocation.world_gen_overlay_animation - 1);
+                OverlayMaker.createImage(graphic, false, "tanshugetrees:textures/screens/overlay_region_gen_bar.png", "", 27, 8, 17, 16, 17, 1, (int) Math.round(((double) TreeLocation.world_gen_overlay_bar / 1024) * 16));
+
+                if (FileConfig.developer_mode == true) {
+
+                    OverlayMaker.createText(graphic, screen_width, screen_height, "top-left", 8, 32, 1.0, -10066330, false, "Biome : " + TreeLocation.world_gen_overlay_details_biome);
+                    OverlayMaker.createText(graphic, screen_width, screen_height, "top-left", 8, 44, 1.0, -11908534, false, "Tree : " + TreeLocation.world_gen_overlay_details_tree);
 
                 }
 

@@ -7,8 +7,8 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
-import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class WorldGenStepBeforePlants extends Feature <NoneFeatureConfiguration> {
 
@@ -27,7 +27,7 @@ public class WorldGenStepBeforePlants extends Feature <NoneFeatureConfiguration>
         String dimension = GameUtils.misc.getCurrentDimensionID(level_server).replace(":", "-");
         ChunkPos chunk_pos = new ChunkPos(context.origin().getX() >> 4, context.origin().getZ() >> 4);
 
-        synchronized (Handcode.global_locking) {
+        synchronized (Core.global_locking) {
 
             TreeLocation.start(level_accessor, dimension, chunk_pos);
 

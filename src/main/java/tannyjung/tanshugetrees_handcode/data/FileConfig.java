@@ -1,8 +1,7 @@
 package tannyjung.tanshugetrees_handcode.data;
 
-import tannyjung.tanshugetrees_core.ConfigMaker;
-import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_core.FileManager;
+import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.outside.ConfigMaker;
 
 
 import java.util.*;
@@ -116,7 +115,7 @@ public class FileConfig {
                 | Cancel the trees when their spawn center is above this Y level. As some world gen mods such as ReTerraForged, replacing mountain block and my trees can't detect those new block, make them spawn on blocks that not in the list. Set to 0 to disable this.
                 
                 unviable_ecology_skip_chance = 0.9
-                | Skip trees that generate in unviable ecosystems. For example, land trees that generate in water.
+                | Skip trees that generate in unviable ecosystems. For example, land trees that generate in water. This config only affect to dead trees, as normal trees already skip generate in unviable ecosystems.
                 
                 leaf_litter_world_gen = true
                 leaf_litter_world_gen_chance = 0.1
@@ -124,7 +123,7 @@ public class FileConfig {
                 | Create leaf litter on ground and water, while in world gen. Leaf litter config must be enable to allow this.
                 
                 abscission_world_gen = true
-                | Make all deciduous trees generate with all leaves dropped to the ground, when they are in snowy biomes.
+                | Make all deciduous trees generate with all leaves dropped to the ground when they're in snowy biomes
                 
                 dead_tree_auto_level = 11 / 12 / 13 / 14 / 15 / 16 / 17 / 18 / 19 / 21 / 22 / 23 / 24 / 25 / 26 / 27 / 28 / 29 / 31 / 32 / 33 / 34 / 35 / 36 / 37 / 38 / 39
                 | Randomly pick these number for trees that set dead tree level as "auto" and "auto_pine". 1X is normal dead trees. 2X is fallen trees with roots. 3X is fallen trees without roots. X1 X2 X3 X4 X5 is no leaves, no sprig, no twig, no limb, no branch. X6 X7 is only trunk 50-100% and hollowed. X8 X9 is only trunk 10-50% and hollowed.
@@ -248,13 +247,13 @@ public class FileConfig {
                 ----------------------------------------------------------------------------------------------------
                 """;
 
-		ConfigMaker.repair(Handcode.path_config + "/config.txt", write);
+		ConfigMaker.repair(Core.path_config + "/config.txt", write);
 
 	}
 
 	public static void apply () {
 
-		Map<String, String> data = ConfigMaker.getValues(Handcode.path_config + "/config.txt");
+		Map<String, String> data = ConfigMaker.getValues(Core.path_config + "/config.txt");
 
 		auto_check_update = Boolean.parseBoolean(data.get("auto_check_update"));
 		auto_update = Boolean.parseBoolean(data.get("auto_update"));
@@ -321,11 +320,11 @@ public class FileConfig {
 
         if (wip_version == true) {
 
-            Handcode.tanny_pack_type = "WIP";
+			Core.tanny_pack_type = "WIP";
 
         } else {
 
-            Handcode.tanny_pack_type = Handcode.tanny_pack_type_original;
+			Core.tanny_pack_type = Core.tanny_pack_type_original;
 
         }
 

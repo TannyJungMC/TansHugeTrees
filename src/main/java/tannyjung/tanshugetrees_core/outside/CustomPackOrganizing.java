@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_core;
+package tannyjung.tanshugetrees_core.outside;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
@@ -104,7 +104,7 @@ public class CustomPackOrganizing {
 
             if (packs != null) {
 
-                File tanny_pack = TannyPackManager.getCurrentFile(path_config);
+                File tanny_pack = TannyPackManager.getCurrentFile();
 
                 if (tanny_pack.exists() == true) {
 

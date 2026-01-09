@@ -1,9 +1,9 @@
 package tannyjung.tanshugetrees_handcode.data;
 
 
-import tannyjung.tanshugetrees_core.OutsideUtils;
-import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_core.FileManager;
+import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.outside.OutsideUtils;
+import tannyjung.tanshugetrees_core.outside.FileManager;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -22,8 +22,8 @@ public class FileConfigWorldGen {
 
     private static void createTemp () {
 
-        File from = new File(Handcode.path_config + "/config_worldgen.txt");
-        File to = new File(Handcode.path_config + "/config_worldgen_temp.txt");
+        File from = new File(Core.path_config + "/config_worldgen.txt");
+        File to = new File(Core.path_config + "/config_worldgen_temp.txt");
 
         if (from.exists() == true && from.isDirectory() == false) {
 
@@ -43,8 +43,8 @@ public class FileConfigWorldGen {
 
     private static void create () {
 
-        File file = new File(Handcode.path_config + "/config_worldgen.txt");
-        File file_organized = new File(Handcode.path_config + "/#dev/temporary/world_gen");
+        File file = new File(Core.path_config + "/config_worldgen.txt");
+        File file_organized = new File(Core.path_config + "/#dev/temporary/world_gen");
 
         // Re-Create The File
         {
@@ -157,7 +157,7 @@ public class FileConfigWorldGen {
         // Test is it locked
         {
 
-            for (String read_all : FileManager.readTXT(Handcode.path_config + "/config_worldgen_temp.txt")) {
+            for (String read_all : FileManager.readTXT(Core.path_config + "/config_worldgen_temp.txt")) {
 
                 {
 
@@ -232,7 +232,7 @@ public class FileConfigWorldGen {
                                 // Get Old Value
                                 {
 
-                                    File file_temp = new File(Handcode.path_config + "/config_worldgen_temp.txt");
+                                    File file_temp = new File(Core.path_config + "/config_worldgen_temp.txt");
                                     boolean thisID = false;
                                     option = read_all.substring(0, read_all.indexOf(" = "));
 
@@ -289,13 +289,13 @@ public class FileConfigWorldGen {
 
         }
 
-        FileManager.writeTXT(Handcode.path_config + "/config_worldgen.txt", write.toString(), true);
+        FileManager.writeTXT(Core.path_config + "/config_worldgen.txt", write.toString(), true);
 
     }
 
     private static void deleteTemp () {
 
-        File file = new File(Handcode.path_config + "/config_worldgen_temp.txt");
+        File file = new File(Core.path_config + "/config_worldgen_temp.txt");
 
         if (file.exists() == true && file.isDirectory() == false) {
 

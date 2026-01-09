@@ -2,76 +2,85 @@ package tannyjung.tanshugetrees_handcode.systems.compatibility;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
+import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
-import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.systems.Loop;
 
 public class CompatibilitySereneSeasons {
 
-    private static int season_detector_tick = 0;
+    public static void loop (LevelAccessor level_accessor, ServerLevel level_server) {
 
-    public static void start (LevelAccessor level_accessor, ServerLevel level_server) {
+        int[] pos = GameUtils.space.getWorldSpawnPos(level_accessor);
+        int posX = pos[0];
+        int posZ = pos[1];
+        int posY = GameUtils.space.getBuildHeight(level_accessor, false) + 1;
 
-        if (Handcode.restart_loop == false) {
+        // Run
+        {
 
-            Handcode.createDelayedWorks(false, 1200, () -> start(level_accessor, level_server));
-            run(level_accessor, level_server);
+            runClear(level_server, posX, posY, posZ);
+
+            Core.delayed_works.create(false, 20, () -> {
+
+                runTest(level_server, posX, posY, posZ, "spring", 0);
+
+                Core.delayed_works.create(false, 20, () -> {
+
+                    runClear(level_server, posX, posY, posZ);
+
+                    Core.delayed_works.create(false, 20, () -> {
+
+                        runTest(level_server, posX, posY, posZ, "summer", 1);
+
+                        Core.delayed_works.create(false, 20, () -> {
+
+                            runClear(level_server, posX, posY, posZ);
+
+                            Core.delayed_works.create(false, 20, () -> {
+
+                                runTest(level_server, posX, posY, posZ, "autumn", 2);
+
+                                Core.delayed_works.create(false, 20, () -> {
+
+                                    runClear(level_server, posX, posY, posZ);
+
+                                    Core.delayed_works.create(false, 20, () -> {
+
+                                        runTest(level_server, posX, posY, posZ, "winter", 3);
+
+                                        Core.delayed_works.create(false, 20, () -> {
+
+                                            runClear(level_server, posX, posY, posZ);
+
+                                        });
+
+                                    });
+
+                                });
+
+                            });
+
+                        });
+
+                    });
+
+                });
+
+            });
 
         }
 
     }
 
-    private static void run (LevelAccessor level_accessor, ServerLevel level_server) {
+    private static void runClear (ServerLevel level_server, int posX, int posY, int posZ) {
 
-        season_detector_tick = season_detector_tick + 1;
-        int posX = level_accessor.getLevelData().getXSpawn();
-        int posZ = level_accessor.getLevelData().getZSpawn();
-        int posY = level_accessor.getMinBuildHeight() + 1;
+        GameUtils.command.run(false, level_server, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
 
-        if (season_detector_tick == 1 || season_detector_tick == 3 || season_detector_tick == 5 || season_detector_tick == 7 || season_detector_tick == 9) {
+    }
 
-            GameUtils.command.run(false, level_server, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
+    private static void runTest (ServerLevel level_server, int posX, int posY, int posZ, String season, int season_number) {
 
-            if (season_detector_tick == 60) {
-
-                season_detector_tick = 0;
-
-            }
-
-        } else {
-
-            String season = "";
-            int season_number = 0;
-
-            if (season_detector_tick == 2) {
-
-                season = "spring";
-
-            } else if (season_detector_tick == 4) {
-
-                season = "summer";
-                season_number = 1;
-
-            } else if (season_detector_tick == 6) {
-
-                season = "autumn";
-                season_number = 2;
-
-            } else if (season_detector_tick == 8) {
-
-                season = "winter";
-                season_number = 3;
-
-            }
-
-            if (season.isEmpty() == false) {
-
-                GameUtils.command.run(false, level_server, posX, posY, posZ, "setblock ~ ~ ~ command_block{Command:\"TANSHUGETREES command season set " + season + "\"}");
-                GameUtils.command.run(false, level_server, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
-
-            }
-
-        }
+        GameUtils.command.run(false, level_server, posX, posY, posZ, "setblock ~ ~ ~ command_block{Command:\"TANSHUGETREES command season set " + season + "\"}");
+        GameUtils.command.run(false, level_server, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
 
     }
 

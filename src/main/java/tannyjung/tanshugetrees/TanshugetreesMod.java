@@ -1,7 +1,5 @@
 package tannyjung.tanshugetrees;
 
-import tannyjung.tanshugetrees_handcode.Handcode;
-
 import tannyjung.tanshugetrees.init.TanshugetreesModTabs;
 import tannyjung.tanshugetrees.init.TanshugetreesModMenus;
 import tannyjung.tanshugetrees.init.TanshugetreesModItems;
@@ -50,7 +48,7 @@ public class TanshugetreesMod {
 		TanshugetreesModTabs.REGISTRY.register(bus);
 		TanshugetreesModMenus.REGISTRY.register(bus);
 		// Start of user code block mod init
-		Handcode.start();
+		tannyjung.tanshugetrees_core.Core.start(bus);
 		// End of user code block mod init
 	}
 

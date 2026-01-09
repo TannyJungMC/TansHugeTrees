@@ -15,7 +15,7 @@ public class TreeSummonerStaff {
 
         if (level_accessor instanceof ServerLevel level_server) {
 
-            BlockPos pos = GameUtils.misc.getBlockLook(entity, 200);
+            BlockPos pos = GameUtils.space.getBlockLook(entity, 200);
 
             if (level_accessor.getBlockState(pos).isAir() == false) {
 
@@ -23,7 +23,7 @@ public class TreeSummonerStaff {
                 GameUtils.command.runEntity(entity, "playsound minecraft:entity.illusioner.mirror_move ambient @a[distance=..100] ~ ~ ~ 2 2 0.025");
                 GameUtils.command.run(false, level_server, pos.getX(), pos.getY(), pos.getZ(), "execute positioned ~0.5 ~0.5 ~0.5 run particle minecraft:flash ~ ~ ~ 0 0 0 0 1 force");
                 GameUtils.command.run(false, level_server, pos.getX(), pos.getY(), pos.getZ(), "execute positioned ~0.5 ~0.5 ~0.5 run playsound minecraft:entity.illusioner.prepare_blindness ambient @a[distance=..100] ~ ~ ~ 2 0 0.025");
-                GameUtils.command.runEntity(entity, "execute positioned " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + " run TANSHUGETREES command summon_tree " + GameUtils.entity.getItemSlot(entity, EquipmentSlot.MAINHAND).getOrCreateTag().getString("path"));
+                GameUtils.command.runEntity(entity, "execute positioned " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + " run TANSHUGETREES command summon_tree " + GameUtils.nbt.item.getText(entity, EquipmentSlot.MAINHAND, "path"));
 
             }
 

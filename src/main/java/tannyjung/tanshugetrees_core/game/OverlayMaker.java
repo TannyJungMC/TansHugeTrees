@@ -5,25 +5,40 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import tannyjung.tanshugetrees_core.OutsideUtils;
+import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.net.URL;
-import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OverlayMaker {
 
-    public static void text (GuiGraphics graphic, int screen_width, int screen_height, String pos_style, int posX, int posZ, double scale, int color, boolean shadow, String text) {
+    private static final Map<String, Integer> online_image_id = new HashMap<>();
+    private static final Map<String, Boolean> image_available = new HashMap<>();
+    private static int online_image_count = 0;
+
+    public static void createText (GuiGraphics graphic, int screen_width, int screen_height, String pos_style, int posX, int posZ, double scale, int color, boolean shadow, String text) {
 
         int[] pos = convertPos(screen_width, screen_height, posX, posZ, pos_style, scale);
         posX = pos[0];
         posZ = pos[1];
 
+        /*
+        (Forge)
+        graphic.pose().pushPose();
+        graphic.pose().scale((float) scale, (float) scale, 1.0f);
+        graphic.drawString(Minecraft.getInstance().font, text, posX, posZ, color, shadow);
+        graphic.pose().popPose();
+        (NeoForge)
+        graphic.pose().pushMatrix();
+        graphic.pose().scale((float) scale, (float) scale);
+        graphic.drawString(Minecraft.getInstance().font, text, posX, posZ, color, shadow);
+        graphic.pose().popMatrix();
+        */
         graphic.pose().pushPose();
         graphic.pose().scale((float) scale, (float) scale, 1.0f);
         graphic.drawString(Minecraft.getInstance().font, text, posX, posZ, color, shadow);
@@ -31,39 +46,34 @@ public class OverlayMaker {
 
     }
 
-    public static void image (GuiGraphics graphic, String type, String name, String path, int posX, int posZ, int sizeX, int sizeZ, int piece_countX, int piece_countZ, int choose) {
+    public static void createImage (GuiGraphics graphic, boolean internet, String path, String path_fail, int posX, int posZ, int sizeX, int sizeZ, int piece_countX, int piece_countZ, int choose) {
 
-        if (name.isEmpty() == true) {
+        String name = "";
 
-            name = path;
+        if (internet == true) {
 
-        } else {
+            if (online_image_id.containsKey(path) == false) {
 
-            name = "tannyjung:" + name + ".png";
-
-        }
-
-        ResourceLocation location = ResourceLocation.parse(name);
-        AbstractTexture texture = null;
-
-        // Test Get Texture
-        {
-
-            try {
-
-                texture = Minecraft.getInstance().getTextureManager().getTexture(location);
-
-            } catch (Exception ignored) {
-
-
+                online_image_count = online_image_count + 1;
+                online_image_id.put(path, online_image_count);
 
             }
 
+            name = "tannyjung:online_image_" + online_image_id.get(path) + ".png";
+
+        } else {
+
+            name = path;
+
         }
 
-        if (texture instanceof SimpleTexture) {
+        ResourceLocation location = null;
 
-            if (type.equals("internet") == true) {
+        if (image_available.containsKey(name) == false) {
+
+            boolean pass = false;
+
+            if (internet == true) {
 
                 {
 
@@ -77,16 +87,30 @@ public class OverlayMaker {
                             // Color Convert
                             {
 
+                                int argb = 0;
+                                int a = 0;
+                                int r = 0;
+                                int g = 0;
+                                int b = 0;
+                                int abgr = 0;
+
                                 for (int scanY = 0; scanY < buffer.getHeight(); scanY++) {
 
                                     for (int scanX = 0; scanX < buffer.getWidth(); scanX++) {
 
-                                        int argb = buffer.getRGB(scanX, scanY);
-                                        int a = (argb >>> 24) & 0xFF;
-                                        int r = (argb >>> 16) & 0xFF;
-                                        int g = (argb >>> 8) & 0xFF;
-                                        int b = (argb) & 0xFF;
-                                        int abgr = (a << 24) | (b << 16) | (g << 8) | r;
+                                        argb = buffer.getRGB(scanX, scanY);
+                                        a = (argb >>> 24) & 0xFF;
+                                        r = (argb >>> 16) & 0xFF;
+                                        g = (argb >>> 8) & 0xFF;
+                                        b = (argb) & 0xFF;
+                                        abgr = (a << 24) | (b << 16) | (g << 8) | r;
+
+                                        /*
+                                        (Forge)
+                                        native_image.setPixelRGBA(scanX, scanY, abgr);
+                                        (NeoForge)
+                                        native_image.setPixelABGR(scanX, scanY, abgr);
+                                        */
                                         native_image.setPixelRGBA(scanX, scanY, abgr);
 
                                     }
@@ -95,7 +119,14 @@ public class OverlayMaker {
 
                             }
 
+                            /*
+                            (Forge)
                             Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(native_image));
+                            (NeoForge)
+                            Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(() -> "test", native_image));
+                            */
+                            Minecraft.getInstance().getTextureManager().register(ResourceLocation.parse(name), new DynamicTexture(native_image));
+                            pass = true;
 
                         } catch (Exception exception) {
 
@@ -107,30 +138,39 @@ public class OverlayMaker {
 
                 }
 
-            } else if (type.equals("outside") == true) {
+            } else {
 
                 {
 
-                    File file = new File(path);
+                    AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(ResourceLocation.parse(name));
 
-                    if (file.exists() == true && file.isDirectory() == false) {
+                    if (texture.getId() != -1) {
 
-                        try {
-
-                            NativeImage image = NativeImage.read(Files.newInputStream(file.toPath()));
-                            Minecraft.getInstance().getTextureManager().register(name, new DynamicTexture(image));
-
-                        } catch (Exception exception) {
-
-                            OutsideUtils.exception(new Exception(), exception, "");
-
-                        }
+                        pass = true;
 
                     }
 
                 }
 
             }
+
+            image_available.put(name, pass);
+
+        }
+
+        if (image_available.get(name) == true) {
+
+            location = ResourceLocation.parse(name);
+
+        } else {
+
+            if (path_fail.isEmpty() == true) {
+
+                return;
+
+            }
+
+            location = ResourceLocation.parse(path_fail);
 
         }
 

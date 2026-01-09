@@ -4,9 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
-import tannyjung.tanshugetrees_core.FileManager;
+import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.outside.FileManager;
 import tannyjung.tanshugetrees_core.game.GameUtils;
-import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public class SaplingTrader {
 
     public static void summonTrader (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ) {
 
-        File[] files = new File(Handcode.path_config + "/#dev/temporary/sapling_trader").listFiles();
+        File[] files = new File(Core.path_config + "/#dev/temporary/sapling_trader").listFiles();
         StringBuilder data = new StringBuilder();
         data.append("VillagerData:{level:99},CustomName:'{\"text\":\"Sapling Trader\"}',ArmorItems:[{},{},{},{id:\"tanshugetrees:sapling_yokai\",Count:1b}],DeathLootTable:\"minecraft:empty\",ArmorDropChances:[0.0f,0.0f,0.0f,0.0f],Offers:{Recipes:[");
 

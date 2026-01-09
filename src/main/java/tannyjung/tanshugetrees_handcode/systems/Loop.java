@@ -3,52 +3,21 @@ package tannyjung.tanshugetrees_handcode.systems;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.game.GameUtils;
-import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 
+import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.data.FileConfig;
+import tannyjung.tanshugetrees_handcode.systems.compatibility.CompatibilitySereneSeasons;
 
 public class Loop {
 
-    private static int second = 0;
     private static boolean loop_tree_generator = false;
     private static boolean loop_tree_location = false;
     private static boolean loop_living_tree_mechanics_leaf_drop = false;
     private static boolean loop_living_tree_mechanics_leaf_litter_remover = false;
     private static int living_tree_mechanics_tick = 0;
 
-    public static void start (LevelAccessor level_accessor, ServerLevel level_server) {
-
-        if (Handcode.restart_loop == false) {
-
-            Handcode.createDelayedWorks(false, 1, () -> start(level_accessor, level_server));
-            run(level_accessor, level_server);
-
-        }
-
-    }
-
-    private static void run (LevelAccessor level_accessor, ServerLevel level_server) {
-
-        tick(level_accessor, level_server);
-
-        // Second Loop
-        {
-
-            second = second + 1;
-
-            if (second > 20) {
-
-                second = 0;
-                second(level_server);
-
-            }
-
-        }
-
-    }
-
-    private static void tick (LevelAccessor level_accessor, ServerLevel level_server) {
+    public static void tick (LevelAccessor level_accessor, ServerLevel level_server) {
 
         if (loop_tree_generator == true) {
 
@@ -57,22 +26,19 @@ public class Loop {
 
                 if (FileConfig.tree_generator_speed_tick > 0) {
 
-                    StringBuilder custom = new StringBuilder();
+                    String count = "";
 
                     if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
                         if (FileConfig.tree_generator_count_limit > 0) {
 
-                            custom
-                                    .append(",sort=nearest,limit=")
-                                    .append(FileConfig.tree_generator_count_limit)
-                            ;
+                            count = ",sort=nearest,limit=" + FileConfig.tree_generator_count_limit;
 
                         }
 
                     }
 
-                    GameUtils.command.run(false, level_server, 0, 0, 0, "execute at @p as @e[tag=TANSHUGETREES-tree_generator" + custom + "] at @s run TANSHUGETREES dev tree_generator");
+                    GameUtils.command.run(false, level_server, 0, 0, 0, "execute at @p as @e[tag=TANSHUGETREES-tree_generator" + count + "] at @s run TANSHUGETREES dev tree_generator");
 
                 }
 
@@ -126,10 +92,9 @@ public class Loop {
 
     }
 
-    private static void second (ServerLevel level_server) {
+    public static void second (ServerLevel level_server) {
 
         boolean loop_delayed_command = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANNYJUNG-delayed_command]");
-
         loop_tree_generator = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_generator]");
         loop_tree_location = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-tree_location]");
         loop_living_tree_mechanics_leaf_drop = GameUtils.command.result(level_server, 0, 0, 0, "execute if entity @e[tag=TANSHUGETREES-leaf_drop]");
@@ -199,6 +164,16 @@ public class Loop {
                 GameUtils.command.run(false, level_server, 0, 0, 0, "execute as @e[tag=TANNYJUNG-delayed_command] at @s run TANSHUGETREES dev delayed_command");
 
             }
+
+        }
+
+    }
+
+    public static void minute (LevelAccessor level_accessor, ServerLevel level_server) {
+
+        if (Handcode.compatibility_serene_seasons == true) {
+
+            CompatibilitySereneSeasons.loop(level_accessor, level_server);
 
         }
 

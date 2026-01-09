@@ -1,18 +1,17 @@
 package tannyjung.tanshugetrees_handcode.systems.world_gen;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.chunk.*;
-import tannyjung.tanshugetrees_core.FileManager;
-import tannyjung.tanshugetrees_core.OutsideUtils;
+import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.outside.CacheManager;
+import tannyjung.tanshugetrees_core.outside.FileManager;
+import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.TanshugetreesMod;
-import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
 
@@ -25,8 +24,8 @@ public class TreeLocation {
 
     private static final Map<String, List<String>> cache_write_tree_location = new HashMap<>();
     private static final Map<String, List<String>> cache_write_place = new HashMap<>();
-    private static final Map<String, List<String>> cache_dead_tree_auto_level = new HashMap<>();
     private static final Map<String, ByteBuffer> cache_other_region = new HashMap<>();
+    private static final Map<String, List<String>> cache_dead_tree_auto_level = new HashMap<>();
     private static final Map<String, Boolean> cache_biome_test = new HashMap<>();
     public static int world_gen_overlay_animation = 0;
     public static int world_gen_overlay_bar = 0;
@@ -40,18 +39,21 @@ public class TreeLocation {
         TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x - 4, chunk_pos.z + 4));
         TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x - 4, chunk_pos.z - 4));
 
+        cache_dead_tree_auto_level.clear();
+        cache_biome_test.clear();
+
     }
 
     public static void run (LevelAccessor level_accessor, String dimension, ChunkPos chunk_pos) {
 
         int region_posX = chunk_pos.x >> 5;
         int region_posZ = chunk_pos.z >> 5;
-        File file_region = new File(Handcode.path_world_data + "/world_gen/#regions/" + dimension + "/" + region_posX + "," + region_posZ + ".bin");
+        File file_region = new File(Core.path_world_data + "/world_gen/#regions/" + dimension + "/" + region_posX + "," + region_posZ + ".bin");
 
         if (file_region.exists() == false) {
 
             FileManager.writeBIN(file_region.getPath(), new ArrayList<>(), false);
-            File file = new File(Handcode.path_config + "/config_worldgen.txt");
+            File file = new File(Core.path_config + "/config_worldgen.txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -99,13 +101,13 @@ public class TreeLocation {
 
                     for (Map.Entry<String, List<String>> entry : cache_write_tree_location.entrySet()) {
 
-                        FileManager.writeBIN(Handcode.path_world_data + "/world_gen/tree_locations/" + dimension + "/" + entry.getKey() + ".bin", entry.getValue(), true);
+                        FileManager.writeBIN(Core.path_world_data + "/world_gen/tree_locations/" + dimension + "/" + entry.getKey() + ".bin", entry.getValue(), true);
 
                     }
 
                     for (Map.Entry<String, List<String>> entry : cache_write_place.entrySet()) {
 
-                        FileManager.writeBIN(Handcode.path_world_data + "/world_gen/place/" + dimension + "/" + entry.getKey() + ".bin", entry.getValue(), true);
+                        FileManager.writeBIN(Core.path_world_data + "/world_gen/place/" + dimension + "/" + entry.getKey() + ".bin", entry.getValue(), true);
 
                     }
 
@@ -115,9 +117,7 @@ public class TreeLocation {
 
             cache_write_tree_location.clear();
             cache_write_place.clear();
-            cache_dead_tree_auto_level.clear();
             cache_other_region.clear();
-            cache_biome_test.clear();
 
         }
 
@@ -137,7 +137,7 @@ public class TreeLocation {
 
             }
 
-            Handcode.createDelayedWorks(true, 20, TreeLocation::scanning_overlay_loop);
+            Core.delayed_works.create(true, 20, TreeLocation::scanning_overlay_loop);
 
         }
 
@@ -198,7 +198,7 @@ public class TreeLocation {
                                     id = read_all.substring(read_all.indexOf("]") + 2).replace(" > ", "/");
                                     center_posX = (chunk_posX * 16) + random.nextInt(0, 16);
                                     center_posZ = (chunk_posZ * 16) + random.nextInt(0, 16);
-                                    biome_center = level_accessor.getBiome(new BlockPos(center_posX, level_accessor.getMaxBuildHeight(), center_posZ));
+                                    biome_center = GameUtils.space.getBiome(level_accessor, center_posX, GameUtils.space.getBuildHeight(level_accessor, true), center_posZ);
                                     world_gen_overlay_details_biome = GameUtils.biome.toID(biome_center);
 
                                 }
@@ -402,7 +402,7 @@ public class TreeLocation {
                                                     // Biome
                                                     {
 
-                                                        biome_center = level_accessor.getBiome(new BlockPos(center_posX, level_accessor.getMaxBuildHeight(), center_posZ));
+                                                        biome_center = GameUtils.space.getBiome(level_accessor, center_posX, GameUtils.space.getBuildHeight(level_accessor, true), center_posZ);
                                                         biome_id = GameUtils.biome.toID(biome_center);
                                                         boolean result = false;
 
@@ -466,7 +466,7 @@ public class TreeLocation {
         int test_posX = 0;
         int test_posZ = 0;
         ByteBuffer buffer = null;
-        String id_dictionary = Cache.getDictionary(id, false);
+        String id_dictionary = CacheManager.getDictionary(id, false);
 
         for (int step = 1; step <= 9; step++) {
 
@@ -595,7 +595,7 @@ public class TreeLocation {
 
                         if (cache_other_region.containsKey(key) == false) {
 
-                            cache_other_region.put(key, FileManager.readBIN(Handcode.path_world_data + "/world_gen/tree_locations/" + dimension + "/" + key + ".bin"));
+                            cache_other_region.put(key, FileManager.readBIN(Core.path_world_data + "/world_gen/tree_locations/" + dimension + "/" + key + ".bin"));
 
                         }
 
@@ -664,11 +664,11 @@ public class TreeLocation {
 
                     if (random.nextDouble() < waterside_chance) {
 
-                        boolean on_land = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX, level_accessor.getMaxBuildHeight(), center_posZ)), "forge:is_water") == false;
-                        boolean waterside_test1 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX + 16, level_accessor.getMaxBuildHeight(), center_posZ + 16)), "forge:is_water");
-                        boolean waterside_test2 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX + 16, level_accessor.getMaxBuildHeight(), center_posZ - 16)), "forge:is_water");
-                        boolean waterside_test3 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX - 16, level_accessor.getMaxBuildHeight(), center_posZ + 16)), "forge:is_water");
-                        boolean waterside_test4 = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX - 16, level_accessor.getMaxBuildHeight(), center_posZ - 16)), "forge:is_water");
+                        boolean on_land = GameUtils.biome.isTaggedAs(GameUtils.space.getBiome(level_accessor, center_posX, GameUtils.space.getBuildHeight(level_accessor, true), center_posZ), "forge:is_water") == false;
+                        boolean waterside_test1 = GameUtils.biome.isTaggedAs(GameUtils.space.getBiome(level_accessor, center_posX + 16, GameUtils.space.getBuildHeight(level_accessor, true), center_posZ + 16), "forge:is_water");
+                        boolean waterside_test2 = GameUtils.biome.isTaggedAs(GameUtils.space.getBiome(level_accessor, center_posX + 16, GameUtils.space.getBuildHeight(level_accessor, true), center_posZ - 16), "forge:is_water");
+                        boolean waterside_test3 = GameUtils.biome.isTaggedAs(GameUtils.space.getBiome(level_accessor, center_posX - 16, GameUtils.space.getBuildHeight(level_accessor, true), center_posZ + 16), "forge:is_water");
+                        boolean waterside_test4 = GameUtils.biome.isTaggedAs(GameUtils.space.getBiome(level_accessor, center_posX - 16, GameUtils.space.getBuildHeight(level_accessor, true), center_posZ - 16), "forge:is_water");
 
                         if (on_land == true) {
 
@@ -724,7 +724,7 @@ public class TreeLocation {
 
         }
 
-        File chosen = new File(Handcode.path_config + "/#dev/temporary/presets/" + path_storage + "/storage");
+        File chosen = new File(Core.path_config + "/#dev/temporary/presets/" + path_storage + "/storage");
 
         // Random Select File
         {
@@ -980,7 +980,7 @@ public class TreeLocation {
 
                     for (int scanZ = scan_fromZ; scanZ <= scan_toZ; scanZ++) {
 
-                        if (level_accessor.getChunk(scanX, scanZ, ChunkStatus.FEATURES, false) != null) {
+                        if (GameUtils.space.testChunkStatus(level_accessor, scanX, scanZ, "FEATURES") == true) {
 
                             return;
 
@@ -1002,7 +1002,7 @@ public class TreeLocation {
                 {
 
                     List<String> write = new ArrayList<>();
-                    write.add("s" + Cache.getDictionary(id, false));
+                    write.add("s" + CacheManager.getDictionary(id, false));
                     write.add("i" + center_posX);
                     write.add("i" + center_posZ);
                     cache_write_tree_location.computeIfAbsent(regionX + "," + regionZ, test -> new ArrayList<>()).addAll(write);
@@ -1017,14 +1017,14 @@ public class TreeLocation {
                     write.add("i" + from_chunkZ);
                     write.add("i" + to_chunkX);
                     write.add("i" + to_chunkZ);
-                    write.add("s" + Cache.getDictionary(id, false));
-                    write.add("s" + Cache.getDictionary(chosen.getName(), false));
+                    write.add("s" + CacheManager.getDictionary(id, false));
+                    write.add("s" + CacheManager.getDictionary(chosen.getName(), false));
                     write.add("i" + center_posX);
                     write.add("i" + center_posZ);
                     write.add("b" + rotation);
                     write.add("l" + mirrored);
                     write.add("s" + start_height_offset_get);
-                    write.add("s" + Cache.getDictionary(ground_block, false));
+                    write.add("s" + CacheManager.getDictionary(ground_block, false));
                     write.add("s" + dead_tree_level);
 
                     int from_chunkX_test = from_chunkX >> 5;

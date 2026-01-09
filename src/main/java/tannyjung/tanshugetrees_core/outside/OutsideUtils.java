@@ -1,36 +1,37 @@
-package tannyjung.tanshugetrees_core;
+package tannyjung.tanshugetrees_core.outside;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import tannyjung.tanshugetrees_core.Core;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class OutsideUtils {
 
-    public static final Logger logger = LogManager.getLogger("TannyJung");
-
     public static void exception (Exception from, Exception exception, String details) {
 
-        logger.error("----------------------------------------------------------------------------------------------------");
+        Core.logger.error("----------------------------------------------------------------------------------------------------");
 
         {
 
             StackTraceElement from_get = from.getStackTrace()[0];
-            logger.error("Found an error reported from {} -> {} -> {}", from_get.getClassName(), from_get.getMethodName(), from_get.getLineNumber());
-            logger.error(exception.getMessage());
+            Core.logger.error("Found an error reported from {} -> {} -> {}", from_get.getClassName(), from_get.getMethodName(), from_get.getLineNumber());
+            Core.logger.error(exception.getMessage());
 
             for (StackTraceElement get : exception.getStackTrace()) {
 
                 if (get.toString().contains("tannyjung") == true) {
 
-                    logger.error(get);
+                    Core.logger.error(get);
 
                 }
 
@@ -40,7 +41,7 @@ public class OutsideUtils {
 
                 for (String get : details.split(" / ")) {
 
-                    logger.error(get);
+                    Core.logger.error(get);
 
                 }
 
@@ -48,7 +49,7 @@ public class OutsideUtils {
 
         }
 
-        logger.error("----------------------------------------------------------------------------------------------------");
+        Core.logger.error("----------------------------------------------------------------------------------------------------");
 
     }
 
@@ -293,6 +294,37 @@ public class OutsideUtils {
         }
 
         return return_text.substring(1);
+
+    }
+
+    public static String[] readOnlineTXT (String url) {
+
+        List<String> data = new ArrayList<>();
+
+        if (OutsideUtils.isURLAvailable(url) == true) {
+
+            try {
+
+                BufferedReader buffered_reader = new BufferedReader(new InputStreamReader(new URI(url).toURL().openStream()), 65536);
+                String read_all = "";
+
+                while ((read_all = buffered_reader.readLine()) != null) {
+
+                    data.add(read_all);
+
+                }
+
+                buffered_reader.close();
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception, "");
+
+            }
+
+        }
+
+        return convertListToArray(data);
 
     }
 

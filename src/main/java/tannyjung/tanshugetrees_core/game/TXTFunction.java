@@ -1,8 +1,6 @@
 package tannyjung.tanshugetrees_core.game;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -10,16 +8,15 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkStatus;
-import tannyjung.tanshugetrees_core.OutsideUtils;
-import tannyjung.tanshugetrees_handcode.systems.Cache;
+import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.outside.CacheManager;
+import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 
 public class TXTFunction {
 
 	public static void run (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String path, boolean randomly) {
 
-        WorldGenLevel world_gen = (WorldGenLevel) level_accessor;
+        WorldGenLevel level_world_gen = (WorldGenLevel) level_accessor;
         boolean chunk_loaded = level_server.isPositionEntityTicking(new BlockPos(posX, posY, posZ));
         RandomSource random = RandomSource.create();
 
@@ -47,14 +44,13 @@ public class TXTFunction {
         int maxY = 0;
         int maxZ = 0;
         BlockPos pos = null;
-        ChunkAccess chunk = null;
 
         String variable_text = "";
         boolean variable_logic = false;
         BlockState variable_block = Blocks.AIR.defaultBlockState();
         StringBuilder export_command = new StringBuilder();
 
-        for (String read_all : Cache.getFunction(path)) {
+        for (String read_all : CacheManager.getFunction(path)) {
 
             {
 
@@ -97,7 +93,7 @@ public class TXTFunction {
 
                                         if (random.nextDouble() < chance) {
 
-                                            OutsideUtils.logger.info(variable_text + "   |   Testing > " + run_test + "   |   Result > " + run_test_result + "   |   Skip > " + run_skip + "   |   Break > " + run_break);
+                                            Core.logger.info(variable_text + "   |   Testing > " + run_test + "   |   Result > " + run_test_result + "   |   Skip > " + run_skip + "   |   Break > " + run_break);
 
                                         }
 
@@ -227,7 +223,7 @@ public class TXTFunction {
 
                                                             }
 
-                                                            if (GameUtils.misc.testCustomBiome(level_accessor.getBiome(new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ)), variable_text) == true) {
+                                                            if (GameUtils.misc.testCustomBiome(GameUtils.space.getBiome(level_accessor, posX + offset_posX, posY + offset_posY, posZ + offset_posZ), variable_text) == true) {
 
                                                                 continue;
 
@@ -255,11 +251,10 @@ public class TXTFunction {
                                                             }
 
                                                             pos = new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ);
-                                                            chunk = level_accessor.getChunk(pos.getX() >> 4, pos.getZ() >> 4, ChunkStatus.SURFACE, false);
 
-                                                            if (chunk != null) {
+                                                            if (GameUtils.space.testChunkStatus(level_accessor, pos.getX() >> 4, pos.getZ() >> 4, "SURFACE") == true) {
 
-                                                                if (GameUtils.misc.testCustomBlock(chunk.getBlockState(pos), variable_text) == true) {
+                                                                if (GameUtils.misc.testCustomBlock(level_accessor.getBlockState(pos), variable_text) == true) {
 
                                                                     continue;
 
@@ -379,8 +374,7 @@ public class TXTFunction {
 
                                                                 try {
 
-                                                                    pos = new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ);
-                                                                    world_gen.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(variable_text)).value().place(world_gen, world_gen.getLevel().getChunkSource().getGenerator(), world_gen.getRandom(), pos);
+                                                                    GameUtils.space.placeFeature(level_world_gen, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, variable_text);
 
                                                                 } catch (Exception ignored) {
 
@@ -496,7 +490,7 @@ public class TXTFunction {
 
         }
 
-	}
+    }
 
     public static void runDelayedCommand (Entity entity) {
 
@@ -506,7 +500,7 @@ public class TXTFunction {
 
             if (level_server.isPositionEntityTicking(entity.blockPosition()) == true) {
 
-                for (String command : NBTManager.entity.getText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
+                for (String command : GameUtils.nbt.entity.getText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
 
                     GameUtils.command.run(true, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), command);
 

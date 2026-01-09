@@ -9,17 +9,16 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import tannyjung.tanshugetrees_core.FileManager;
-import tannyjung.tanshugetrees_core.OutsideUtils;
+import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.outside.CacheManager;
+import tannyjung.tanshugetrees_core.outside.FileManager;
+import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_core.game.TXTFunction;
-import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.Cache;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LeafLitter;
@@ -34,7 +33,7 @@ public class TreePlacer {
 
     public static void start (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos) {
 
-        ByteBuffer get = FileManager.readBIN(Handcode.path_world_data + "/world_gen/place/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + ".bin");
+        ByteBuffer get = FileManager.readBIN(Core.path_world_data + "/world_gen/place/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + ".bin");
 
         while (get.remaining() > 0) {
 
@@ -58,14 +57,14 @@ public class TreePlacer {
                 from_chunkZ = get.getInt();
                 to_chunkX = get.getInt();
                 to_chunkZ = get.getInt();
-                id = Cache.getDictionary(String.valueOf(get.getShort()), true);
-                chosen = Cache.getDictionary(String.valueOf(get.getShort()), true);
+                id = CacheManager.getDictionary(String.valueOf(get.getShort()), true);
+                chosen = CacheManager.getDictionary(String.valueOf(get.getShort()), true);
                 center_posX = get.getInt();
                 center_posZ = get.getInt();
                 rotation = get.get();
                 mirrored = get.get() == 1;
                 start_height_offset = get.getShort();
-                ground_block = Cache.getDictionary(String.valueOf(get.getShort()), true);
+                ground_block = CacheManager.getDictionary(String.valueOf(get.getShort()), true);
                 dead_tree_level = get.getShort();
 
             } catch (Exception exception) {
@@ -147,7 +146,7 @@ public class TreePlacer {
             // Already Tested
             {
 
-                ByteBuffer detailed_detection = FileManager.readBIN(Handcode.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + ".bin");
+                ByteBuffer detailed_detection = FileManager.readBIN(Core.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + ".bin");
                 boolean get_pass = false;
                 int get_posX = 0;
                 int get_posY = 0;
@@ -234,18 +233,15 @@ public class TreePlacer {
 
                         if (size >= 0) {
 
-                            ChunkAccess chunk = null;
                             Map<Structure, LongSet> references = new HashMap<>();
 
                             for (int scanX = from_chunkX - size; scanX <= to_chunkX + size; scanX++) {
 
                                 for (int scanZ = from_chunkZ - size; scanZ <= to_chunkZ + size; scanZ++) {
 
-                                    chunk = level_accessor.getChunk(scanX, scanZ, ChunkStatus.STRUCTURE_REFERENCES, false);
+                                    if (GameUtils.space.testChunkStatus(level_accessor, scanX, scanZ, "STRUCTURE_REFERENCES") == true) {
 
-                                    if (chunk != null) {
-
-                                        references = chunk.getAllReferences();
+                                        references = level_accessor.getChunk(scanX, scanZ).getAllReferences();
 
                                         if (references != null) {
 
@@ -276,20 +272,13 @@ public class TreePlacer {
                     // Ground Level
                     {
 
-                        ChunkAccess chunk = level_accessor.getChunk(center_chunkX, center_chunkZ, ChunkStatus.SURFACE, false);
+                        if (GameUtils.space.testChunkStatus(level_accessor, center_chunkX >> 4, center_chunkZ >> 4, "SURFACE") == true) {
 
-                        if (chunk != null) {
+                            originalY = level_accessor.getHeight(Heightmap.Types.OCEAN_FLOOR, center_posX, center_posZ) + 1;
 
-                            originalY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR, center_posX, center_posZ) + 1;
+                            if (GameUtils.misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(center_posX, originalY - 1, center_posZ)), ground_block) == false) {
 
-                            // Ground Block
-                            {
-
-                                if (GameUtils.misc.testCustomBlock(chunk.getBlockState(new BlockPos(center_posX, originalY - 1, center_posZ)), ground_block) == false) {
-
-                                    break test;
-
-                                }
+                                break test;
 
                             }
 
@@ -377,7 +366,7 @@ public class TreePlacer {
 
                             }
 
-                            if (originalY == level_accessor.getMinBuildHeight()) {
+                            if (originalY == GameUtils.space.getBuildHeight(level_accessor, false)) {
 
                                 break test;
 
@@ -760,7 +749,7 @@ public class TreePlacer {
 
                         for (int scanZ = from_chunkZ_test; scanZ <= to_chunkZ_test; scanZ++) {
 
-                            FileManager.writeBIN(Handcode.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + scanX + "," + scanZ + ".bin", write, true);
+                            FileManager.writeBIN(Core.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + scanX + "," + scanZ + ".bin", write, true);
 
                         }
 
@@ -1004,7 +993,7 @@ public class TreePlacer {
 
             }
 
-            boolean in_snowy_biome = GameUtils.biome.isTaggedAs(level_accessor.getBiome(new BlockPos(center_posX, center_posY, center_posZ)), "forge:is_snowy");
+            boolean in_snowy_biome = GameUtils.biome.isTaggedAs(GameUtils.space.getBiome(level_accessor, center_posX, center_posY, center_posZ), "forge:is_snowy");
             boolean no_roots = (FileConfig.world_gen_roots == false && can_disable_roots);
             boolean coarse_woody_debris = false;
             boolean hollowed = false;
@@ -1343,9 +1332,17 @@ public class TreePlacer {
 
                                                             height_motion = level_accessor.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
 
-                                                            if (height_motion != level_accessor.getMinBuildHeight() && height_motion < pos.getY()) {
+                                                            if (height_motion < pos.getY()) {
 
-                                                                LeafLitter.create(level_accessor, level_server, pos.getX(), height_motion, pos.getZ(), block, false);
+                                                                if (height_motion != GameUtils.space.getBuildHeight(level_accessor, false)) {
+
+                                                                    if (level_accessor.isWaterAt(new BlockPos(pos.getX(), height_motion, pos.getZ())) == false) {
+
+                                                                        LeafLitter.create(level_accessor, level_server, pos.getX(), height_motion, pos.getZ(), block, false);
+
+                                                                    }
+
+                                                                }
 
                                                             }
 
