@@ -15,7 +15,7 @@ public class PresetFixer {
 
     public static void start () {
 
-        File template = new File(Core.path_config + "/#dev/temporary/preset_template.txt");
+        File template = new File(Core.path_config + "/#dev/#temporary/preset_template.txt");
 
         if (template.exists() == true && template.isDirectory() == false) {
 
@@ -51,13 +51,13 @@ public class PresetFixer {
 
                 }
 
-                TanshugetreesMod.LOGGER.info("Fixed all presets in all packs");
+                Core.logger.info("Fixed all presets in all packs");
 
             }
 
         } else {
 
-            TanshugetreesMod.LOGGER.error("Template not found");
+            Core.logger.error("Template not found");
 
         }
 

@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.*;
 
-public class Cache {
+public class Caches {
 
     private static void getTreeShape (String id) {
 
@@ -36,7 +36,7 @@ public class Cache {
 
                 try {
 
-                    path = Core.path_config + "/#dev/temporary/presets/" + split[0] + "/" + split[1] + "/storage/" + split[2];
+                    path = Core.path_config + "/#dev/#temporary/presets/" + split[0] + "/" + split[1] + "/storage/" + split[2];
 
                 } catch (Exception exception) {
 
@@ -129,7 +129,7 @@ public class Cache {
 
         if (CacheManager.cache_string_list.get("world_gen_settings").containsKey(id) == false) {
 
-            String[] data = FileManager.readTXT(Core.path_config + "/#dev/temporary/world_gen/" + id + ".txt");
+            String[] data = FileManager.readTXT(Core.path_config + "/#dev/#temporary/world_gen/" + id + ".txt");
             CacheManager.cache_string_list.get("world_gen_settings").put(id, data);
 
         }
@@ -148,7 +148,7 @@ public class Cache {
 
         if (CacheManager.cache_string_list.get("tree_settings").containsKey(id) == false) {
 
-            String[] data = FileManager.readTXT(Core.path_config + "/#dev/temporary/presets/" + id + "_settings.txt");
+            String[] data = FileManager.readTXT(Core.path_config + "/#dev/#temporary/presets/" + id + "_settings.txt");
             CacheManager.cache_string_list.get("tree_settings").put(id, data);
 
         }
@@ -172,7 +172,7 @@ public class Cache {
             // Get Data
             {
 
-                File[] packs = new File(Core.path_config + "/#dev/temporary/tree_decoration").listFiles();
+                File[] packs = new File(Core.path_config + "/#dev/#temporary/tree_decoration").listFiles();
 
                 if (packs != null) {
 
@@ -192,7 +192,7 @@ public class Cache {
 
                         }
 
-                        files = new File(Core.path_config + "/#dev/temporary/tree_decoration/" + path_prefix).listFiles();
+                        files = new File(Core.path_config + "/#dev/#temporary/tree_decoration/" + path_prefix).listFiles();
 
                         if (files != null) {
 

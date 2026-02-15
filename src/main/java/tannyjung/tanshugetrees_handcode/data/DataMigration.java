@@ -1,8 +1,8 @@
 package tannyjung.tanshugetrees_handcode.data;
 
-import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.FileManager;
+import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 
 import java.io.*;
 
@@ -14,20 +14,20 @@ public class DataMigration {
 
             String path = Core.path_config + "/#dev/version.txt";
             File test_exist = new File(Core.path_config).getParentFile();
-            int version = 0;
+            String version = "";
 
             // Get Version
             {
 
                 if (test_exist.exists() == false) {
 
-                    version = -1;
+                    version = "missing";
 
                 } else {
 
                     for (String read_all : FileManager.readTXT(path)) {
 
-                        version = Integer.parseInt(read_all);
+                        version = read_all;
 
                     }
 
@@ -35,13 +35,13 @@ public class DataMigration {
 
             }
 
-            if (version >= 0 && Core.data_structure_version != version) {
+            if (version.equals("missing") == false && Core.data_structure_version.equals(version) == false) {
 
                 config.test(version);
 
             }
 
-            FileManager.writeTXT(path, String.valueOf(Core.data_structure_version), false);
+            FileManager.writeTXT(path, Core.data_structure_version, false);
 
         }
 
@@ -49,20 +49,20 @@ public class DataMigration {
 
             String path = Core.path_world_data + "/version.txt";
             File test_exist = new File(Core.path_world_data).getParentFile();
-            int version = 0;
+            String version = "";
 
             // Get Version
             {
 
                 if (test_exist.exists() == false) {
 
-                    version = -1;
+                    version = "missing";
 
                 } else {
 
                     for (String read_all : FileManager.readTXT(path)) {
 
-                        version = Integer.parseInt(read_all);
+                        version = read_all;
 
                     }
 
@@ -70,13 +70,13 @@ public class DataMigration {
 
             }
 
-            if (version >= 0 && Core.data_structure_version != version) {
+            if (version.equals("missing") == false && Core.data_structure_version.equals(version) == false) {
 
                 world.test(version);
 
             }
 
-            FileManager.writeTXT(path, String.valueOf(Core.data_structure_version), false);
+            FileManager.writeTXT(path, Core.data_structure_version, false);
 
         }
 
@@ -84,10 +84,10 @@ public class DataMigration {
 
     private static class config {
 
-        private static void test (int version) {
+        private static void test (String version) {
 
-            if (version == 0) DataMigration.config.run.failed();
-            if (version < 20260107) TanshugetreesMod.LOGGER.info("Data Migration : Config Test");
+            if (version.isEmpty() == true) DataMigration.config.run.failed();
+            if (OutsideUtils.testVersion("1.8.0", version).equals("outdated") == true) run.before_1_8_0();
 
         }
 
@@ -95,25 +95,19 @@ public class DataMigration {
 
             private static void failed () {
 
-                TanshugetreesMod.LOGGER.info("Running config data migration for failed condition");
-
-                // Rename "tanshugetrees" to "tannyjung_tanshugetrees"
-                {
-
-                    File file = new File(new File(Core.path_config).getParentFile().getPath() + "/tanshugetrees");
-
-                    if (file.exists() == true && file.isDirectory() == true) {
-
-                        FileManager.rename(file.getPath(), "tannyjung_tanshugetrees");
-
-                    }
-
-                }
+                Core.logger.info("Running config data migration for failed condition");
 
                 FileManager.delete(Core.path_config + "/#dev/custom_packs_organized");
                 FileManager.rename(Core.path_config + "/custom_packs/THT-tree_pack-main", "#TannyJung-Main-Pack");
                 FileManager.rename(Core.path_config + "/custom_packs/TannyJung-Main-Pack", "#TannyJung-Main-Pack");
                 FileManager.rename(Core.path_config + "/config_world_gen.txt", "config_worldgen.txt");
+
+            }
+
+            private static void before_1_8_0 () {
+
+                Core.logger.info("Running config data migration for 1.8.0");
+                FileManager.rename(Core.path_config + "/#dev/temporary", "#temporary");
 
             }
 
@@ -123,10 +117,9 @@ public class DataMigration {
 
     private static class world {
 
-        private static void test (int version) {
+        private static void test (String version) {
 
-            if (version == 0) run.failed();
-            if (version < 20260107) TanshugetreesMod.LOGGER.info("Data Migration : World Test");
+            if (version.isEmpty() == true) run.failed();
 
         }
 
@@ -134,7 +127,7 @@ public class DataMigration {
 
             private static void failed () {
 
-                TanshugetreesMod.LOGGER.info("Running world data migration for failed condition");
+                Core.logger.info("Running world data migration for failed condition");
 
                 // Rename "tanshugetrees" to "tannyjung_tanshugetrees"
                 {

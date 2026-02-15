@@ -22,12 +22,12 @@ public class ShapeFileConverter {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", Core.mod_id_short + " : Turned ON");
+                GameUtils.misc.sendChatMessage(level_server, "@a", "Turned ON / gray");
 
             }
 
             TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = count;
-            GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", Core.mod_id_short + " : Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
+            GameUtils.misc.sendChatMessage(level_server, "@a", "Set loop to " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count + " / gray");
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
@@ -47,21 +47,12 @@ public class ShapeFileConverter {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == true) {
 
-                if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
-
-                    TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = 0;
-                    GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", Core.mod_id_short + " : Will turn OFF after this one");
-
-                } else {
-
-                    GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", Core.mod_id_short + " : Turned OFF");
-                    TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = false;
-
-                }
+                GameUtils.misc.sendChatMessage(level_server, "@a", "Turned OFF / gray");
+                TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = false;
 
             } else {
 
-                GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", Core.mod_id_short + " : Already Turned OFF");
+                GameUtils.misc.sendChatMessage(level_server, "@a", "Already Turned OFF / gray");
 
             }
 
@@ -102,7 +93,7 @@ public class ShapeFileConverter {
 
         }
 
-        File file = new File(Core.path_config + "/#dev/temporary/presets/" + file_location[0] + "/" + file_location[1] + "/" + file_location[1] + ".txt");
+        File file = new File(Core.path_config + "/#dev/#temporary/presets/" + file_location[0] + "/" + file_location[1] + "/" + file_location[1] + ".txt");
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -111,15 +102,24 @@ public class ShapeFileConverter {
             // Summon
             {
 
-                GameUtils.command.run(false, level_server, 0, 0, 0, "execute at @p positioned ~ 1000 ~ run " + GameUtils.command.summonEntity("marker", "TANSHUGETREES / TANSHUGETREES-tree_generator", "Tree Generator", GameUtils.misc.getForgeDataFromFile(file.getPath())));
-                String data_modify = "debug_mode:false,tree_generator_speed_global:false,tree_generator_speed_tick:1,tree_generator_speed_repeat:0,name:\"" + file_location[1] + "\"";
-                GameUtils.command.run(false, level_server, 0, 0, 0, "execute at @p positioned ~ 1000 ~ run data merge entity @e[tag=TANSHUGETREES-tree_generator,distance=..1,limit=1,sort=nearest] {ForgeData:{" + data_modify + "}}");
+                for (Entity player : GameUtils.entity.getEverywhere(level_server, "minecraft:player", "")) {
+
+                    GameUtils.entity.summon(level_server, player.getX(), 1000, player.getZ(), "minecraft:marker", "TANSHUGETREES-tree_generator", "Tree Generator", GameUtils.nbt.convertFileToForgeData(file.getPath()), false);
+
+                    for (Entity entity : GameUtils.entity.getAt(level_server, player.getX(), 1000, player.getZ(), 1, true, 1, "minecraft:marker", "TANSHUGETREES-tree_generator")) {
+
+                        String data_modify = "debug_mode:false,tree_generator_speed_global:false,tree_generator_speed_tick:1,tree_generator_speed_repeat:0,name:\"" + file_location[1] + "\"";
+                        GameUtils.command.runEntity(entity, "data merge entity @s {NeoForgeData:{tanshugetrees:{" + data_modify + "}}}");
+
+                    }
+
+                }
 
             }
 
         } else {
 
-            GameUtils.misc.sendChatMessage(level_server, null, "@a", "red", Core.mod_id_short + " : Can't start shape file converter because the file location you wrote cannot be found");
+            GameUtils.misc.sendChatMessage(level_server, "@a", "Can't start shape file converter because the file location you wrote cannot be found / red");
             TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = 0;
             stop(level_accessor);
 
@@ -132,7 +132,7 @@ public class ShapeFileConverter {
         String name = GameUtils.nbt.entity.getText(entity, "name");
         String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss-SSS").format(Calendar.getInstance().getTime());
         GameUtils.nbt.entity.setText(entity, "export_file_name", name + "_" + time + ".bin");
-        GameUtils.command.run(false, level_server, 0, 0, 0, "tellraw @a [\"\",{\"text\":\"" + Core.mod_id_short + " : Generating \",\"color\":\"aqua\"},{\"text\":\"" + GameUtils.nbt.entity.getText(entity, "export_file_name").replace(" (generating)", "") + "\",\"color\":\"white\"}]");
+        GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [\"\",{\"text\":\"" + Core.mod_id_short + " : Generating \",\"color\":\"aqua\"},{\"text\":\"" + GameUtils.nbt.entity.getText(entity, "export_file_name").replace(" (generating)", "") + "\",\"color\":\"white\"}]");
 
         // Write Settings
         {
@@ -501,14 +501,14 @@ public class ShapeFileConverter {
         String path = Core.path_config + "/#dev/shape_file_converter/" + GameUtils.nbt.entity.getText(entity, "name") + "/storage/" + GameUtils.nbt.entity.getText(entity, "export_file_name");
         FileManager.writeBIN(path, start_data, false);
         FileManager.writeBIN(path, data, true);
-        GameUtils.misc.sendChatMessage(level_server, null, "@a", "green", Core.mod_id_short + " : Completed!");
+        GameUtils.misc.sendChatMessage(level_server, "@a", "Completed! / green");
         export_data.clear();
 
-        Core.delayed_works.create(true, 1, () -> {
+        Core.DelayedWorks.create(true, 1, () -> {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 
-                GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", Core.mod_id_short + " : Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count);
+                GameUtils.misc.sendChatMessage(level_server, "@a", "Loop left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count + " / gray");
                 summon(level_accessor, level_server);
 
             } else {

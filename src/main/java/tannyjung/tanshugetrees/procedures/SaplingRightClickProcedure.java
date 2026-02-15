@@ -22,6 +22,6 @@ public class SaplingRightClickProcedure {
 				_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(), "");
 			TanshugetreesMod.LOGGER.info(entity);
 		}
-		Sapling.click(world, entity, x, y, z);
+		Sapling.click(world, entity, (int) x, (int) y, (int) z);
 	}
 }

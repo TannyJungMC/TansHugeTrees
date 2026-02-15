@@ -10,10 +10,6 @@ import net.minecraft.commands.CommandSource;
 
 public class WaypointFlowerPlaceProcedure {
 	public static void execute(LevelAccessor world, double x, double y, double z) {
-		double merge_text_pos = 0;
-		String merge_text = "";
-		String file_name = "";
-		String theme = "";
 		if (world instanceof ServerLevel _level)
 			_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(),
 					"TANSHUGETREES command summon_sapling_trader");

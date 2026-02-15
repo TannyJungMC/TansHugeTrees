@@ -1,28 +1,28 @@
 package tannyjung.tanshugetrees_core.game;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.CacheManager;
-import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 
 public class TXTFunction {
 
 	public static void run (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String path, boolean randomly) {
 
-        WorldGenLevel level_world_gen = (WorldGenLevel) level_accessor;
-        boolean chunk_loaded = level_server.isPositionEntityTicking(new BlockPos(posX, posY, posZ));
-        RandomSource random = RandomSource.create();
+        boolean chunk_loaded = GameUtils.entity.canTickingAt(level_server, posX, posY, posZ);
+        RandomSource random = null;
 
         if (randomly == true) {
 
-            RandomSource.create(level_server.getSeed() ^ ((posX * 341873128712L) + posY + (posZ * 132897987541L)));
+            random = RandomSource.create();
+
+        } else {
+
+            random = RandomSource.create(level_server.getSeed() ^ ((posX * 341873128712L) + posY + (posZ * 132897987541L)));
 
         }
 
@@ -30,6 +30,10 @@ public class TXTFunction {
         boolean run_test_result = true;
         boolean run_skip = false;
         boolean run_break = false;
+        int convert_posX = 0;
+        int convert_posY = 0;
+        int convert_posZ = 0;
+
         String[] get = new String[0];
         double chance = 0.0;
         String[] offset_pos = new String[0];
@@ -43,7 +47,6 @@ public class TXTFunction {
         int maxX = 0;
         int maxY = 0;
         int maxZ = 0;
-        BlockPos pos = null;
 
         String variable_text = "";
         boolean variable_logic = false;
@@ -56,117 +59,46 @@ public class TXTFunction {
 
                 if (read_all.isEmpty() == false) {
 
-                    if (read_all.equals("[") == true || read_all.equals("]") == true) {
+                    if (read_all.startsWith("# ") == false) {
 
-                        run_test = false;
-                        run_test_result = true;
-                        run_skip = false;
-                        run_break = false;
+                        if (read_all.equals("[") == true || read_all.equals("]") == true) {
 
-                    } else if (read_all.startsWith("-") == true) {
+                            run_test = false;
+                            run_test_result = true;
+                            run_skip = false;
+                            run_break = false;
 
-                        run_test = false;
-                        run_test_result = true;
-                        run_skip = false;
+                        } else if (read_all.startsWith("-") == true) {
 
-                    } else {
+                            run_test = false;
+                            run_test_result = true;
+                            run_skip = false;
 
-                        if (run_break == false) {
+                        } else {
 
-                            {
+                            if (run_break == false) {
 
-                                if (read_all.startsWith("debug = ") == true) {
+                                {
 
-                                    {
-
-                                        try {
-
-                                            get = read_all.substring("debug = ".length()).split(" \\| ");
-                                            chance = Double.parseDouble(get[0]);
-                                            variable_text = get[1];
-
-                                        } catch (Exception ignored) {
-
-                                            return;
-
-                                        }
-
-                                        if (random.nextDouble() < chance) {
-
-                                            Core.logger.info(variable_text + "   |   Testing > " + run_test + "   |   Result > " + run_test_result + "   |   Skip > " + run_skip + "   |   Break > " + run_break);
-
-                                        }
-
-                                    }
-
-                                } else {
-
-                                    if (read_all.equals("if") == true) {
+                                    if (read_all.startsWith("debug = ") == true) {
 
                                         {
 
-                                            if (run_test == false) {
+                                            try {
 
-                                                run_test = true;
-                                                run_test_result = true;
-                                                run_skip = false;
+                                                get = read_all.substring("debug = ".length()).split(" \\| ");
+                                                chance = Double.parseDouble(get[0]);
+                                                variable_text = get[1];
 
-                                            } else {
-
-                                                if (run_skip == false) {
-
-                                                    if (run_test_result == false) {
-
-                                                        run_test_result = true;
-
-                                                    } else {
-
-                                                        run_skip = true;
-
-                                                    }
-
-                                                }
-
-                                            }
-
-                                        }
-
-                                    } else if (read_all.equals("else") == true) {
-
-                                        {
-
-                                            run_test_result = !run_test_result;
-
-                                        }
-
-                                    } else if (read_all.equals("run") == true) {
-
-                                        {
-
-                                            run_test = false;
-                                            run_skip = run_test_result == false;
-
-                                        }
-
-                                    } else if (read_all.equals("break") == true) {
-
-                                        {
-
-                                            if (run_skip == false) {
-
-                                                run_break = true;
-
-                                            }
-
-                                        }
-
-                                    } else if (read_all.equals("return") == true) {
-
-                                        {
-
-                                            if (run_skip == false) {
+                                            } catch (Exception ignored) {
 
                                                 return;
+
+                                            }
+
+                                            if (random.nextDouble() < chance) {
+
+                                                Core.logger.info(variable_text + "   |   Testing > " + run_test + "   |   Result > " + run_test_result + "   |   Skip > " + run_skip + "   |   Break > " + run_break);
 
                                             }
 
@@ -174,87 +106,102 @@ public class TXTFunction {
 
                                     } else {
 
-                                        if (run_skip == false) {
+                                        if (read_all.equals("if") == true) {
 
-                                            if (run_test == true) {
+                                            {
 
-                                                // Tests
-                                                {
+                                                if (run_test == false) {
 
-                                                    if (read_all.startsWith("chance = ") == true) {
+                                                    run_test = true;
+                                                    run_test_result = true;
+                                                    run_skip = false;
 
-                                                        {
+                                                } else {
 
-                                                            try {
+                                                    if (run_skip == false) {
 
-                                                                get = read_all.substring("chance = ".length()).split(" \\| ");
-                                                                chance = Double.parseDouble(get[0]);
+                                                        if (run_test_result == false) {
 
-                                                            } catch (Exception ignored) {
+                                                            run_test_result = true;
 
-                                                                return;
+                                                        } else {
 
-                                                            }
-
-                                                            if (random.nextDouble() < chance) {
-
-                                                                continue;
-
-                                                            }
+                                                            run_skip = true;
 
                                                         }
 
-                                                    } else if (read_all.startsWith("biome = ") == true) {
+                                                    }
 
-                                                        {
+                                                }
 
-                                                            try {
+                                            }
 
-                                                                get = read_all.substring("biome = ".length()).split(" \\| ");
-                                                                offset_pos = get[0].split("/");
-                                                                offset_posX = Integer.parseInt(offset_pos[0]);
-                                                                offset_posY = Integer.parseInt(offset_pos[1]);
-                                                                offset_posZ = Integer.parseInt(offset_pos[2]);
-                                                                variable_text = get[1];
+                                        } else if (read_all.equals("else") == true) {
 
-                                                            } catch (Exception ignored) {
+                                            {
 
-                                                                return;
+                                                run_test_result = !run_test_result;
 
-                                                            }
+                                            }
 
-                                                            if (GameUtils.misc.testCustomBiome(GameUtils.space.getBiome(level_accessor, posX + offset_posX, posY + offset_posY, posZ + offset_posZ), variable_text) == true) {
+                                        } else if (read_all.equals("run") == true) {
 
-                                                                continue;
+                                            {
 
-                                                            }
+                                                run_test = false;
+                                                run_skip = run_test_result == false;
 
-                                                        }
+                                            }
 
-                                                    } else if (read_all.startsWith("block = ") == true) {
+                                        } else if (read_all.equals("break") == true) {
 
-                                                        {
+                                            {
 
-                                                            try {
+                                                if (run_skip == false) {
 
-                                                                get = read_all.substring("block = ".length()).split(" \\| ");
-                                                                offset_pos = get[0].split("/");
-                                                                offset_posX = Integer.parseInt(offset_pos[0]);
-                                                                offset_posY = Integer.parseInt(offset_pos[1]);
-                                                                offset_posZ = Integer.parseInt(offset_pos[2]);
-                                                                variable_text = get[1];
+                                                    run_break = true;
 
-                                                            } catch (Exception ignored) {
+                                                }
 
-                                                                return;
+                                            }
 
-                                                            }
+                                        } else if (read_all.equals("return") == true) {
 
-                                                            pos = new BlockPos(posX + offset_posX, posY + offset_posY, posZ + offset_posZ);
+                                            {
 
-                                                            if (GameUtils.space.testChunkStatus(level_accessor, pos.getX() >> 4, pos.getZ() >> 4, "SURFACE") == true) {
+                                                if (run_skip == false) {
 
-                                                                if (GameUtils.misc.testCustomBlock(level_accessor.getBlockState(pos), variable_text) == true) {
+                                                    return;
+
+                                                }
+
+                                            }
+
+                                        } else {
+
+                                            if (run_skip == false) {
+
+                                                if (run_test == true) {
+
+                                                    // Tests
+                                                    {
+
+                                                        if (read_all.startsWith("chance = ") == true) {
+
+                                                            {
+
+                                                                try {
+
+                                                                    get = read_all.substring("chance = ".length()).split(" \\| ");
+                                                                    chance = Double.parseDouble(get[0]);
+
+                                                                } catch (Exception ignored) {
+
+                                                                    return;
+
+                                                                }
+
+                                                                if (random.nextDouble() < chance) {
 
                                                                     continue;
 
@@ -262,81 +209,145 @@ public class TXTFunction {
 
                                                             }
 
-                                                        }
+                                                        } else if (read_all.startsWith("biome = ") == true) {
 
-                                                    }
+                                                            {
 
-                                                    run_test_result = false;
+                                                                try {
 
-                                                }
+                                                                    get = read_all.substring("biome = ".length()).split(" \\| ");
+                                                                    offset_pos = get[0].split("/");
+                                                                    offset_posX = Integer.parseInt(offset_pos[0]);
+                                                                    offset_posY = Integer.parseInt(offset_pos[1]);
+                                                                    offset_posZ = Integer.parseInt(offset_pos[2]);
+                                                                    variable_text = get[1];
 
-                                            } else {
+                                                                } catch (Exception ignored) {
 
-                                                // Run
-                                                {
+                                                                    return;
 
-                                                    if (read_all.startsWith("block = ") == true) {
+                                                                }
 
-                                                        {
+                                                                if (GameUtils.misc.testCustomBiome(GameUtils.space.getBiomeAt(level_server, posX + offset_posX, posY + offset_posY, posZ + offset_posZ), variable_text) == true) {
 
-                                                            try {
+                                                                    continue;
 
-                                                                get = read_all.substring("block = ".length()).split(" \\| ");
-                                                                chance = Double.parseDouble(get[0]);
-                                                                variable_block = GameUtils.block.fromText(get[3]);
-                                                                variable_text = get[4];
-
-                                                            } catch (Exception ignored) {
-
-                                                                return;
+                                                                }
 
                                                             }
 
-                                                            if (random.nextDouble() < chance && variable_block != Blocks.AIR.defaultBlockState()) {
+                                                        } else if (read_all.startsWith("block = ") == true) {
 
-                                                                // Get Pos
-                                                                {
+                                                            {
 
-                                                                    try {
+                                                                try {
 
-                                                                        offset_pos = get[1].split("/");
-                                                                        offset_posX = Integer.parseInt(offset_pos[0]);
-                                                                        offset_posY = Integer.parseInt(offset_pos[1]);
-                                                                        offset_posZ = Integer.parseInt(offset_pos[2]);
+                                                                    get = read_all.substring("block = ".length()).split(" \\| ");
+                                                                    offset_pos = get[0].split("/");
+                                                                    offset_posX = Integer.parseInt(offset_pos[0]);
+                                                                    offset_posY = Integer.parseInt(offset_pos[1]);
+                                                                    offset_posZ = Integer.parseInt(offset_pos[2]);
+                                                                    variable_text = get[1];
 
-                                                                        min_max = get[2].split("/");
-                                                                        minX = Integer.parseInt(min_max[0]);
-                                                                        minY = Integer.parseInt(min_max[1]);
-                                                                        minZ = Integer.parseInt(min_max[2]);
-                                                                        maxX = Integer.parseInt(min_max[3]);
-                                                                        maxY = Integer.parseInt(min_max[4]);
-                                                                        maxZ = Integer.parseInt(min_max[5]);
+                                                                } catch (Exception ignored) {
 
-                                                                    } catch (Exception ignored) {
+                                                                    return;
 
-                                                                        return;
+                                                                }
+
+                                                                convert_posX = offset_posX + posX;
+                                                                convert_posY = offset_posY + posY;
+                                                                convert_posZ = offset_posZ + posZ;
+
+                                                                if (GameUtils.space.testChunkStatus(level_accessor, convert_posX >> 4, convert_posZ >> 4, "minecraft:surface") == true) {
+
+                                                                    if (GameUtils.misc.testCustomBlock(GameUtils.block.getAt(level_accessor, convert_posX, convert_posY, convert_posZ), variable_text) == true) {
+
+                                                                        continue;
 
                                                                     }
 
                                                                 }
 
-                                                                for (int testX = minX; testX <= maxX; testX++) {
+                                                            }
 
-                                                                    for (int testY = minY; testY <= maxY; testY++) {
+                                                        }
 
-                                                                        for (int testZ = minZ; testZ <= maxZ; testZ++) {
+                                                        run_test_result = false;
 
-                                                                            pos = new BlockPos(posX + offset_posX + testX, posY + offset_posY + testY, posZ + offset_posZ + testZ);
+                                                    }
 
-                                                                            if (level_accessor.hasChunk(pos.getX() >> 4, pos.getZ() >> 4) == true) {
+                                                } else {
 
-                                                                                if (GameUtils.misc.testCustomBlock(level_accessor.getBlockState(pos), variable_text) == false) {
+                                                    // Run
+                                                    {
 
-                                                                                    continue;
+                                                        if (read_all.startsWith("block = ") == true) {
+
+                                                            {
+
+                                                                try {
+
+                                                                    get = read_all.substring("block = ".length()).split(" \\| ");
+                                                                    chance = Double.parseDouble(get[0]);
+                                                                    variable_block = GameUtils.block.fromText(get[3]);
+                                                                    variable_text = get[4];
+
+                                                                } catch (Exception ignored) {
+
+                                                                    return;
+
+                                                                }
+
+                                                                if (random.nextDouble() < chance && variable_block != Blocks.AIR.defaultBlockState()) {
+
+                                                                    // Get Pos
+                                                                    {
+
+                                                                        try {
+
+                                                                            offset_pos = get[1].split("/");
+                                                                            offset_posX = Integer.parseInt(offset_pos[0]);
+                                                                            offset_posY = Integer.parseInt(offset_pos[1]);
+                                                                            offset_posZ = Integer.parseInt(offset_pos[2]);
+
+                                                                            min_max = get[2].split("/");
+                                                                            minX = Integer.parseInt(min_max[0]);
+                                                                            minY = Integer.parseInt(min_max[1]);
+                                                                            minZ = Integer.parseInt(min_max[2]);
+                                                                            maxX = Integer.parseInt(min_max[3]);
+                                                                            maxY = Integer.parseInt(min_max[4]);
+                                                                            maxZ = Integer.parseInt(min_max[5]);
+
+                                                                        } catch (Exception ignored) {
+
+                                                                            return;
+
+                                                                        }
+
+                                                                    }
+
+                                                                    for (int testX = minX; testX <= maxX; testX++) {
+
+                                                                        for (int testY = minY; testY <= maxY; testY++) {
+
+                                                                            for (int testZ = minZ; testZ <= maxZ; testZ++) {
+
+                                                                                convert_posX = posX + offset_posX + testX;
+                                                                                convert_posY = posY + offset_posY + testY;
+                                                                                convert_posZ = posZ + offset_posZ + testZ;
+
+                                                                                if (level_accessor.hasChunk(convert_posX >> 4, convert_posZ >> 4) == true) {
+
+                                                                                    if (GameUtils.misc.testCustomBlock(GameUtils.block.getAt(level_accessor, convert_posX, convert_posY, convert_posZ), variable_text) == false) {
+
+                                                                                        continue;
+
+                                                                                    }
+
+                                                                                    GameUtils.block.setAt(level_accessor, convert_posX, convert_posY, convert_posZ, variable_block, false);
 
                                                                                 }
-
-                                                                                level_accessor.setBlock(new BlockPos(pos), variable_block, 2);
 
                                                                             }
 
@@ -348,33 +359,19 @@ public class TXTFunction {
 
                                                             }
 
-                                                        }
+                                                        } else if (read_all.startsWith("feature = ") == true) {
 
-                                                    } else if (read_all.startsWith("feature = ") == true) {
-
-                                                        {
-
-                                                            try {
-
-                                                                get = read_all.substring("feature = ".length()).split(" \\| ");
-                                                                chance = Double.parseDouble(get[0]);
-                                                                offset_pos = get[1].split("/");
-                                                                offset_posX = Integer.parseInt(offset_pos[0]);
-                                                                offset_posY = Integer.parseInt(offset_pos[1]);
-                                                                offset_posZ = Integer.parseInt(offset_pos[2]);
-                                                                variable_text = get[2];
-
-                                                            } catch (Exception ignored) {
-
-                                                                return;
-
-                                                            }
-
-                                                            if (random.nextDouble() < chance) {
+                                                            {
 
                                                                 try {
 
-                                                                    GameUtils.space.placeFeature(level_world_gen, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, variable_text);
+                                                                    get = read_all.substring("feature = ".length()).split(" \\| ");
+                                                                    chance = Double.parseDouble(get[0]);
+                                                                    offset_pos = get[1].split("/");
+                                                                    offset_posX = Integer.parseInt(offset_pos[0]);
+                                                                    offset_posY = Integer.parseInt(offset_pos[1]);
+                                                                    offset_posZ = Integer.parseInt(offset_pos[2]);
+                                                                    variable_text = get[2];
 
                                                                 } catch (Exception ignored) {
 
@@ -382,63 +379,83 @@ public class TXTFunction {
 
                                                                 }
 
-                                                            }
+                                                                if (random.nextDouble() < chance) {
 
-                                                        }
+                                                                    try {
 
-                                                    } else if (read_all.startsWith("function = ") == true) {
+                                                                        GameUtils.space.placeFeature(level_accessor, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, variable_text);
 
-                                                        {
+                                                                    } catch (Exception ignored) {
 
-                                                            try {
+                                                                        return;
 
-                                                                get = read_all.substring("function = ".length()).split(" \\| ");
-                                                                chance = Double.parseDouble(get[0]);
-                                                                offset_pos = get[1].split("/");
-                                                                offset_posX = Integer.parseInt(offset_pos[0]);
-                                                                offset_posY = Integer.parseInt(offset_pos[1]);
-                                                                offset_posZ = Integer.parseInt(offset_pos[2]);
-                                                                variable_text = get[2];
+                                                                    }
 
-                                                            } catch (Exception ignored) {
-
-                                                                return;
+                                                                }
 
                                                             }
 
-                                                            if (random.nextDouble() < chance) {
+                                                        } else if (read_all.startsWith("function = ") == true) {
 
-                                                                TXTFunction.run(level_accessor, level_server, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, variable_text, false);
+                                                            {
+
+                                                                try {
+
+                                                                    get = read_all.substring("function = ".length()).split(" \\| ");
+                                                                    chance = Double.parseDouble(get[0]);
+                                                                    offset_pos = get[1].split("/");
+                                                                    offset_posX = Integer.parseInt(offset_pos[0]);
+                                                                    offset_posY = Integer.parseInt(offset_pos[1]);
+                                                                    offset_posZ = Integer.parseInt(offset_pos[2]);
+                                                                    variable_text = get[2];
+
+                                                                } catch (Exception ignored) {
+
+                                                                    return;
+
+                                                                }
+
+                                                                if (random.nextDouble() < chance) {
+
+                                                                    TXTFunction.run(level_accessor, level_server, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, variable_text, false);
+
+                                                                }
 
                                                             }
 
-                                                        }
+                                                        } else if (read_all.startsWith("command = ") == true) {
 
-                                                    } else if (read_all.startsWith("command = ") == true) {
+                                                            {
 
-                                                        {
+                                                                try {
 
-                                                            try {
+                                                                    get = read_all.substring("command = ".length()).split(" \\| ");
+                                                                    chance = Double.parseDouble(get[0]);
+                                                                    variable_text = get[1];
 
-                                                                get = read_all.substring("command = ".length()).split(" \\| ");
-                                                                chance = Double.parseDouble(get[0]);
-                                                                variable_text = get[1];
+                                                                } catch (Exception ignored) {
 
-                                                            } catch (Exception ignored) {
+                                                                    return;
 
-                                                                return;
+                                                                }
 
-                                                            }
+                                                                if (random.nextDouble() < chance) {
 
-                                                            if (random.nextDouble() < chance) {
+                                                                    if (chunk_loaded == true) {
 
-                                                                if (chunk_loaded == true) {
+                                                                        String variable_text_final = variable_text;
 
-                                                                    GameUtils.command.run(true, level_server, posX, posY, posZ, variable_text);
+                                                                        level_server.getServer().execute(() -> {
 
-                                                                } else {
+                                                                            GameUtils.command.run(level_server, posX, posY, posZ, variable_text_final);
 
-                                                                    export_command.append("|").append(variable_text);
+                                                                        });
+
+                                                                    } else {
+
+                                                                        export_command.append("|").append(variable_text);
+
+                                                                    }
 
                                                                 }
 
@@ -483,33 +500,34 @@ public class TXTFunction {
 
                 }
 
-                command = command.replace("'", "*").replace("\"", "$");
-                GameUtils.command.run(true, level_server, posX + 0.5, posY + 0.5, posZ + 0.5, GameUtils.command.summonEntity("marker", "TANNYJUNG / TANNYJUNG-delayed_command", "Delayed Command", "ForgeData:{command:\"" + command + "\"}"));
-
+                String command_final = command.replace("'", "*").replace("\"", "$");
+                GameUtils.entity.summon(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "marker", "TANNYJUNG-delayed_command", "Delayed Command", "NeoForgeData:{" + Core.mod_id + ":{command:\"" + command_final + "\"}}", true);
+                
             }
 
         }
 
     }
 
-    public static void runDelayedCommand (Entity entity) {
+    public static void runDelayedCommand (ServerLevel level_server, Entity entity) {
 
-        LevelAccessor level_accessor = entity.level();
+        int posX = entity.getBlockX();
+        int posY = entity.getBlockY();
+        int posZ = entity.getBlockZ();
 
-        if (level_accessor instanceof ServerLevel level_server) {
+        if (GameUtils.entity.canTickingAt(level_server, posX, posY, posZ) == true) {
 
-            if (level_server.isPositionEntityTicking(entity.blockPosition()) == true) {
+            for (String command : GameUtils.nbt.entity.getText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
 
-                for (String command : GameUtils.nbt.entity.getText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
+                level_server.getServer().execute(() -> {
 
-                    GameUtils.command.run(true, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), command);
+                    GameUtils.command.run(level_server, posX, posY, posZ, command);
 
-
-                }
-
-                GameUtils.command.runEntity(entity, "kill @s");
+                });
 
             }
+
+            GameUtils.command.runEntity(entity, "kill @s");
 
         }
 

@@ -9,7 +9,6 @@ import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_core.game.TXTFunction;
 import tannyjung.tanshugetrees_core.outside.CacheManager;
 import tannyjung.tanshugetrees_handcode.data.FileConfig;
-import tannyjung.tanshugetrees_handcode.systems.Cache;
 
 public class LeafLitter {
 
@@ -41,7 +40,7 @@ public class LeafLitter {
 
                                 if (level_accessor.isWaterAt(pos_ground) == true) {
 
-                                    block = GameUtils.block.propertyBooleanSet(block, "waterlogged", true);
+                                    block = GameUtils.block.property.setLogic(block, "waterlogged", true);
                                     posY = posY - 1;
 
                                 } else if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos_ground), "tanshugetrees:passable_blocks") == true) {
@@ -65,7 +64,7 @@ public class LeafLitter {
 
                                 BlockState block_to = Blocks.AIR.defaultBlockState();
 
-                                if (GameUtils.block.propertyBooleanGet(level_accessor.getBlockState(pos), "waterlogged") == true) {
+                                if (GameUtils.block.property.getLogic(level_accessor.getBlockState(pos), "waterlogged") == true) {
 
                                     block_to = Blocks.WATER.defaultBlockState();
 

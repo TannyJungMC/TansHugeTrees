@@ -5,28 +5,29 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
@@ -39,27 +40,36 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.ScoreHolder;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.outside.FileManager;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
 /*
-(Forge)
+(1.20.1)
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import net.minecraft.world.level.chunk.ChunkStatus;
-(NeoForge)
+(1.21.1)
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.scores.ScoreHolder;
 */
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.server.ServerLifecycleHooks;
-import net.minecraft.world.level.chunk.ChunkStatus;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
 
 public class GameUtils {
 
@@ -71,27 +81,21 @@ public class GameUtils {
 
         }
 
-        public static int getPlayerCount () {
+        public static boolean testCustomBiome (Holder<Biome> biome, String config_value) {
 
-            return ServerLifecycleHooks.getCurrentServer().getPlayerCount();
-
-        }
-
-        public static boolean testCustomBiome (Holder<Biome> biome_center, String config_value) {
-
-            boolean return_logic = false;
+			boolean result = false;
 
             if (config_value.equals("all") == true) {
 
-                return_logic = true;
+                result = true;
 
             } else {
 
-                String biome_centerID = GameUtils.biome.toID(biome_center);
+                String biome_centerID = space.getBiomeID(biome);
 
                 for (String split : config_value.split(" / ")) {
 
-                    return_logic = true;
+                    result = true;
 
                     for (String split2 : split.split(", ")) {
 
@@ -101,9 +105,9 @@ public class GameUtils {
 
                             if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
 
-                                if (GameUtils.biome.isTaggedAs(biome_center, split_get) == false) {
+                                if (space.isBiomeTaggedAs(biome, split_get) == false) {
 
-                                    return_logic = false;
+                                    result = false;
 
                                 }
 
@@ -111,7 +115,7 @@ public class GameUtils {
 
                                 if (biome_centerID.equals(split_get) == false) {
 
-                                    return_logic = false;
+                                    result = false;
 
                                 }
 
@@ -119,13 +123,13 @@ public class GameUtils {
 
                             if (split2.startsWith("!") == true) {
 
-                                return_logic = !return_logic;
+                                result = !result;
 
                             }
 
                         }
 
-                        if (return_logic == false) {
+                        if (result == false) {
 
                             break;
 
@@ -133,7 +137,7 @@ public class GameUtils {
 
                     }
 
-                    if (return_logic == true) {
+                    if (result == true) {
 
                         break;
 
@@ -143,7 +147,7 @@ public class GameUtils {
 
             }
 
-            return return_logic;
+            return result;
 
         }
 
@@ -171,7 +175,7 @@ public class GameUtils {
 
                             if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
 
-                                if (GameUtils.block.isTaggedAs(test_block, value) == false) {
+                                if (block.isTaggedAs(test_block, value) == false) {
 
                                     return_logic = false;
 
@@ -217,105 +221,79 @@ public class GameUtils {
 
         }
 
-		public static void sendChatMessage (ServerLevel level_server, Entity entity, String target, String color, String text) {
+		public static void sendChatMessage (ServerLevel level_server, String target, String data) {
 
-            command.run(false, level_server, 0, 0, 0, "tellraw " + target + " [{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}]");
+			String[] split = data.split(" \\| ")[0].split(" / ");
+			String prefix_color = "white";
+
+			if (split.length > 1) {
+
+				prefix_color = split[1];
+
+			}
+
+			String message = nbt.createText("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod |   | " + data);
+            command.run(level_server, 0, 0, 0, "tellraw " + target + " [" + message + "]");
 
         }
 
-        public static void sendChatMessagePrivate (Entity entity, String color, String text) {
+		public static void spawnParticle (ServerLevel level_server, double posX, double posY, double posZ, double spreadX, double spreadY, double spreadZ, double speed, int count, String id) {
 
-            command.runEntity(entity, "tellraw @s [{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}]");
+			ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE.get(ResourceLocation.parse(id));
 
-        }
+			if (particle != null) {
 
-		public static String getCurrentDimensionID (Level level) {
+				level_server.sendParticles((ParticleOptions) particle, posX, posY, posZ, count, spreadX, spreadY, spreadZ, speed);
 
-			/*
-			(Forge)
-			return level.dimension().location().toString();
-			(NeoForge)
-			return level.dimension().identifier().toString();
-			*/
-			return level.dimension().location().toString();
+			}
 
 		}
 
-        public static String getForgeDataFromFile (String path) {
+		public static void playSound (ServerLevel level_server, double posX, double posY, double posZ, float volume, float pitch, String id) {
 
-            String return_text = "";
-            File file = new File(path);
+			SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse(id));
 
-            if (file.exists() == true && file.isDirectory() == false) {
+			if (sound != null) {
 
-                StringBuilder data = new StringBuilder();
+				level_server.playSound(null, BlockPos.containing(posX, posY, posZ), sound, SoundSource.NEUTRAL, volume, pitch);
 
-                // Read File
-                {
+			}
 
-                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
-
-                        {
-
-                            data.append(read_all);
-
-                        }
-
-                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception, ""); }
-
-                }
-
-                return_text = data.substring(data.indexOf("ForgeData"), data.length() - 2);
-
-            }
-
-            return return_text;
-
-        }
+		}
 
 	}
 
 	public static class command {
 
-		public static void run (boolean safe_mode, ServerLevel level_server, double posX, double posY, double posZ, String command) {
-
+		public static void run (ServerLevel level_server, double posX, double posY, double posZ, String command) {
+			
 			/*
-			(Forge)
-			Runnable runnable = () -> level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
-			(NeoForge)
-			Runnable runnable = () -> level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, PermissionSet.ALL_PERMISSIONS, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
+			(1.20.1) (1.21.1)
+			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
+			(1.21.8)
+			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, PermissionSet.ALL_PERMISSIONS, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
 			*/
-            Runnable runnable = () -> level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
-
-            if (safe_mode == true) {
-
-                level_server.getServer().execute(runnable);
-
-            } else {
-
-                runnable.run();
-
-            }
+			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
 
 		}
 
 		public static void runEntity (Entity entity, String command) {
 
-            if (entity.level() instanceof ServerLevel level_server) {
+			if (entity.level() instanceof ServerLevel level_server) {
 
 				/*
-				(Forge)
+				(1.20.1) (1.21.1)
 				level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, entity.position(), entity.getRotationVector(), level_server, 4, entity.getName().getString(), entity.getDisplayName(), level_server.getServer(), entity), command);
-				(NeoForge)
+				(1.21.8)
 				level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, entity.position(), entity.getRotationVector(), level_server, PermissionSet.ALL_PERMISSIONS, entity.getName().getString(), entity.getDisplayName(), level_server.getServer(), entity), command);
 				*/
-                level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, entity.position(), entity.getRotationVector(), level_server, 4, entity.getName().getString(), entity.getDisplayName(), level_server.getServer(), entity), command);
+				level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, entity.position(), entity.getRotationVector(), level_server, 4, entity.getName().getString(), entity.getDisplayName(), level_server.getServer(), entity), command);
 
-            }
+			}
 
-        }
+		}
 
-		public static boolean result (ServerLevel level_server, int posX, int posY, int posZ, String command) {
+		public static boolean result (ServerLevel level_server, double posX, double posY, double posZ, String command) {
 
 			StringBuilder result = new StringBuilder();
 
@@ -344,9 +322,9 @@ public class GameUtils {
 			};
 
 			/*
-			(Forge)
+			(1.20.1) (1.21.1)
 			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null), command);
-			(NeoForge)
+			(1.21.8)
 			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, PermissionSet.ALL_PERMISSIONS, "", Component.literal(""), level_server.getServer(), null), command);
 			*/
 			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null), command);
@@ -393,162 +371,39 @@ public class GameUtils {
 
 		}
 
-		public static String resultCustom (ServerLevel level_server, int posX, int posY, int posZ, String command) {
-
-			StringBuilder result = new StringBuilder();
-
-			CommandSource data_consumer = new CommandSource() {
-
-				@Override
-				public void sendSystemMessage(Component component) {
-
-					result.append(component);
-
-				}
-
-				@Override
-				public boolean acceptsSuccess() {
-					return true;
-				}
-
-				@Override
-				public boolean acceptsFailure() {
-					return true;
-				}
-
-				@Override
-				public boolean shouldInformAdmins() {
-					return false;
-				}
-
-			};
-
-			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null), command);
-			return result.toString();
-
-		}
-
-        public static String summonEntity (String id, String tag, String name, String custom) {
-
-            StringBuilder return_text = new StringBuilder();
-
-            return_text
-                    .append("summon ")
-                    .append(id)
-                    .append(" ~ ~ ~ {Tags:[\"TANNYJUNG\",\"")
-            ;
-
-            if (tag.isEmpty() == false) {
-
-                return_text.append(tag.replace(" / ", "\",\""));
-
-            }
-
-            return_text.append("\"]");
-
-            if (name.isEmpty() == false) {
-
-                return_text
-                        .append(",CustomName:'{\"text\":\"")
-                        .append(name)
-                        .append("\"}'")
-                ;
-
-            }
-
-            if (custom.isEmpty() == false) {
-
-                return_text
-                        .append(",")
-                        .append(custom)
-                ;
-
-            }
-
-            return return_text + "}";
-
-        }
-
-	}
-
-	public static class score {
-
-		public static int get (ServerLevel level_server, String objective, String player) {
-
-			ServerScoreboard score = level_server.getServer().getScoreboard();
-			Objective objective_get = score.getObjective(objective);
-
-			/*
-			(Forge)
-			return score.getOrCreatePlayerScore(player, objective_get).getScore();
-			(NeoForge)
-			return score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_get, false).get();
-			*/
-			return score.getOrCreatePlayerScore(player, objective_get).getScore();
-
-		}
-
-		public static void set (ServerLevel level_server, String objective, String player, int value) {
-
-			ServerScoreboard score = level_server.getServer().getScoreboard();
-			Objective objective_get = score.getObjective(objective);
-
-			/*
-			(Forge)
-			score.getOrCreatePlayerScore(player, objective_get).setScore(value);
-			(NeoForge)
-			score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_get, false).set(value);
-			*/
-			score.getOrCreatePlayerScore(player, objective_get).setScore(value);
-
-		}
-
-		public static void add (ServerLevel level_server, String objective, String player, int value) {
-
-			ServerScoreboard score = level_server.getServer().getScoreboard();
-			Objective objective_get = score.getObjective(objective);
-			int old_value = get(level_server, objective, player);
-
-			/*
-			(Forge)
-			score.getOrCreatePlayerScore(player, objective_get).setScore(old_value + value);
-			(NeoForge)
-			score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_get, false).set(old_value + value);
-			*/
-			score.getOrCreatePlayerScore(player, objective_get).setScore(old_value + value);
-
-		}
-
-	}
-
-	public static class biome {
-
-		public static String toID (Holder<Biome> biome) {
-
-			String return_text = biome.toString().replace("Reference{ResourceKey[minecraft:worldgen/biome / ", "");
-			return return_text.substring(0, return_text.indexOf("]"));
-
-		}
-
-		public static boolean isTaggedAs (Holder<Biome> biome, String tag) {
-
-			try {
-
-				return biome.is(TagKey.create(Registries.BIOME, ResourceLocation.parse(tag)));
-
-			} catch (Exception exception) {
-
-				OutsideUtils.exception(new Exception(), exception, "");
-
-			}
-
-			return false;
-
-		}
-
 	}
 
 	public static class block {
+
+		public static BlockState getAt (LevelAccessor level_accessor, int posX, int posY, int posZ) {
+
+			return level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
+
+		}
+
+		public static void setAt (LevelAccessor level_accessor, int posX, int posY, int posZ, BlockState block, boolean world_gen) {
+
+			int type = 0;
+
+			if (world_gen == false) {
+
+				type = 2;
+
+			}
+
+			if (space.getBuildHeight(level_accessor, false) > posY && posY < space.getBuildHeight(level_accessor, true)) {
+
+				level_accessor.setBlock(new BlockPos(posX, posY, posZ), block, type);
+
+			}
+
+		}
+
+		public static void removeAt (LevelAccessor level_accessor, int posX, int posY, int posZ) {
+
+			level_accessor.removeBlock(new BlockPos(posX, posY, posZ), false);
+
+		}
 
 		public static boolean isTaggedAs (BlockState block, String tag) {
 
@@ -590,9 +445,9 @@ public class GameUtils {
 					}
 
 					/*
-					(Forge)
+					(1.20.1) (1.21.1)
 					block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id)).defaultBlockState();
-					(NeoForge)
+					(1.21.8)
 					block = BuiltInRegistries.BLOCK.get(Identifier.parse(id)).get().value().defaultBlockState();
 					*/
 					block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id)).defaultBlockState();
@@ -612,19 +467,19 @@ public class GameUtils {
 					for (String property_data : properties) {
 
 						String[] get = property_data.split("=");
-						Property<?> property = block.getBlock().getStateDefinition().getProperty(get[0]);
+						Property<?> test = block.getBlock().getStateDefinition().getProperty(get[0]);
 
-						if (property instanceof BooleanProperty) {
+						if (test instanceof BooleanProperty) {
 
-							block = propertyBooleanSet(block, get[0], Boolean.parseBoolean(get[1]));
+							block = property.setLogic(block, get[0], Boolean.parseBoolean(get[1]));
 
-						} else if (property instanceof IntegerProperty) {
+						} else if (test instanceof IntegerProperty) {
 
-							block = propertyIntegerSet(block, get[0], Integer.parseInt(get[1]));
+							block = property.setNumber(block, get[0], Integer.parseInt(get[1]));
 
-						} else if (property instanceof EnumProperty<?>) {
+						} else if (test instanceof EnumProperty<?>) {
 
-							block = propertyEnumSet(block, get[0], get[1]);
+							block = property.setCustom(block, get[0], get[1]);
 
 						}
 
@@ -655,129 +510,250 @@ public class GameUtils {
 
 		}
 
-		public static String textFromItemText (String text) {
+		public static void setScheduleTick (ServerLevel level_server, int posX, int posY, int posZ, int value) {
 
-			String id = text.substring(0, text.indexOf("{"));
-			String convert = text.substring(text.indexOf("ForgeData"), text.length() - 1);
-			return id + "{" + convert;
+			level_server.scheduleTick(new BlockPos(posX, posY, posZ), level_server.getBlockState(new BlockPos(posX, posY, posZ)).getBlock(), value);
 
 		}
 
-		public static boolean propertyBooleanGet (BlockState block, String name) {
+		public static class property {
 
-			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+			public static boolean getLogic (BlockState block, String name) {
 
-			if (property instanceof BooleanProperty) {
+				Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
 
-				return Boolean.parseBoolean(block.getValue(property).toString());
+				if (property instanceof BooleanProperty) {
 
-			}
-
-			return false;
-
-		}
-
-		public static int propertyIntegerGet (BlockState block, String name) {
-
-			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
-
-			if (property instanceof IntegerProperty) {
-
-				return Integer.parseInt(block.getValue(property).toString());
-
-			}
-
-			return 0;
-
-		}
-
-		public static String propertyEnumGet (BlockState block, String name) {
-
-			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
-
-			if (property instanceof EnumProperty<?>) {
-
-				return block.getValue(property).toString();
-
-			}
-
-			return "";
-
-		}
-
-		public static BlockState propertyBooleanSet (BlockState block, String name, boolean value) {
-
-			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
-
-            if (block.hasProperty(property) == true) {
-
-                if (property instanceof BooleanProperty property_instance) {
-
-                    block = block.setValue(property_instance, value);
-
-                }
-
-            }
-
-			return block;
-
-		}
-
-		public static BlockState propertyIntegerSet (BlockState block, String name, int value) {
-
-			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
-
-            if (block.hasProperty(property) == true) {
-
-                if (property instanceof IntegerProperty property_instance) {
-
-                    block = block.setValue(property_instance, value);
-
-                }
-
-            }
-
-			return block;
-
-		}
-
-		public static BlockState propertyEnumSet (BlockState block, String name, String value) {
-
-			if (name.equals("facing") == true) {
-
-				if (block.hasProperty(DirectionalBlock.FACING) == true) {
-
-					block = block.setValue(DirectionalBlock.FACING, Direction.valueOf(value.toUpperCase()));
-
-				} else if (block.hasProperty(HorizontalDirectionalBlock.FACING) == true) {
-
-					block = block.setValue(HorizontalDirectionalBlock.FACING, Direction.valueOf(value.toUpperCase()));
+					return Boolean.parseBoolean(block.getValue(property).toString());
 
 				}
 
-			} else if (name.equals("type") == true) {
+				return false;
 
-                if (block.hasProperty(SlabBlock.TYPE) == true) {
+			}
 
-                    block = block.setValue(SlabBlock.TYPE, SlabType.valueOf(value.toUpperCase()));
+			public static int getNumber (BlockState block, String name) {
 
-                }
+				Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
 
-            }
+				if (property instanceof IntegerProperty) {
 
-			return block;
+					return Integer.parseInt(block.getValue(property).toString());
+
+				}
+
+				return 0;
+
+			}
+
+			public static String getCustom (BlockState block, String name) {
+
+				Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+
+				if (property instanceof EnumProperty<?>) {
+
+					return block.getValue(property).toString();
+
+				}
+
+				return "";
+
+			}
+
+			public static BlockState setLogic (BlockState block, String name, boolean value) {
+
+				Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+
+				if (block.hasProperty(property) == true) {
+
+					if (property instanceof BooleanProperty property_instance) {
+
+						block = block.setValue(property_instance, value);
+
+					}
+
+				}
+
+				return block;
+
+			}
+
+			public static BlockState setNumber (BlockState block, String name, int value) {
+
+				Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+
+				if (block.hasProperty(property) == true) {
+
+					if (property instanceof IntegerProperty property_instance) {
+
+						block = block.setValue(property_instance, value);
+
+					}
+
+				}
+
+				return block;
+
+			}
+
+			public static BlockState setCustom (BlockState block, String name, String value) {
+
+				if (name.equals("facing") == true) {
+
+					if (block.hasProperty(DirectionalBlock.FACING) == true) {
+
+						block = block.setValue(DirectionalBlock.FACING, Direction.valueOf(value.toUpperCase()));
+
+					} else if (block.hasProperty(HorizontalDirectionalBlock.FACING) == true) {
+
+						block = block.setValue(HorizontalDirectionalBlock.FACING, Direction.valueOf(value.toUpperCase()));
+
+					}
+
+				} else if (name.equals("type") == true) {
+
+					if (block.hasProperty(SlabBlock.TYPE) == true) {
+
+						block = block.setValue(SlabBlock.TYPE, SlabType.valueOf(value.toUpperCase()));
+
+					}
+
+				}
+
+				return block;
+
+			}
 
 		}
-
 
 	}
 
 	public static class entity {
 
-		public static List<Entity> getAllAt (Level level, int posX, int posY, int posZ) {
+		public static List<Entity> getAt (ServerLevel level_server, double posX, double posY, double posZ, int distance, boolean is_box, int count, String id, String tag) {
 
-			Vec3 center = new Vec3((posX + 0.5), (posY + 0.5), (posZ + 0.5));
-			return level.getEntitiesOfClass(Entity.class, new AABB(center, center).inflate(3 / 2d), e -> true).stream().sorted(Comparator.comparingDouble(_entcnd -> _entcnd.distanceToSqr(center))).toList();
+			Vec3 center = new Vec3(posX, posY, posZ);
+			int distance_power = distance * distance;
+			List<String> tags = Arrays.stream(tag.split(" / ")).toList();
+
+			List<Entity> entities = level_server.getEntitiesOfClass(Entity.class, new AABB(center, center).inflate(distance), entity -> {
+
+				boolean test = false;
+
+				if (is_box == true || entity.distanceToSqr(center) <= distance_power) {
+
+					if (id.isEmpty() == true || EntityType.getKey(entity.getType()).toString().equals(id) == true) {
+
+						if (tag.isEmpty() == true || entity.getTags().containsAll(tags) == true) {
+
+							test = true;
+
+						}
+
+					}
+
+				}
+
+				return test;
+
+			});
+
+			if (distance > 0) {
+
+				entities = entities.stream().sorted(Comparator.comparingDouble(entity -> entity.distanceToSqr(center))).toList();
+
+			}
+
+			if (count > 0) {
+
+				if (entities.size() > count) {
+
+					entities = entities.subList(0, count);
+
+				}
+
+			}
+
+			return entities;
+
+		}
+
+		public static List<Entity> getEverywhere (ServerLevel level_server, String id, String tag) {
+
+			List<Entity> entities = new ArrayList<>();
+			List<String> tags = Arrays.stream(tag.split(" / ")).toList();
+
+			level_server.getAllEntities().forEach(entity -> {
+
+				if (id.isEmpty() == true || EntityType.getKey(entity.getType()).toString().equals(id) == true) {
+
+					if (tag.isEmpty() == true || entity.getTags().containsAll(tags) == true) {
+
+						entities.add(entity);
+
+					}
+
+				}
+
+			});
+
+			return entities;
+
+		}
+
+		public static void summon (ServerLevel level_server, double posX, double posY, double posZ, String id, String tag, String name, String custom, boolean world_gen) {
+
+			StringBuilder data = new StringBuilder();
+			data.append("summon ");
+			data.append(id);
+			data.append(" ~ ~ ~ {Tags:[\"TANNYJUNG\",\"");
+			data.append(Core.mod_id_big);
+			data.append("\",\"");
+
+			if (tag.isEmpty() == false) {
+
+				data.append(tag.replace(" / ", "\",\""));
+
+			}
+
+			data.append("\"]");
+
+			if (name.isEmpty() == false) {
+
+				data.append(",CustomName:'{\"text\":\"");
+				data.append(name);
+				data.append("\"}'");
+
+			}
+
+			if (custom.isEmpty() == false) {
+
+				data.append(",");
+				data.append(custom);
+
+			}
+
+			data.append("}");
+
+			if (world_gen == false) {
+
+				command.run(level_server, posX, posY, posZ, data.toString());
+
+			} else {
+
+				level_server.getServer().execute(() -> {
+
+					command.run(level_server, posX, posY, posZ, data.toString());
+
+				});
+
+			}
+
+		}
+
+		public static int getPlayerCount () {
+
+			return ServerLifecycleHooks.getCurrentServer().getPlayerCount();
 
 		}
 
@@ -790,6 +766,12 @@ public class GameUtils {
 			}
 
 			return false;
+
+		}
+
+		public static boolean canTickingAt (ServerLevel level_server, int posX, int posY, int posZ) {
+
+			return level_server.isPositionEntityTicking(new BlockPos(posX, posY, posZ));
 
 		}
 
@@ -829,64 +811,263 @@ public class GameUtils {
 
 	}
 
+	public static class space {
+
+		public static String getDimensionID (ServerLevel level_server) {
+
+			/*
+			(1.20.1) (1.21.1)
+			return level_server.dimension().location().toString();
+			(1.21.8)
+			return level_server.dimension().identifier().toString();
+			*/
+			return level_server.dimension().location().toString();
+
+		}
+
+		public static int[] getWorldSpawnPos (LevelAccessor level_accessor) {
+
+			/*
+			(1.20.1)
+			return new int[]{level_accessor.getLevelData().getXSpawn(), level_accessor.getLevelData().getZSpawn()};
+			(1.21.1)
+			return new int[]{level_accessor.getLevelData().getSpawnPos().getX(), level_accessor.getLevelData().getSpawnPos().getZ()};
+			*/
+			return new int[]{level_accessor.getLevelData().getSpawnPos().getX(), level_accessor.getLevelData().getSpawnPos().getZ()};
+
+		}
+
+		public static BlockPos getPosLook (Entity entity, double distance) {
+
+			return entity.level().clip(new ClipContext(entity.getEyePosition(1f), entity.getEyePosition(1f).add(entity.getViewVector(1f).scale(distance)), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, entity)).getBlockPos();
+
+		}
+
+		public static int getBuildHeight (LevelAccessor level_accessor, boolean highest) {
+
+			if (highest == true) {
+
+				/*
+				(1.20.1) (1.21.1)
+				return level_accessor.getMaxBuildHeight() - 1;
+				(1.21.8)
+				return level_accessor.getMaxY() - 1;
+				*/
+				return level_accessor.getMaxBuildHeight() - 1;
+
+			} else {
+
+				/*
+				(1.20.1) (1.21.1)
+				return level_accessor.getMinBuildHeight() + 1;
+				(1.21.8)
+				return level_accessor.getMinY() + 1;
+				*/
+				return level_accessor.getMinBuildHeight() + 1;
+
+			}
+
+		}
+		
+		public static boolean testChunkStatus (LevelAccessor level_accessor, int chunkX, int chunkZ, String status) {
+
+			return level_accessor.hasChunk(chunkX, chunkZ) == true && level_accessor.getChunk(chunkX, chunkZ).getHighestGeneratedStatus().isOrAfter(ChunkStatus.byName(status)) == true;
+
+		}
+
+		public static void placeFeature (LevelAccessor level_accessor, int posX, int posY, int posZ, String id) {
+
+			WorldGenLevel level_world_gen = (WorldGenLevel) level_accessor;
+			BlockPos pos = new BlockPos(posX, posY, posZ);
+
+			/*
+			(1.20.1) (1.21.1)
+			level_world_gen.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+			(1.21.8)
+			level_world_gen.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getValueOrThrow(FeatureUtils.createKey(id)).place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+			*/
+			level_world_gen.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+
+		}
+
+		public static String getBiomeID (Holder<Biome> biome) {
+
+			String return_text = biome.toString().replace("Reference{ResourceKey[minecraft:worldgen/biome / ", "");
+			return return_text.substring(0, return_text.indexOf("]"));
+
+		}
+
+		public static boolean isBiomeTaggedAs (Holder<Biome> biome, String tag) {
+
+			try {
+
+				return biome.is(TagKey.create(Registries.BIOME, ResourceLocation.parse(tag)));
+
+			} catch (Exception exception) {
+
+				OutsideUtils.exception(new Exception(), exception, "");
+
+			}
+
+			return false;
+
+		}
+
+		public static Holder<Biome> getBiomeAt (ServerLevel level_server, int posX, int posY, int posZ) {
+
+			int quartX = posX >> 2;
+			int quartY = posY >> 2;
+			int quartZ = posZ >> 2;
+			return level_server.getChunkSource().getGenerator().getBiomeSource().getNoiseBiome(quartX, quartY, quartZ, level_server.getChunkSource().randomState().sampler());
+
+		}
+
+	}
+
 	public static class nbt {
+
+		public static String convertFileToForgeData (String path) {
+
+			StringBuilder data = new StringBuilder();
+
+			for (String read_all : FileManager.readTXT(path)) {
+
+				if (read_all.isEmpty() == false && read_all.startsWith("---") == false) {
+
+					data.append(read_all.replace(" = ", ":"));
+					data.append(",");
+
+				}
+
+			}
+
+			return "NeoForgeData:{" + Core.mod_id + ":{" + data + "}}";
+
+		}
+
+		public static String createText (String data) {
+
+			StringBuilder convert = new StringBuilder();
+			String[] split = new String[0];
+			boolean first = false;
+			convert.append("{\"text\":\"\"},");
+
+			for (String read_all : data.split(" \\| ")) {
+
+				if (first == false) {
+
+					first = true;
+
+				} else {
+
+					convert.append(",");
+
+				}
+
+				split = read_all.split(" / ");
+
+				if (split.length == 1) {
+
+					convert.append("{\"text\":\"");
+					convert.append(split[0]);
+					convert.append("\",\"color\":\"white\"");
+
+				} else {
+
+					convert.append("{\"text\":\"");
+					convert.append(split[0]);
+					convert.append("\",\"color\":\"");
+					convert.append(split[1]);
+					convert.append("\"");
+
+					if (split.length == 3) {
+
+						if (split[2].startsWith("https") == true) {
+
+							convert.append(",\"underlined\":true,\"clickEvent\":{\"action\":\"open_url\",\"value\":\"");
+							convert.append(split[2]);
+							convert.append("\"}");
+
+						} else if (split[2].startsWith("/") == true) {
+
+							convert.append(",\"underlined\":true,\"clickEvent\":{\"action\":\"run_command\",\"value\":\"");
+							convert.append(split[2]);
+							convert.append("\"}");
+
+						}
+
+						convert.append(",\"hoverEvent\":{\"action\":\"show_text\",\"contents\":\"");
+						convert.append(split[2]);
+						convert.append("\"}");
+
+					}
+
+				}
+
+				convert.append("}");
+
+			}
+
+			return convert.toString();
+
+		}
 
 		public static class entity {
 
 			public static String getText (Entity entity, String name) {
 
 				/*
-				(Forge)
-				return entity.getPersistentData().getString(name);
-				(NeoForge)
-				return entity.getPersistentData().getString(name).get();
+				(1.20.1) (1.21.1)
+				return entity.getPersistentData().getCompound(Core.mod_id).getString(name);
+				(1.21.8)
+				return entity.getPersistentData().getCompound(Core.mod_id).getString(name).get();
 				*/
-				return entity.getPersistentData().getString(name);
+				return entity.getPersistentData().getCompound(Core.mod_id).getString(name);
 
 			}
 
 			public static Boolean getLogic (Entity entity, String name) {
 
 				/*
-				(Forge)
-				return entity.getPersistentData().getBoolean(name);
-				(NeoForge)
-				return entity.getPersistentData().getBoolean(name).get();
+				(1.20.1) (1.21.1)
+				return entity.getPersistentData().getCompound(Core.mod_id).getBoolean(name);
+				(1.21.8)
+				return entity.getPersistentData().getCompound(Core.mod_id).getBoolean(name).get();
 				*/
-				return entity.getPersistentData().getBoolean(name);
+				return entity.getPersistentData().getCompound(Core.mod_id).getBoolean(name);
 
 			}
 
 			public static double getNumber (Entity entity, String name) {
 
 				/*
-				(Forge)
-				return entity.getPersistentData().getDouble(name);
-				(NeoForge)
-				return entity.getPersistentData().getDouble(name).get();
+				(1.20.1) (1.21.1)
+				return entity.getPersistentData().getCompound(Core.mod_id).getDouble(name);
+				(1.21.8)
+				return entity.getPersistentData().getCompound(Core.mod_id).getDouble(name).get();
 				*/
-				return entity.getPersistentData().getDouble(name);
+				return entity.getPersistentData().getCompound(Core.mod_id).getDouble(name);
 
 			}
 
 			public static double[] getListNumber (Entity entity, String name) {
 
 				/*
-				(Forge)
-				ListTag list = entity.getPersistentData().getList(name, Tag.TAG_DOUBLE);
-				(NeoForge)
-				ListTag list = entity.getPersistentData().getList(name).get();
+				(1.20.1) (1.21.1)
+				ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name, Tag.TAG_DOUBLE);
+				(1.21.8)
+				ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name).get();
 				*/
-				ListTag list = entity.getPersistentData().getList(name, Tag.TAG_DOUBLE);
+				ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name, Tag.TAG_DOUBLE);
 
 				double[] convert = new double[list.size()];
 
 				for (int count = 0; count <= list.size() - 1; count++) {
 
 					/*
-					(Forge)
+					(1.20.1) (1.21.1)
 					convert[count] = list.getDouble(count);
-					(NeoForge)
+					(1.21.8)
 					convert[count] = list.getDouble(count).get();
 					*/
 					convert[count] = list.getDouble(count);
@@ -900,21 +1081,21 @@ public class GameUtils {
 			public static double[] getListNumberFloat (Entity entity, String name) {
 
 				/*
-				(Forge)
-				ListTag list = entity.getPersistentData().getList(name, Tag.TAG_FLOAT);
-				(NeoForge)
-				ListTag list = entity.getPersistentData().getList(name).get();
+				(1.20.1) (1.21.1)
+				ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name, Tag.TAG_FLOAT);
+				(1.21.8)
+				ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name).get();
 				*/
-				ListTag list = entity.getPersistentData().getList(name, Tag.TAG_FLOAT);
+				ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name, Tag.TAG_FLOAT);
 
 				double[] convert = new double[list.size()];
 
 				for (int count = 0; count <= list.size() - 1; count++) {
 
 					/*
-					(Forge)
+					(1.20.1) (1.21.1)
 					convert[count] = list.getFloat(count);
-					(NeoForge)
+					(1.21.8)
 					convert[count] = list.getFloat(count).get();
 					*/
 					convert[count] = list.getFloat(count);
@@ -927,31 +1108,43 @@ public class GameUtils {
 
 			public static void setText (Entity entity, String name, String value) {
 
-				entity.getPersistentData().putString(name, value);
+				CompoundTag tag = new CompoundTag();
+				CompoundTag tag_add = new CompoundTag();
+				tag_add.putString(name, value);
+				tag.put(Core.mod_id, tag_add);
+				entity.getPersistentData().merge(tag);
 
 			}
 
 			public static void setLogic (Entity entity, String name, boolean value) {
 
-				entity.getPersistentData().putBoolean(name, value);
+				CompoundTag tag = new CompoundTag();
+				CompoundTag tag_add = new CompoundTag();
+				tag_add.putBoolean(name, value);
+				tag.put(Core.mod_id, tag_add);
+				entity.getPersistentData().merge(tag);
 
 			}
 
 			public static void setNumber (Entity entity, String name, double value) {
 
-				entity.getPersistentData().putDouble(name, value);
+				CompoundTag tag = new CompoundTag();
+				CompoundTag tag_add = new CompoundTag();
+				tag_add.putDouble(name, value);
+				tag.put(Core.mod_id, tag_add);
+				entity.getPersistentData().merge(tag);
 
 			}
 
 			public static void addNumber (Entity entity, String name, double value) {
 
 				/*
-				(Forge)
-				entity.getPersistentData().putDouble(name, entity.getPersistentData().getDouble(name) + value);
-				(NeoForge)
-				entity.getPersistentData().putDouble(name, entity.getPersistentData().getDouble(name).get() + value);
+				(1.20.1) (1.21.1)
+				entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, entity.getPersistentData().getCompound(Core.mod_id).getDouble(name) + value);
+				(1.21.8)
+				entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, entity.getPersistentData().getCompound(Core.mod_id).getDouble(name).get() + value);
 				*/
-				entity.getPersistentData().putDouble(name, entity.getPersistentData().getDouble(name) + value);
+				entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, entity.getPersistentData().getCompound(Core.mod_id).getDouble(name) + value);
 
 			}
 
@@ -959,23 +1152,23 @@ public class GameUtils {
 
 		public static class block {
 
-			public static String getText (LevelAccessor level_accessor, BlockPos pos, String name) {
+			public static String getText (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
 
 				return new Object() {
 
-					public String getValue (LevelAccessor level_accessor, BlockPos pos, String name) {
+					public String getValue (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
 
-						BlockEntity blockEntity = level_accessor.getBlockEntity(pos);
+						BlockEntity blockEntity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
 
 						if (blockEntity != null) {
 
-							/*
-							(Forge)
-							return blockEntity.getPersistentData().getString(name);
-							(NeoForge)
-							return blockEntity.getPersistentData().getString(name).get();
-							*/
-							return blockEntity.getPersistentData().getString(name);
+                        /*
+                        (1.20.1) (1.21.1)
+                        return blockEntity.getPersistentData().getCompound(Core.mod_id).getString(name);
+                        (1.21.8)
+                        return blockEntity.getPersistentData().getCompound(Core.mod_id).getString(name).get();
+                        */
+							return blockEntity.getPersistentData().getCompound(Core.mod_id).getString(name);
 
 						}
 
@@ -983,27 +1176,27 @@ public class GameUtils {
 
 					}
 
-				}.getValue(level_accessor, pos, name);
+				}.getValue(level_accessor, posX, posY, posZ, name);
 
 			}
 
-			public static double getNumber (LevelAccessor level_accessor, BlockPos pos, String name) {
+			public static double getNumber (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
 
 				return new Object() {
 
-					public double getValue (LevelAccessor level_accessor, BlockPos pos, String name) {
+					public double getValue (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
 
-						BlockEntity blockEntity = level_accessor.getBlockEntity(pos);
+						BlockEntity blockEntity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
 
 						if (blockEntity != null) {
 
-							/*
-							(Forge)
-							return blockEntity.getPersistentData().getDouble(name);
-							(NeoForge)
-							return blockEntity.getPersistentData().getDouble(name).get();
-							*/
-							return blockEntity.getPersistentData().getDouble(name);
+                        /*
+                        (1.20.1) (1.21.1)
+                        return blockEntity.getPersistentData().getCompound(Core.mod_id).getDouble(name);
+                        (1.21.8)
+                        return blockEntity.getPersistentData().getCompound(Core.mod_id).getDouble(name).get();
+                        */
+							return blockEntity.getPersistentData().getCompound(Core.mod_id).getDouble(name);
 
 						}
 
@@ -1011,27 +1204,27 @@ public class GameUtils {
 
 					}
 
-				}.getValue(level_accessor, pos, name);
+				}.getValue(level_accessor, posX, posY, posZ, name);
 
 			}
 
-			public static boolean getLogic (LevelAccessor level_accessor, BlockPos pos, String name) {
+			public static boolean getLogic (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
 
 				return new Object() {
 
-					public boolean getValue (LevelAccessor level_accessor, BlockPos pos, String name) {
+					public boolean getValue (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
 
-						BlockEntity blockEntity = level_accessor.getBlockEntity(pos);
+						BlockEntity blockEntity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
 
 						if (blockEntity != null) {
 
-							/*
-							(Forge)
-							return blockEntity.getPersistentData().getBoolean(name);
-							(NeoForge)
-							return blockEntity.getPersistentData().getBoolean(name).get();
-							*/
-							return blockEntity.getPersistentData().getBoolean(name);
+                        /*
+                        (1.20.1) (1.21.1)
+                        return blockEntity.getPersistentData().getCompound(Core.mod_id).getBoolean(name);
+                        (1.21.8)
+                        return blockEntity.getPersistentData().getCompound(Core.mod_id).getBoolean(name).get();
+                        */
+							return blockEntity.getPersistentData().getCompound(Core.mod_id).getBoolean(name);
 
 						}
 
@@ -1039,87 +1232,80 @@ public class GameUtils {
 
 					}
 
-				}.getValue(level_accessor, pos, name);
+				}.getValue(level_accessor, posX, posY, posZ, name);
 
 			}
 
-			public static void setText (LevelAccessor level_accessor, BlockPos pos, String name, String value) {
+			public static void setText (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, String value) {
 
-				BlockEntity block_entity = level_accessor.getBlockEntity(pos);
+				BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
 
 				if (block_entity != null) {
 
-					block_entity.getPersistentData().putString(name, value);
-					BlockState block = level_accessor.getBlockState(pos);
-
-					if (level_accessor instanceof ServerLevel level_server) {
-
-						level_server.sendBlockUpdated(pos, block, block, 2);
-
-					}
+					CompoundTag tag = new CompoundTag();
+					CompoundTag tag_add = new CompoundTag();
+					tag_add.putString(name, value);
+					tag.put(Core.mod_id, tag_add);
+					block_entity.getPersistentData().merge(tag);
+					BlockState block = GameUtils.block.getAt(level_accessor, posX, posY, posZ);
+					level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
 
 				}
 
 			}
 
-			public static void setNumber (LevelAccessor level_accessor, BlockPos pos, String name, double value) {
+			public static void setLogic (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, boolean value) {
 
-				BlockEntity block_entity = level_accessor.getBlockEntity(pos);
+				BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
 
 				if (block_entity != null) {
 
-					block_entity.getPersistentData().putDouble(name, value);
-					BlockState block = level_accessor.getBlockState(pos);
-
-					if (level_accessor instanceof ServerLevel level_server) {
-
-						level_server.sendBlockUpdated(pos, block, block, 2);
-
-					}
+					CompoundTag tag = new CompoundTag();
+					CompoundTag tag_add = new CompoundTag();
+					tag_add.putBoolean(name, value);
+					tag.put(Core.mod_id, tag_add);
+					block_entity.getPersistentData().merge(tag);
+					BlockState block = GameUtils.block.getAt(level_accessor, posX, posY, posZ);
+					level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
 
 				}
 
 			}
 
-			public static void setLogic (LevelAccessor level_accessor, BlockPos pos, String name, boolean value) {
+			public static void setNumber (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, double value) {
 
-				BlockEntity block_entity = level_accessor.getBlockEntity(pos);
+				BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
 
 				if (block_entity != null) {
 
-					block_entity.getPersistentData().putBoolean(name, value);
-					BlockState block = level_accessor.getBlockState(pos);
-
-					if (level_accessor instanceof ServerLevel level_server) {
-
-						level_server.sendBlockUpdated(pos, block, block, 2);
-
-					}
+					CompoundTag tag = new CompoundTag();
+					CompoundTag tag_add = new CompoundTag();
+					tag_add.putDouble(name, value);
+					tag.put(Core.mod_id, tag_add);
+					block_entity.getPersistentData().merge(tag);
+					BlockState block = GameUtils.block.getAt(level_accessor, posX, posY, posZ);
+					level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
 
 				}
 
 			}
 
-			public static void addNumber (LevelAccessor level_accessor, BlockPos pos, String name, double value) {
+			public static void addNumber (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, double value) {
 
-				BlockEntity block_entity = level_accessor.getBlockEntity(pos);
+				BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
 
 				if (block_entity != null) {
 
 					/*
-					(Forge)
-					block_entity.getPersistentData().putDouble(name, block_entity.getPersistentData().getDouble(name) + value);
-					(NeoForge)
-					block_entity.getPersistentData().putDouble(name, block_entity.getPersistentData().getDouble(name).get() + value);
+					(1.20.1) (1.21.1)
+					block_entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, block_entity.getPersistentData().getCompound(Core.mod_id).getDouble(name) + value);
+					(1.21.8)
+					block_entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, block_entity.getPersistentData().getCompound(Core.mod_id).getDouble(name).get() + value);
 					*/
-					block_entity.getPersistentData().putDouble(name, block_entity.getPersistentData().getDouble(name) + value);
-					BlockState block = level_accessor.getBlockState(pos);
+					block_entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, block_entity.getPersistentData().getCompound(Core.mod_id).getDouble(name) + value);
 
-					if (level_accessor instanceof ServerLevel level_server) {
-
-						level_server.sendBlockUpdated(pos, block, block, 2);
-
-					}
+					BlockState block = GameUtils.block.getAt(level_accessor, posX, posY, posZ);
+					level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
 
 				}
 
@@ -1131,149 +1317,93 @@ public class GameUtils {
 
 			public static String getText (Entity entity, EquipmentSlot slot, String name) {
 
-				/*
-				(Forge)
-				return GameUtils.entity.getItemSlot(entity, slot).getOrCreateTag().getString(name);
-				(NeoForge)
-				return GameUtils.entity.getItemSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getString("path"));
-				*/
-				return GameUtils.entity.getItemSlot(entity, slot).getOrCreateTag().getString(name);
+            /*
+            (1.20.1)
+            return GameUtils.entity.getItemSlot(entity, slot).getOrCreateTag().getCompound(Core.mod_id).getString(name);
+            (1.21.1)
+            return GameUtils.entity.getItemSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
+            */
+				return GameUtils.entity.getItemSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
 
 			}
-
-		}
-
-		public static CompoundTag textToCompoundTag (String id) {
-
-			CompoundTag return_NBT = new CompoundTag();
-
-			{
-
-				try {
-
-					/*
-					(Forge)
-					return_NBT = TagParser.parseTag(id.substring(id.indexOf("{")));
-					(NeoForge)
-					return_NBT = TagParser.parseCompoundFully(id.substring(id.indexOf("{")));
-					*/
-					return_NBT = TagParser.parseTag(id.substring(id.indexOf("{")));
-
-				} catch (Exception ignored) {
-
-
-
-				}
-
-			}
-
-			return return_NBT;
 
 		}
 
 	}
 
-	public static class space {
+	public static class score {
 
-		public static int[] getWorldSpawnPos (LevelAccessor level_accessor) {
+		public static void create (ServerLevel level_server, String name) {
 
-			/*
-			(Forge)
-			return new int[]{level_accessor.getLevelData().getXSpawn(), level_accessor.getLevelData().getZSpawn()};
-			(NeoForge)
-			return new int[]{level_accessor.getLevelData().getSpawnPos().getX(), level_accessor.getLevelData().getSpawnPos().getZ()};
-			*/
-			return new int[]{level_accessor.getLevelData().getXSpawn(), level_accessor.getLevelData().getZSpawn()};
+			Scoreboard scoreboard = level_server.getServer().getScoreboard();
+			Objective objective = scoreboard.getObjective(name);
 
-		}
+			if (objective == null) {
 
-		public static BlockPos getBlockLook (Entity entity, double distance) {
+				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER, true, null);
 
-			return entity.level().clip(new ClipContext(entity.getEyePosition(1f), entity.getEyePosition(1f).add(entity.getViewVector(1f).scale(distance)), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, entity)).getBlockPos();
+			}
 
 		}
 
-		public static int getBuildHeight (LevelAccessor level_accessor, boolean highest) {
+		public static int get (ServerLevel level_server, String objective, String player) {
 
-			int height = 0;
+			ServerScoreboard score = level_server.getServer().getScoreboard();
+			Objective objective_test = score.getObjective(objective);
 
-			if (highest == true) {
+			if (objective_test != null) {
 
 				/*
-				(Forge)
-				height = level_accessor.getMaxBuildHeight();
-				(NeoForge)
-				height = level_accessor.getMaxY();
+				(1.20.1)
+				return score.getOrCreatePlayerScore(player, objective_test).getScore();
+				(1.21.1)
+				return score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).get();
 				*/
-				height = level_accessor.getMaxBuildHeight();
+				return score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).get();
 
-			} else {
+			}
+
+			return 0;
+
+		}
+
+		public static void set (ServerLevel level_server, String objective, String player, int value) {
+
+			ServerScoreboard score = level_server.getServer().getScoreboard();
+			Objective objective_test = score.getObjective(objective);
+
+			if (objective_test != null) {
 
 				/*
-				(Forge)
-				height = level_accessor.getMinBuildHeight();
-				(NeoForge)
-				height = level_accessor.getMinY();
+				(1.20.1)
+				score.getOrCreatePlayerScore(player, objective_test).setScore(value);
+				(1.21.1)
+				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(value);
 				*/
-				height = level_accessor.getMinBuildHeight();
-
-			}
-
-			return height;
-
-		}
-		
-		public static boolean testChunkStatus (LevelAccessor level_accessor, int chunkX, int chunkZ, String status) {
-
-			if (level_accessor.hasChunk(chunkX, chunkZ) == true) {
-
-				ChunkStatus status_convert = ChunkStatus.FULL;
-
-				if (status.equals("STRUCTURE_REFERENCES") == true) {
-
-					status_convert = ChunkStatus.STRUCTURE_REFERENCES;
-
-				} else if (status.equals("SURFACE") == true) {
-
-					status_convert = ChunkStatus.SURFACE;
-
-				} else if (status.equals("FEATURES") == true) {
-
-					status_convert = ChunkStatus.FEATURES;
-
-				}
-
-                return level_accessor.getChunk(chunkX, chunkZ).getStatus().isOrAfter(status_convert);
-
-			}
-
-			return false;
-
-		}
-
-		public static Holder<Biome> getBiome (LevelAccessor level_accessor, int posX, int posY, int posZ) {
-
-			if (level_accessor.hasChunk(posX >> 4, posZ >> 4) == true) {
-
-				return level_accessor.getBiome(new BlockPos(posX, posY, posZ));
-
-			} else {
-
-				return level_accessor.getUncachedNoiseBiome(posX, posY, posZ);
+				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(value);
 
 			}
 
 		}
 
-		public static void placeFeature (WorldGenLevel level_world_gen, int posX, int posY, int posZ, String id) {
+		public static void add (ServerLevel level_server, String objective, String player, int value) {
 
-			/*
-			(Forge)
-			level_world_gen.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), new BlockPos(posX, posY, posZ));
-			(NeoForge)
-			level_world_gen.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getValueOrThrow(FeatureUtils.createKey(id)).place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), new BlockPos(posX, posY, posZ));
-			*/
-			level_world_gen.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), new BlockPos(posX, posY, posZ));
+			ServerScoreboard score = level_server.getServer().getScoreboard();
+			Objective objective_test = score.getObjective(objective);
+
+			if (objective_test != null) {
+
+				int old_value = get(level_server, objective, player);
+
+				/*
+				(1.20.1)
+				score.getOrCreatePlayerScore(player, objective_test).setScore(old_value + value);
+				(1.21.1)
+				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(old_value + value);
+				*/
+				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(old_value + value);
+
+			}
 
 		}
 

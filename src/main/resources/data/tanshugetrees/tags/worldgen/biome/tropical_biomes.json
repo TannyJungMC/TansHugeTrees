@@ -6,7 +6,7 @@
       "required": false
     },
     {
-      "id": "#neoforge:is_hot",
+      "id": "#c:is_hot",
       "required": false
     },
     {
@@ -14,7 +14,7 @@
       "required": false
     },
     {
-      "id": "#neoforge:is_wet",
+      "id": "#c:is_wet",
       "required": false
     }
   ]

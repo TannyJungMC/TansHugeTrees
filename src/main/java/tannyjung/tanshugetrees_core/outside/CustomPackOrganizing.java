@@ -2,7 +2,7 @@ package tannyjung.tanshugetrees_core.outside;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
-import org.apache.logging.log4j.Logger;
+import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 
 import java.io.File;
@@ -15,16 +15,16 @@ public class CustomPackOrganizing {
     private static final Map<String, Map<String, List<String>>> cache_errors = new HashMap<>();
     private static final Map<String, String> cache_pack_ids = new HashMap<>();
 
-    public static Map<String, Map<String, List<String>>> start (String path_config, String pack_separation_single, String pack_separation_multiple, int data_structure_version) {
+    public static Map<String, Map<String, List<String>>> start (String pack_separation_single, String pack_separation_multiple) {
 
-        FileManager.delete(path_config + "/#dev/temporary");
-        FileManager.createEmptyFile(path_config + "/#dev/temporary", true);
-        FileManager.createEmptyFile(path_config + "/custom_packs", true);
+        FileManager.delete(Core.path_config + "/#dev/#temporary");
+        FileManager.createEmptyFile(Core.path_config + "/#dev/#temporary", true);
+        FileManager.createEmptyFile(Core.path_config + "/custom_packs", true);
 
         // Rename All Packs Back
         {
 
-            File[] packs = new File(path_config + "/custom_packs").listFiles();
+            File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 
             if (packs != null) {
 
@@ -41,7 +41,7 @@ public class CustomPackOrganizing {
         // Extract ZIP
         {
 
-            File[] packs = new File(path_config + "/custom_packs").listFiles();
+            File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 
             if (packs != null) {
 
@@ -49,7 +49,7 @@ public class CustomPackOrganizing {
 
                     if (pack.getName().endsWith(".zip") == true) {
 
-                        FileManager.extractZIP(pack.getPath(), path_config + "/#dev/temporary/pack_zip/" + pack.getName().replace(".zip", ""), false, "");
+                        FileManager.extractZIP(pack.getPath(), Core.path_config + "/#dev/#temporary/pack_zip/" + pack.getName().replace(".zip", ""), false, "");
 
                     }
 
@@ -62,7 +62,7 @@ public class CustomPackOrganizing {
         // Organizing Info
         {
 
-            File[] packs = new File(path_config + "/custom_packs").listFiles();
+            File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 
             if (packs != null) {
 
@@ -72,7 +72,7 @@ public class CustomPackOrganizing {
 
                     if (pack.getName().endsWith(".zip") == true) {
 
-                        file = new File(path_config + "/#dev/temporary/pack_zip/" + pack.getName().replace(".zip", "") + "/info.txt");
+                        file = new File(Core.path_config + "/#dev/#temporary/pack_zip/" + pack.getName().replace(".zip", "") + "/info.txt");
 
                     } else {
 
@@ -82,7 +82,7 @@ public class CustomPackOrganizing {
 
                     if (file.exists() == true && file.isDirectory() == false) {
 
-                        FileManager.copy(file.getPath(), path_config + "/#dev/temporary/info/" + pack.getName() + ".txt", false);
+                        FileManager.copy(file.getPath(), Core.path_config + "/#dev/#temporary/info/" + pack.getName() + ".txt", false);
 
                     }
 
@@ -92,15 +92,15 @@ public class CustomPackOrganizing {
 
         }
 
-        getPackID(path_config);
-        testInfo(path_config, data_structure_version);
+        getPackID();
+        testInfo();
         pack_separation_single = "/" + pack_separation_single + "/";
         pack_separation_multiple = "/" + pack_separation_multiple + "/";
 
         // Organizing Data
         {
 
-            File[] packs = new File(path_config + "/custom_packs").listFiles();
+            File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 
             if (packs != null) {
 
@@ -108,7 +108,7 @@ public class CustomPackOrganizing {
 
                 if (tanny_pack.exists() == true) {
 
-                    organizingData(path_config, tanny_pack, pack_separation_single, pack_separation_multiple);
+                    organizingData(tanny_pack, pack_separation_single, pack_separation_multiple);
 
                 }
 
@@ -116,7 +116,7 @@ public class CustomPackOrganizing {
 
                     if (pack != tanny_pack) {
 
-                        organizingData(path_config, pack, pack_separation_single, pack_separation_multiple);
+                        organizingData(pack, pack_separation_single, pack_separation_multiple);
 
                     }
 
@@ -129,7 +129,7 @@ public class CustomPackOrganizing {
         // Organizing Replacement
         {
 
-            File[] packs = new File(path_config + "/custom_packs").listFiles();
+            File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 
             if (packs != null) {
 
@@ -139,7 +139,7 @@ public class CustomPackOrganizing {
 
                         if (pack.getName().endsWith(".zip") == true) {
 
-                            pack = new File(path_config + "/#dev/temporary/pack_zip/" + pack.getName().replace(".zip", ""));
+                            pack = new File(Core.path_config + "/#dev/#temporary/pack_zip/" + pack.getName().replace(".zip", ""));
 
                         }
 
@@ -157,7 +157,7 @@ public class CustomPackOrganizing {
 
                                             if (source.toFile().isDirectory() == false) {
 
-                                                String replace_to = Path.of(path_config + "/#dev/temporary").resolve(file.toPath().relativize(source)).toString();
+                                                String replace_to = Path.of(Core.path_config + "/#dev/#temporary").resolve(file.toPath().relativize(source)).toString();
 
                                                 if (source.toString().endsWith(".txt") == true) {
 
@@ -262,7 +262,7 @@ public class CustomPackOrganizing {
         // Organizing Dev
         {
 
-            File[] packs = new File(path_config + "/custom_packs").listFiles();
+            File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 
             if (packs != null) {
 
@@ -270,7 +270,7 @@ public class CustomPackOrganizing {
 
                     if (pack.getName().endsWith(".zip") == true) {
 
-                        pack = new File(path_config + "/#dev/temporary/pack_zip/" + pack.getName().replace(".zip", ""));
+                        pack = new File(Core.path_config + "/#dev/#temporary/pack_zip/" + pack.getName().replace(".zip", ""));
 
                     }
 
@@ -288,7 +288,7 @@ public class CustomPackOrganizing {
 
                                         if (source.toFile().isDirectory() == false) {
 
-                                            String replace_to = Path.of(path_config + "/#dev/temporary").resolve(file.toPath().relativize(source)).toString();
+                                            String replace_to = Path.of(Core.path_config + "/#dev/#temporary").resolve(file.toPath().relativize(source)).toString();
                                             FileManager.copy(source.toString(), replace_to, false);
 
                                         }
@@ -313,9 +313,9 @@ public class CustomPackOrganizing {
 
         }
 
-        FileManager.delete(path_config + "/#dev/temporary/pack_zip");
-        testSettings(path_config);
-        testWorldGen(path_config);
+        FileManager.delete(Core.path_config + "/#dev/#temporary/pack_zip");
+        testSettings();
+        testWorldGen();
 
         Map<String, Map<String, List<String>>> errors = new HashMap<>(cache_errors);
         cache_errors.clear();
@@ -324,9 +324,9 @@ public class CustomPackOrganizing {
 
     }
 
-    private static void getPackID (String path_config) {
+    private static void getPackID () {
 
-        File[] files = new File(path_config + "/#dev/temporary/info").listFiles();
+        File[] files = new File(Core.path_config + "/#dev/#temporary/info").listFiles();
 
         if (files != null) {
 
@@ -353,28 +353,22 @@ public class CustomPackOrganizing {
 
     }
 
-    private static void a () {
+    public static void testInfo () {
 
-
-
-    }
-
-    public static void testInfo (String path_config, int data_structure_version_config) {
-
-        File[] packs = new File(path_config + "/custom_packs").listFiles();
+        File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 
         if (packs != null) {
 
             File file = null;
             String pack_id = "";
             List<String> pack_id_duplicated_test = new ArrayList<>();
-            int data_structure_version = 0;
+            String data_structure_version = "";
             String required_packs = "";
             String required_mods = "";
 
             for (File pack : packs) {
 
-                file = new File(path_config + "/#dev/temporary/info/" + pack.getName() + ".txt");
+                file = new File(Core.path_config + "/#dev/#temporary/info/" + pack.getName() + ".txt");
 
                 if (file.exists() == true && file.isDirectory() == false) {
 
@@ -385,7 +379,7 @@ public class CustomPackOrganizing {
 
                             if (read_all.startsWith("data_structure_version = ") == true) {
 
-                                data_structure_version = Integer.parseInt(read_all.substring("data_structure_version = ".length()));
+                                data_structure_version = read_all.substring("data_structure_version = ".length());
 
                             } else if (read_all.startsWith("required_packs = ")) {
 
@@ -422,7 +416,7 @@ public class CustomPackOrganizing {
                         // Data Structure Version
                         {
 
-                            if (data_structure_version != data_structure_version_config) {
+                            if (Core.data_structure_version_pack.equals(data_structure_version) == false) {
 
                                 FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
                                 addError("pack", "pack / unsupported mod version", pack.getPath(), pack.getName());
@@ -512,9 +506,9 @@ public class CustomPackOrganizing {
 
     }
 
-    private static void testSettings (String path_config) {
+    private static void testSettings () {
 
-        File file = new File(path_config + "/#dev/temporary/presets");
+        File file = new File(Core.path_config + "/#dev/#temporary/presets");
 
         if (file.exists() == true && file.isDirectory() == true) {
 
@@ -526,7 +520,7 @@ public class CustomPackOrganizing {
 
                     if (file_each.getName().startsWith("[INCOMPATIBLE] ") == false && file_each.getName().endsWith("_settings.txt") == true) {
 
-                        String name = Path.of(path_config + "/#dev/temporary/presets").relativize(file_each.toPath()).toString().replace("\\", "/");
+                        String name = Path.of(Core.path_config + "/#dev/#temporary/presets").relativize(file_each.toPath()).toString().replace("\\", "/");
                         String value = "";
 
                         for (String read_all : FileManager.readTXT(file_each.getPath())) {
@@ -560,7 +554,7 @@ public class CustomPackOrganizing {
 
                                         if (value.isEmpty() == false) {
 
-                                            if (new File(path_config + "/#dev/temporary/functions/" + value + ".txt").exists() == false) {
+                                            if (new File(Core.path_config + "/#dev/#temporary/functions/" + value + ".txt").exists() == false) {
 
                                                 addError("file", "settings file / unknown function", file_each.getPath(), name + " > " + value);
                                                 break;
@@ -591,21 +585,21 @@ public class CustomPackOrganizing {
 
     }
 
-    private static void testWorldGen (String path_config) {
+    private static void testWorldGen () {
 
-        File file = new File(path_config + "/#dev/temporary/world_gen");
+        File file = new File(Core.path_config + "/#dev/#temporary/world_gen");
 
         if (file.exists() == true && file.isDirectory() == true) {
 
             try {
 
-                Files.walk(Path.of(path_config + "/#dev/temporary/world_gen")).forEach(source -> {
+                Files.walk(Path.of(Core.path_config + "/#dev/#temporary/world_gen")).forEach(source -> {
 
                     File file_each = source.toFile();
 
                     if (file_each.getName().startsWith("[INCOMPATIBLE] ") == false && file_each.getName().endsWith(".txt") == true) {
 
-                        String name = Path.of(path_config + "/#dev/temporary/world_gen").relativize(file_each.toPath()).toString().replace("\\", "/");
+                        String name = Path.of(Core.path_config + "/#dev/#temporary/world_gen").relativize(file_each.toPath()).toString().replace("\\", "/");
                         File file_test = null;
 
                         for (String read_all : FileManager.readTXT(file_each.getPath())) {
@@ -616,7 +610,7 @@ public class CustomPackOrganizing {
 
                                     {
 
-                                        file_test = new File(path_config + "/#dev/temporary/presets/" + read_all.substring("path_storage = ".length()) + "/storage");
+                                        file_test = new File(Core.path_config + "/#dev/#temporary/presets/" + read_all.substring("path_storage = ".length()) + "/storage");
 
                                         if (file_test.exists() == true && file_test.isDirectory() == true) {
 
@@ -640,7 +634,7 @@ public class CustomPackOrganizing {
 
                                     {
 
-                                        file_test = new File(path_config + "/#dev/temporary/presets/" + read_all.substring("path_settings = ".length()) + "_settings.txt");
+                                        file_test = new File(Core.path_config + "/#dev/#temporary/presets/" + read_all.substring("path_settings = ".length()) + "_settings.txt");
 
                                         if (file_test.exists() == false) {
 
@@ -671,7 +665,7 @@ public class CustomPackOrganizing {
 
     }
 
-    private static void organizingData (String path_config, File pack, String pack_separation_single, String pack_separation_multiple) {
+    private static void organizingData (File pack, String pack_separation_single, String pack_separation_multiple) {
 
         boolean incompatible = pack.getName().startsWith("[INCOMPATIBLE] ");
 
@@ -685,7 +679,7 @@ public class CustomPackOrganizing {
 
         if (pack.getName().endsWith(".zip") == true) {
 
-            pack = new File(path_config + "/#dev/temporary/pack_zip/" + pack.getName().replace(".zip", ""));
+            pack = new File(Core.path_config + "/#dev/#temporary/pack_zip/" + pack.getName().replace(".zip", ""));
 
         }
 
@@ -704,7 +698,7 @@ public class CustomPackOrganizing {
 
                         if (incompatible == false) {
 
-                            FileManager.copy(file.getPath(), path_config + "/#dev/temporary/" + file.getName(), true);
+                            FileManager.copy(file.getPath(), Core.path_config + "/#dev/#temporary/" + file.getName(), true);
 
                         }
 
@@ -715,7 +709,7 @@ public class CustomPackOrganizing {
                     // Multiple Separation
                     {
 
-                        Path path_to = Path.of(path_config + "/#dev/temporary/" + file.getName() + "/" + cache_pack_ids.get(pack_name));
+                        Path path_to = Path.of(Core.path_config + "/#dev/#temporary/" + file.getName() + "/" + cache_pack_ids.get(pack_name));
 
                         {
 
@@ -770,7 +764,7 @@ public class CustomPackOrganizing {
 
     }
 
-    public static void sendErrorMessage (ServerLevel level_server, Logger logger, String prefix, Map<String, Map<String, List<String>>> errors, String type) {
+    public static void sendErrorMessage (ServerLevel level_server, Map<String, Map<String, List<String>>> errors, String type) {
 
         if (errors.containsKey(type) == true) {
 
@@ -784,11 +778,11 @@ public class CustomPackOrganizing {
 
                 if (level_server != null) {
 
-                    GameUtils.misc.sendChatMessage(level_server, null, "@a", "red", prefix + " : " + message);
+                    GameUtils.misc.sendChatMessage(level_server, "@a", message + " / red");
 
                 } else {
 
-                    logger.error(message);
+                    Core.logger.error(message);
 
                 }
 
@@ -796,11 +790,11 @@ public class CustomPackOrganizing {
 
                     if (level_server != null) {
 
-                        GameUtils.misc.sendChatMessage(level_server, null, "@a", "dark_gray", prefix + " : " + get);
+                        GameUtils.misc.sendChatMessage(level_server, "@a", get + " / dark_gray");
 
                     } else {
 
-                        logger.error("- {}", get);
+                        Core.logger.error("- {}", get);
 
                     }
 

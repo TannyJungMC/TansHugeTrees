@@ -16,7 +16,7 @@ public class SaplingTrader {
 
     public static void summonTrader (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ) {
 
-        File[] files = new File(Core.path_config + "/#dev/temporary/sapling_trader").listFiles();
+        File[] files = new File(Core.path_config + "/#dev/#temporary/sapling_trader").listFiles();
         StringBuilder data = new StringBuilder();
         data.append("VillagerData:{level:99},CustomName:'{\"text\":\"Sapling Trader\"}',ArmorItems:[{},{},{},{id:\"tanshugetrees:sapling_yokai\",Count:1b}],DeathLootTable:\"minecraft:empty\",ArmorDropChances:[0.0f,0.0f,0.0f,0.0f],Offers:{Recipes:[");
 
@@ -68,11 +68,11 @@ public class SaplingTrader {
         }
 
         data.append("]}");
-        GameUtils.command.run(false, level_server, posX, posY, posZ, "execute positioned ~0.5 ~0.5 ~0.5 run " + GameUtils.command.summonEntity("wandering_trader", "TANSHUGETREES", "Sapling Trader", data.toString()));
-        GameUtils.command.run(false, level_server, posX, posY, posZ, "execute positioned ~0.5 ~0.5 ~0.5 run particle minecraft:flash ~ ~ ~ 0 0 0 0 1 force");
-        GameUtils.command.run(false, level_server, posX, posY, posZ, "execute positioned ~0.5 ~0.5 ~0.5 run particle minecraft:campfire_signal_smoke ~ ~ ~ 0.5 0.5 0.5 0.01 20 force");
-        GameUtils.command.run(false, level_server, posX, posY, posZ, "execute positioned ~0.5 ~0.5 ~0.5 run playsound minecraft:entity.illusioner.cast_spell ambient @a[distance=..100] ~ ~ ~ 2 0 0.025");
-        level_accessor.setBlock(new BlockPos(posX, posY, posZ), Blocks.AIR.defaultBlockState(), 2);
+        GameUtils.entity.summon(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "minecraft:wandering_trader", "TANSHUGETREES-sapling_trader", "Sapling Trader", data.toString(), false);
+        GameUtils.misc.spawnParticle(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 0, 0, 0, 0, 1, "minecraft:flash");
+        GameUtils.misc.spawnParticle(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 0.5, 0.5, 0.5, 0.01, 20, "minecraft:campfire_signal_smoke");
+        GameUtils.misc.playSound(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 2, 0, "minecraft:entity.illusioner.cast_spell");
+        GameUtils.block.removeAt(level_accessor, posX, posY, posZ);
 
     }
 

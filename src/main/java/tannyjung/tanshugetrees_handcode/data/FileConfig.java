@@ -74,10 +74,6 @@ public class FileConfig {
 	public static void repair () {
 
         String write = """
-                Important Notes
-                
-                - To apply and repair missing values, run this command [ /TANSHUGETREES restart ] or restart the world.
-                
                 ----------------------------------------------------------------------------------------------------
                 TannyJung's Main Pack
                 ----------------------------------------------------------------------------------------------------
@@ -239,7 +235,7 @@ public class FileConfig {
                 ----------------------------------------------------------------------------------------------------
                 
                 developer_mode = false
-                | Enable some features for debugging. Such as region pre-location info in-game, to see what tree slowdown the pre-location. Tracking the trees to see what tree running the living tree mechanics.
+                | Enable some features for debugging. Such as detailed error messages, region pre-location details in-game, etc.
                 
                 world_gen_icon = true
                 | Enable little icon at top-left showing everytime the mod generate new region. This config only affect on singleplayer.

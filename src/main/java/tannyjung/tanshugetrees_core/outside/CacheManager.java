@@ -118,7 +118,7 @@ public class CacheManager {
 
         if (cache_string_list.get("functions").containsKey(id) == false) {
 
-            String[] data = FileManager.readTXT(Core.path_config + "/#dev/temporary/" + id + ".txt");
+            String[] data = FileManager.readTXT(Core.path_config + "/#dev/#temporary/" + id + ".txt");
             cache_string_list.get("functions").put(id, data);
 
         }

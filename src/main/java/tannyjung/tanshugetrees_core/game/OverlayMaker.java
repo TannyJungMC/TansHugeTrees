@@ -11,7 +11,7 @@ import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.net.URL;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,12 +28,12 @@ public class OverlayMaker {
         posZ = pos[1];
 
         /*
-        (Forge)
+        (1.20.1) (1.21.1)
         graphic.pose().pushPose();
         graphic.pose().scale((float) scale, (float) scale, 1.0f);
         graphic.drawString(Minecraft.getInstance().font, text, posX, posZ, color, shadow);
         graphic.pose().popPose();
-        (NeoForge)
+        (1.21.8)
         graphic.pose().pushMatrix();
         graphic.pose().scale((float) scale, (float) scale);
         graphic.drawString(Minecraft.getInstance().font, text, posX, posZ, color, shadow);
@@ -81,7 +81,7 @@ public class OverlayMaker {
 
                         try {
 
-                            BufferedImage buffer = ImageIO.read(new URL(path));
+                            BufferedImage buffer = ImageIO.read(URI.create(path).toURL());
                             NativeImage native_image = new NativeImage(buffer.getWidth(), buffer.getHeight(), false);
 
                             // Color Convert
@@ -106,9 +106,9 @@ public class OverlayMaker {
                                         abgr = (a << 24) | (b << 16) | (g << 8) | r;
 
                                         /*
-                                        (Forge)
+                                        (1.20.1) (1.21.1)
                                         native_image.setPixelRGBA(scanX, scanY, abgr);
-                                        (NeoForge)
+                                        (1.21.8)
                                         native_image.setPixelABGR(scanX, scanY, abgr);
                                         */
                                         native_image.setPixelRGBA(scanX, scanY, abgr);
@@ -120,9 +120,9 @@ public class OverlayMaker {
                             }
 
                             /*
-                            (Forge)
+                            (1.20.1) (1.21.1)
                             Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(native_image));
-                            (NeoForge)
+                            (1.21.8)
                             Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(() -> "test", native_image));
                             */
                             Minecraft.getInstance().getTextureManager().register(ResourceLocation.parse(name), new DynamicTexture(native_image));

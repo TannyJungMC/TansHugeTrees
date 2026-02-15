@@ -1,6 +1,5 @@
 package tannyjung.tanshugetrees_core;
 
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -11,8 +10,6 @@ import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.data.DataMigration;
 import tannyjung.tanshugetrees_handcode.data.DataRepair;
 import tannyjung.tanshugetrees_handcode.data.FileConfig;
-import tannyjung.tanshugetrees_handcode.data.TannyPack;
-import tannyjung.tanshugetrees_handcode.systems.Loop;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -21,30 +18,42 @@ import java.util.function.Supplier;
 import org.apache.logging.log4j.LogManager;
 
 /*
-(Forge)
+(1.20.1)
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
-(NeoForge)
+(1.21.1)
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.registries.DeferredRegister;
 */
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class Core {
 
+    /*
+    (1.20.1)
+    ___ForgeData___
+    (1.21.1) (1.21.8)
+    ___NeoForgeData___
+
+    NeoForgeData
+    */
+    
     public static String mod_name = "";
     public static String mod_id = "";
     public static String mod_id_big = "";
     public static String mod_id_short = "";
 
-    public static int data_structure_version = 0;
-    public static int data_structure_version_pack = 0;
+    public static String data_structure_version = "";
+    public static String data_structure_version_pack = "";
     public static String tanny_pack_type = "";
     public static String tanny_pack_type_original = "";
+
+    public static String github_pack = "";
+    public static String wiki = "";
 
     public static Logger logger = null;
     public static final Object global_locking = new Object();
@@ -52,18 +61,18 @@ public class Core {
     public static String path_config = "";
     public static String path_world_data = "";
     public static final ExecutorService thread_main = Executors.newFixedThreadPool(1, name -> { Thread thread = new Thread(name); thread.setName("TannyJung - " + Core.mod_name); return thread; });
-
+    
     public static void start (IEventBus bus) {
 
         Handcode.start();
 
         mod_id_big = mod_id.toUpperCase();
         tanny_pack_type_original = tanny_pack_type;
-        path_config = path_game + "/config/tannyjung_" + mod_id;
+        path_config = path_game + "/config/" + mod_id;
         path_world_data = path_game + "/saves/" + mod_id + "-error";
         logger = LogManager.getLogger(mod_id);
 
-        registry.start(bus);
+        Registries.start(bus);
 
 
 
@@ -82,87 +91,81 @@ public class Core {
 
     }
 
-    public static class registry {
+    public static void restart (ServerLevel level_server, String type, boolean detail_info) {
 
-        public static Map<String, Supplier<Feature<?>>> features = new HashMap<>();
+        Runnable runnable = () -> {
 
-        public static void start (IEventBus bus) {
+            synchronized (global_locking) {
 
-            Handcode.registry();
+                if (level_server != null && detail_info == true) {
 
-            // Feature
-            {
-
-                DeferredRegister<Feature<?>> deferred = DeferredRegister.create(Registries.FEATURE, mod_id);
-
-                for (Map.Entry<String, Supplier<Feature<?>>> entry : features.entrySet()) {
-
-                    deferred.register(entry.getKey(), entry.getValue());
+                    GameUtils.misc.sendChatMessage(level_server, "@a", "Restarting... / gray");
 
                 }
 
-                deferred.register(bus);
-                features.clear();
+                double cache_size = CacheManager.clear();
+
+                if (type.contains("config") == true) {
+
+                    {
+
+                        DataRepair.start();
+                        DataRepair.messagePackErrors(level_server, "pack");
+
+                        if (detail_info == true) {
+
+                            DataRepair.messagePackErrors(level_server, "file");
+
+                        }
+
+                    }
+
+                }
+
+                if (type.contains("world") == true) {
+
+                    {
+
+                        if (level_server != null) {
+
+                            GameUtils.score.create(level_server, mod_id_big);
+
+                            if (detail_info == true) {
+
+                                GameUtils.misc.sendChatMessage(level_server, "@a", "Restarted and cleared main caches (About " + cache_size + " MB) / gray");
+
+                            }
+
+                        }
+
+                    }
+
+                }
 
             }
+
+        };
+
+        if (level_server == null) {
+
+            runnable.run();
+
+        } else {
+
+            Loops.restart = true;
+
+            DelayedWorks.create(true, 20, () -> {
+
+                runnable.run();
+                Loops.restart = false;
+
+            });
 
         }
 
     }
 
-    public static class loop {
-
-        public static boolean restart = false;
-        private static int second = 0;
-        private static int minute = 0;
-
-        public static void run (LevelAccessor level_accessor, ServerLevel level_server) {
-
-            if (restart == false) {
-
-                loopTick(level_accessor, level_server);
-
-            }
-
-        }
-
-        private static void loopTick (LevelAccessor level_accessor, ServerLevel level_server) {
-
-            Loop.tick(level_accessor, level_server);
-            second = second + 1;
-
-            if (second > 20) {
-
-                second = 0;
-                loopSecond(level_accessor, level_server);
-
-            }
-
-        }
-
-        private static void loopSecond (LevelAccessor level_accessor, ServerLevel level_server) {
-
-            Loop.second(level_server);
-            minute = minute + 1;
-
-            if (minute > 60) {
-
-                minute = 0;
-                loopMinute(level_accessor, level_server);
-
-            }
-
-        }
-
-        private static void loopMinute (LevelAccessor level_accessor, ServerLevel level_server) {
-
-            Loop.minute(level_accessor, level_server);
-
-        }
-
-    }
-
-    public static class delayed_works {
+    public static class DelayedWorks {
 
         private static final Collection<AbstractMap.SimpleEntry<Runnable, Integer>> delayed_works = new ConcurrentLinkedQueue<>();
         private static final ScheduledExecutorService thread_delay = Executors.newScheduledThreadPool(1);
@@ -200,75 +203,81 @@ public class Core {
 
     }
 
-    public static void restart (ServerLevel level_server, String type, boolean detail_info) {
+    public static class Loops {
 
-        Runnable runnable = () -> {
+        public static boolean restart = false;
+        private static int second = 0;
+        private static int minute = 0;
 
-            synchronized (global_locking) {
+        public static void run (LevelAccessor level_accessor, ServerLevel level_server) {
 
-                if (level_server != null && detail_info == true) {
+            if (restart == false) {
 
-                    GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", Core.mod_id_short + " : Restarting...");
-
-                }
-
-                double cache_size = CacheManager.clear();
-
-                if (type.contains("config") == true) {
-
-                    {
-
-                        DataRepair.start();
-                        DataRepair.messagePackErrors(level_server, "pack");
-
-                        if (detail_info == true) {
-
-                            DataRepair.messagePackErrors(level_server, "file");
-
-                        }
-
-                    }
-
-                }
-
-                if (type.contains("world") == true) {
-
-                    {
-
-                        if (level_server != null) {
-
-                            GameUtils.command.run(false, level_server, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
-
-                            if (detail_info == true) {
-
-                                GameUtils.misc.sendChatMessage(level_server, null, "@a", "gray", Core.mod_id_short + " : Restarted and cleared main caches (About " + cache_size + " MB)");
-
-                            }
-
-                        }
-
-                    }
-
-                }
+                loopTick(level_accessor, level_server);
 
             }
 
-        };
+        }
 
-        if (level_server == null) {
+        private static void loopTick (LevelAccessor level_accessor, ServerLevel level_server) {
 
-            runnable.run();
+            tannyjung.tanshugetrees_handcode.systems.Loops.tick(level_accessor, level_server);
+            second = second + 1;
 
-        } else {
+            if (second > 20) {
 
-            loop.restart = true;
+                second = 0;
+                loopSecond(level_accessor, level_server);
 
-            delayed_works.create(true, 20, () -> {
+            }
 
-                runnable.run();
-                loop.restart = false;
+        }
 
-            });
+        private static void loopSecond (LevelAccessor level_accessor, ServerLevel level_server) {
+
+            tannyjung.tanshugetrees_handcode.systems.Loops.second(level_server);
+            minute = minute + 1;
+
+            if (minute > 60) {
+
+                minute = 0;
+                loopMinute(level_accessor, level_server);
+
+            }
+
+        }
+
+        private static void loopMinute (LevelAccessor level_accessor, ServerLevel level_server) {
+
+            tannyjung.tanshugetrees_handcode.systems.Loops.minute(level_accessor, level_server);
+
+        }
+
+    }
+
+    public static class Registries {
+
+        public static Map<String, Supplier<Feature<?>>> features = new HashMap<>();
+
+        public static void start (IEventBus bus) {
+
+            Handcode.registry();
+
+            // Feature
+            {
+
+                DeferredRegister<Feature<?>> deferred = DeferredRegister.create(net.minecraft.core.registries.Registries.FEATURE, mod_id);
+
+                for (Map.Entry<String, Supplier<Feature<?>>> entry : features.entrySet()) {
+
+                    deferred.register(entry.getKey(), entry.getValue());
+
+                }
+
+                deferred.register(bus);
+                features.clear();
+
+            }
 
         }
 

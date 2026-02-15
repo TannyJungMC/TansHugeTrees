@@ -9,7 +9,7 @@ import tannyjung.tanshugetrees_core.game.OverlayMaker;
 import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.TreeLocation;
 
-public class Overlay {
+public class Overlays {
     
     public static void eventMenu (Screen screen, GuiGraphics graphic, int screen_width, int screen_height) {
 

@@ -5,15 +5,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
-import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.CommandMaker;
-import tannyjung.tanshugetrees_core.game.TXTFunction;
-import tannyjung.tanshugetrees_handcode.Handcode;
-
-import tannyjung.tanshugetrees_handcode.data.TannyPack;
-import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanics;
-import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanicsLeafDrop;
-import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanicsLeafLitterRemover;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.Seasons;
 import tannyjung.tanshugetrees_handcode.systems.tree_generator.*;
 
@@ -31,16 +23,7 @@ public class Commands {
         CommandMaker.create(event, 2, "TANSHUGETREES / command / shape_file_converter / stop", run.command.shape_file_converter::stop);
         CommandMaker.create(event, 2, "TANSHUGETREES / command / summon_tree / <text>", run.command::summon_tree);
         CommandMaker.create(event, 2, "TANSHUGETREES / command / summon_sapling_trader", run.command::summon_sapling_trader);
-        CommandMaker.create(event, 2, "TANSHUGETREES / command / txt_function / <text>", run.command::txt_function);
-        CommandMaker.create(event, 2, "TANSHUGETREES / dev / delayed_command", run.dev::delayed_command);
-        CommandMaker.create(event, 2, "TANSHUGETREES / dev / living_tree_mechanics / leaf_drop", run.dev.living_tree_mechanics::leaf_drop);
-        CommandMaker.create(event, 2, "TANSHUGETREES / dev / living_tree_mechanics / leaf_litter_remover", run.dev.living_tree_mechanics::leaf_litter_remover);
-        CommandMaker.create(event, 2, "TANSHUGETREES / dev / living_tree_mechanics / loop", run.dev.living_tree_mechanics::loop);
-        CommandMaker.create(event, 2, "TANSHUGETREES / dev / tree_generator", run.dev::tree_generator);
-        CommandMaker.create(event, 2, "TANSHUGETREES / restart", run::restart);
-        CommandMaker.create(event, 2, "TANSHUGETREES / tanny_pack / check_update", run.tanny_pack::check_update);
-        CommandMaker.create(event, 2, "TANSHUGETREES / tanny_pack / update", run.tanny_pack::update);
-
+        
     }
 
     private static class run {
@@ -135,128 +118,6 @@ public class Commands {
                 int posY = (int) Math.floor(data.getSource().getPosition().y());
                 int posZ = (int) Math.floor(data.getSource().getPosition().z());
                 SaplingTrader.summonTrader(level_accessor, level_server, posX, posY, posZ);
-
-            }
-
-            private static void txt_function (CommandContext<CommandSourceStack> data) {
-
-                LevelAccessor level_accessor = data.getSource().getLevel();
-                ServerLevel level_server = data.getSource().getLevel();
-                int posX = (int) Math.floor(data.getSource().getPosition().x());
-                int posY = (int) Math.floor(data.getSource().getPosition().y());
-                int posZ = (int) Math.floor(data.getSource().getPosition().z());
-                String variable_text = CommandMaker.argument.getText(data);
-                TXTFunction.run(level_accessor, level_server, posX, posY, posZ, variable_text, true);
-
-            }
-
-        }
-
-        private static class dev {
-
-            private static void delayed_command (CommandContext<CommandSourceStack> data) {
-
-                Entity entity = data.getSource().getEntity();
-
-                if (entity == null) {
-
-                    return;
-
-                }
-
-                TXTFunction.runDelayedCommand(entity);
-
-            }
-
-            private static class living_tree_mechanics {
-
-                private static void leaf_drop (CommandContext<CommandSourceStack> data) {
-
-                    Entity entity = data.getSource().getEntity();
-
-                    if (entity == null) {
-
-                        return;
-
-                    }
-
-                    LivingTreeMechanicsLeafDrop.start(entity);
-
-                }
-
-                private static void leaf_litter_remover (CommandContext<CommandSourceStack> data) {
-
-                    Entity entity = data.getSource().getEntity();
-
-                    if (entity == null) {
-
-                        return;
-
-                    }
-
-                    LivingTreeMechanicsLeafLitterRemover.start(entity);
-
-                }
-
-                private static void loop (CommandContext<CommandSourceStack> data) {
-
-                    Entity entity = data.getSource().getEntity();
-
-                    if (entity == null) {
-
-                        return;
-
-                    }
-
-                    LivingTreeMechanics.start(entity);
-
-                }
-
-            }
-
-            private static void tree_generator (CommandContext<CommandSourceStack> data) {
-
-                LevelAccessor level_accessor = data.getSource().getLevel();
-                Entity entity = data.getSource().getEntity();
-
-                if (entity == null) {
-
-                    return;
-
-                }
-
-                TreeGenerator.run(level_accessor, entity);
-
-            }
-
-        }
-
-        private static void restart (CommandContext<CommandSourceStack> data) {
-
-            ServerLevel level_server = data.getSource().getLevel();
-            Entity entity = data.getSource().getEntity();
-
-            Core.thread_main.submit(() -> {
-
-                Handcode.restart(level_server, "config / world", entity != null);
-
-            });
-
-        }
-
-        private static class tanny_pack {
-
-            private static void check_update (CommandContext<CommandSourceStack> data) {
-
-                ServerLevel level_server = data.getSource().getLevel();
-                TannyPack.checkUpdate(level_server);
-
-            }
-
-            private static void update (CommandContext<CommandSourceStack> data) {
-
-                ServerLevel level_server = data.getSource().getLevel();
-                TannyPack.reinstall(level_server);
 
             }
 

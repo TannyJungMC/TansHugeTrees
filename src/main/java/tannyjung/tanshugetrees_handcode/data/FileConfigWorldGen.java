@@ -44,7 +44,7 @@ public class FileConfigWorldGen {
     private static void create () {
 
         File file = new File(Core.path_config + "/config_worldgen.txt");
-        File file_organized = new File(Core.path_config + "/#dev/temporary/world_gen");
+        File file_organized = new File(Core.path_config + "/#dev/#temporary/world_gen");
 
         // Re-Create The File
         {
@@ -58,7 +58,7 @@ public class FileConfigWorldGen {
                         
                         - No need to run restart command to apply this config, as it's automatic applying.
                         - To repair missing values, run this command [ /TANSHUGETREES restart ] or restart the world.
-                        - Very important! You must lock the trees you have edited, to mark it as don't reset. Do it by change "[]" at font of tree ID to "[LOCK]".
+                        - Very important! You must lock the trees you have edited to prevent them from resetting. Do it by change "[]" at font of ID to "[LOCK]". This is for keeping config values you haven't changed to always up to date.
                         
                         Config Description
                         
@@ -74,9 +74,7 @@ public class FileConfigWorldGen {
                         - rotation : Set rotation of that tree. For random direction, use [ random ]. For specific direction, use [ north ], [ west ], [ east ], or [ south ]. Only supported one value per tree.
                         - mirrored : Set mirror effect for that tree. For random value, use [ random ]. For specific value, use [ true ] or [ false ]. Only supported one value per tree.
                         
-                        """
-
-                );
+                        """);
 
             }
 
@@ -96,7 +94,7 @@ public class FileConfigWorldGen {
                     write.append("----------------------------------------------------------------------------------------------------");
                     write.append("\n");
                     write.append("\n");
-                    write.append("Not found any pack installed");
+                    write.append("Not found any world gen file. This maybe because you haven't start a world yet, no any custom pack installed, or haven't run restart command yet. Try join a world or run restart command [ /TANSHUGETREES restart ] to see is there any error.");
                     write.append("\n");
                     write.append("\n");
 

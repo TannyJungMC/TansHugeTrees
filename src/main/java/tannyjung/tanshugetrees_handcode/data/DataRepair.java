@@ -1,7 +1,6 @@
 package tannyjung.tanshugetrees_handcode.data;
 
 import net.minecraft.server.level.ServerLevel;
-import tannyjung.tanshugetrees.TanshugetreesMod;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.CustomPackOrganizing;
 import tannyjung.tanshugetrees_core.outside.FileManager;
@@ -18,7 +17,7 @@ public class DataRepair {
 
         String pack_separation_single = "leaf_litter/sapling_trader";
         String pack_separation_multiple = "functions/presets/tree_decoration/world_gen";
-        pack_errors = CustomPackOrganizing.start(Core.path_config, pack_separation_single, pack_separation_multiple, Core.data_structure_version_pack);
+        pack_errors = CustomPackOrganizing.start(pack_separation_single, pack_separation_multiple);
 
         FileManager.createEmptyFile(Core.path_config + "/#dev/shape_file_converter", true);
         FileConfig.repair();
@@ -30,8 +29,8 @@ public class DataRepair {
 
     public static void messagePackErrors (ServerLevel level_server, String type) {
 
-        if (type.contains("pack") == true) CustomPackOrganizing.sendErrorMessage(level_server, TanshugetreesMod.LOGGER, Core.mod_id_short + "", pack_errors, "pack");
-        if (type.contains("file") == true) CustomPackOrganizing.sendErrorMessage(level_server, TanshugetreesMod.LOGGER, Core.mod_id_short + "", pack_errors, "file");
+        if (type.contains("pack") == true) CustomPackOrganizing.sendErrorMessage(level_server, pack_errors, "pack");
+        if (type.contains("file") == true) CustomPackOrganizing.sendErrorMessage(level_server, pack_errors, "file");
 
     }
 

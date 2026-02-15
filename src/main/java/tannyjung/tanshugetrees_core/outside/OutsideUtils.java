@@ -1,6 +1,5 @@
 package tannyjung.tanshugetrees_core.outside;
 
-import org.apache.logging.log4j.Logger;
 import tannyjung.tanshugetrees_core.Core;
 
 import java.io.BufferedInputStream;
@@ -50,6 +49,64 @@ public class OutsideUtils {
         }
 
         Core.logger.error("----------------------------------------------------------------------------------------------------");
+
+    }
+
+    public static String testVersion (String version_main, String version) {
+
+        String result = "";
+
+        test:
+        {
+
+            if (Core.data_structure_version.equals(version) == true) {
+
+                result = "same";
+
+            } else {
+
+                String[] main_split = version_main.split("\\.");
+                String[] split = version.split("\\.");
+                int main_split1 = 0;
+                int main_split2 = 0;
+                int main_split3 = 0;
+                int split1 = 0;
+                int split2 = 0;
+                int split3 = 0;
+
+                try {
+
+                    main_split1 = Integer.parseInt(main_split[0]);
+                    main_split2 = Integer.parseInt(main_split[1]);
+                    main_split3 = Integer.parseInt(main_split[2]);
+                    split1 = Integer.parseInt(split[0]);
+                    split2 = Integer.parseInt(split[1]);
+                    split3 = Integer.parseInt(split[2]);
+
+                } catch (Exception ignored) {
+
+                    result = "outdated";
+                    break test;
+
+                }
+
+                if (main_split1 < split1 || main_split2 < split2 || main_split3 < split3) {
+
+                    result = "outdated";
+
+                } else {
+
+                    result = "early";
+
+                }
+
+            }
+
+        }
+
+        System.out.println("+++ " + result + " <--- " + version_main + " / " + version);
+
+        return result;
 
     }
 

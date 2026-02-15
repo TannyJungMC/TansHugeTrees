@@ -12,42 +12,42 @@ public class CompatibilitySereneSeasons {
         int[] pos = GameUtils.space.getWorldSpawnPos(level_accessor);
         int posX = pos[0];
         int posZ = pos[1];
-        int posY = GameUtils.space.getBuildHeight(level_accessor, false) + 1;
+        int posY = GameUtils.space.getBuildHeight(level_accessor, false);
 
         // Run
         {
 
             runClear(level_server, posX, posY, posZ);
 
-            Core.delayed_works.create(false, 20, () -> {
+            Core.DelayedWorks.create(false, 20, () -> {
 
                 runTest(level_server, posX, posY, posZ, "spring", 0);
 
-                Core.delayed_works.create(false, 20, () -> {
+                Core.DelayedWorks.create(false, 20, () -> {
 
                     runClear(level_server, posX, posY, posZ);
 
-                    Core.delayed_works.create(false, 20, () -> {
+                    Core.DelayedWorks.create(false, 20, () -> {
 
                         runTest(level_server, posX, posY, posZ, "summer", 1);
 
-                        Core.delayed_works.create(false, 20, () -> {
+                        Core.DelayedWorks.create(false, 20, () -> {
 
                             runClear(level_server, posX, posY, posZ);
 
-                            Core.delayed_works.create(false, 20, () -> {
+                            Core.DelayedWorks.create(false, 20, () -> {
 
                                 runTest(level_server, posX, posY, posZ, "autumn", 2);
 
-                                Core.delayed_works.create(false, 20, () -> {
+                                Core.DelayedWorks.create(false, 20, () -> {
 
                                     runClear(level_server, posX, posY, posZ);
 
-                                    Core.delayed_works.create(false, 20, () -> {
+                                    Core.DelayedWorks.create(false, 20, () -> {
 
                                         runTest(level_server, posX, posY, posZ, "winter", 3);
 
-                                        Core.delayed_works.create(false, 20, () -> {
+                                        Core.DelayedWorks.create(false, 20, () -> {
 
                                             runClear(level_server, posX, posY, posZ);
 
@@ -71,16 +71,17 @@ public class CompatibilitySereneSeasons {
 
     }
 
-    private static void runClear (ServerLevel level_server, int posX, int posY, int posZ) {
+    private static void runClear (LevelAccessor level_accessor, int posX, int posY, int posZ) {
 
-        GameUtils.command.run(false, level_server, posX, posY, posZ, "fill ~ ~ ~ ~ ~1 ~ air");
+        GameUtils.block.removeAt(level_accessor, posX, posY, posZ);
+        GameUtils.block.removeAt(level_accessor, posX, posY + 1, posZ);
 
     }
 
     private static void runTest (ServerLevel level_server, int posX, int posY, int posZ, String season, int season_number) {
 
-        GameUtils.command.run(false, level_server, posX, posY, posZ, "setblock ~ ~ ~ command_block{Command:\"TANSHUGETREES command season set " + season + "\"}");
-        GameUtils.command.run(false, level_server, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
+        GameUtils.command.run(level_server, posX, posY, posZ, "setblock ~ ~ ~ command_block{Command:\"TANSHUGETREES command season set " + season + "\"}");
+        GameUtils.command.run(level_server, posX, posY, posZ, "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
 
     }
 
