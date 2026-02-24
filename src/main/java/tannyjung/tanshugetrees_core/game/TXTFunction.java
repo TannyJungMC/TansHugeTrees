@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_core.game;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -228,7 +229,11 @@ public class TXTFunction {
 
                                                                 }
 
-                                                                if (GameUtils.misc.testCustomBiome(GameUtils.space.getBiomeAt(level_server, posX + offset_posX, posY + offset_posY, posZ + offset_posZ), variable_text) == true) {
+                                                                convert_posX = posX + offset_posX;
+                                                                convert_posY = posY + offset_posY;
+                                                                convert_posZ = posZ + offset_posZ;
+
+                                                                if (GameUtils.misc.testCustomBiome(GameUtils.space.getBiomeAt(level_server, convert_posX, convert_posY, convert_posZ), variable_text) == true) {
 
                                                                     continue;
 
@@ -261,7 +266,7 @@ public class TXTFunction {
 
                                                                 if (GameUtils.space.testChunkStatus(level_accessor, convert_posX >> 4, convert_posZ >> 4, "minecraft:surface") == true) {
 
-                                                                    if (GameUtils.misc.testCustomBlock(GameUtils.block.getAt(level_accessor, convert_posX, convert_posY, convert_posZ), variable_text) == true) {
+                                                                    if (GameUtils.misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(convert_posX, convert_posY, convert_posZ)), variable_text) == true) {
 
                                                                         continue;
 
@@ -339,13 +344,13 @@ public class TXTFunction {
 
                                                                                 if (level_accessor.hasChunk(convert_posX >> 4, convert_posZ >> 4) == true) {
 
-                                                                                    if (GameUtils.misc.testCustomBlock(GameUtils.block.getAt(level_accessor, convert_posX, convert_posY, convert_posZ), variable_text) == false) {
+                                                                                    if (GameUtils.misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(convert_posX, convert_posY, convert_posZ)), variable_text) == false) {
 
                                                                                         continue;
 
                                                                                     }
 
-                                                                                    GameUtils.block.setAt(level_accessor, convert_posX, convert_posY, convert_posZ, variable_block, false);
+                                                                                    level_accessor.setBlock(new BlockPos(convert_posX, convert_posY, convert_posZ), variable_block, 2);
 
                                                                                 }
 
@@ -381,9 +386,13 @@ public class TXTFunction {
 
                                                                 if (random.nextDouble() < chance) {
 
+                                                                    convert_posX = posX + offset_posX;
+                                                                    convert_posY = posY + offset_posY;
+                                                                    convert_posZ = posZ + offset_posZ;
+
                                                                     try {
 
-                                                                        GameUtils.space.placeFeature(level_accessor, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, variable_text);
+                                                                        GameUtils.space.placeFeature(level_accessor, convert_posX, convert_posY, convert_posZ, variable_text);
 
                                                                     } catch (Exception ignored) {
 
@@ -417,7 +426,10 @@ public class TXTFunction {
 
                                                                 if (random.nextDouble() < chance) {
 
-                                                                    TXTFunction.run(level_accessor, level_server, posX + offset_posX, posY + offset_posY, posZ + offset_posZ, variable_text, false);
+                                                                    convert_posX = posX + offset_posX;
+                                                                    convert_posY = posY + offset_posY;
+                                                                    convert_posZ = posZ + offset_posZ;
+                                                                    TXTFunction.run(level_accessor, level_server, convert_posX, convert_posY, convert_posZ, variable_text, false);
 
                                                                 }
 
@@ -501,7 +513,7 @@ public class TXTFunction {
                 }
 
                 String command_final = command.replace("'", "*").replace("\"", "$");
-                GameUtils.entity.summon(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "marker", "TANNYJUNG-delayed_command", "Delayed Command", "NeoForgeData:{" + Core.mod_id + ":{command:\"" + command_final + "\"}}", true);
+                GameUtils.entity.summonWorldGen(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "marker", "Delayed Command", "TANNYJUNG-delayed_command", "{NeoForgeData:{" + Core.mod_id + ":{command:\"" + command_final + "\"}}}");
                 
             }
 
@@ -527,7 +539,7 @@ public class TXTFunction {
 
             }
 
-            GameUtils.command.runEntity(entity, "kill @s");
+            entity.discard();
 
         }
 

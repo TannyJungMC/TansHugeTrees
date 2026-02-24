@@ -1,9 +1,12 @@
 package tannyjung.tanshugetrees_handcode.systems;
 
+import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_core.game.TXTFunction;
@@ -34,9 +37,17 @@ public class Loops {
 
                 if (FileConfig.tree_generator_speed_tick > 0) {
 
-                    for (Entity entity : GameUtils.entity.getEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-tree_generator")) {
+                    List<ServerPlayer> players = level_server.players();
 
-                        TreeGenerator.run(level_accessor, entity);
+                    if (players.isEmpty() == false) {
+
+                        ServerPlayer player = players.get(Mth.nextInt(RandomSource.create(), 0, players.size() - 1));
+
+                        for (Entity entity : GameUtils.entity.getAtArea(level_server, player.getX(), player.getY(), player.getZ(), 500, false, FileConfig.tree_generator_count_limit, "minecraft:marker", "TANSHUGETREES-tree_generator")) {
+
+                            TreeGenerator.run(level_accessor, entity);
+
+                        }
 
                     }
 
@@ -64,7 +75,7 @@ public class Loops {
 
                             if (Math.random() < (double) GameUtils.score.get(level_server, "TANSHUGETREES", "tree_location") / (double) FileConfig.living_tree_mechanics_simulation) {
 
-                                List<Entity> entities = GameUtils.entity.getEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-tree_location");
+                                List<Entity> entities = GameUtils.entity.getAtEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-tree_location");
 
                                 if (entities.isEmpty() == false) {
 
@@ -84,11 +95,9 @@ public class Loops {
 
             if (loop_living_tree_mechanics_leaf_drop == true) {
 
-                List<Entity> entities = GameUtils.entity.getEverywhere(level_server, "", "TANSHUGETREES-leaf_drop");
+                for (Entity entity : GameUtils.entity.getAtEverywhere(level_server, "minecraft:block_display", "TANSHUGETREES-leaf_drop")) {
 
-                if (entities.isEmpty() == false) {
-
-                    LivingTreeMechanicsLeafDrop.start(entities.get(Mth.nextInt(RandomSource.create(), 0, entities.size() - 1)));
+                    LivingTreeMechanicsLeafDrop.start(entity);
 
                 }
 
@@ -96,11 +105,9 @@ public class Loops {
 
             if (loop_living_tree_mechanics_leaf_litter_remover == true) {
 
-                List<Entity> entities = GameUtils.entity.getEverywhere(level_server, "", "TANSHUGETREES-leaf_litter_remover");
+                for (Entity entity : GameUtils.entity.getAtEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-leaf_litter_remover")) {
 
-                if (entities.isEmpty() == false) {
-
-                    LivingTreeMechanicsLeafLitterRemover.start(entities.get(Mth.nextInt(RandomSource.create(), 0, entities.size() - 1)));
+                    LivingTreeMechanicsLeafLitterRemover.start(entity);
 
                 }
 
@@ -123,7 +130,7 @@ public class Loops {
 
             if (FileConfig.developer_mode == true) {
 
-                for (Entity entity : GameUtils.entity.getEverywhere(level_server, "", "TANSHUGETREES")) {
+                for (Entity entity : GameUtils.entity.getAtEverywhere(level_server, "", "TANSHUGETREES")) {
 
                     GameUtils.misc.spawnParticle(level_server, entity.getX(), entity.getBlockY(), entity.getZ(), 0, 0, 0, 0, 1, "minecraft:end_rod");
 
@@ -134,7 +141,7 @@ public class Loops {
 
                     if (loop_delayed_command == true) {
 
-                        GameUtils.score.set(level_server, "TANSHUGETREES", "delayed_command", GameUtils.entity.getEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-delayed_command").size());
+                        GameUtils.score.set(level_server, "TANSHUGETREES", "delayed_command", GameUtils.entity.getAtEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-delayed_command").size());
 
                     }
 
@@ -149,7 +156,7 @@ public class Loops {
 
             if (loop_tree_location == true) {
 
-                GameUtils.score.set(level_server, "TANSHUGETREES", "tree_location", GameUtils.entity.getEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-tree_location").size());
+                GameUtils.score.set(level_server, "TANSHUGETREES", "tree_location", GameUtils.entity.getAtEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-tree_location").size());
 
             }
         }
@@ -159,13 +166,13 @@ public class Loops {
 
             if (loop_living_tree_mechanics_leaf_drop == true) {
 
-                GameUtils.score.set(level_server, "TANSHUGETREES", "leaf_drop", GameUtils.entity.getEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-leaf_drop").size());
+                GameUtils.score.set(level_server, "TANSHUGETREES", "leaf_drop", GameUtils.entity.getAtEverywhere(level_server, "minecraft:block_display", "TANSHUGETREES-leaf_drop").size());
 
             }
 
             if (loop_living_tree_mechanics_leaf_litter_remover == true) {
 
-                GameUtils.score.set(level_server, "TANSHUGETREES", "leaf_litter_remover", GameUtils.entity.getEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-leaf_litter_remover").size());
+                GameUtils.score.set(level_server, "TANSHUGETREES", "leaf_litter_remover", GameUtils.entity.getAtEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-leaf_litter_remover").size());
 
             }
 
@@ -176,7 +183,7 @@ public class Loops {
 
             if (loop_delayed_command == true) {
 
-                for (Entity entity : GameUtils.entity.getEverywhere(level_server, "", "TANSHUGETREES-delayed_command")) {
+                for (Entity entity : GameUtils.entity.getAtEverywhere(level_server, "", "TANSHUGETREES-delayed_command")) {
 
                     TXTFunction.runDelayedCommand(level_server, entity);
 

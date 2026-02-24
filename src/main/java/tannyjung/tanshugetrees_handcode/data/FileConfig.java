@@ -227,7 +227,7 @@ public class FileConfig {
                 tree_generator_speed_repeat = 100
                 | How many processes the generators run in a time. Increase this will make them generate faster but also can cause lag. Set to 0 for one time generation that can freeze the game.
                 
-                tree_generator_count_limit = 3
+                tree_generator_count_limit = 1
                 | How many generators will generate in the same time. Set to 0 for no limit.
                 
                 ----------------------------------------------------------------------------------------------------

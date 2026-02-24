@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "tanshugetrees:blocks/block_placer_taproot_inner",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "tanshugetrees:block_placer_taproot_inner"
+        }
+      ]
+    }
+  ]
+}

@@ -141,8 +141,8 @@ public class LivingTreeMechanics {
 
             if (FileConfig.developer_mode == true) {
 
-                GameUtils.command.runEntity(entity, "particle flash ~ ~ ~ 0 0 0 0 1 force");
-                GameUtils.command.runEntity(entity, "particle totem_of_undying ~ ~100 ~ 0 25 0 0 300 force");
+                GameUtils.misc.spawnParticle(level_server, entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0, 0, 1, "minecraft:flash");
+                GameUtils.misc.spawnParticle(level_server, entity.getX(), entity.getY() + 100, entity.getZ(), 0, 25, 0, 0, 300, "minecraft:totem_of_undying");
 
             }
 
@@ -352,19 +352,19 @@ public class LivingTreeMechanics {
 
                             if (TanshugetreesModVariables.MapVariables.get(level_accessor).season.equals("Summer") == true) {
 
-                                GameUtils.command.runEntity(entity, "kill @s");
+                                entity.discard();
 
                             }
 
                         } else if (Math.random() < 0.1) {
 
-                            GameUtils.command.runEntity(entity, "kill @s");
+                            entity.discard();
 
                         }
 
                     } else {
 
-                        GameUtils.command.runEntity(entity, "kill @s");
+                        entity.discard();
 
                     }
 
@@ -512,7 +512,7 @@ public class LivingTreeMechanics {
                                             // Don't create animation, if there's a block below.
                                             if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())), "tanshugetrees:passable_blocks") == true) {
 
-                                                GameUtils.entity.summon(level_server, pos.getX(), pos.getY(), pos.getZ(), "minecraft:block_display", "TANSHUGETREES-leaf_drop", "Falling Leaf", "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.block.toTextID(block) + "\"},NeoForgeData:{tanshugetrees:{block:\"" + GameUtils.block.toText(block) + "\"}}", false);
+                                                GameUtils.entity.summon(level_server, pos.getX(), pos.getY(), pos.getZ(), "minecraft:block_display", "Falling Leaf", "TANSHUGETREES-leaf_drop", "{transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.block.toTextID(block) + "\"},NeoForgeData:{tanshugetrees:{block:\"" + GameUtils.block.toText(block) + "\"}}}");
                                                 GameUtils.score.add(level_server, "TANSHUGETREES", "leaf_drop", 1);
 
                                             }
@@ -648,7 +648,7 @@ public class LivingTreeMechanics {
 
                     if (GameUtils.score.get(level_server, "TANSHUGETREES", "leaf_litter_remover") < FileConfig.leaf_litter_remover_count_limit) {
 
-                        GameUtils.entity.summon(level_server, pos.getX(), pos.getY(), pos.getZ(), "minecraft:marker", "TANSHUGETREES-leaf_litter_remover", "Leaf Litter Remover", "NeoForgeData:{tanshugetrees:{block:\"" + GameUtils.block.toText(block) + "\"}}", false);
+                        GameUtils.entity.summon(level_server, pos.getX(), pos.getY(), pos.getZ(), "minecraft:marker", "Leaf Litter Remover", "TANSHUGETREES-leaf_litter_remover", "{NeoForgeData:{tanshugetrees:{block:\"" + GameUtils.block.toText(block) + "\"}}}");
                         GameUtils.score.add(level_server, "TANSHUGETREES", "leaf_litter_remover", 1);
 
                     }

@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -34,7 +35,7 @@ public class Sapling {
 
                     if (creative_mode == true || Math.random() < 0.05) {
 
-                        if (GameUtils.block.getAt(level_accessor, posX, posY, posZ).getBlock() == TanshugetreesModBlocks.TREE_GENERATOR.get()) {
+                        if (level_accessor.getBlockState(new BlockPos(posX, posY, posZ)).getBlock() == TanshugetreesModBlocks.TREE_GENERATOR.get()) {
 
                             // Custom Sapling
                             {
@@ -56,7 +57,7 @@ public class Sapling {
                             // General
                             {
 
-                                String name = GameUtils.block.toTextID(GameUtils.block.getAt(level_accessor, posX, posY, posZ)).substring("tanshugetrees:sapling_".length());
+                                String name = GameUtils.block.toTextID(level_accessor.getBlockState(new BlockPos(posX, posY, posZ))).substring("tanshugetrees:sapling_".length());
                                 File file = new File(Core.path_config + "/#dev/#temporary/presets/#TannyJung-Main-Pack/" + name + "/" + name + ".txt");
 
                                 if (file.exists() == true && file.isDirectory() == false) {
@@ -80,7 +81,7 @@ public class Sapling {
 
                                 for (int test = (int) GameUtils.nbt.block.getNumber(level_accessor, posX, posY, posZ, "bone_meal_usage"); test > 0; test--) {
 
-                                    GameUtils.entity.summon(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "minecraft:item", "", "", "Item:{id:\"minecraft:bone_meal\",Count:1b}", false);
+                                    GameUtils.entity.summon(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "minecraft:item", "", "", "{Item:{id:\"minecraft:bone_meal\",Count:1b}}");
 
                                 }
 
@@ -89,13 +90,13 @@ public class Sapling {
                                 // Display Text
                                 {
 
-                                    GameUtils.entity.summon(level_server, posX + 0.5, posY + 1.25, posZ + 0.5, "minecraft:text_display", "TANSHUGETREES-sapling_error", "Sapling Error", "see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"" + error + "\",\"color\":\"red\"}'", false);
+                                    GameUtils.entity.summon(level_server, posX + 0.5, posY + 1.25, posZ + 0.5, "minecraft:text_display", "Sapling Error", "TANSHUGETREES-sapling_error", "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"" + error + "\",\"color\":\"red\"}'}");
 
                                     Core.DelayedWorks.create(false, 200, () -> {
 
-                                        for (Entity get : GameUtils.entity.getAt(level_server, posX, posY, posZ, 1, true, 0, "minecraft:text_display", "TANSHUGETREES-sapling_error")) {
+                                        for (Entity entity_import : GameUtils.entity.getAtArea(level_server, posX, posY, posZ, 1, true, 0, "minecraft:text_display", "TANSHUGETREES-sapling_error")) {
 
-                                            entity.discard();
+                                            entity_import.discard();
                                             
                                         }
                                         
@@ -114,7 +115,7 @@ public class Sapling {
                             }
 
                             GameUtils.nbt.block.setLogic(level_accessor, level_server, posX, posY, posZ, "sapling_started", true);
-                            GameUtils.entity.summon(level_server, posX + 0.5, posY + 1.25, posZ + 0.5, "minecraft:text_display", "TANSHUGETREES-sapling_countdown", "Sapling Countdown", "see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical", false);
+                            GameUtils.entity.summon(level_server, posX + 0.5, posY + 1.25, posZ + 0.5, "minecraft:text_display", "Sapling Countdown", "TANSHUGETREES-sapling_countdown", "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical}");
 
                         }
 
@@ -141,9 +142,9 @@ public class Sapling {
                     // Update Countdown Number
                     {
 
-                        for (Entity entity : GameUtils.entity.getAt(level_server, posX, posY, posZ, 1, true, 0, "minecraft:text_display", "TANSHUGETREES-sapling_countdown")) {
+                        for (Entity entity_import : GameUtils.entity.getAtArea(level_server, posX, posY, posZ, 1, true, 0, "minecraft:text_display", "TANSHUGETREES-sapling_countdown")) {
 
-                            GameUtils.command.runEntity(entity, "data merge entity @s {text:'{\"text\":\"" + countdown + "\",\"color\":\"red\"}'}");
+                            GameUtils.command.runEntity(entity_import, "data merge entity @s {text:'{\"text\":\"" + countdown + "\",\"color\":\"red\"}'}");
 
                         }
 
@@ -154,9 +155,9 @@ public class Sapling {
 
                         Core.DelayedWorks.create(false, 20, () -> {
 
-                            for (Entity entity : GameUtils.entity.getAt(level_server, posX, posY, posZ, 1, true, 0, "minecraft:text_display", "TANSHUGETREES-sapling_countdown")) {
+                            for (Entity entity_import : GameUtils.entity.getAtArea(level_server, posX, posY, posZ, 1, true, 0, "minecraft:text_display", "TANSHUGETREES-sapling_countdown")) {
 
-                                entity.discard();
+                                entity_import.discard();
 
                             }
 
@@ -173,21 +174,16 @@ public class Sapling {
 
                         if (GameUtils.nbt.block.getText(level_accessor, posX, posY, posZ, "path").isEmpty() == false) {
 
-                            TreeGenerator.create(level_server, null, posX, posY, posZ, GameUtils.nbt.block.getText(level_accessor, posX, posY, posZ, "path"));
+                            TreeGenerator.create(level_server, posX, posY, posZ, GameUtils.nbt.block.getText(level_accessor, posX, posY, posZ, "path"));
 
                         } else {
 
-                            GameUtils.entity.summon(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "minecraft:marker", "TANSHUGETREES-tree_generator", "Tree Generator", "", false);
-
-                            for (Entity entity : GameUtils.entity.getAt(level_server, posX, posY, posZ, 1, true, 0, "minecraft:text_display", "TANSHUGETREES-tree_generator")) {
-
-                                GameUtils.command.runEntity(entity, "data modify entity @s NeoForgeData.tanshugetrees set from block ~ ~ ~ NeoForgeData.tanshugetrees");
-
-                            }
+                            Entity entity_summon = GameUtils.entity.summon(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", "");
+                            GameUtils.command.runEntity(entity_summon, "data modify entity @s NeoForgeData.tanshugetrees set from block ~ ~ ~ NeoForgeData.tanshugetrees");
 
                         }
 
-                        GameUtils.block.removeAt(level_accessor, posX, posY, posZ);
+                        level_accessor.removeBlock(new BlockPos(posX, posY, posZ), false);
 
                     }
 

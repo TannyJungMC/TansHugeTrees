@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.systems.compatibility;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.Core;
@@ -73,8 +74,8 @@ public class CompatibilitySereneSeasons {
 
     private static void runClear (LevelAccessor level_accessor, int posX, int posY, int posZ) {
 
-        GameUtils.block.removeAt(level_accessor, posX, posY, posZ);
-        GameUtils.block.removeAt(level_accessor, posX, posY + 1, posZ);
+        level_accessor.removeBlock(new BlockPos(posX, posY, posZ), false);
+        level_accessor.removeBlock(new BlockPos(posX, posY + 1, posZ), false);
 
     }
 

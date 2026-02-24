@@ -33,12 +33,12 @@ public class LivingTreeMechanicsLeafLitterRemover {
 
         if (GameUtils.block.isTaggedAs(test_block, "tanshugetrees:passable_blocks") == true && level_accessor.isWaterAt(test_pos) == false) {
 
-            GameUtils.command.runEntity(entity, "tp ~ ~-1 ~");
+            entity.setPos(entity.getX(), entity.getY() - 1,  entity.getZ());
 
         } else {
 
             LeafLitter.create(level_server, level_server, posX, posY + 1, posZ, GameUtils.block.fromText(GameUtils.nbt.entity.getText(entity, "block")), true);
-            GameUtils.command.runEntity(entity, "kill @s");
+            entity.discard();
 
         }
 

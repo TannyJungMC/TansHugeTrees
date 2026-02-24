@@ -161,7 +161,7 @@ public class TannyPackManager {
 
                                     if (level_server != null) {
 
-                                        GameUtils.misc.sendChatMessage(level_server, "@a", "Detected new version of TannyJung's Main Pack (" + Core.tanny_pack_type + "). You can manual update by follow the guide in  / gold | Wiki / white / " + Core.wiki + " |  or click  / gold | [Here] / white / /" + Core.mod_id_big + " tanny_pack update" + " |  to let the mod install it. / gold");
+                                        GameUtils.misc.sendChatMessage(level_server, "@a", "Detected new version of TannyJung's Main Pack (" + Core.tanny_pack_type + "). You can manual update by follow  / gold | Installation Guide / white / " + Core.wiki + " |  or click  / gold | here / white / /" + Core.mod_id_big + " tanny_pack update" + " |  to let the mod do it automatically. / gold");
 
                                     } else {
 

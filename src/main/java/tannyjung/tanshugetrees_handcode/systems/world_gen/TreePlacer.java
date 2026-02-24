@@ -29,7 +29,8 @@ import java.util.*;
 public class TreePlacer {
 
     private static final Object lock = new Object();
-    private static final Map<int[], Map<int[], List<String>>> functions = new HashMap<>();
+    private static final Map<ChunkPos, Map<BlockPos, List<String>>> functions = new HashMap<>();
+    private static final Map<ChunkPos, Map<ChunkPos, Boolean>> structure_area = new HashMap<>();
 
     public static void start (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, int chunkX, int chunkZ) {
 
@@ -82,6 +83,7 @@ public class TreePlacer {
 
         }
 
+        structure_area.remove(new ChunkPos(chunkX, chunkZ));
         functionRun(level_accessor, level_server, chunkX, chunkZ);
 
     }
@@ -230,6 +232,9 @@ public class TreePlacer {
                     {
 
                         int size = FileConfig.structure_detection_size;
+                        ChunkPos chunk_pos = new ChunkPos(chunkX, chunkZ);
+                        ChunkPos chunk_pos_test = null;
+                        boolean test = false;
 
                         if (size >= 0) {
 
@@ -239,23 +244,46 @@ public class TreePlacer {
 
                                 for (int scanZ = from_chunkZ - size; scanZ <= to_chunkZ + size; scanZ++) {
 
-                                    if (GameUtils.space.testChunkStatus(level_accessor, scanX, scanZ, "minecraft:structure_references") == true) {
+                                    chunk_pos_test = new ChunkPos(scanX, scanZ);
 
-                                        references = level_accessor.getChunk(scanX, scanZ).getAllReferences();
+                                    if (structure_area.containsKey(chunk_pos) == false) {
 
-                                        if (references.size() > 0) {
+                                        structure_area.put(chunk_pos, new HashMap<>());
 
-                                            for (Structure structure : references.keySet().toArray(new Structure[0])) {
+                                    }
 
-                                                if (structure.step().equals(GenerationStep.Decoration.SURFACE_STRUCTURES) == true) {
+                                    if (structure_area.get(chunk_pos).containsKey(chunk_pos_test) == false) {
 
-                                                    break test;
+                                        test = false;
+
+                                        if (GameUtils.space.testChunkStatus(level_accessor, scanX, scanZ, "minecraft:structure_references") == true) {
+
+                                            references = level_accessor.getChunk(scanX, scanZ).getAllReferences();
+
+                                            if (references.size() > 0) {
+
+                                                for (Structure structure : references.keySet().toArray(new Structure[0])) {
+
+                                                    if (structure.step().equals(GenerationStep.Decoration.SURFACE_STRUCTURES) == true) {
+
+                                                        test = true;
+                                                        break;
+
+                                                    }
 
                                                 }
 
                                             }
 
                                         }
+
+                                        structure_area.get(chunk_pos).put(chunk_pos_test, test);
+
+                                    }
+
+                                    if (structure_area.get(chunk_pos).get(chunk_pos_test) == true) {
+
+                                        break test;
 
                                     }
 
@@ -267,7 +295,7 @@ public class TreePlacer {
 
                     }
 
-                    int originalY = chunk_generator.getBaseHeight(centerX, centerZ, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
+                    int originalY = 0;
 
                     // Ground Level
                     {
@@ -282,17 +310,21 @@ public class TreePlacer {
 
                             }
 
+                        } else {
+
+                            originalY = chunk_generator.getBaseHeight(centerX, centerZ, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
+
                         }
 
-                    }
+                        if (coarse_woody_debris == false) {
 
-                    if (coarse_woody_debris == false) {
+                            centerY = originalY + start_height + start_height_offset;
 
-                        centerY = originalY + start_height + start_height_offset;
+                        } else {
 
-                    } else {
+                            centerY = originalY;
 
-                        centerY = originalY;
+                        }
 
                     }
 
@@ -888,7 +920,9 @@ public class TreePlacer {
 
         if (shape.length > 0) {
 
-            Map<String, String> map_block = new HashMap<>();
+            Map<String, BlockState> map_block = new HashMap<>();
+            Map<String, Boolean> map_block_keep = new HashMap<>();
+            Map<String, String> map_function = new HashMap<>();
             boolean can_disable_roots = false;
             boolean can_leaves_decay = false;
             boolean can_leaves_drop = false;
@@ -931,7 +965,19 @@ public class TreePlacer {
 
                                     type_id = read_all.substring("Block ### ".length(), "Block ### ####".length());
                                     value = read_all.substring("Block ### #### = ".length());
-                                    map_block.put(type_id, value);
+
+                                    if (value.endsWith(" keep") == true) {
+
+                                        map_block_keep.put(type_id, true);
+                                        value = value.replace(" keep", "");
+
+                                    } else {
+
+                                        map_block_keep.put(type_id, false);
+
+                                    }
+
+                                    map_block.put(type_id, GameUtils.block.fromText(value));
 
                                     // Test Leaves Types
                                     {
@@ -979,7 +1025,7 @@ public class TreePlacer {
 
                                     type_id = read_all.substring("Function ## ".length(), "Function ## ###".length());
                                     value = read_all.substring("Function ## ### = ".length());
-                                    map_block.put(type_id, value);
+                                    map_function.put(type_id, value);
 
                                 }
 
@@ -1054,9 +1100,9 @@ public class TreePlacer {
                 int posZ = 0;
 
                 int[] pos_converted = new int[0];
-                String get = "";
                 boolean can_run_function = false;
-                BlockState block = Blocks.AIR.defaultBlockState();
+                BlockState block = null;
+                String function = "";
                 BlockPos pos = null;
                 double leaf_litter_world_gen_chance = 0.0;
                 int height_motion = 0;
@@ -1232,20 +1278,15 @@ public class TreePlacer {
 
                         if (chunkX == pos.getX() >> 4 && chunkZ == pos.getZ() >> 4) {
 
-                            // Get Block or Function
-                            {
+                            if (type.startsWith("1") == true) {
 
-                                get = map_block.getOrDefault(type, "");
+                                block = map_block.getOrDefault(type, Blocks.AIR.defaultBlockState());
 
-                                if (get.isEmpty() == true) {
+                                if (block == Blocks.AIR.defaultBlockState()) {
 
                                     continue;
 
                                 }
-
-                            }
-
-                            if (type.startsWith("1") == true) {
 
                                 // Test and Place Block
                                 {
@@ -1290,9 +1331,7 @@ public class TreePlacer {
                                     // Keep
                                     {
 
-                                        if (get.endsWith(" keep") == true) {
-
-                                            get = get.replace(" keep", "");
+                                        if (map_block_keep.get(type) == true) {
 
                                             if (level_accessor.getBlockState(pos).isAir() == false) {
 
@@ -1303,8 +1342,6 @@ public class TreePlacer {
                                         }
 
                                     }
-
-                                    block = GameUtils.block.fromText(get);
 
                                     // Leaves
                                     {
@@ -1402,8 +1439,8 @@ public class TreePlacer {
 
                                             if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
 
-                                                String marker_data = "NeoForgeData:{tanshugetrees:{file:\"" + path_storage + "|" + chosen + "\",tree_settings:\"" + path_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}}";
-                                                GameUtils.entity.summon(level_server, centerX + 0.5, centerY + 0.5, centerZ + 0.5, "minecraft:marker", "TANSHUGETREES-tree_location", id, marker_data, true);
+                                                String marker_data = "{NeoForgeData:{tanshugetrees:{file:\"" + path_storage + "|" + chosen + "\",tree_settings:\"" + path_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}}}";
+                                                GameUtils.entity.summonWorldGen(level_server, centerX + 0.5, centerY + 0.5, centerZ + 0.5, "minecraft:marker", id, "TANSHUGETREES-tree_location", marker_data);
                                                 
                                             }
 
@@ -1450,7 +1487,13 @@ public class TreePlacer {
                                     // Separate like this because start and end function doesn't need to test "can_run_function"
                                     if (can_run_function == true || (type.equals("210") == true || type.equals("220") == true)) {
 
-                                        functionAdd(chunkX, chunkZ, posX, posY, posZ, "functions/" + get);
+                                        function = map_function.getOrDefault(type, "");
+
+                                        if (function.isEmpty() == false) {
+
+                                            functionAdd(chunkX, chunkZ, pos.getX(), pos.getY(), pos.getZ(), "functions/" + function);
+
+                                        }
 
                                     }
 
@@ -1474,7 +1517,7 @@ public class TreePlacer {
 
         synchronized (lock) {
 
-            functions.computeIfAbsent(new int[]{chunkX, chunkZ}, test -> new HashMap<>()).computeIfAbsent(new int[]{posX, posY, posZ}, test -> new ArrayList<>()).add(path);
+            functions.computeIfAbsent(new ChunkPos(chunkX, chunkZ), test -> new HashMap<>()).computeIfAbsent(new BlockPos(posX, posY, posZ), test -> new ArrayList<>()).add(path);
 
         }
 
@@ -1487,22 +1530,22 @@ public class TreePlacer {
             // Run Functions
             {
 
-                int[] chunk_pos = new int[0];
-                int[] pos = new int[0];
+                ChunkPos chunk_pos = null;
+                BlockPos pos = null;
 
-                for (Map.Entry<int[], Map<int[], List<String>>> entry1 : functions.entrySet()) {
+                for (Map.Entry<ChunkPos, Map<BlockPos, List<String>>> entry1 : functions.entrySet()) {
 
                     chunk_pos = entry1.getKey();
 
-                    if (chunk_pos[0] == chunkX && chunk_pos[1] == chunkZ) {
+                    if (chunkX == chunk_pos.x && chunkZ == chunk_pos.z) {
 
-                        for (Map.Entry<int[], List<String>> entry2 : entry1.getValue().entrySet()) {
+                        for (Map.Entry<BlockPos, List<String>> entry2 : entry1.getValue().entrySet()) {
 
                             pos = entry2.getKey();
 
                             for (String get : entry2.getValue()) {
 
-                                TXTFunction.run(level_accessor, level_server, pos[0], pos[1], pos[2], get, false);
+                                TXTFunction.run(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), get, false);
 
                             }
 

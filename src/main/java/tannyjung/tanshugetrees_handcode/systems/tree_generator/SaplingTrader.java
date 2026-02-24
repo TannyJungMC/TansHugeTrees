@@ -3,7 +3,6 @@ package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Blocks;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.FileManager;
 import tannyjung.tanshugetrees_core.game.GameUtils;
@@ -18,7 +17,7 @@ public class SaplingTrader {
 
         File[] files = new File(Core.path_config + "/#dev/#temporary/sapling_trader").listFiles();
         StringBuilder data = new StringBuilder();
-        data.append("VillagerData:{level:99},CustomName:'{\"text\":\"Sapling Trader\"}',ArmorItems:[{},{},{},{id:\"tanshugetrees:sapling_yokai\",Count:1b}],DeathLootTable:\"minecraft:empty\",ArmorDropChances:[0.0f,0.0f,0.0f,0.0f],Offers:{Recipes:[");
+        data.append("{VillagerData:{level:99},CustomName:'{\"text\":\"Sapling Trader\"}',ArmorItems:[{},{},{},{id:\"tanshugetrees:sapling_yokai\",Count:1b}],DeathLootTable:\"minecraft:empty\",ArmorDropChances:[0.0f,0.0f,0.0f,0.0f],Offers:{Recipes:[");
 
         if (files != null) {
 
@@ -67,12 +66,12 @@ public class SaplingTrader {
 
         }
 
-        data.append("]}");
-        GameUtils.entity.summon(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "minecraft:wandering_trader", "TANSHUGETREES-sapling_trader", "Sapling Trader", data.toString(), false);
+        data.append("]}}");
+        GameUtils.entity.summon(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "minecraft:wandering_trader", "Sapling Trader", "TANSHUGETREES-sapling_trader", data.toString());
         GameUtils.misc.spawnParticle(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 0, 0, 0, 0, 1, "minecraft:flash");
         GameUtils.misc.spawnParticle(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 0.5, 0.5, 0.5, 0.01, 20, "minecraft:campfire_signal_smoke");
         GameUtils.misc.playSound(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 2, 0, "minecraft:entity.illusioner.cast_spell");
-        GameUtils.block.removeAt(level_accessor, posX, posY, posZ);
+        level_accessor.removeBlock(new BlockPos(posX, posY, posZ), false);
 
     }
 

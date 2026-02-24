@@ -101,12 +101,11 @@ public class Commands {
             private static void summon_tree (CommandContext<CommandSourceStack> data) {
 
                 ServerLevel level_server = data.getSource().getLevel();
-                Entity entity = data.getSource().getEntity();
                 int posX = (int) Math.floor(data.getSource().getPosition().x());
                 int posY = (int) Math.floor(data.getSource().getPosition().y());
                 int posZ = (int) Math.floor(data.getSource().getPosition().z());
                 String variable_text = CommandMaker.argument.getText(data);
-                TreeGenerator.create(level_server, entity, posX, posY, posZ, variable_text);
+                TreeGenerator.create(level_server, posX, posY, posZ, variable_text);
 
             }
 

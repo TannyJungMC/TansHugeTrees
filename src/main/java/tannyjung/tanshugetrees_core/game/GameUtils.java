@@ -2,9 +2,7 @@ package tannyjung.tanshugetrees_core.game;
 
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
+import net.minecraft.core.*;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -13,18 +11,20 @@ import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.*;
@@ -43,6 +43,7 @@ import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.ScoreHolder;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+import tannyjung.tanshugetrees.init.TanshugetreesModMenus;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.FileManager;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
@@ -232,8 +233,8 @@ public class GameUtils {
 
 			}
 
-			String message = nbt.createText("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod |   | " + data);
-            command.run(level_server, 0, 0, 0, "tellraw " + target + " [" + message + "]");
+			String message = nbt.createMessageData("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod |   | " + data);
+            command.run(level_server, 0, 0, 0, "tellraw " + target + " " + message);
 
         }
 
@@ -243,7 +244,11 @@ public class GameUtils {
 
 			if (particle != null) {
 
-				level_server.sendParticles((ParticleOptions) particle, posX, posY, posZ, count, spreadX, spreadY, spreadZ, speed);
+				for (ServerPlayer player : level_server.players()) {
+
+					level_server.sendParticles(player, (ParticleOptions) particle, true, posX, posY, posZ, count, spreadX, spreadY, spreadZ, speed);
+
+				}
 
 			}
 
@@ -374,36 +379,6 @@ public class GameUtils {
 	}
 
 	public static class block {
-
-		public static BlockState getAt (LevelAccessor level_accessor, int posX, int posY, int posZ) {
-
-			return level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
-
-		}
-
-		public static void setAt (LevelAccessor level_accessor, int posX, int posY, int posZ, BlockState block, boolean world_gen) {
-
-			int type = 0;
-
-			if (world_gen == false) {
-
-				type = 2;
-
-			}
-
-			if (space.getBuildHeight(level_accessor, false) > posY && posY < space.getBuildHeight(level_accessor, true)) {
-
-				level_accessor.setBlock(new BlockPos(posX, posY, posZ), block, type);
-
-			}
-
-		}
-
-		public static void removeAt (LevelAccessor level_accessor, int posX, int posY, int posZ) {
-
-			level_accessor.removeBlock(new BlockPos(posX, posY, posZ), false);
-
-		}
 
 		public static boolean isTaggedAs (BlockState block, String tag) {
 
@@ -630,7 +605,7 @@ public class GameUtils {
 
 	public static class entity {
 
-		public static List<Entity> getAt (ServerLevel level_server, double posX, double posY, double posZ, int distance, boolean is_box, int count, String id, String tag) {
+		public static List<Entity> getAtArea (ServerLevel level_server, double posX, double posY, double posZ, int distance, boolean is_box, int count, String id, String tag) {
 
 			Vec3 center = new Vec3(posX, posY, posZ);
 			int distance_power = distance * distance;
@@ -678,7 +653,7 @@ public class GameUtils {
 
 		}
 
-		public static List<Entity> getEverywhere (ServerLevel level_server, String id, String tag) {
+		public static List<Entity> getAtEverywhere (ServerLevel level_server, String id, String tag) {
 
 			List<Entity> entities = new ArrayList<>();
 			List<String> tags = Arrays.stream(tag.split(" / ")).toList();
@@ -701,59 +676,76 @@ public class GameUtils {
 
 		}
 
-		public static void summon (ServerLevel level_server, double posX, double posY, double posZ, String id, String tag, String name, String custom, boolean world_gen) {
+		public static Entity getAtAreaOne (ServerLevel level_server, double posX, double posY, double posZ, int distance, boolean is_box, String id, String tag) {
 
-			StringBuilder data = new StringBuilder();
-			data.append("summon ");
-			data.append(id);
-			data.append(" ~ ~ ~ {Tags:[\"TANNYJUNG\",\"");
-			data.append(Core.mod_id_big);
-			data.append("\",\"");
+			List<Entity> entities = GameUtils.entity.getAtArea(level_server, posX, posY, posZ, distance, is_box, 1, id, tag);
 
-			if (tag.isEmpty() == false) {
+			if (entities.isEmpty() == false) {
 
-				data.append(tag.replace(" / ", "\",\""));
-
-			}
-
-			data.append("\"]");
-
-			if (name.isEmpty() == false) {
-
-				data.append(",CustomName:'{\"text\":\"");
-				data.append(name);
-				data.append("\"}'");
-
-			}
-
-			if (custom.isEmpty() == false) {
-
-				data.append(",");
-				data.append(custom);
-
-			}
-
-			data.append("}");
-
-			if (world_gen == false) {
-
-				command.run(level_server, posX, posY, posZ, data.toString());
+				return entities.getFirst();
 
 			} else {
 
-				level_server.getServer().execute(() -> {
-
-					command.run(level_server, posX, posY, posZ, data.toString());
-
-				});
+				return null;
 
 			}
 
 		}
 
-		public static int getPlayerCount () {
+		public static Entity getAtEverywhereOne (ServerLevel level_server, String id, String tag) {
 
-			return ServerLifecycleHooks.getCurrentServer().getPlayerCount();
+			List<Entity> entities = GameUtils.entity.getAtEverywhere(level_server, id, tag);
+
+			if (entities.isEmpty() == false) {
+
+				return entities.getFirst();
+
+			} else {
+
+				return null;
+
+			}
+
+		}
+
+		public static Entity summon (ServerLevel level_server, double posX, double posY, double posZ, String id, String name, String tag, String custom) {
+
+			Entity entity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(id)).create(level_server);
+
+			if (entity != null) {
+
+				if (custom.isEmpty() == false) {
+
+					entity.load(GameUtils.nbt.convertJSONToTag(custom));
+
+				}
+
+				entity.setCustomName(GameUtils.nbt.convertJSONToMessage(GameUtils.nbt.createMessageData(name)));
+				entity.addTag("TANNYJUNG");
+				entity.addTag(Core.mod_id_big);
+
+				for (String get : tag.split(" / ")) {
+
+					entity.addTag(get);
+
+				}
+
+				entity.setPos(posX, posY, posZ);
+				level_server.addFreshEntity(entity);
+
+			}
+
+			return entity;
+
+		}
+
+		public static void summonWorldGen (ServerLevel level_server, double posX, double posY, double posZ, String id, String name, String tag, String custom) {
+
+			level_server.getServer().execute(() -> {
+
+				GameUtils.entity.summon(level_server, posX, posY, posZ, id, name, tag, custom);
+
+			});
 
 		}
 
@@ -772,6 +764,32 @@ public class GameUtils {
 		public static boolean canTickingAt (ServerLevel level_server, int posX, int posY, int posZ) {
 
 			return level_server.isPositionEntityTicking(new BlockPos(posX, posY, posZ));
+
+		}
+
+		public static Vec3 getPosLook (Entity entity, double offsetX, double offsetY, double offsetZ) {
+
+			Vec3 vec3_forward = Vec3.directionFromRotation(entity.getXRot(), entity.getYRot());
+			Vec3 vec3_vertical = null;
+
+			if (Math.abs(vec3_forward.y) > 0.999) {
+
+				vec3_vertical = new Vec3(0,0,1);
+
+			} else {
+
+				vec3_vertical = new Vec3(0,1,0);
+
+			}
+
+			Vec3 vec3_horizontal = vec3_forward.cross(vec3_vertical).normalize();
+			Vec3 vec3_vertical_adjust = vec3_horizontal.cross(vec3_forward).normalize();
+			return entity.position().add(vec3_horizontal.scale(offsetX)).add(vec3_vertical_adjust.scale(offsetY)).add(vec3_forward.scale(offsetZ));
+		}
+
+		public static Vec3 getPosRay (Entity entity, double distance) {
+
+			return entity.level().clip(new ClipContext(entity.getEyePosition(1f), entity.getEyePosition(1f).add(entity.getViewVector(1f).scale(distance)), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, entity)).getLocation();
 
 		}
 
@@ -837,12 +855,6 @@ public class GameUtils {
 
 		}
 
-		public static BlockPos getPosLook (Entity entity, double distance) {
-
-			return entity.level().clip(new ClipContext(entity.getEyePosition(1f), entity.getEyePosition(1f).add(entity.getViewVector(1f).scale(distance)), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, entity)).getBlockPos();
-
-		}
-
 		public static int getBuildHeight (LevelAccessor level_accessor, boolean highest) {
 
 			if (highest == true) {
@@ -881,12 +893,16 @@ public class GameUtils {
 			BlockPos pos = new BlockPos(posX, posY, posZ);
 
 			/*
-			(1.20.1) (1.21.1)
+			(1.20.1)
 			level_world_gen.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+			(1.21.1)
+			level_world_gen.holderOrThrow(ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(id))).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
 			(1.21.8)
 			level_world_gen.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getValueOrThrow(FeatureUtils.createKey(id)).place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
 			*/
-			level_world_gen.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+			level_world_gen.holderOrThrow(ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(id))).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+
+			// Make 1.20.1 and 1.21.8+ use "ResourceKey" same like in 1.21.1?
 
 		}
 
@@ -926,6 +942,42 @@ public class GameUtils {
 
 	public static class nbt {
 
+		public static CompoundTag convertJSONToTag (String data) {
+
+			CompoundTag tag = null;
+
+			try {
+
+				tag = TagParser.parseTag(data);
+
+			} catch (Exception ignored) {
+
+
+
+			}
+
+			return tag;
+
+		}
+
+		public static MutableComponent convertJSONToMessage (String data) {
+
+			MutableComponent component = null;
+
+			try {
+
+				component = Component.Serializer.fromJson(data, RegistryAccess.EMPTY);
+
+			} catch (Exception ignored) {
+
+
+
+			}
+
+			return component;
+
+		}
+
 		public static String convertFileToForgeData (String path) {
 
 			StringBuilder data = new StringBuilder();
@@ -941,16 +993,16 @@ public class GameUtils {
 
 			}
 
-			return "NeoForgeData:{" + Core.mod_id + ":{" + data + "}}";
+			return "{NeoForgeData:{" + Core.mod_id + ":{" + data + "}}}";
 
 		}
 
-		public static String createText (String data) {
+		public static String createMessageData (String data) {
 
 			StringBuilder convert = new StringBuilder();
 			String[] split = new String[0];
 			boolean first = false;
-			convert.append("{\"text\":\"\"},");
+			convert.append("[{\"text\":\"\"},");
 
 			for (String read_all : data.split(" \\| ")) {
 
@@ -1007,6 +1059,8 @@ public class GameUtils {
 				convert.append("}");
 
 			}
+
+			convert.append("]");
 
 			return convert.toString();
 
@@ -1247,7 +1301,7 @@ public class GameUtils {
 					tag_add.putString(name, value);
 					tag.put(Core.mod_id, tag_add);
 					block_entity.getPersistentData().merge(tag);
-					BlockState block = GameUtils.block.getAt(level_accessor, posX, posY, posZ);
+					BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
 					level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
 
 				}
@@ -1265,7 +1319,7 @@ public class GameUtils {
 					tag_add.putBoolean(name, value);
 					tag.put(Core.mod_id, tag_add);
 					block_entity.getPersistentData().merge(tag);
-					BlockState block = GameUtils.block.getAt(level_accessor, posX, posY, posZ);
+					BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
 					level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
 
 				}
@@ -1283,7 +1337,7 @@ public class GameUtils {
 					tag_add.putDouble(name, value);
 					tag.put(Core.mod_id, tag_add);
 					block_entity.getPersistentData().merge(tag);
-					BlockState block = GameUtils.block.getAt(level_accessor, posX, posY, posZ);
+					BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
 					level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
 
 				}
@@ -1304,7 +1358,7 @@ public class GameUtils {
 					*/
 					block_entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, block_entity.getPersistentData().getCompound(Core.mod_id).getDouble(name) + value);
 
-					BlockState block = GameUtils.block.getAt(level_accessor, posX, posY, posZ);
+					BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
 					level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
 
 				}
@@ -1317,13 +1371,23 @@ public class GameUtils {
 
 			public static String getText (Entity entity, EquipmentSlot slot, String name) {
 
-            /*
-            (1.20.1)
-            return GameUtils.entity.getItemSlot(entity, slot).getOrCreateTag().getCompound(Core.mod_id).getString(name);
-            (1.21.1)
-            return GameUtils.entity.getItemSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
-            */
+				/*
+				(1.20.1)
+				return GameUtils.entity.getItemSlot(entity, slot).getOrCreateTag().getCompound(Core.mod_id).getString(name);
+				(1.21.1)
 				return GameUtils.entity.getItemSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
+				*/
+				return GameUtils.entity.getItemSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
+
+			}
+
+			public static void setText (Entity entity, EquipmentSlot slot, String name, String value) {
+
+				CompoundTag tag = new CompoundTag();
+				CompoundTag tag_add = new CompoundTag();
+				tag_add.putString(name, value);
+				tag.put(Core.mod_id, tag_add);
+				CustomData.update(DataComponents.CUSTOM_DATA, GameUtils.entity.getItemSlot(entity, slot), test -> test.merge(tag));
 
 			}
 
@@ -1402,6 +1466,40 @@ public class GameUtils {
 				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(old_value + value);
 				*/
 				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(old_value + value);
+
+			}
+
+		}
+
+	}
+
+	public static class gui {
+
+		public static String getTextBox (Entity entity, String name) {
+
+			if (entity instanceof Player player) {
+
+				if (player.containerMenu instanceof TanshugetreesModMenus.MenuAccessor menu) {
+
+					return menu.getMenuState(0, name, "");
+
+				}
+
+			}
+
+			return "";
+
+		}
+
+		public static void setTextBox (Entity entity, String name, String value) {
+
+			if (entity instanceof Player player) {
+
+				if (player.containerMenu instanceof TanshugetreesModMenus.MenuAccessor menu) {
+
+					menu.sendMenuStateUpdate(player, 0, name, value, true);
+
+				}
 
 			}
 

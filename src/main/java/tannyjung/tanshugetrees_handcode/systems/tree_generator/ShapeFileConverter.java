@@ -102,14 +102,14 @@ public class ShapeFileConverter {
             // Summon
             {
 
-                for (Entity player : GameUtils.entity.getEverywhere(level_server, "minecraft:player", "")) {
+                for (Entity player : GameUtils.entity.getAtEverywhere(level_server, "minecraft:player", "")) {
 
-                    GameUtils.entity.summon(level_server, player.getX(), 1000, player.getZ(), "minecraft:marker", "TANSHUGETREES-tree_generator", "Tree Generator", GameUtils.nbt.convertFileToForgeData(file.getPath()), false);
+                    GameUtils.entity.summon(level_server, player.getX(), 1000, player.getZ(), "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", GameUtils.nbt.convertFileToForgeData(file.getPath()));
 
-                    for (Entity entity : GameUtils.entity.getAt(level_server, player.getX(), 1000, player.getZ(), 1, true, 1, "minecraft:marker", "TANSHUGETREES-tree_generator")) {
+                    for (Entity entity_import : GameUtils.entity.getAtArea(level_server, player.getX(), 1000, player.getZ(), 1, true, 1, "minecraft:marker", "TANSHUGETREES-tree_generator")) {
 
                         String data_modify = "debug_mode:false,tree_generator_speed_global:false,tree_generator_speed_tick:1,tree_generator_speed_repeat:0,name:\"" + file_location[1] + "\"";
-                        GameUtils.command.runEntity(entity, "data merge entity @s {NeoForgeData:{tanshugetrees:{" + data_modify + "}}}");
+                        GameUtils.command.runEntity(entity_import, "data merge entity @s {NeoForgeData:{tanshugetrees:{" + data_modify + "}}}");
 
                     }
 
@@ -132,7 +132,7 @@ public class ShapeFileConverter {
         String name = GameUtils.nbt.entity.getText(entity, "name");
         String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss-SSS").format(Calendar.getInstance().getTime());
         GameUtils.nbt.entity.setText(entity, "export_file_name", name + "_" + time + ".bin");
-        GameUtils.command.run(level_server, 0, 0, 0, "tellraw @a [\"\",{\"text\":\"" + Core.mod_id_short + " : Generating \",\"color\":\"aqua\"},{\"text\":\"" + GameUtils.nbt.entity.getText(entity, "export_file_name").replace(" (generating)", "") + "\",\"color\":\"white\"}]");
+        GameUtils.misc.sendChatMessage(level_server, "@a", "Generating / aqua | " + GameUtils.nbt.entity.getText(entity, "export_file_name").replace(" (generating)", ""));
 
         // Write Settings
         {

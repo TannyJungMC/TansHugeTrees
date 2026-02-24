@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "tanshugetrees:blocks/sapling_sky_island_chain",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "tanshugetrees:sapling_sky_island_chain"
+        }
+      ]
+    }
+  ]
+}
