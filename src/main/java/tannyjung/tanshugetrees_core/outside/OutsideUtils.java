@@ -59,7 +59,7 @@ public class OutsideUtils {
         test:
         {
 
-            if (Core.data_structure_version.equals(version) == true) {
+            if (Core.data_structure_version_mod.equals(version) == true) {
 
                 result = "same";
 
@@ -385,7 +385,7 @@ public class OutsideUtils {
 
     }
 
-    public static class cache {
+    public static class Cache {
 
         public static int sizeMapByteBuffer (Map<String, ByteBuffer> test) {
 

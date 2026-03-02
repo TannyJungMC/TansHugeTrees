@@ -7,6 +7,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.CacheManager;
 
@@ -14,7 +15,7 @@ public class TXTFunction {
 
 	public static void run (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String path, boolean randomly) {
 
-        boolean chunk_loaded = GameUtils.entity.canTickingAt(level_server, posX, posY, posZ);
+        boolean chunk_loaded = GameUtils.Mob.canTickingAt(level_server, posX, posY, posZ);
         RandomSource random = null;
 
         if (randomly == true) {
@@ -233,7 +234,7 @@ public class TXTFunction {
                                                                 convert_posY = posY + offset_posY;
                                                                 convert_posZ = posZ + offset_posZ;
 
-                                                                if (GameUtils.misc.testCustomBiome(GameUtils.space.getBiomeAt(level_server, convert_posX, convert_posY, convert_posZ), variable_text) == true) {
+                                                                if (GameUtils.Misc.testCustomBiome(GameUtils.Space.getBiomeAt(level_server, convert_posX, convert_posY, convert_posZ), variable_text) == true) {
 
                                                                     continue;
 
@@ -264,9 +265,9 @@ public class TXTFunction {
                                                                 convert_posY = offset_posY + posY;
                                                                 convert_posZ = offset_posZ + posZ;
 
-                                                                if (GameUtils.space.testChunkStatus(level_accessor, convert_posX >> 4, convert_posZ >> 4, "minecraft:surface") == true) {
+                                                                if (GameUtils.Space.testChunkStatus(level_accessor, convert_posX >> 4, convert_posZ >> 4, ChunkStatus.SURFACE) == true) {
 
-                                                                    if (GameUtils.misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(convert_posX, convert_posY, convert_posZ)), variable_text) == true) {
+                                                                    if (GameUtils.Misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(convert_posX, convert_posY, convert_posZ)), variable_text) == true) {
 
                                                                         continue;
 
@@ -295,7 +296,7 @@ public class TXTFunction {
 
                                                                     get = read_all.substring("block = ".length()).split(" \\| ");
                                                                     chance = Double.parseDouble(get[0]);
-                                                                    variable_block = GameUtils.block.fromText(get[3]);
+                                                                    variable_block = GameUtils.Tile.fromText(get[3]);
                                                                     variable_text = get[4];
 
                                                                 } catch (Exception ignored) {
@@ -344,7 +345,7 @@ public class TXTFunction {
 
                                                                                 if (level_accessor.hasChunk(convert_posX >> 4, convert_posZ >> 4) == true) {
 
-                                                                                    if (GameUtils.misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(convert_posX, convert_posY, convert_posZ)), variable_text) == false) {
+                                                                                    if (GameUtils.Misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(convert_posX, convert_posY, convert_posZ)), variable_text) == false) {
 
                                                                                         continue;
 
@@ -392,7 +393,7 @@ public class TXTFunction {
 
                                                                     try {
 
-                                                                        GameUtils.space.placeFeature(level_accessor, convert_posX, convert_posY, convert_posZ, variable_text);
+                                                                        GameUtils.Space.placeFeature(level_accessor, convert_posX, convert_posY, convert_posZ, variable_text);
 
                                                                     } catch (Exception ignored) {
 
@@ -459,7 +460,7 @@ public class TXTFunction {
 
                                                                         level_server.getServer().execute(() -> {
 
-                                                                            GameUtils.command.run(level_server, posX, posY, posZ, variable_text_final);
+                                                                            GameUtils.Command.run(level_server, posX, posY, posZ, variable_text_final);
 
                                                                         });
 
@@ -513,7 +514,7 @@ public class TXTFunction {
                 }
 
                 String command_final = command.replace("'", "*").replace("\"", "$");
-                GameUtils.entity.summonWorldGen(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "marker", "Delayed Command", "TANNYJUNG-delayed_command", "{NeoForgeData:{" + Core.mod_id + ":{command:\"" + command_final + "\"}}}");
+                GameUtils.Mob.summonWorldGen(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "marker", "Delayed Command", "TANSHUGETREES-delayed_command", "{ForgeData:{" + Core.mod_id + ":{command:\"" + command_final + "\"}}}");
                 
             }
 
@@ -527,13 +528,13 @@ public class TXTFunction {
         int posY = entity.getBlockY();
         int posZ = entity.getBlockZ();
 
-        if (GameUtils.entity.canTickingAt(level_server, posX, posY, posZ) == true) {
+        if (GameUtils.Mob.canTickingAt(level_server, posX, posY, posZ) == true) {
 
-            for (String command : GameUtils.nbt.entity.getText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
+            for (String command : GameUtils.Data.getEntityText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
 
                 level_server.getServer().execute(() -> {
 
-                    GameUtils.command.run(level_server, posX, posY, posZ, command);
+                    GameUtils.Command.run(level_server, posX, posY, posZ, command);
 
                 });
 

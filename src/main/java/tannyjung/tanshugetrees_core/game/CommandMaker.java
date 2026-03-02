@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
+import tannyjung.tanshugetrees_core.outside.TannyPackManager;
 
 import java.util.function.Consumer;
 
@@ -20,8 +21,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 (1.21.1)
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 */
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import tannyjung.tanshugetrees_core.outside.TannyPackManager;
+import net.minecraftforge.event.RegisterCommandsEvent;
 
 public class CommandMaker {
 
@@ -185,7 +185,7 @@ public class CommandMaker {
 
     }
 
-    public static class argument {
+    public static class Argument {
 
         public static int getNumber (CommandContext<CommandSourceStack> data) {
 
@@ -231,7 +231,7 @@ public class CommandMaker {
 
             if (player.hasPermissions(permission) == false) {
 
-                GameUtils.misc.sendChatMessage(data.getSource().getLevel(), "@s", "You must have server permission minimum level " + permission + " to use this command. If you're in singleplayer, try enable cheat mode or temporary open LAN. If you're in multiplayer, try give yourself OP or contact server admin. / red");
+                GameUtils.Misc.sendChatMessage(data.getSource().getLevel(), "@s", "You must have server permission minimum level " + permission + " to use this command. If you're in singleplayer, try enable cheat mode or temporary open LAN. If you're in multiplayer, try give yourself OP or contact server admin. / red");
                 return false;
 
             }
@@ -242,7 +242,7 @@ public class CommandMaker {
 
     }
 
-    public static class builtin_command {
+    public static class BuiltinCommands {
 
         public static void registry (Object event_object) {
 
@@ -264,7 +264,7 @@ public class CommandMaker {
                     int posX = (int) Math.floor(data.getSource().getPosition().x());
                     int posY = (int) Math.floor(data.getSource().getPosition().y());
                     int posZ = (int) Math.floor(data.getSource().getPosition().z());
-                    String variable_text = CommandMaker.argument.getText(data);
+                    String variable_text = CommandMaker.Argument.getText(data);
                     TXTFunction.run(level_accessor, level_server, posX, posY, posZ, variable_text, true);
 
                 }
@@ -274,13 +274,7 @@ public class CommandMaker {
             private static void restart (CommandContext<CommandSourceStack> data) {
 
                 ServerLevel level_server = data.getSource().getLevel();
-                Entity entity = data.getSource().getEntity();
-
-                Core.thread_main.submit(() -> {
-
-                    Core.restart(level_server, "config / world", entity != null);
-
-                });
+                Core.Restart.run(level_server, "config / world", true);
 
             }
 

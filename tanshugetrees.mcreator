@@ -11,38 +11,8 @@
           "src/main/resources/assets/tanshugetrees/blockstates/waypoint_flower.json",
           "src/main/resources/assets/tanshugetrees/models/block/waypoint_flower.json",
           "src/main/java/tannyjung/tanshugetrees/block/WaypointFlowerBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/waypoint_flower.json",
-          "src/main/resources/assets/tanshugetrees/models/item/waypoint_flower.json"
-        ]
-      }
-    },
-    {
-      "name": "WaypointFlowerPlace",
-      "type": "procedure",
-      "compiles": true,
-      "locked_code": false,
-      "registry_name": "waypoint_flower_place",
-      "metadata": {
-        "files": [
-          "src/main/java/tannyjung/tanshugetrees/procedures/WaypointFlowerPlaceProcedure.java"
-        ],
-        "dependencies": [
-          {
-            "name": "x",
-            "type": "number"
-          },
-          {
-            "name": "y",
-            "type": "number"
-          },
-          {
-            "name": "z",
-            "type": "number"
-          },
-          {
-            "name": "world",
-            "type": "world"
-          }
+          "src/main/resources/assets/tanshugetrees/models/item/waypoint_flower.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/waypoint_flower.json"
         ]
       }
     },
@@ -54,7 +24,7 @@
       "registry_name": "waypoint_flower_recipe",
       "metadata": {
         "files": [
-          "src/main/resources/data/tanshugetrees/recipe/waypoint_flower_recipe.json"
+          "src/main/resources/data/tanshugetrees/recipes/waypoint_flower_recipe.json"
         ]
       }
     },
@@ -102,7 +72,7 @@
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerTaprootOuterBlock.java",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_taproot_outer.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_taproot_outer.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_taproot_outer.json"
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_taproot_outer.json"
         ]
       },
       "path": "~/Tree Generator/Block Placer"
@@ -115,9 +85,9 @@
       "registry_name": "block_placer_taproot_inner",
       "metadata": {
         "files": [
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_taproot_inner.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerTaprootInnerBlockEntity.java",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerTaprootInnerBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_taproot_inner.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_taproot_inner.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_taproot_inner.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_taproot_inner.json"
@@ -134,9 +104,9 @@
       "metadata": {
         "files": [
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_taproot_core.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_taproot_core.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_taproot_core.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerTaprootCoreBlock.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_taproot_core.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerTaprootCoreBlockEntity.java",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_taproot_core.json"
         ]
@@ -153,10 +123,10 @@
         "files": [
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_secondary_root_core.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_secondary_root_core.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_secondary_root_core.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_secondary_root_core.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerSecondaryRootCoreBlock.java",
-          "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerSecondaryRootCoreBlockEntity.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_secondary_root_core.json"
+          "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerSecondaryRootCoreBlockEntity.java"
         ]
       },
       "path": "~/Tree Generator/Block Placer"
@@ -169,7 +139,7 @@
       "registry_name": "block_placer_secondary_root_inner",
       "metadata": {
         "files": [
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_secondary_root_inner.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_secondary_root_inner.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_secondary_root_inner.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_secondary_root_inner.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_secondary_root_inner.json",
@@ -191,7 +161,7 @@
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_secondary_root_outer.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_secondary_root_outer.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerSecondaryRootOuterBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_secondary_root_outer.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_secondary_root_outer.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_secondary_root_outer.json"
         ]
       },
@@ -208,9 +178,9 @@
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_tertiary_root_core.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerTertiaryRootCoreBlock.java",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerTertiaryRootCoreBlockEntity.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_tertiary_root_core.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_tertiary_root_core.json",
-          "src/main/resources/assets/tanshugetrees/models/item/block_placer_tertiary_root_core.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_tertiary_root_core.json"
+          "src/main/resources/assets/tanshugetrees/models/item/block_placer_tertiary_root_core.json"
         ]
       },
       "path": "~/Tree Generator/Block Placer"
@@ -226,7 +196,7 @@
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerTertiaryRootInnerBlockEntity.java",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_tertiary_root_inner.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_tertiary_root_inner.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_tertiary_root_inner.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_tertiary_root_inner.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_tertiary_root_inner.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerTertiaryRootInnerBlock.java"
         ]
@@ -243,7 +213,7 @@
         "files": [
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_tertiary_root_outer.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerTertiaryRootOuterBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_tertiary_root_outer.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_tertiary_root_outer.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_tertiary_root_outer.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerTertiaryRootOuterBlockEntity.java",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_tertiary_root_outer.json"
@@ -259,8 +229,8 @@
       "registry_name": "block_placer_fine_root_core",
       "metadata": {
         "files": [
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_fine_root_core.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_fine_root_core.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_fine_root_core.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerFineRootCoreBlock.java",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_fine_root_core.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_fine_root_core.json",
@@ -278,10 +248,10 @@
       "metadata": {
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerFineRootInnerBlockEntity.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_fine_root_inner.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_fine_root_inner.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_fine_root_inner.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_fine_root_inner.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_fine_root_inner.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerFineRootInnerBlock.java"
         ]
       },
@@ -297,7 +267,7 @@
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerFineRootOuterBlock.java",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_fine_root_outer.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_fine_root_outer.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_fine_root_outer.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_fine_root_outer.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_fine_root_outer.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerFineRootOuterBlockEntity.java"
@@ -313,11 +283,11 @@
       "registry_name": "block_placer_trunk_core",
       "metadata": {
         "files": [
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_trunk_core.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerTrunkCoreBlock.java",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerTrunkCoreBlockEntity.java",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_trunk_core.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_trunk_core.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_trunk_core.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_trunk_core.json"
         ]
       },
@@ -332,8 +302,8 @@
       "metadata": {
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerTrunkInnerBlockEntity.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_trunk_inner.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_trunk_inner.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_trunk_inner.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_trunk_inner.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerTrunkInnerBlock.java",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_trunk_inner.json"
@@ -352,7 +322,7 @@
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_trunk_outer.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_trunk_outer.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerTrunkOuterBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_trunk_outer.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_trunk_outer.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerTrunkOuterBlockEntity.java",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_trunk_outer.json"
         ]
@@ -368,11 +338,11 @@
       "metadata": {
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerBranchCoreBlockEntity.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_branch_core.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_branch_core.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_branch_core.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerBranchCoreBlock.java",
-          "src/main/resources/assets/tanshugetrees/blockstates/block_placer_branch_core.json"
+          "src/main/resources/assets/tanshugetrees/blockstates/block_placer_branch_core.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_branch_core.json"
         ]
       },
       "path": "~/Tree Generator/Block Placer"
@@ -385,10 +355,10 @@
       "registry_name": "block_placer_branch_inner",
       "metadata": {
         "files": [
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_branch_inner.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerBranchInnerBlock.java",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_branch_inner.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_branch_inner.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_branch_inner.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_branch_inner.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerBranchInnerBlockEntity.java"
         ]
@@ -404,9 +374,9 @@
       "metadata": {
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerBranchOuterBlock.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_branch_outer.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_branch_outer.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_branch_outer.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_branch_outer.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_branch_outer.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerBranchOuterBlockEntity.java"
         ]
@@ -422,10 +392,10 @@
       "metadata": {
         "files": [
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_twig_core.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_twig_core.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerTwigCoreBlockEntity.java",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerTwigCoreBlock.java",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_twig_core.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_twig_core.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_twig_core.json"
         ]
       },
@@ -444,7 +414,7 @@
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_twig_inner.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerTwigInnerBlock.java",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_twig_inner.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_twig_inner.json"
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_twig_inner.json"
         ]
       },
       "path": "~/Tree Generator/Block Placer"
@@ -459,9 +429,9 @@
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerTwigOuterBlock.java",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_twig_outer.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_twig_outer.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerTwigOuterBlockEntity.java",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_twig_outer.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_twig_outer.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_twig_outer.json"
         ]
       },
@@ -475,7 +445,7 @@
       "registry_name": "block_placer_leaves_2",
       "metadata": {
         "files": [
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_leaves_2.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_leaves_2.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerLeaves2BlockEntity.java",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerLeaves2Block.java",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_leaves_2.json",
@@ -512,11 +482,11 @@
       "registry_name": "block_placer_leaves_1",
       "metadata": {
         "files": [
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_leaves_1.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerLeaves1Block.java",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_leaves_1.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerLeaves1BlockEntity.java",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_leaves_1.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_leaves_1.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_leaves_1.json"
         ]
       },
@@ -534,7 +504,7 @@
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerSprigCoreBlock.java",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_sprig_core.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_sprig_core.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_sprig_core.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_sprig_core.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_sprig_core.json"
         ]
       },
@@ -550,8 +520,8 @@
         "files": [
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_sprig_inner.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerSprigInnerBlockEntity.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_sprig_inner.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerSprigInnerBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_sprig_inner.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_sprig_inner.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_sprig_inner.json"
         ]
@@ -567,8 +537,8 @@
       "metadata": {
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerSprigOuterBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_sprig_outer.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_sprig_outer.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_sprig_outer.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerSprigOuterBlockEntity.java",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_sprig_outer.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_sprig_outer.json"
@@ -585,10 +555,10 @@
       "metadata": {
         "files": [
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_bough_core.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_bough_core.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerBoughCoreBlock.java",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_bough_core.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerBoughCoreBlockEntity.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_bough_core.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_bough_core.json"
         ]
       },
@@ -605,7 +575,7 @@
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerBoughInnerBlock.java",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_bough_inner.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_bough_inner.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_bough_inner.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_bough_inner.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_bough_inner.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerBoughInnerBlockEntity.java"
         ]
@@ -620,12 +590,12 @@
       "registry_name": "block_placer_bough_outer",
       "metadata": {
         "files": [
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_bough_outer.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerBoughOuterBlock.java",
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerBoughOuterBlockEntity.java",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_bough_outer.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_bough_outer.json",
-          "src/main/resources/assets/tanshugetrees/blockstates/block_placer_bough_outer.json"
+          "src/main/resources/assets/tanshugetrees/blockstates/block_placer_bough_outer.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_bough_outer.json"
         ]
       },
       "path": "~/Tree Generator/Block Placer"
@@ -639,8 +609,8 @@
       "metadata": {
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerLimbCoreBlockEntity.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_limb_core.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_limb_core.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_limb_core.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerLimbCoreBlock.java",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_limb_core.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_limb_core.json"
@@ -657,8 +627,8 @@
       "metadata": {
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerLimbInnerBlockEntity.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_limb_inner.json",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerLimbInnerBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_limb_inner.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_limb_inner.json",
           "src/main/resources/assets/tanshugetrees/models/block/block_placer_limb_inner.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_limb_inner.json"
@@ -676,10 +646,10 @@
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/entity/BlockPlacerLimbOuterBlockEntity.java",
           "src/main/java/tannyjung/tanshugetrees/block/BlockPlacerLimbOuterBlock.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/block_placer_limb_outer.json",
           "src/main/resources/assets/tanshugetrees/models/item/block_placer_limb_outer.json",
           "src/main/resources/assets/tanshugetrees/blockstates/block_placer_limb_outer.json",
-          "src/main/resources/assets/tanshugetrees/models/block/block_placer_limb_outer.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/block_placer_limb_outer.json"
+          "src/main/resources/assets/tanshugetrees/models/block/block_placer_limb_outer.json"
         ]
       },
       "path": "~/Tree Generator/Block Placer"
@@ -771,9 +741,9 @@
           "src/main/java/tannyjung/tanshugetrees/block/SaplingHalcyonBlock.java",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_halcyon.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_halcyon.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_halcyon.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingHalcyonBlockEntity.java",
-          "src/main/resources/assets/tanshugetrees/blockstates/sapling_halcyon.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_halcyon.json"
+          "src/main/resources/assets/tanshugetrees/blockstates/sapling_halcyon.json"
         ]
       },
       "path": "~/Tree Generator/Saplings/Available"
@@ -787,11 +757,11 @@
       "metadata": {
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingYokaiBlockEntity.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_yokai.json",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_yokai.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_yokai.json",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_yokai.json",
-          "src/main/java/tannyjung/tanshugetrees/block/SaplingYokaiBlock.java"
+          "src/main/java/tannyjung/tanshugetrees/block/SaplingYokaiBlock.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_yokai.json"
         ]
       },
       "path": "~/Tree Generator/Saplings/Available"
@@ -804,9 +774,9 @@
       "registry_name": "tree_generator",
       "metadata": {
         "files": [
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/tree_generator.json",
           "src/main/resources/assets/tanshugetrees/models/item/tree_generator.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/TreeGeneratorBlockEntity.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/tree_generator.json",
           "src/main/resources/assets/tanshugetrees/blockstates/tree_generator.json",
           "src/main/resources/assets/tanshugetrees/models/block/tree_generator.json",
           "src/main/java/tannyjung/tanshugetrees/block/TreeGeneratorBlock.java"
@@ -825,9 +795,9 @@
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingRedwoodBlockEntity.java",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_redwood.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_redwood.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_redwood.json",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_redwood.json",
-          "src/main/java/tannyjung/tanshugetrees/block/SaplingRedwoodBlock.java"
+          "src/main/java/tannyjung/tanshugetrees/block/SaplingRedwoodBlock.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_redwood.json"
         ]
       },
       "path": "~/Tree Generator/Saplings/Available"
@@ -840,12 +810,12 @@
       "registry_name": "sapling_malus_domestica",
       "metadata": {
         "files": [
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_malus_domestica.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_malus_domestica.json",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_malus_domestica.json",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_malus_domestica.json",
           "src/main/java/tannyjung/tanshugetrees/block/SaplingMalusDomesticaBlock.java",
-          "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingMalusDomesticaBlockEntity.java"
+          "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingMalusDomesticaBlockEntity.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_malus_domestica.json"
         ]
       },
       "path": "~/Tree Generator/Saplings/Available"
@@ -859,10 +829,10 @@
       "metadata": {
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingWendyBlockEntity.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_wendy.json",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_wendy.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_wendy.json",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_wendy.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_wendy.json",
           "src/main/java/tannyjung/tanshugetrees/block/SaplingWendyBlock.java"
         ]
       },
@@ -880,7 +850,7 @@
           "src/main/java/tannyjung/tanshugetrees/block/SaplingMangroveBlock.java",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_mangrove.json",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_mangrove.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_mangrove.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_mangrove.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_mangrove.json"
         ]
       },
@@ -895,8 +865,8 @@
       "metadata": {
         "files": [
           "src/main/resources/assets/tanshugetrees/models/item/sapling_falcon.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_falcon.json",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_falcon.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_falcon.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_falcon.json",
           "src/main/java/tannyjung/tanshugetrees/block/SaplingFalconBlock.java",
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingFalconBlockEntity.java"
@@ -916,7 +886,7 @@
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_sky_island_chain.json",
           "src/main/java/tannyjung/tanshugetrees/block/SaplingSkyIslandChainBlock.java",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_sky_island_chain.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_sky_island_chain.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_sky_island_chain.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingSkyIslandChainBlockEntity.java"
         ]
       },
@@ -1014,20 +984,8 @@
       "metadata": {
         "dependencies": [
           {
-            "name": "x",
-            "type": "number"
-          },
-          {
-            "name": "y",
-            "type": "number"
-          },
-          {
-            "name": "z",
-            "type": "number"
-          },
-          {
-            "name": "world",
-            "type": "world"
+            "name": "entity",
+            "type": "entity"
           }
         ],
         "files": [
@@ -1044,7 +1002,7 @@
       "registry_name": "sapling_christmas_tree",
       "metadata": {
         "files": [
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_christmas_tree.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_christmas_tree.json",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_christmas_tree.json",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_christmas_tree.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_christmas_tree.json",
@@ -1064,8 +1022,8 @@
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/SaplingBaobabBlock.java",
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingBaobabBlockEntity.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_baobab.json",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_baobab.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_baobab.json",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_baobab.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_baobab.json"
         ]
@@ -1081,7 +1039,7 @@
       "metadata": {
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/SaplingLegionBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_legion.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_legion.json",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_legion.json",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_legion.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingLegionBlockEntity.java",
@@ -1103,7 +1061,7 @@
           "src/main/resources/assets/tanshugetrees/models/item/sapling_old_witch.json",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_old_witch.json",
           "src/main/java/tannyjung/tanshugetrees/block/SaplingOldWitchBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_old_witch.json"
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_old_witch.json"
         ]
       },
       "path": "~/Tree Generator/Saplings/Available"
@@ -1119,8 +1077,8 @@
           "src/main/java/tannyjung/tanshugetrees/block/SaplingGiantPumpkinBlock.java",
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingGiantPumpkinBlockEntity.java",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_giant_pumpkin.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_giant_pumpkin.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_giant_pumpkin.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_giant_pumpkin.json",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_giant_pumpkin.json"
         ]
       },
@@ -1137,9 +1095,9 @@
           "src/main/resources/assets/tanshugetrees/models/item/sapling_rust.json",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_rust.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_rust.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_rust.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingRustBlockEntity.java",
-          "src/main/java/tannyjung/tanshugetrees/block/SaplingRustBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_rust.json"
+          "src/main/java/tannyjung/tanshugetrees/block/SaplingRustBlock.java"
         ]
       },
       "path": "~/Tree Generator/Saplings/Available"
@@ -1155,9 +1113,9 @@
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_the_aspirant.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_the_aspirant.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingTheAspirantBlockEntity.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_the_aspirant.json",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_the_aspirant.json",
-          "src/main/java/tannyjung/tanshugetrees/block/SaplingTheAspirantBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_the_aspirant.json"
+          "src/main/java/tannyjung/tanshugetrees/block/SaplingTheAspirantBlock.java"
         ]
       },
       "path": "~/Tree Generator/Saplings/Available"
@@ -1170,12 +1128,12 @@
       "registry_name": "sapling_white_fairy",
       "metadata": {
         "files": [
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_white_fairy.json",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_white_fairy.json",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_white_fairy.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_white_fairy.json",
           "src/main/java/tannyjung/tanshugetrees/block/SaplingWhiteFairyBlock.java",
-          "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingWhiteFairyBlockEntity.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_white_fairy.json"
+          "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingWhiteFairyBlockEntity.java"
         ]
       },
       "path": "~/Tree Generator/Saplings/Available"
@@ -1189,11 +1147,11 @@
       "metadata": {
         "files": [
           "src/main/java/tannyjung/tanshugetrees/block/SaplingAgathosBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_agathos.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_agathos.json",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_agathos.json",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_agathos.json",
-          "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingAgathosBlockEntity.java"
+          "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingAgathosBlockEntity.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_agathos.json"
         ]
       },
       "path": "~/Tree Generator/Saplings/Available"
@@ -1206,11 +1164,11 @@
       "registry_name": "sapling_palm",
       "metadata": {
         "files": [
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_palm.json",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_palm.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_palm.json",
           "src/main/java/tannyjung/tanshugetrees/block/SaplingPalmBlock.java",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_palm.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_palm.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingPalmBlockEntity.java"
         ]
       },
@@ -1224,9 +1182,9 @@
       "registry_name": "sapling_coconut_tree",
       "metadata": {
         "files": [
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_coconut_tree.json",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_coconut_tree.json",
           "src/main/java/tannyjung/tanshugetrees/block/SaplingCoconutTreeBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_coconut_tree.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingCoconutTreeBlockEntity.java",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_coconut_tree.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_coconut_tree.json"
@@ -1244,10 +1202,10 @@
         "files": [
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_bean_stalk.json",
           "src/main/java/tannyjung/tanshugetrees/block/SaplingBeanStalkBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_bean_stalk.json",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_bean_stalk.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_bean_stalk.json",
-          "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingBeanStalkBlockEntity.java"
+          "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingBeanStalkBlockEntity.java",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_bean_stalk.json"
         ]
       },
       "path": "~/Tree Generator/Saplings/Available"
@@ -1261,7 +1219,7 @@
       "metadata": {
         "files": [
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_bee_keeper.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_bee_keeper.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_bee_keeper.json",
           "src/main/java/tannyjung/tanshugetrees/block/SaplingBeeKeeperBlock.java",
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingBeeKeeperBlockEntity.java",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_bee_keeper.json",
@@ -1283,7 +1241,7 @@
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingWalkingTreeBlockEntity.java",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_walking_tree.json",
           "src/main/resources/assets/tanshugetrees/models/block/sapling_walking_tree.json",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_walking_tree.json"
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_walking_tree.json"
         ]
       },
       "path": "~/Tree Generator/Saplings/Available"
@@ -1298,13 +1256,43 @@
         "files": [
           "src/main/resources/assets/tanshugetrees/models/block/sapling_catalyst.json",
           "src/main/java/tannyjung/tanshugetrees/block/SaplingCatalystBlock.java",
-          "src/main/resources/data/tanshugetrees/loot_table/blocks/sapling_catalyst.json",
+          "src/main/resources/data/tanshugetrees/loot_tables/blocks/sapling_catalyst.json",
           "src/main/resources/assets/tanshugetrees/blockstates/sapling_catalyst.json",
           "src/main/java/tannyjung/tanshugetrees/block/entity/SaplingCatalystBlockEntity.java",
           "src/main/resources/assets/tanshugetrees/models/item/sapling_catalyst.json"
         ]
       },
       "path": "~/Tree Generator/Saplings/Available"
+    },
+    {
+      "name": "WaypointFlowerTick",
+      "type": "procedure",
+      "compiles": true,
+      "locked_code": false,
+      "registry_name": "waypoint_flower_tick",
+      "metadata": {
+        "dependencies": [
+          {
+            "name": "x",
+            "type": "number"
+          },
+          {
+            "name": "y",
+            "type": "number"
+          },
+          {
+            "name": "z",
+            "type": "number"
+          },
+          {
+            "name": "world",
+            "type": "world"
+          }
+        ],
+        "files": [
+          "src/main/java/tannyjung/tanshugetrees/procedures/WaypointFlowerTickProcedure.java"
+        ]
+      }
     }
   ],
   "variable_elements": [
@@ -1471,9 +1459,9 @@
       "item.tanshugetrees.tree_summoner_staff": "Tree Summoner Staff",
       "item.tanshugetrees.tree_summoner_staff.description_2": "",
       "item.tanshugetrees.tree_summoner_staff.description_0": "§8--------------------------------------------------",
-      "item.tanshugetrees.tree_summoner_staff.description_1": "§8Summon a tree by just one click. Just for fun. Can be useful for world builders, no need to place saplings and bone meal them every time.",
+      "item.tanshugetrees.tree_summoner_staff.description_1": "§8Summon a tree by just one click. Can be useful for tree preset developers and map builders. The path will be test from extracted packs first, then from unextracted packs if failed.",
       "gui.tanshugetrees.tree_summoner_staff_gui.button_apply": "Apply",
-      "gui.tanshugetrees.tree_summoner_staff_gui.path": "Example : #TannyJung-Main-Pack/redwood",
+      "gui.tanshugetrees.tree_summoner_staff_gui.path": "",
       "block.tanshugetrees.sapling_christmas_tree.description_1": "§8This is a tree generator sapling. It may take long time to generate!",
       "block.tanshugetrees.sapling_christmas_tree.description_0": "§8--------------------------------------------------",
       "block.tanshugetrees.sapling_christmas_tree.description_2": "§8--------------------------------------------------",
@@ -1537,7 +1525,9 @@
       "block.tanshugetrees.sapling_catalyst": "Sapling : Catalyst",
       "block.tanshugetrees.sapling_catalyst.description_2": "§8--------------------------------------------------",
       "block.tanshugetrees.sapling_catalyst.description_1": "§8This is a tree generator sapling. It may take long time to generate!",
-      "block.tanshugetrees.sapling_catalyst.description_0": "§8--------------------------------------------------"
+      "block.tanshugetrees.sapling_catalyst.description_0": "§8--------------------------------------------------",
+      "gui.tanshugetrees.tree_summoner_staff_gui.label_currently_not_working": "Currently not working",
+      "gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr": "Example : #TannyJung-Main-Pack/redwood"
     }
   },
   "metadata": {
@@ -1551,7 +1541,7 @@
       "src/main/java/tannyjung/tanshugetrees/init/TanshugetreesModTabs.java",
       "src/main/resources/pack.mcmeta",
       "src/main/java/tannyjung/tanshugetrees/TanshugetreesMod.java",
-      "src/main/resources/META-INF/neoforge.mods.toml",
+      "src/main/resources/META-INF/mods.toml",
       "src/main/java/tannyjung/tanshugetrees/network/TanshugetreesModVariables.java"
     ]
   },
@@ -1581,7 +1571,7 @@
   "workspaceSettings": {
     "modid": "tanshugetrees",
     "modName": "Tan\u0027s Huge Trees",
-    "version": "1.7.1",
+    "version": "1.8.0",
     "description": "Generate trees and nature stuffs around the world",
     "author": "TannyJung",
     "websiteURL": "https://www.curseforge.com/minecraft/mc-mods/tans-huge-trees",
@@ -1592,7 +1582,7 @@
     "dependencies": [],
     "dependants": [],
     "mcreatorDependencies": [],
-    "currentGenerator": "neoforge-1.21.1",
+    "currentGenerator": "forge-1.20.1",
     "credits": "Created with MCreator and IntelliJ",
     "modElementsPackage": "tannyjung.tanshugetrees"
   },

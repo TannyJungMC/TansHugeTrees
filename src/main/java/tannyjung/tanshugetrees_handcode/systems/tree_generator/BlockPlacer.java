@@ -11,19 +11,19 @@ public class BlockPlacer {
 
     public static void start (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ) {
 
-        String function = GameUtils.nbt.block.getText(level_accessor, posX, posY, posZ, "function");
+        String function = GameUtils.Data.getBlockText(level_accessor, posX, posY, posZ, "function");
 
-        if (GameUtils.nbt.block.getLogic(level_accessor, posX, posY, posZ, "delay1") == false) {
+        if (GameUtils.Data.getBlockLogic(level_accessor, posX, posY, posZ, "delay1") == false) {
 
-            GameUtils.nbt.block.setLogic(level_accessor, level_server, posX, posY, posZ, "delay1", true);
-            GameUtils.block.setScheduleTick(level_server, posX, posY, posZ, 100);
+            GameUtils.Data.setBlockLogic(level_accessor, level_server, posX, posY, posZ, "delay1", true);
+            GameUtils.Tile.setScheduleTick(level_server, posX, posY, posZ, 100);
 
             // Test Function
             {
 
                 if (function.isEmpty() == false) {
 
-                    String[] styles = GameUtils.nbt.block.getText(level_accessor, posX, posY, posZ, "function_style").split("/");
+                    String[] styles = GameUtils.Data.getBlockText(level_accessor, posX, posY, posZ, "function_style").split("/");
                     boolean pass = false;
 
                     for (String style : styles) {
@@ -74,7 +74,7 @@ public class BlockPlacer {
 
                     if (pass == false) {
 
-                        GameUtils.nbt.block.setText(level_accessor, level_server, posX, posY, posZ, "function", "");
+                        GameUtils.Data.setBlockText(level_accessor, level_server, posX, posY, posZ, "function", "");
 
                     }
 
@@ -84,14 +84,14 @@ public class BlockPlacer {
 
         } else {
 
-            if (GameUtils.nbt.block.getLogic(level_accessor, posX, posY, posZ, "delay2") == false) {
+            if (GameUtils.Data.getBlockLogic(level_accessor, posX, posY, posZ, "delay2") == false) {
 
-                GameUtils.nbt.block.setLogic(level_accessor, level_server, posX, posY, posZ, "delay2", true);
-                GameUtils.block.setScheduleTick(level_server, posX, posY, posZ, 100);
+                GameUtils.Data.setBlockLogic(level_accessor, level_server, posX, posY, posZ, "delay2", true);
+                GameUtils.Tile.setScheduleTick(level_server, posX, posY, posZ, 100);
 
             } else {
 
-                level_accessor.setBlock(new BlockPos(posX, posY, posZ), GameUtils.block.fromText(GameUtils.nbt.block.getText(level_accessor, posX, posY, posZ, "block")), 2);
+                level_accessor.setBlock(new BlockPos(posX, posY, posZ), GameUtils.Tile.fromText(GameUtils.Data.getBlockText(level_accessor, posX, posY, posZ, "block")), 2);
 
                 if (function.isEmpty() == false) {
 

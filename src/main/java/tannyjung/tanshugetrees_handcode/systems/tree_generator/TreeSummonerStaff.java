@@ -5,21 +5,24 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.phys.Vec3;
+import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 
 public class TreeSummonerStaff {
 
     public static void apply (Entity entity) {
 
-        if (GameUtils.gui.getTextBox(entity, "path").isEmpty() == true) {
+        GameUtils.Data.setItemText(entity, EquipmentSlot.MAINHAND, "path", GameUtils.GUI.getTextBox(entity, "path"));
 
-            GameUtils.gui.setTextBox(entity, "path", GameUtils.nbt.item.getText(entity, EquipmentSlot.MAINHAND, "path"));
+    }
 
-        }
+    public static void restore (Entity entity) {
 
-        GameUtils.nbt.item.setText(entity, EquipmentSlot.MAINHAND, "path", GameUtils.gui.getTextBox(entity, "path"));
+        Core.DelayedWorks.create(false, 5, () -> {
+
+            GameUtils.GUI.setTextBox(entity, "path", GameUtils.Data.getItemText(entity, EquipmentSlot.MAINHAND, "path"));
+
+        });
 
     }
 
@@ -34,11 +37,11 @@ public class TreeSummonerStaff {
         }
 
         ServerLevel level_server = (ServerLevel) level_accessor;
-        BlockPos pos = BlockPos.containing(GameUtils.entity.getPosRay(entity, 200));
-        GameUtils.misc.playSound(level_server, entity.getX(), entity.getY(), entity.getZ(), 2, 2, "minecraft:entity.illusioner.mirror_move");
-        GameUtils.misc.spawnParticle(level_server, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, 0, 0, 0, 1, "minecraft:flash");
-        GameUtils.misc.playSound(level_server, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 2, 0, "minecraft:entity.illusioner.prepare_blindness");
-        TreeGenerator.create(level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.nbt.item.getText(entity, EquipmentSlot.MAINHAND, "path"));
+        BlockPos pos = BlockPos.containing(GameUtils.Space.getPosRay(entity, 200));
+        GameUtils.Misc.playSound(level_server, entity.getX(), entity.getY(), entity.getZ(), 2, 2, "minecraft:entity.illusioner.mirror_move");
+        GameUtils.Misc.spawnParticle(level_server, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, 0, 0, 0, 1, "minecraft:flash");
+        GameUtils.Misc.playSound(level_server, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 2, 0, "minecraft:entity.illusioner.prepare_blindness");
+        TreeGenerator.create(level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.Data.getItemText(entity, EquipmentSlot.MAINHAND, "path"));
 
     }
 

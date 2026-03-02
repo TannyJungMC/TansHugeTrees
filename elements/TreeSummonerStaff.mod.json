@@ -34,7 +34,7 @@
     "specialInformation": {
       "fixedValue": [
         "§8--------------------------------------------------",
-        "§8Summon a tree by just one click. Just for fun. Can be useful for world builders, no need to place saplings and bone meal them every time.",
+        "§8Summon a tree by just one click. Can be useful for tree preset developers and map builders. The path will be test from extracted packs first, then from unextracted packs if failed.",
         "",
         "§8- Open GUI by right click while sneaking",
         "§8- Summon a tree by right click without sneaking",

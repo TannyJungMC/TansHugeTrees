@@ -1,10 +1,10 @@
 modLoader="javafml"
-loaderVersion="[4,)"
+loaderVersion="[47,)"
 license="All Rights Reserved"
 
 [[mods]]
 modId="tanshugetrees"
-version="1.7.1"
+version="1.8.0"
 displayName="Tan's Huge Trees"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/tans-huge-trees"
 logoFile="logo.png"
@@ -15,21 +15,10 @@ description="Generate trees and nature stuffs around the world"
 # Start of user code block mod configuration
 # End of user code block mod configuration
 
-
-# Start of user code block custom mixins
-# End of user code block custom mixins
-
-[[dependencies.tanshugetrees]]
-    modId="neoforge"
-    type="required"
-    versionRange="[21.1.190,)"
-    ordering="AFTER"
-    side="BOTH"
-
 [[dependencies.tanshugetrees]]
     modId="minecraft"
-    type="required"
-    versionRange="[1.21.1]"
+    mandatory=true
+    versionRange="[1.20.1]"
     ordering="AFTER"
     side="BOTH"
 

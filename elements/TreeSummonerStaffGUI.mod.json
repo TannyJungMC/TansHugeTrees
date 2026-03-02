@@ -13,12 +13,12 @@
       {
         "type": "textfield",
         "data": {
-          "placeholder": "Example : #TannyJung-Main-Pack/redwood",
+          "placeholder": "",
           "name": "path",
           "width": 352,
           "height": 20,
           "x": 38,
-          "y": 88,
+          "y": 112,
           "locked": false
         }
       },
@@ -34,7 +34,7 @@
           "width": 48,
           "height": 20,
           "x": 342,
-          "y": 112,
+          "y": 136,
           "locked": false
         }
       },
@@ -49,8 +49,24 @@
           },
           "width": 48,
           "height": 20,
+          "x": 286,
+          "y": 136,
+          "locked": false
+        }
+      },
+      {
+        "type": "label",
+        "data": {
+          "name": "label_example_tannyjungmainpackr",
+          "text": {
+            "fixedValue": "Example : #TannyJung-Main-Pack/redwood"
+          },
+          "color": {
+            "value": -10066330,
+            "falpha": 0.0
+          },
           "x": 38,
-          "y": 112,
+          "y": 136,
           "locked": false
         }
       }

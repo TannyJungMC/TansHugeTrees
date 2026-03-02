@@ -144,7 +144,7 @@
     "fluidCapacity": 8000,
     "fluidRestrictions": [],
     "onTickUpdate": {
-      "name": "WaypointFlowerPlace"
+      "name": "WaypointFlowerTick"
     },
     "generateFeature": false,
     "restrictionBiomes": [],

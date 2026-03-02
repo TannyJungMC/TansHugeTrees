@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 
 import javax.imageio.ImageIO;
@@ -18,7 +19,7 @@ import java.util.Map;
 public class OverlayMaker {
 
     private static final Map<String, Integer> online_image_id = new HashMap<>();
-    private static final Map<String, Boolean> image_available = new HashMap<>();
+    private static final Map<String, String> status = new HashMap<>();
     private static int online_image_count = 0;
 
     public static void createText (GuiGraphics graphic, int screen_width, int screen_height, String pos_style, int posX, int posZ, double scale, int color, boolean shadow, String text) {
@@ -46,64 +47,76 @@ public class OverlayMaker {
 
     }
 
-    public static void createImage (GuiGraphics graphic, boolean internet, String path, String path_fail, int posX, int posZ, int sizeX, int sizeZ, int piece_countX, int piece_countZ, int choose) {
+    public static void createImage (GuiGraphics graphic, boolean internet, String path, String path_load, String path_fail, int posX, int posZ, int sizeX, int sizeZ, int piece_countX, int piece_countZ, int choose) {
 
         String name = "";
 
-        if (internet == true) {
+        // Get Name
+        {
 
-            if (online_image_id.containsKey(path) == false) {
+            if (internet == true) {
 
-                online_image_count = online_image_count + 1;
-                online_image_id.put(path, online_image_count);
+                if (online_image_id.containsKey(path) == false) {
+
+                    online_image_count = online_image_count + 1;
+                    online_image_id.put(path, online_image_count);
+
+                }
+
+                name = "tannyjung:online_image_" + online_image_id.get(path) + ".png";
+
+            } else {
+
+                name = path;
 
             }
-
-            name = "tannyjung:online_image_" + online_image_id.get(path) + ".png";
-
-        } else {
-
-            name = path;
 
         }
 
         ResourceLocation location = null;
 
-        if (image_available.containsKey(name) == false) {
+        if (status.containsKey(name) == false) {
 
-            boolean pass = false;
+            // Load
+            {
 
-            if (internet == true) {
+                status.put(name, "load");
 
-                {
+                if (internet == true) {
 
-                    if (OutsideUtils.isURLAvailable(path) == true) {
+                    String name_final = name;
 
-                        try {
+                    Core.thread_main.submit(() -> {
 
-                            BufferedImage buffer = ImageIO.read(URI.create(path).toURL());
-                            NativeImage native_image = new NativeImage(buffer.getWidth(), buffer.getHeight(), false);
+                        {
 
-                            // Color Convert
-                            {
+                            if (OutsideUtils.isURLAvailable(path) == true) {
 
-                                int argb = 0;
-                                int a = 0;
-                                int r = 0;
-                                int g = 0;
-                                int b = 0;
-                                int abgr = 0;
+                                try {
 
-                                for (int scanY = 0; scanY < buffer.getHeight(); scanY++) {
+                                    BufferedImage buffer = ImageIO.read(URI.create(path).toURL());
+                                    NativeImage native_image = new NativeImage(buffer.getWidth(), buffer.getHeight(), false);
 
-                                    for (int scanX = 0; scanX < buffer.getWidth(); scanX++) {
+                                    // Color Convert
+                                    {
 
-                                        argb = buffer.getRGB(scanX, scanY);
-                                        a = (argb >>> 24) & 0xFF;
-                                        r = (argb >>> 16) & 0xFF;
-                                        g = (argb >>> 8) & 0xFF;
-                                        b = (argb) & 0xFF;
-                                        abgr = (a << 24) | (b << 16) | (g << 8) | r;
+                                        int argb = 0;
+                                        int a = 0;
+                                        int r = 0;
+                                        int g = 0;
+                                        int b = 0;
+                                        int abgr = 0;
+
+                                        for (int scanY = 0; scanY < buffer.getHeight(); scanY++) {
+
+                                            for (int scanX = 0; scanX < buffer.getWidth(); scanX++) {
+
+                                                argb = buffer.getRGB(scanX, scanY);
+                                                a = (argb >>> 24) & 0xFF;
+                                                r = (argb >>> 16) & 0xFF;
+                                                g = (argb >>> 8) & 0xFF;
+                                                b = (argb) & 0xFF;
+                                                abgr = (a << 24) | (b << 16) | (g << 8) | r;
 
                                         /*
                                         (1.20.1) (1.21.1)
@@ -111,42 +124,48 @@ public class OverlayMaker {
                                         (1.21.8)
                                         native_image.setPixelABGR(scanX, scanY, abgr);
                                         */
-                                        native_image.setPixelRGBA(scanX, scanY, abgr);
+                                                native_image.setPixelRGBA(scanX, scanY, abgr);
+
+                                            }
+
+                                        }
 
                                     }
+
+                                    /*
+                                    (1.20.1) (1.21.1)
+                                    Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(native_image));
+                                    (1.21.8)
+                                    Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(() -> "test", native_image));
+                                    */
+                                    Minecraft.getInstance().getTextureManager().register(ResourceLocation.parse(name_final), new DynamicTexture(native_image));
+
+                                    status.put(name_final, "available");
+
+                                } catch (Exception exception) {
+
+                                    status.put(name_final, "fail");
+                                    OutsideUtils.exception(new Exception(), exception, "");
 
                                 }
 
                             }
 
-                            /*
-                            (1.20.1) (1.21.1)
-                            Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(native_image));
-                            (1.21.8)
-                            Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(() -> "test", native_image));
-                            */
-                            Minecraft.getInstance().getTextureManager().register(ResourceLocation.parse(name), new DynamicTexture(native_image));
-                            pass = true;
-
-                        } catch (Exception exception) {
-
-                            OutsideUtils.exception(new Exception(), exception, "");
-
                         }
 
-                    }
+                    });
 
-                }
-
-            } else {
-
-                {
+                } else {
 
                     AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(ResourceLocation.parse(name));
 
-                    if (texture.getId() != -1) {
+                    if (texture.getId() == -1) {
 
-                        pass = true;
+                        status.put(name, "fail");
+
+                    } else {
+
+                        status.put(name, "available");
 
                     }
 
@@ -154,21 +173,17 @@ public class OverlayMaker {
 
             }
 
-            image_available.put(name, pass);
-
         }
 
-        if (image_available.get(name) == true) {
+        if (status.get(name).equals("available") == true) {
 
             location = ResourceLocation.parse(name);
 
+        } else if (status.get(name).equals("load") == true) {
+
+            location = ResourceLocation.parse(path_load);
+
         } else {
-
-            if (path_fail.isEmpty() == true) {
-
-                return;
-
-            }
 
             location = ResourceLocation.parse(path_fail);
 

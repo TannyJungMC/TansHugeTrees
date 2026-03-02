@@ -3,8 +3,7 @@ package tannyjung.tanshugetrees.client.gui;
 import tannyjung.tanshugetrees.world.inventory.TreeSummonerStaffGUIMenu;
 import tannyjung.tanshugetrees.network.TreeSummonerStaffGUIButtonMessage;
 import tannyjung.tanshugetrees.init.TanshugetreesModScreens;
-
-import net.neoforged.neoforge.network.PacketDistributor;
+import tannyjung.tanshugetrees.TanshugetreesMod;
 
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
@@ -53,6 +52,7 @@ public class TreeSummonerStaffGUIScreen extends AbstractContainerScreen<TreeSumm
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+		this.renderBackground(guiGraphics);
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 		path.render(guiGraphics, mouseX, mouseY, partialTicks);
 		this.renderTooltip(guiGraphics, mouseX, mouseY);
@@ -87,36 +87,42 @@ public class TreeSummonerStaffGUIScreen extends AbstractContainerScreen<TreeSumm
 
 	@Override
 	protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		guiGraphics.drawString(this.font, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr"), -176, 16, -10066330, false);
 	}
 
 	@Override
 	public void init() {
 		super.init();
-		path = new EditBox(this.font, this.leftPos + -175, this.topPos + -31, 350, 18, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.path"));
+		path = new EditBox(this.font, this.leftPos + -175, this.topPos + -7, 350, 18, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.path"));
 		path.setMaxLength(8192);
 		path.setResponder(content -> {
 			if (!menuStateUpdateActive)
 				menu.sendMenuStateUpdate(entity, 0, "path", content, false);
 		});
-		path.setHint(Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.path"));
 		this.addWidget(this.path);
 		button_apply = Button.builder(Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.button_apply"), e -> {
 			int x = TreeSummonerStaffGUIScreen.this.x;
 			int y = TreeSummonerStaffGUIScreen.this.y;
 			if (true) {
-				PacketDistributor.sendToServer(new TreeSummonerStaffGUIButtonMessage(0, x, y, z));
+				TanshugetreesMod.PACKET_HANDLER.sendToServer(new TreeSummonerStaffGUIButtonMessage(0, x, y, z));
 				TreeSummonerStaffGUIButtonMessage.handleButtonAction(entity, 0, x, y, z);
 			}
-		}).bounds(this.leftPos + 128, this.topPos + -8, 48, 20).build();
+		}).bounds(this.leftPos + 128, this.topPos + 16, 48, 20).build();
 		this.addRenderableWidget(button_apply);
 		button_restore = Button.builder(Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.button_restore"), e -> {
 			int x = TreeSummonerStaffGUIScreen.this.x;
 			int y = TreeSummonerStaffGUIScreen.this.y;
 			if (true) {
-				PacketDistributor.sendToServer(new TreeSummonerStaffGUIButtonMessage(1, x, y, z));
+				TanshugetreesMod.PACKET_HANDLER.sendToServer(new TreeSummonerStaffGUIButtonMessage(1, x, y, z));
 				TreeSummonerStaffGUIButtonMessage.handleButtonAction(entity, 1, x, y, z);
 			}
-		}).bounds(this.leftPos + -176, this.topPos + -8, 48, 20).build();
+		}).bounds(this.leftPos + 72, this.topPos + 16, 48, 20).build();
 		this.addRenderableWidget(button_restore);
+	}
+
+	@Override
+	protected void containerTick() {
+		super.containerTick();
+		path.tick();
 	}
 }

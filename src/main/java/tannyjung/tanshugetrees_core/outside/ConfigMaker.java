@@ -96,7 +96,9 @@ public class ConfigMaker {
         StringBuilder write = new StringBuilder();
         write.append("Important Notes");
         write.append("\n");
+        write.append("\n");
         write.append("- To apply this config and repair missing values, run this command [ /").append(Core.mod_id_big).append("restart ] or restart the world.");
+        write.append("\n");
         write.append("\n");
 
         // Generate

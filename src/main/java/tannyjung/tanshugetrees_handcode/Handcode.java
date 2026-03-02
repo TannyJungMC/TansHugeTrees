@@ -1,198 +1,38 @@
 package tannyjung.tanshugetrees_handcode;
 
-import net.minecraft.core.registries.Registries;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.event.server.*;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import tannyjung.core.Utils;
-import tannyjung.core.TXTFunction;
-import tannyjung.tanshugetrees.TanshugetreesMod;
-import tannyjung.tanshugetrees_handcode.config.CustomPackIncompatible;
-import tannyjung.tanshugetrees_handcode.config.PackCheckUpdate;
-import tannyjung.tanshugetrees_handcode.config.ConfigMain;
-import tannyjung.tanshugetrees_handcode.systems.Loop;
+import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.game.GameUtils;
+import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.FeatureAreaDirt;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.FeatureAreaGrass;
-import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.SeasonDetector;
-import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenFull;
-import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGenBeforePlants;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-@Mod.EventBusSubscriber
 public class Handcode {
+    
+    public static boolean compatibility_serene_seasons = false;
 
-	// ----------------------------------------------------------------------------------------------------
+    public static void start () {
 
-	public static int data_structure_version = 20251023;
-	public static String tanny_pack_version = "Alpha";
+        Core.data_structure_version_core = 1;
+        Core.data_structure_version_mod = "1.8.0";
+        Core.data_structure_version_pack = "1.8.0";
+        Core.tanny_pack_type = "WIP";
 
-	public static boolean version_1192 = false;
+        Core.mod_name = "Tan's Huge Trees";
+        Core.mod_id = "tanshugetrees";
+        Core.mod_id_short = "T";
 
-	// ----------------------------------------------------------------------------------------------------
+        Core.github_pack = "THT-tree_pack";
+        Core.wiki = "https://sites.google.com/view/tannyjung/minecraft-mods/tans-huge-trees";
 
-	public static String path_config = Utils.path_game + "/config/tanshugetrees";
-	public static String path_world_data = Utils.path_game + "/saves/tanshugetrees-error/path_world_data";
-	public static String tanny_pack_version_name = ""; // Make this because version can swap to "WIP" by config
+        compatibility_serene_seasons = FileConfig.compatibility_serene_seasons && GameUtils.Misc.isModLoaded("sereneseasons");
 
-    public static ExecutorService thread_main = Executors.newFixedThreadPool(1);
-    public static ExecutorService thread_living_tree_mechanics = Executors.newFixedThreadPool(1);
-    private static int thread_number = 0;
+    }
 
-    // ----------------------------------------------------------------------------------------------------
+    public static void registry () {
 
-	public Handcode () {}
+        Core.Registries.features.put("area_grass", FeatureAreaGrass::new);
+        Core.Registries.features.put("area_dirt", FeatureAreaDirt::new);
 
-	public static void startGame () {
-
-        TanshugetreesMod.LOGGER.info("Loading mod registries, config, and variables.");
-
-        // Core Code Syncing
-        {
-
-            TXTFunction.path_config = path_config;
-            TXTFunction.version_1192 = version_1192;
-
-        }
-
-		// Basic Registries
-		{
-
-			IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-
-			DeferredRegister<Feature<?>> REGISTRY = DeferredRegister.create(Registries.FEATURE, TanshugetreesMod.MODID);
-			REGISTRY.register("world_gen_before_plants", WorldGenBeforePlants::new);
-			REGISTRY.register("area_grass", FeatureAreaGrass::new);
-			REGISTRY.register("area_dirt", FeatureAreaDirt::new);
-
-			REGISTRY.register(bus);
-
-		}
-
-        Handcode.thread_main.submit(() -> {
-
-			ConfigMain.repairAll(null);
-			ConfigMain.apply(null);
-
-		});
-
-	}
-
-	@SubscribeEvent
-	public static void worldAboutToStart (ServerAboutToStartEvent event) {
-
-        TanshugetreesMod.LOGGER.info("Turned ON world systems");
-
-        // Thread Start
-        {
-
-            thread_number = 1;
-
-            thread_main = Executors.newFixedThreadPool(1, name -> {
-                Thread thread = new Thread(name);
-                thread.setName("Tan's Huge Trees - Main (" + thread_number + "/" + 1 + ")");
-                return thread;
-            });
-
-            thread_number = 1;
-
-            thread_living_tree_mechanics = Executors.newFixedThreadPool(4, name -> {
-                Thread thread = new Thread(name);
-                thread.setName("Tan's Huge Trees - Living Tree Mechanics (" + thread_number + "/" + 4 + ")");
-                return thread;
-            });
-
-        }
-
-		String world_path = String.valueOf(event.getServer().getWorldPath(new LevelResource(".")));
-		path_world_data = world_path + "/data/tanshugetrees";
-		ConfigMain.repairAll(null);
-		ConfigMain.apply(null);
-
-	}
-
-	@SubscribeEvent
-	public static void worldStarted (ServerStartedEvent event) {
-
-		LevelAccessor level_accessor = event.getServer().overworld();
-
-		if (level_accessor instanceof ServerLevel level_server) {
-
-			Utils.command.run(level_server, 0, 0, 0, "scoreboard objectives add TANSHUGETREES dummy");
-
-			// Season Detector
-			{
-
-				if (ConfigMain.serene_seasons_compatibility == true && ModList.get().isLoaded("sereneseasons") == true) {
-
-					SeasonDetector.start(level_server);
-
-				}
-
-			}
-
-			Loop.start(level_accessor, level_server);
-
-		}
-
-	}
-
-	@SubscribeEvent
-	public static void worldStopped (ServerStoppingEvent event) {
-
-		TanshugetreesMod.LOGGER.info("Turned OFF world systems");
-
-        // Thread Stop
-        {
-
-            thread_main.shutdownNow();
-            thread_living_tree_mechanics.shutdownNow();
-
-        }
-
-	}
-
-	@SubscribeEvent
-	public static void playerJoined (PlayerEvent.PlayerLoggedInEvent event) {
-
-		if (Utils.misc.playerCount() == 1) {
-
-			TanshugetreesMod.queueServerWork(100, () -> {
-
-				if (ConfigMain.auto_check_update == true) {
-
-					LevelAccessor level_accessor = event.getEntity().level();
-					CustomPackIncompatible.scanMain(level_accessor);
-					PackCheckUpdate.start(level_accessor, false);
-
-				}
-
-			});
-
-		}
-
-	}
-
-	@SubscribeEvent
-	public static void chunkLoaded (ChunkEvent.Load event) {
-
-		if (event.isNewChunk() == true) {
-
-			WorldGenFull.start(event);
-
-		}
-
-	}
+    }
 
 }

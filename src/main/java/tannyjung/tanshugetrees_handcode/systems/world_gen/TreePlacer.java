@@ -10,6 +10,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -34,7 +35,7 @@ public class TreePlacer {
 
     public static void start (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, int chunkX, int chunkZ) {
 
-        ByteBuffer get = FileManager.readBIN(Core.path_world_data + "/world_gen/place/" + dimension + "/" + (chunkX >> 5) + "," + (chunkZ >> 5) + ".bin");
+        ByteBuffer get = FileManager.readBIN(Core.path_world_mod + "/world_gen/place/" + dimension + "/" + (chunkX >> 5) + "," + (chunkZ >> 5) + ".bin");
 
         while (get.remaining() > 0) {
 
@@ -148,7 +149,7 @@ public class TreePlacer {
             // Already Tested
             {
 
-                ByteBuffer detailed_detection = FileManager.readBIN(Core.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + (chunkX >> 5) + "," + (chunkZ >> 5) + ".bin");
+                ByteBuffer detailed_detection = FileManager.readBIN(Core.path_world_mod + "/world_gen/detailed_detection/" + dimension + "/" + (chunkX >> 5) + "," + (chunkZ >> 5) + ".bin");
                 boolean get_pass = false;
                 int get_posX = 0;
                 int get_posY = 0;
@@ -256,7 +257,7 @@ public class TreePlacer {
 
                                         test = false;
 
-                                        if (GameUtils.space.testChunkStatus(level_accessor, scanX, scanZ, "minecraft:structure_references") == true) {
+                                        if (GameUtils.Space.testChunkStatus(level_accessor, scanX, scanZ, ChunkStatus.STRUCTURE_REFERENCES) == true) {
 
                                             references = level_accessor.getChunk(scanX, scanZ).getAllReferences();
 
@@ -295,24 +296,18 @@ public class TreePlacer {
 
                     }
 
-                    int originalY = 0;
+                    int originalY = chunk_generator.getBaseHeight(centerX, centerZ, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
 
                     // Ground Level
                     {
 
-                        if (GameUtils.space.testChunkStatus(level_accessor, center_chunkX, center_chunkZ, "minecraft:features") == true) {
+                        if (GameUtils.Space.testChunkStatus(level_accessor, center_chunkX, center_chunkZ, ChunkStatus.FEATURES) == true) {
 
-                            originalY = level_accessor.getHeight(Heightmap.Types.OCEAN_FLOOR, centerX, centerZ);
-
-                            if (GameUtils.misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(centerX, originalY - 1, centerZ)), ground_block) == false) {
+                            if (GameUtils.Misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(centerX, originalY - 1, centerZ)), ground_block) == false) {
 
                                 break test;
 
                             }
-
-                        } else {
-
-                            originalY = chunk_generator.getBaseHeight(centerX, centerZ, Heightmap.Types.OCEAN_FLOOR_WG, level_accessor, level_server.getChunkSource().randomState());
 
                         }
 
@@ -398,7 +393,7 @@ public class TreePlacer {
 
                             }
 
-                            if (originalY == GameUtils.space.getBuildHeight(level_accessor, false)) {
+                            if (originalY == GameUtils.Space.getBuildHeight(level_accessor, false)) {
 
                                 break test;
 
@@ -781,7 +776,7 @@ public class TreePlacer {
 
                         for (int scanZ = from_chunkZ_test; scanZ <= to_chunkZ_test; scanZ++) {
 
-                            FileManager.writeBIN(Core.path_world_data + "/world_gen/detailed_detection/" + dimension + "/" + scanX + "," + scanZ + ".bin", write, true);
+                            FileManager.writeBIN(Core.path_world_mod + "/world_gen/detailed_detection/" + dimension + "/" + scanX + "," + scanZ + ".bin", write, true);
 
                         }
 
@@ -977,7 +972,7 @@ public class TreePlacer {
 
                                     }
 
-                                    map_block.put(type_id, GameUtils.block.fromText(value));
+                                    map_block.put(type_id, GameUtils.Tile.fromText(value));
 
                                     // Test Leaves Types
                                     {
@@ -1039,7 +1034,7 @@ public class TreePlacer {
 
             }
 
-            boolean in_snowy_biome = GameUtils.space.isBiomeTaggedAs(GameUtils.space.getBiomeAt(level_server, centerX, centerY, centerZ), "tanshugetrees:snowy_biomes");
+            boolean in_snowy_biome = GameUtils.Space.isBiomeTaggedAs(GameUtils.Space.getBiomeAt(level_server, centerX, centerY, centerZ), "tanshugetrees:snowy_biomes");
             boolean no_roots = (FileConfig.world_gen_roots == false && can_disable_roots);
             boolean coarse_woody_debris = false;
             boolean hollowed = false;
@@ -1346,7 +1341,7 @@ public class TreePlacer {
                                     // Leaves
                                     {
 
-                                        if (type.startsWith("120") == true && GameUtils.block.isTaggedAs(block, "minecraft:leaves") == true) {
+                                        if (type.startsWith("120") == true && GameUtils.Tile.isTaggedAs(block, "minecraft:leaves") == true) {
 
                                             // Pre Leaves Drop
                                             {
@@ -1371,7 +1366,7 @@ public class TreePlacer {
 
                                                             if (height_motion < pos.getY()) {
 
-                                                                if (height_motion != GameUtils.space.getBuildHeight(level_accessor, false)) {
+                                                                if (height_motion != GameUtils.Space.getBuildHeight(level_accessor, false)) {
 
                                                                     if (level_accessor.isWaterAt(new BlockPos(pos.getX(), height_motion, pos.getZ())) == false) {
 
@@ -1419,7 +1414,7 @@ public class TreePlacer {
 
                                         if (level_accessor.isWaterAt(pos) == true) {
 
-                                            block = GameUtils.block.property.setLogic(block, "waterlogged", true);
+                                            block = GameUtils.Tile.setPropertyLogic(block, "waterlogged", true);
 
                                         }
 
@@ -1439,8 +1434,8 @@ public class TreePlacer {
 
                                             if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
 
-                                                String marker_data = "{NeoForgeData:{tanshugetrees:{file:\"" + path_storage + "|" + chosen + "\",tree_settings:\"" + path_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}}}";
-                                                GameUtils.entity.summonWorldGen(level_server, centerX + 0.5, centerY + 0.5, centerZ + 0.5, "minecraft:marker", id, "TANSHUGETREES-tree_location", marker_data);
+                                                String marker_data = "{ForgeData:{tanshugetrees:{file:\"" + path_storage + "|" + chosen + "\",tree_settings:\"" + path_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}}}";
+                                                GameUtils.Mob.summonWorldGen(level_server, centerX + 0.5, centerY + 0.5, centerZ + 0.5, "minecraft:marker", id, "TANSHUGETREES-tree_location", marker_data);
                                                 
                                             }
 
@@ -1455,19 +1450,17 @@ public class TreePlacer {
 
                                     if (type.startsWith("120") == false) {
 
-                                        if (dead_tree_level == 0) {
+                                        for (String name : Caches.getTreeDecorationList("normal")) {
 
-                                            for (String name : Caches.getTreeDecorationList("normal")) {
+                                            functionAdd(chunkX, chunkZ, pos.getX(), pos.getY(), pos.getZ(), "tree_decoration/" + name);
 
-                                                functionAdd(chunkX, chunkZ, posX, posY, posZ, "tree_decoration/" + name);
+                                        }
 
-                                            }
-
-                                        } else {
+                                        if (dead_tree_level != 0) {
 
                                             for (String name : Caches.getTreeDecorationList("decay")) {
 
-                                                functionAdd(chunkX, chunkZ, posX, posY, posZ, "tree_decoration/" + name);
+                                                functionAdd(chunkX, chunkZ, pos.getX(), pos.getY(), pos.getZ(), "tree_decoration/" + name);
 
                                             }
 
