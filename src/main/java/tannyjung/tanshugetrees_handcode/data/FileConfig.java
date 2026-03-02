@@ -102,7 +102,7 @@ public class FileConfig {
                 | These number will be multiplied to all tree config in these types
                 
                 tree_location = true
-                | Enable marker entity for tree location to store some tree data and for some custom features. Disable this can reduce number of entities, but some features will not work, such as living tree mechanics.
+                | Enable marker entity for tree location to store some tree data and for some custom features. Disable this can reduce number of entities, but some features will not work such as living tree mechanics.
                 
                 world_gen_roots = true
                 | Enable tree roots when generate in world gen. Note that disable this will no affect to some trees, because roots is important part for them. Also will no affect to taproot part.
@@ -143,7 +143,7 @@ public class FileConfig {
                 surface_smoothness_detection_height_down = 25
                 | Set height down of surface smoothness. Set to 100 for same as Y size of the tree below its center.
                 
-                structure_detection_size = 1
+                structure_detection_size = 0
                 | Cancel trees if they detect structure in their area based from their size. This number will be plus with their size, higher number bigger distance. Note that this feature is not perfect, trees with long size might not be canceled. Only support number between is 0 to 9. Set to 0 for only chunks that marked as having structures. Set to -1 to disable this feature.
                 
                 ----------------------------------------------------------------------------------------------------
@@ -231,7 +231,7 @@ public class FileConfig {
                 | How many generators will generate in the same time. Set to 0 for no limit.
                 
                 ----------------------------------------------------------------------------------------------------
-                Misc
+                Miscellaneous
                 ----------------------------------------------------------------------------------------------------
                 
                 developer_mode = false

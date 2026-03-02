@@ -14,7 +14,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerScoreboard;
@@ -29,10 +28,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.DirectionalBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.*;
@@ -40,9 +36,12 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Objective;
-import net.minecraft.world.scores.ScoreHolder;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+import net.minecraftforge.event.server.ServerLifecycleEvent;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import tannyjung.tanshugetrees.init.TanshugetreesModMenus;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.FileManager;
@@ -56,25 +55,20 @@ import java.util.List;
 /*
 (1.20.1)
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import net.minecraft.world.level.chunk.ChunkStatus;
 (1.21.1)
 import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.scores.ScoreHolder;
 */
-import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
-import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.component.CustomData;
+import net.minecraftforge.fml.ModList;
+import net.minecraft.world.level.chunk.ChunkStatus;
 
 public class GameUtils {
 
-	public static class misc {
+	public static class Misc {
 
         public static boolean isModLoaded (String id) {
 
@@ -92,7 +86,7 @@ public class GameUtils {
 
             } else {
 
-                String biome_centerID = space.getBiomeID(biome);
+                String biome_centerID = Space.getBiomeID(biome);
 
                 for (String split : config_value.split(" / ")) {
 
@@ -106,7 +100,7 @@ public class GameUtils {
 
                             if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
 
-                                if (space.isBiomeTaggedAs(biome, split_get) == false) {
+                                if (Space.isBiomeTaggedAs(biome, split_get) == false) {
 
                                     result = false;
 
@@ -176,7 +170,7 @@ public class GameUtils {
 
                             if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
 
-                                if (block.isTaggedAs(test_block, value) == false) {
+                                if (Tile.isTaggedAs(test_block, value) == false) {
 
                                     return_logic = false;
 
@@ -184,7 +178,7 @@ public class GameUtils {
 
                             } else {
 
-                                if (test_block.equals(block.fromText(value)) == false) {
+                                if (test_block.equals(Tile.fromText(value)) == false) {
 
                                     return_logic = false;
 
@@ -233,14 +227,13 @@ public class GameUtils {
 
 			}
 
-			String message = nbt.createMessageData("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod |   | " + data);
-            command.run(level_server, 0, 0, 0, "tellraw " + target + " " + message);
+            Command.run(level_server, 0, 0, 0, "tellraw " + target + " [{\"text\":\"\"}," + Data.createTextData("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod |   | " + data) + "]");
 
         }
 
 		public static void spawnParticle (ServerLevel level_server, double posX, double posY, double posZ, double spreadX, double spreadY, double spreadZ, double speed, int count, String id) {
 
-			ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE.get(ResourceLocation.parse(id));
+			ParticleType<?> particle = ForgeRegistries.PARTICLE_TYPES.getValue(ResourceLocation.parse(id));
 
 			if (particle != null) {
 
@@ -256,7 +249,7 @@ public class GameUtils {
 
 		public static void playSound (ServerLevel level_server, double posX, double posY, double posZ, float volume, float pitch, String id) {
 
-			SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse(id));
+			SoundEvent sound = ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation.parse(id));
 
 			if (sound != null) {
 
@@ -268,7 +261,7 @@ public class GameUtils {
 
 	}
 
-	public static class command {
+	public static class Command {
 
 		public static void run (ServerLevel level_server, double posX, double posY, double posZ, String command) {
 			
@@ -378,7 +371,7 @@ public class GameUtils {
 
 	}
 
-	public static class block {
+	public static class Tile {
 
 		public static boolean isTaggedAs (BlockState block, String tag) {
 
@@ -407,54 +400,62 @@ public class GameUtils {
 				// Get Block ID
 				{
 
+					if (id.endsWith("}") == true) {
+
+						id = id.substring(0, id.indexOf("{"));
+
+					}
+
+					if (id.endsWith("]") == true) {
+
+						id = id.substring(0, id.indexOf("["));
+
+					}
+
+				}
+
+				/*
+				(1.20.1) (1.21.1)
+
+				(1.21.8)
+
+				*/
+				Block block_test = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(id));
+
+				if (block_test != null) {
+
+					block = block_test.defaultBlockState();
+
 					if (data.endsWith("}") == true) {
 
-						id = data.substring(0, data.indexOf("{"));
+						// To Do -> Put "{...}" from data into the block
+
+						data = data.substring(0, data.indexOf("{"));
 
 					}
 
 					if (data.endsWith("]") == true) {
 
-						id = data.substring(0, data.indexOf("["));
+						String[] properties = data.substring(data.indexOf("[") + 1, data.length() - 1).split(",");
 
-					}
+						for (String property_data : properties) {
 
-					/*
-					(1.20.1) (1.21.1)
-					block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id)).defaultBlockState();
-					(1.21.8)
-					block = BuiltInRegistries.BLOCK.get(Identifier.parse(id)).get().value().defaultBlockState();
-					*/
-					block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id)).defaultBlockState();
+							String[] get = property_data.split("=");
+							Property<?> test = block.getBlock().getStateDefinition().getProperty(get[0]);
 
-				}
+							if (test instanceof BooleanProperty) {
 
-				if (data.endsWith("}") == true) {
+								block = setPropertyLogic(block, get[0], Boolean.parseBoolean(get[1]));
 
-					data = data.substring(0, data.indexOf("{"));
+							} else if (test instanceof IntegerProperty) {
 
-				}
+								block = setPropertyNumber(block, get[0], Integer.parseInt(get[1]));
 
-				if (data.endsWith("]") == true) {
+							} else if (test instanceof EnumProperty<?>) {
 
-					String[] properties = data.substring(data.indexOf("[") + 1, data.length() - 1).split(",");
+								block = setPropertyCustom(block, get[0], get[1]);
 
-					for (String property_data : properties) {
-
-						String[] get = property_data.split("=");
-						Property<?> test = block.getBlock().getStateDefinition().getProperty(get[0]);
-
-						if (test instanceof BooleanProperty) {
-
-							block = property.setLogic(block, get[0], Boolean.parseBoolean(get[1]));
-
-						} else if (test instanceof IntegerProperty) {
-
-							block = property.setNumber(block, get[0], Integer.parseInt(get[1]));
-
-						} else if (test instanceof EnumProperty<?>) {
-
-							block = property.setCustom(block, get[0], get[1]);
+							}
 
 						}
 
@@ -491,119 +492,115 @@ public class GameUtils {
 
 		}
 
-		public static class property {
+		public static boolean getPropertyLogic (BlockState block, String name) {
 
-			public static boolean getLogic (BlockState block, String name) {
+			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
 
-				Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+			if (property instanceof BooleanProperty) {
 
-				if (property instanceof BooleanProperty) {
-
-					return Boolean.parseBoolean(block.getValue(property).toString());
-
-				}
-
-				return false;
+				return Boolean.parseBoolean(block.getValue(property).toString());
 
 			}
 
-			public static int getNumber (BlockState block, String name) {
+			return false;
 
-				Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+		}
 
-				if (property instanceof IntegerProperty) {
+		public static int getPropertyNumber (BlockState block, String name) {
 
-					return Integer.parseInt(block.getValue(property).toString());
+			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
 
-				}
+			if (property instanceof IntegerProperty) {
 
-				return 0;
-
-			}
-
-			public static String getCustom (BlockState block, String name) {
-
-				Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
-
-				if (property instanceof EnumProperty<?>) {
-
-					return block.getValue(property).toString();
-
-				}
-
-				return "";
+				return Integer.parseInt(block.getValue(property).toString());
 
 			}
 
-			public static BlockState setLogic (BlockState block, String name, boolean value) {
+			return 0;
 
-				Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+		}
 
-				if (block.hasProperty(property) == true) {
+		public static String getPropertyCustom (BlockState block, String name) {
 
-					if (property instanceof BooleanProperty property_instance) {
+			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
 
-						block = block.setValue(property_instance, value);
+			if (property instanceof EnumProperty<?>) {
 
-					}
-
-				}
-
-				return block;
+				return block.getValue(property).toString();
 
 			}
 
-			public static BlockState setNumber (BlockState block, String name, int value) {
+			return "";
 
-				Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+		}
 
-				if (block.hasProperty(property) == true) {
+		public static BlockState setPropertyLogic (BlockState block, String name, boolean value) {
 
-					if (property instanceof IntegerProperty property_instance) {
+			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
 
-						block = block.setValue(property_instance, value);
+			if (block.hasProperty(property) == true) {
 
-					}
+				if (property instanceof BooleanProperty property_instance) {
 
-				}
-
-				return block;
-
-			}
-
-			public static BlockState setCustom (BlockState block, String name, String value) {
-
-				if (name.equals("facing") == true) {
-
-					if (block.hasProperty(DirectionalBlock.FACING) == true) {
-
-						block = block.setValue(DirectionalBlock.FACING, Direction.valueOf(value.toUpperCase()));
-
-					} else if (block.hasProperty(HorizontalDirectionalBlock.FACING) == true) {
-
-						block = block.setValue(HorizontalDirectionalBlock.FACING, Direction.valueOf(value.toUpperCase()));
-
-					}
-
-				} else if (name.equals("type") == true) {
-
-					if (block.hasProperty(SlabBlock.TYPE) == true) {
-
-						block = block.setValue(SlabBlock.TYPE, SlabType.valueOf(value.toUpperCase()));
-
-					}
+					block = block.setValue(property_instance, value);
 
 				}
 
-				return block;
+			}
+
+			return block;
+
+		}
+
+		public static BlockState setPropertyNumber (BlockState block, String name, int value) {
+
+			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
+
+			if (block.hasProperty(property) == true) {
+
+				if (property instanceof IntegerProperty property_instance) {
+
+					block = block.setValue(property_instance, value);
+
+				}
 
 			}
+
+			return block;
+
+		}
+
+		public static BlockState setPropertyCustom (BlockState block, String name, String value) {
+
+			if (name.equals("facing") == true) {
+
+				if (block.hasProperty(DirectionalBlock.FACING) == true) {
+
+					block = block.setValue(DirectionalBlock.FACING, Direction.valueOf(value.toUpperCase()));
+
+				} else if (block.hasProperty(HorizontalDirectionalBlock.FACING) == true) {
+
+					block = block.setValue(HorizontalDirectionalBlock.FACING, Direction.valueOf(value.toUpperCase()));
+
+				}
+
+			} else if (name.equals("type") == true) {
+
+				if (block.hasProperty(SlabBlock.TYPE) == true) {
+
+					block = block.setValue(SlabBlock.TYPE, SlabType.valueOf(value.toUpperCase()));
+
+				}
+
+			}
+
+			return block;
 
 		}
 
 	}
 
-	public static class entity {
+	public static class Mob {
 
 		public static List<Entity> getAtArea (ServerLevel level_server, double posX, double posY, double posZ, int distance, boolean is_box, int count, String id, String tag) {
 
@@ -678,11 +675,11 @@ public class GameUtils {
 
 		public static Entity getAtAreaOne (ServerLevel level_server, double posX, double posY, double posZ, int distance, boolean is_box, String id, String tag) {
 
-			List<Entity> entities = GameUtils.entity.getAtArea(level_server, posX, posY, posZ, distance, is_box, 1, id, tag);
+			List<Entity> entities = GameUtils.Mob.getAtArea(level_server, posX, posY, posZ, distance, is_box, 1, id, tag);
 
 			if (entities.isEmpty() == false) {
 
-				return entities.getFirst();
+				return entities.get(0);
 
 			} else {
 
@@ -694,11 +691,11 @@ public class GameUtils {
 
 		public static Entity getAtEverywhereOne (ServerLevel level_server, String id, String tag) {
 
-			List<Entity> entities = GameUtils.entity.getAtEverywhere(level_server, id, tag);
+			List<Entity> entities = GameUtils.Mob.getAtEverywhere(level_server, id, tag);
 
 			if (entities.isEmpty() == false) {
 
-				return entities.getFirst();
+				return entities.get(0);
 
 			} else {
 
@@ -716,11 +713,18 @@ public class GameUtils {
 
 				if (custom.isEmpty() == false) {
 
-					entity.load(GameUtils.nbt.convertJSONToTag(custom));
+					entity.load(Data.convertJSONToTag(custom));
 
 				}
 
-				entity.setCustomName(GameUtils.nbt.convertJSONToMessage(GameUtils.nbt.createMessageData(name)));
+				entity.setCustomName(Data.convertJSONToComponent("[" + Data.createTextData(name) + "]"));
+
+				if (name.contains(" / ") == true) {
+
+					entity.setCustomNameVisible(true);
+
+				}
+
 				entity.addTag("TANNYJUNG");
 				entity.addTag(Core.mod_id_big);
 
@@ -743,7 +747,7 @@ public class GameUtils {
 
 			level_server.getServer().execute(() -> {
 
-				GameUtils.entity.summon(level_server, posX, posY, posZ, id, name, tag, custom);
+				GameUtils.Mob.summon(level_server, posX, posY, posZ, id, name, tag, custom);
 
 			});
 
@@ -767,33 +771,11 @@ public class GameUtils {
 
 		}
 
-		public static Vec3 getPosLook (Entity entity, double offsetX, double offsetY, double offsetZ) {
+	}
 
-			Vec3 vec3_forward = Vec3.directionFromRotation(entity.getXRot(), entity.getYRot());
-			Vec3 vec3_vertical = null;
+	public static class Item {
 
-			if (Math.abs(vec3_forward.y) > 0.999) {
-
-				vec3_vertical = new Vec3(0,0,1);
-
-			} else {
-
-				vec3_vertical = new Vec3(0,1,0);
-
-			}
-
-			Vec3 vec3_horizontal = vec3_forward.cross(vec3_vertical).normalize();
-			Vec3 vec3_vertical_adjust = vec3_horizontal.cross(vec3_forward).normalize();
-			return entity.position().add(vec3_horizontal.scale(offsetX)).add(vec3_vertical_adjust.scale(offsetY)).add(vec3_forward.scale(offsetZ));
-		}
-
-		public static Vec3 getPosRay (Entity entity, double distance) {
-
-			return entity.level().clip(new ClipContext(entity.getEyePosition(1f), entity.getEyePosition(1f).add(entity.getViewVector(1f).scale(distance)), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, entity)).getLocation();
-
-		}
-
-		public static ItemStack getItemSlot (Entity entity, EquipmentSlot equipment_slot) {
+		public static ItemStack getSlot (Entity entity, EquipmentSlot equipment_slot) {
 
 			if (entity instanceof LivingEntity living_entity) {
 
@@ -805,7 +787,7 @@ public class GameUtils {
 
 		}
 
-		public static void itemCountSet (Entity entity, EquipmentSlot equipment_slot, int value) {
+		public static void setCount (Entity entity, EquipmentSlot equipment_slot, int value) {
 
 			if (entity instanceof LivingEntity living_entity) {
 
@@ -816,7 +798,7 @@ public class GameUtils {
 
 		}
 
-		public static void itemCountAdd (Entity entity, EquipmentSlot equipment_slot, int value) {
+		public static void addCount (Entity entity, EquipmentSlot equipment_slot, int value) {
 
 			if (entity instanceof LivingEntity living_entity) {
 
@@ -829,7 +811,7 @@ public class GameUtils {
 
 	}
 
-	public static class space {
+	public static class Space {
 
 		public static String getDimensionID (ServerLevel level_server) {
 
@@ -851,7 +833,7 @@ public class GameUtils {
 			(1.21.1)
 			return new int[]{level_accessor.getLevelData().getSpawnPos().getX(), level_accessor.getLevelData().getSpawnPos().getZ()};
 			*/
-			return new int[]{level_accessor.getLevelData().getSpawnPos().getX(), level_accessor.getLevelData().getSpawnPos().getZ()};
+			return new int[]{level_accessor.getLevelData().getXSpawn(), level_accessor.getLevelData().getZSpawn()};
 
 		}
 
@@ -880,10 +862,10 @@ public class GameUtils {
 			}
 
 		}
-		
-		public static boolean testChunkStatus (LevelAccessor level_accessor, int chunkX, int chunkZ, String status) {
 
-			return level_accessor.hasChunk(chunkX, chunkZ) == true && level_accessor.getChunk(chunkX, chunkZ).getHighestGeneratedStatus().isOrAfter(ChunkStatus.byName(status)) == true;
+		public static boolean testChunkStatus (LevelAccessor level_accessor, int chunkX, int chunkZ, ChunkStatus status) {
+
+			return level_accessor.hasChunk(chunkX, chunkZ) == true && level_accessor.getChunk(chunkX, chunkZ).getHighestGeneratedStatus().isOrAfter(status) == true;
 
 		}
 
@@ -894,15 +876,13 @@ public class GameUtils {
 
 			/*
 			(1.20.1)
-			level_world_gen.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolderOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
 			(1.21.1)
 			level_world_gen.holderOrThrow(ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(id))).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
 			(1.21.8)
-			level_world_gen.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getValueOrThrow(FeatureUtils.createKey(id)).place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getValueOrThrow(FeatureUtils.createKey(id)).place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
 			*/
-			level_world_gen.holderOrThrow(ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(id))).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
-
-			// Make 1.20.1 and 1.21.8+ use "ResourceKey" same like in 1.21.1?
+			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
 
 		}
 
@@ -938,9 +918,35 @@ public class GameUtils {
 
 		}
 
+		public static Vec3 getPosLook (Entity entity, double offsetX, double offsetY, double offsetZ) {
+
+			Vec3 vec3_forward = Vec3.directionFromRotation(entity.getXRot(), entity.getYRot());
+			Vec3 vec3_vertical = null;
+
+			if (Math.abs(vec3_forward.y) > 0.999) {
+
+				vec3_vertical = new Vec3(0,0,1);
+
+			} else {
+
+				vec3_vertical = new Vec3(0,1,0);
+
+			}
+
+			Vec3 vec3_horizontal = vec3_forward.cross(vec3_vertical).normalize();
+			Vec3 vec3_vertical_adjust = vec3_horizontal.cross(vec3_forward).normalize();
+			return entity.position().add(vec3_horizontal.scale(offsetX)).add(vec3_vertical_adjust.scale(offsetY)).add(vec3_forward.scale(offsetZ));
+		}
+
+		public static Vec3 getPosRay (Entity entity, double distance) {
+
+			return entity.level().clip(new ClipContext(entity.getEyePosition(1f), entity.getEyePosition(1f).add(entity.getViewVector(1f).scale(distance)), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, entity)).getLocation();
+
+		}
+
 	}
 
-	public static class nbt {
+	public static class Data {
 
 		public static CompoundTag convertJSONToTag (String data) {
 
@@ -960,13 +966,19 @@ public class GameUtils {
 
 		}
 
-		public static MutableComponent convertJSONToMessage (String data) {
+		public static MutableComponent convertJSONToComponent (String data) {
 
 			MutableComponent component = null;
 
 			try {
 
+				/*
+				(1.20.1)
+				component = Component.Serializer.fromJson(data);
+				(1.21.1)
 				component = Component.Serializer.fromJson(data, RegistryAccess.EMPTY);
+				*/
+				component = Component.Serializer.fromJson(data);
 
 			} catch (Exception ignored) {
 
@@ -993,16 +1005,15 @@ public class GameUtils {
 
 			}
 
-			return "{NeoForgeData:{" + Core.mod_id + ":{" + data + "}}}";
+			return "{ForgeData:{" + Core.mod_id + ":{" + data + "}}}";
 
 		}
 
-		public static String createMessageData (String data) {
+		public static String createTextData (String data) {
 
 			StringBuilder convert = new StringBuilder();
 			String[] split = new String[0];
 			boolean first = false;
-			convert.append("[{\"text\":\"\"},");
 
 			for (String read_all : data.split(" \\| ")) {
 
@@ -1060,161 +1071,187 @@ public class GameUtils {
 
 			}
 
-			convert.append("]");
-
 			return convert.toString();
 
 		}
 
-		public static class entity {
+		public static String createTextDataDoubleBackslash (String data) {
 
-			public static String getText (Entity entity, String name) {
-
-				/*
-				(1.20.1) (1.21.1)
-				return entity.getPersistentData().getCompound(Core.mod_id).getString(name);
-				(1.21.8)
-				return entity.getPersistentData().getCompound(Core.mod_id).getString(name).get();
-				*/
-				return entity.getPersistentData().getCompound(Core.mod_id).getString(name);
-
-			}
-
-			public static Boolean getLogic (Entity entity, String name) {
-
-				/*
-				(1.20.1) (1.21.1)
-				return entity.getPersistentData().getCompound(Core.mod_id).getBoolean(name);
-				(1.21.8)
-				return entity.getPersistentData().getCompound(Core.mod_id).getBoolean(name).get();
-				*/
-				return entity.getPersistentData().getCompound(Core.mod_id).getBoolean(name);
-
-			}
-
-			public static double getNumber (Entity entity, String name) {
-
-				/*
-				(1.20.1) (1.21.1)
-				return entity.getPersistentData().getCompound(Core.mod_id).getDouble(name);
-				(1.21.8)
-				return entity.getPersistentData().getCompound(Core.mod_id).getDouble(name).get();
-				*/
-				return entity.getPersistentData().getCompound(Core.mod_id).getDouble(name);
-
-			}
-
-			public static double[] getListNumber (Entity entity, String name) {
-
-				/*
-				(1.20.1) (1.21.1)
-				ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name, Tag.TAG_DOUBLE);
-				(1.21.8)
-				ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name).get();
-				*/
-				ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name, Tag.TAG_DOUBLE);
-
-				double[] convert = new double[list.size()];
-
-				for (int count = 0; count <= list.size() - 1; count++) {
-
-					/*
-					(1.20.1) (1.21.1)
-					convert[count] = list.getDouble(count);
-					(1.21.8)
-					convert[count] = list.getDouble(count).get();
-					*/
-					convert[count] = list.getDouble(count);
-
-				}
-
-				return convert;
-
-			}
-
-			public static double[] getListNumberFloat (Entity entity, String name) {
-
-				/*
-				(1.20.1) (1.21.1)
-				ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name, Tag.TAG_FLOAT);
-				(1.21.8)
-				ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name).get();
-				*/
-				ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name, Tag.TAG_FLOAT);
-
-				double[] convert = new double[list.size()];
-
-				for (int count = 0; count <= list.size() - 1; count++) {
-
-					/*
-					(1.20.1) (1.21.1)
-					convert[count] = list.getFloat(count);
-					(1.21.8)
-					convert[count] = list.getFloat(count).get();
-					*/
-					convert[count] = list.getFloat(count);
-
-				}
-
-				return convert;
-
-			}
-
-			public static void setText (Entity entity, String name, String value) {
-
-				CompoundTag tag = new CompoundTag();
-				CompoundTag tag_add = new CompoundTag();
-				tag_add.putString(name, value);
-				tag.put(Core.mod_id, tag_add);
-				entity.getPersistentData().merge(tag);
-
-			}
-
-			public static void setLogic (Entity entity, String name, boolean value) {
-
-				CompoundTag tag = new CompoundTag();
-				CompoundTag tag_add = new CompoundTag();
-				tag_add.putBoolean(name, value);
-				tag.put(Core.mod_id, tag_add);
-				entity.getPersistentData().merge(tag);
-
-			}
-
-			public static void setNumber (Entity entity, String name, double value) {
-
-				CompoundTag tag = new CompoundTag();
-				CompoundTag tag_add = new CompoundTag();
-				tag_add.putDouble(name, value);
-				tag.put(Core.mod_id, tag_add);
-				entity.getPersistentData().merge(tag);
-
-			}
-
-			public static void addNumber (Entity entity, String name, double value) {
-
-				/*
-				(1.20.1) (1.21.1)
-				entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, entity.getPersistentData().getCompound(Core.mod_id).getDouble(name) + value);
-				(1.21.8)
-				entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, entity.getPersistentData().getCompound(Core.mod_id).getDouble(name).get() + value);
-				*/
-				entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, entity.getPersistentData().getCompound(Core.mod_id).getDouble(name) + value);
-
-			}
+			return createTextData(data).replace("\"", "\\\"");
 
 		}
 
-		public static class block {
+		public static String createItem (String name, String lore, String custom_data, String forge_data) {
 
-			public static String getText (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+			/*
+			(1.20.1)
+			String part_name = "display:{Name:\"" + createTextDataDoubleBackslash(name) + "\"},";
+			String part_lore = "Lore:[\"" + Data.createTextDataDoubleBackslash(lore) + "\"],";
+			String part_custom_data = "tag:{" + Core.mod_id + ":{" + custom_data + "}},";
+			String part_forge_data = "BlockEntityData:{ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
+			(1.21.1)
+			String part_name = "custom_name:\"" + createTextDataDoubleBackslash(name) + "\",";
+			String part_lore = "lore:[\"" + Data.createTextDataDoubleBackslash(lore) + "\"],";
+			String part_custom_data = "custom_data:{" + custom_data + "},";
+			String part_forge_data = "block_entity_data:{id:\"\",ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
+			*/
+			String part_name = "display:{Name:\"" + createTextDataDoubleBackslash(name) + "\"},";
+			String part_lore = "Lore:[\"" + Data.createTextDataDoubleBackslash(lore) + "\"],";
+			String part_custom_data = "tag:{" + Core.mod_id + ":{" + custom_data + "}},";
+			String part_forge_data = "BlockEntityData:{ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
 
-				return new Object() {
+			StringBuilder write = new StringBuilder();
+			if (name.isEmpty() == false) write.append(part_name);
+			if (lore.isEmpty() == false) write.append(part_lore);
+			if (custom_data.isEmpty() == false) write.append(part_custom_data);
+			if (forge_data.isEmpty() == false) write.append(part_forge_data);
+			return write.toString();
 
-					public String getValue (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+		}
 
-						BlockEntity blockEntity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+		public static String getEntityText (Entity entity, String name) {
 
-						if (blockEntity != null) {
+			/*
+			(1.20.1) (1.21.1)
+			return entity.getPersistentData().getCompound(Core.mod_id).getString(name);
+			(1.21.8)
+			return entity.getPersistentData().getCompound(Core.mod_id).getString(name).get();
+			*/
+			return entity.getPersistentData().getCompound(Core.mod_id).getString(name);
+
+		}
+
+		public static Boolean getEntityLogic (Entity entity, String name) {
+
+			/*
+			(1.20.1) (1.21.1)
+			return entity.getPersistentData().getCompound(Core.mod_id).getBoolean(name);
+			(1.21.8)
+			return entity.getPersistentData().getCompound(Core.mod_id).getBoolean(name).get();
+			*/
+			return entity.getPersistentData().getCompound(Core.mod_id).getBoolean(name);
+
+		}
+
+		public static double getEntityNumber (Entity entity, String name) {
+
+			/*
+			(1.20.1) (1.21.1)
+			return entity.getPersistentData().getCompound(Core.mod_id).getDouble(name);
+			(1.21.8)
+			return entity.getPersistentData().getCompound(Core.mod_id).getDouble(name).get();
+			*/
+			return entity.getPersistentData().getCompound(Core.mod_id).getDouble(name);
+
+		}
+
+		public static double[] getEntityListNumber (Entity entity, String name) {
+
+			/*
+			(1.20.1) (1.21.1)
+			ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name, Tag.TAG_DOUBLE);
+			(1.21.8)
+			ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name).get();
+			*/
+			ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name, Tag.TAG_DOUBLE);
+
+			double[] convert = new double[list.size()];
+
+			for (int count = 0; count <= list.size() - 1; count++) {
+
+				/*
+				(1.20.1) (1.21.1)
+				convert[count] = list.getDouble(count);
+				(1.21.8)
+				convert[count] = list.getDouble(count).get();
+				*/
+				convert[count] = list.getDouble(count);
+
+			}
+
+			return convert;
+
+		}
+
+		public static double[] getEntityListNumberFloat (Entity entity, String name) {
+
+			/*
+			(1.20.1) (1.21.1)
+			ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name, Tag.TAG_FLOAT);
+			(1.21.8)
+			ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name).get();
+			*/
+			ListTag list = entity.getPersistentData().getCompound(Core.mod_id).getList(name, Tag.TAG_FLOAT);
+
+			double[] convert = new double[list.size()];
+
+			for (int count = 0; count <= list.size() - 1; count++) {
+
+				/*
+				(1.20.1) (1.21.1)
+				convert[count] = list.getFloat(count);
+				(1.21.8)
+				convert[count] = list.getFloat(count).get();
+				*/
+				convert[count] = list.getFloat(count);
+
+			}
+
+			return convert;
+
+		}
+
+		public static void setEntityText (Entity entity, String name, String value) {
+
+			CompoundTag tag = new CompoundTag();
+			CompoundTag tag_add = new CompoundTag();
+			tag_add.putString(name, value);
+			tag.put(Core.mod_id, tag_add);
+			entity.getPersistentData().merge(tag);
+
+		}
+
+		public static void setEntityLogic (Entity entity, String name, boolean value) {
+
+			CompoundTag tag = new CompoundTag();
+			CompoundTag tag_add = new CompoundTag();
+			tag_add.putBoolean(name, value);
+			tag.put(Core.mod_id, tag_add);
+			entity.getPersistentData().merge(tag);
+
+		}
+
+		public static void setEntityNumber (Entity entity, String name, double value) {
+
+			CompoundTag tag = new CompoundTag();
+			CompoundTag tag_add = new CompoundTag();
+			tag_add.putDouble(name, value);
+			tag.put(Core.mod_id, tag_add);
+			entity.getPersistentData().merge(tag);
+
+		}
+
+		public static void addEntityNumber (Entity entity, String name, double value) {
+
+			/*
+			(1.20.1) (1.21.1)
+			entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, entity.getPersistentData().getCompound(Core.mod_id).getDouble(name) + value);
+			(1.21.8)
+			entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, entity.getPersistentData().getCompound(Core.mod_id).getDouble(name).get() + value);
+			*/
+			entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, entity.getPersistentData().getCompound(Core.mod_id).getDouble(name) + value);
+
+		}
+
+		public static String getBlockText (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+
+			return new Object() {
+
+				public String getValue (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+
+					BlockEntity blockEntity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+
+					if (blockEntity != null) {
 
                         /*
                         (1.20.1) (1.21.1)
@@ -1222,27 +1259,27 @@ public class GameUtils {
                         (1.21.8)
                         return blockEntity.getPersistentData().getCompound(Core.mod_id).getString(name).get();
                         */
-							return blockEntity.getPersistentData().getCompound(Core.mod_id).getString(name);
-
-						}
-
-						return "";
+						return blockEntity.getPersistentData().getCompound(Core.mod_id).getString(name);
 
 					}
 
-				}.getValue(level_accessor, posX, posY, posZ, name);
+					return "";
 
-			}
+				}
 
-			public static double getNumber (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+			}.getValue(level_accessor, posX, posY, posZ, name);
 
-				return new Object() {
+		}
 
-					public double getValue (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+		public static double getBlockNumber (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
 
-						BlockEntity blockEntity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+			return new Object() {
 
-						if (blockEntity != null) {
+				public double getValue (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+
+					BlockEntity blockEntity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+
+					if (blockEntity != null) {
 
                         /*
                         (1.20.1) (1.21.1)
@@ -1250,27 +1287,27 @@ public class GameUtils {
                         (1.21.8)
                         return blockEntity.getPersistentData().getCompound(Core.mod_id).getDouble(name).get();
                         */
-							return blockEntity.getPersistentData().getCompound(Core.mod_id).getDouble(name);
-
-						}
-
-						return 0.0;
+						return blockEntity.getPersistentData().getCompound(Core.mod_id).getDouble(name);
 
 					}
 
-				}.getValue(level_accessor, posX, posY, posZ, name);
+					return 0.0;
 
-			}
+				}
 
-			public static boolean getLogic (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+			}.getValue(level_accessor, posX, posY, posZ, name);
 
-				return new Object() {
+		}
 
-					public boolean getValue (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+		public static boolean getBlockLogic (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
 
-						BlockEntity blockEntity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+			return new Object() {
 
-						if (blockEntity != null) {
+				public boolean getValue (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+
+					BlockEntity blockEntity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+
+					if (blockEntity != null) {
 
                         /*
                         (1.20.1) (1.21.1)
@@ -1278,124 +1315,125 @@ public class GameUtils {
                         (1.21.8)
                         return blockEntity.getPersistentData().getCompound(Core.mod_id).getBoolean(name).get();
                         */
-							return blockEntity.getPersistentData().getCompound(Core.mod_id).getBoolean(name);
-
-						}
-
-						return false;
+						return blockEntity.getPersistentData().getCompound(Core.mod_id).getBoolean(name);
 
 					}
 
-				}.getValue(level_accessor, posX, posY, posZ, name);
-
-			}
-
-			public static void setText (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, String value) {
-
-				BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
-
-				if (block_entity != null) {
-
-					CompoundTag tag = new CompoundTag();
-					CompoundTag tag_add = new CompoundTag();
-					tag_add.putString(name, value);
-					tag.put(Core.mod_id, tag_add);
-					block_entity.getPersistentData().merge(tag);
-					BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
-					level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
+					return false;
 
 				}
 
-			}
-
-			public static void setLogic (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, boolean value) {
-
-				BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
-
-				if (block_entity != null) {
-
-					CompoundTag tag = new CompoundTag();
-					CompoundTag tag_add = new CompoundTag();
-					tag_add.putBoolean(name, value);
-					tag.put(Core.mod_id, tag_add);
-					block_entity.getPersistentData().merge(tag);
-					BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
-					level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
-
-				}
-
-			}
-
-			public static void setNumber (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, double value) {
-
-				BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
-
-				if (block_entity != null) {
-
-					CompoundTag tag = new CompoundTag();
-					CompoundTag tag_add = new CompoundTag();
-					tag_add.putDouble(name, value);
-					tag.put(Core.mod_id, tag_add);
-					block_entity.getPersistentData().merge(tag);
-					BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
-					level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
-
-				}
-
-			}
-
-			public static void addNumber (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, double value) {
-
-				BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
-
-				if (block_entity != null) {
-
-					/*
-					(1.20.1) (1.21.1)
-					block_entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, block_entity.getPersistentData().getCompound(Core.mod_id).getDouble(name) + value);
-					(1.21.8)
-					block_entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, block_entity.getPersistentData().getCompound(Core.mod_id).getDouble(name).get() + value);
-					*/
-					block_entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, block_entity.getPersistentData().getCompound(Core.mod_id).getDouble(name) + value);
-
-					BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
-					level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
-
-				}
-
-			}
+			}.getValue(level_accessor, posX, posY, posZ, name);
 
 		}
 
-		public static class item {
+		public static void setBlockText (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, String value) {
 
-			public static String getText (Entity entity, EquipmentSlot slot, String name) {
+			BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
 
-				/*
-				(1.20.1)
-				return GameUtils.entity.getItemSlot(entity, slot).getOrCreateTag().getCompound(Core.mod_id).getString(name);
-				(1.21.1)
-				return GameUtils.entity.getItemSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
-				*/
-				return GameUtils.entity.getItemSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
-
-			}
-
-			public static void setText (Entity entity, EquipmentSlot slot, String name, String value) {
+			if (block_entity != null) {
 
 				CompoundTag tag = new CompoundTag();
 				CompoundTag tag_add = new CompoundTag();
 				tag_add.putString(name, value);
 				tag.put(Core.mod_id, tag_add);
-				CustomData.update(DataComponents.CUSTOM_DATA, GameUtils.entity.getItemSlot(entity, slot), test -> test.merge(tag));
+				block_entity.getPersistentData().merge(tag);
+				BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
+				level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
 
 			}
 
 		}
 
+		public static void setBlockLogic (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, boolean value) {
+
+			BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+
+			if (block_entity != null) {
+
+				CompoundTag tag = new CompoundTag();
+				CompoundTag tag_add = new CompoundTag();
+				tag_add.putBoolean(name, value);
+				tag.put(Core.mod_id, tag_add);
+				block_entity.getPersistentData().merge(tag);
+				BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
+				level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
+
+			}
+
+		}
+
+		public static void setBlockNumber (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, double value) {
+
+			BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+
+			if (block_entity != null) {
+
+				CompoundTag tag = new CompoundTag();
+				CompoundTag tag_add = new CompoundTag();
+				tag_add.putDouble(name, value);
+				tag.put(Core.mod_id, tag_add);
+				block_entity.getPersistentData().merge(tag);
+				BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
+				level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
+
+			}
+
+		}
+
+		public static void addBlockNumber (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, double value) {
+
+			BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+
+			if (block_entity != null) {
+
+				/*
+				(1.20.1) (1.21.1)
+				block_entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, block_entity.getPersistentData().getCompound(Core.mod_id).getDouble(name) + value);
+				(1.21.8)
+				block_entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, block_entity.getPersistentData().getCompound(Core.mod_id).getDouble(name).get() + value);
+				*/
+				block_entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, block_entity.getPersistentData().getCompound(Core.mod_id).getDouble(name) + value);
+
+				BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
+				level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
+
+			}
+
+		}
+
+		public static String getItemText (Entity entity, EquipmentSlot slot, String name) {
+
+			/*
+			(1.20.1)
+			return Item.getSlot(entity, slot).getOrCreateTag().getCompound(Core.mod_id).getString(name);
+			(1.21.1)
+			return Item.getSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
+			*/
+			return Item.getSlot(entity, slot).getOrCreateTag().getCompound(Core.mod_id).getString(name);
+
+		}
+
+		public static void setItemText (Entity entity, EquipmentSlot slot, String name, String value) {
+
+			CompoundTag tag = new CompoundTag();
+			CompoundTag tag_add = new CompoundTag();
+			tag_add.putString(name, value);
+			tag.put(Core.mod_id, tag_add);
+
+			/*
+			(1.20.1)
+			Item.getSlot(entity, slot).getOrCreateTag().merge(tag);
+			(1.21.1)
+			CustomData.update(DataComponents.CUSTOM_DATA, Item.getSlot(entity, slot), test -> test.merge(tag));
+			*/
+			Item.getSlot(entity, slot).getOrCreateTag().merge(tag);
+
+		}
+
 	}
 
-	public static class score {
+	public static class Score {
 
 		public static void create (ServerLevel level_server, String name) {
 
@@ -1404,7 +1442,13 @@ public class GameUtils {
 
 			if (objective == null) {
 
+				/*
+				(1.20.1)
+				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER);
+				(1.21.1)
 				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER, true, null);
+				*/
+				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER);
 
 			}
 
@@ -1423,7 +1467,7 @@ public class GameUtils {
 				(1.21.1)
 				return score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).get();
 				*/
-				return score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).get();
+				return score.getOrCreatePlayerScore(player, objective_test).getScore();
 
 			}
 
@@ -1444,7 +1488,7 @@ public class GameUtils {
 				(1.21.1)
 				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(value);
 				*/
-				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(value);
+				score.getOrCreatePlayerScore(player, objective_test).setScore(value);
 
 			}
 
@@ -1465,7 +1509,7 @@ public class GameUtils {
 				(1.21.1)
 				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(old_value + value);
 				*/
-				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(old_value + value);
+				score.getOrCreatePlayerScore(player, objective_test).setScore(old_value + value);
 
 			}
 
@@ -1473,7 +1517,7 @@ public class GameUtils {
 
 	}
 
-	public static class gui {
+	public static class GUI {
 
 		public static String getTextBox (Entity entity, String name) {
 

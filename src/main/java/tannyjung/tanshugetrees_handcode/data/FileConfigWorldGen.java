@@ -94,7 +94,7 @@ public class FileConfigWorldGen {
                     write.append("----------------------------------------------------------------------------------------------------");
                     write.append("\n");
                     write.append("\n");
-                    write.append("Not found any world gen file. This maybe because you haven't start a world yet, no any custom pack installed, or haven't run restart command yet. Try join a world or run restart command [ /TANSHUGETREES restart ] to see is there any error.");
+                    write.append("Not found any world gen file. This maybe because you haven't start a world yet or haven't run restart command yet. Try join a world or run restart command [ /TANSHUGETREES restart ].");
                     write.append("\n");
                     write.append("\n");
 
@@ -137,10 +137,7 @@ public class FileConfigWorldGen {
 
     private static void write (Path source) {
 
-        String name_pack = source.getParent().getParent().toFile().getName();
-        String name_theme = source.getParent().toFile().getName();
-        String name_tree = source.toFile().getName().replace(".txt", "");
-        String name = name_pack + " > " + name_theme + " > " + name_tree;
+        String name = Path.of(Core.path_config + "/#dev/#temporary/world_gen").relativize(source).toString().replace("\\", " > ").replace(".txt", "");;
         boolean incompatible = false;
 
         if (name.contains("[INCOMPATIBLE] ") == true) {

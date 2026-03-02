@@ -1,15 +1,15 @@
 plugins {
     id 'eclipse'
-    id 'net.neoforged.moddev' version '2.0.107'
+    id 'net.neoforged.moddev.legacyforge' version '2.0.116'
 }
 
 version = '1.0'
 base.archivesName = "modid"
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-neoForge {
-    version = "21.1.190"
+legacyForge {
+    version = "1.20.1-47.4.10"
 
     runs {
         client {
@@ -41,6 +41,27 @@ neoForge {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+mixin {
+    if (file("src/main/resources/tanshugetrees.mixins.json").exists()) {
+        add sourceSets.main, "tanshugetrees.refmap.json"
+        config "tanshugetrees.mixins.json"
+    }
+}
+
+dependencies {
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.0"))
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.5.0"))
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+jar {
+    if (file("src/main/resources/tanshugetrees.mixins.json").exists()) {
+        manifest.attributes([
+                "MixinConfigs": "tanshugetrees.mixins.json"
+        ])
+    }
 }
 
 apply from: 'mcreator.gradle'

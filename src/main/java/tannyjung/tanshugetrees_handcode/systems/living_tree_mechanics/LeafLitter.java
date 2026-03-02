@@ -14,7 +14,7 @@ public class LeafLitter {
 
     public static void create (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, BlockState block, boolean remove) {
 
-        String function_id = "leaf_litter/" + GameUtils.block.toTextID(block).replace(":", "-");
+        String function_id = "leaf_litter/" + GameUtils.Tile.toTextID(block).replace(":", "-");
 
         if (FileConfig.leaf_litter_classic_only == false && CacheManager.getFunction(function_id).length > 0) {
 
@@ -34,16 +34,16 @@ public class LeafLitter {
                         // Place
                         {
 
-                            if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == true) {
+                            if (GameUtils.Tile.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == true) {
 
                                 BlockPos pos_ground = new BlockPos(posX, posY - 1, posZ);
 
                                 if (level_accessor.isWaterAt(pos_ground) == true) {
 
-                                    block = GameUtils.block.property.setLogic(block, "waterlogged", true);
+                                    block = GameUtils.Tile.setPropertyLogic(block, "waterlogged", true);
                                     posY = posY - 1;
 
-                                } else if (GameUtils.block.isTaggedAs(level_accessor.getBlockState(pos_ground), "tanshugetrees:passable_blocks") == true) {
+                                } else if (GameUtils.Tile.isTaggedAs(level_accessor.getBlockState(pos_ground), "tanshugetrees:passable_blocks") == true) {
 
                                     return;
 
@@ -64,7 +64,7 @@ public class LeafLitter {
 
                                 BlockState block_to = Blocks.AIR.defaultBlockState();
 
-                                if (GameUtils.block.property.getLogic(level_accessor.getBlockState(pos), "waterlogged") == true) {
+                                if (GameUtils.Tile.getPropertyLogic(level_accessor.getBlockState(pos), "waterlogged") == true) {
 
                                     block_to = Blocks.WATER.defaultBlockState();
 

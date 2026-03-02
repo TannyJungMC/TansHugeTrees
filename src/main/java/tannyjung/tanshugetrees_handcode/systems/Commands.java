@@ -32,7 +32,8 @@ public class Commands {
 
             private static void preset_fixer (CommandContext<CommandSourceStack> data) {
 
-                PresetFixer.start();
+                ServerLevel level_server = data.getSource().getLevel();
+                PresetFixer.start(level_server);
 
             }
 
@@ -84,7 +85,7 @@ public class Commands {
                 private static void start (CommandContext<CommandSourceStack> data) {
 
                     LevelAccessor level_accessor = data.getSource().getLevel();
-                    int variable_number = CommandMaker.argument.getNumber(data);
+                    int variable_number = CommandMaker.Argument.getNumber(data);
                     ShapeFileConverter.start(level_accessor, variable_number);
 
                 }
@@ -104,19 +105,18 @@ public class Commands {
                 int posX = (int) Math.floor(data.getSource().getPosition().x());
                 int posY = (int) Math.floor(data.getSource().getPosition().y());
                 int posZ = (int) Math.floor(data.getSource().getPosition().z());
-                String variable_text = CommandMaker.argument.getText(data);
+                String variable_text = CommandMaker.Argument.getText(data);
                 TreeGenerator.create(level_server, posX, posY, posZ, variable_text);
 
             }
 
             private static void summon_sapling_trader (CommandContext<CommandSourceStack> data) {
 
-                LevelAccessor level_accessor = data.getSource().getLevel();
                 ServerLevel level_server = data.getSource().getLevel();
                 int posX = (int) Math.floor(data.getSource().getPosition().x());
                 int posY = (int) Math.floor(data.getSource().getPosition().y());
                 int posZ = (int) Math.floor(data.getSource().getPosition().z());
-                SaplingTrader.summonTrader(level_accessor, level_server, posX, posY, posZ);
+                SaplingTrader.summonTrader(level_server, posX, posY, posZ);
 
             }
 

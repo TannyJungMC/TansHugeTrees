@@ -17,7 +17,7 @@ public class TannyPackManager {
 
             if (level_server != null) {
 
-                GameUtils.misc.sendChatMessage(level_server, "@a", "Can't check for update right now, because the mod can't connect to GitHub. This maybe the website is currently down or there's a new mod update. The most serious case is your country blocked GitHub website, that will need to manual install with VPN enabled. Here is / red | Wiki / white / " + Core.wiki + " |  if you want to manual install. / red");
+                GameUtils.Misc.sendChatMessage(level_server, "@a", "Can't check for update right now, because the mod can't connect to GitHub. This maybe the website is currently down or there's a new mod update. The most serious case is your country blocked GitHub website, that will need to manual install with VPN enabled. Here is / red | Wiki / white / " + Core.wiki + " |  if you want to manual install. / red");
 
             } else {
 
@@ -86,7 +86,7 @@ public class TannyPackManager {
 
                 if (level_server != null) {
 
-                    GameUtils.misc.sendChatMessage(level_server, "@a", "Something went wrong with version testing. This maybe the website is currently down or there's a new mod update. The most serious case is your country blocked GitHub website, that will need to manual install with VPN enabled. Here is / red | Wiki / white / " + Core.wiki + " |  if you want to manual install. / red");
+                    GameUtils.Misc.sendChatMessage(level_server, "@a", "Something went wrong with version testing. This maybe the website is currently down or there's a new mod update. The most serious case is your country blocked GitHub website, that will need to manual install with VPN enabled. Here is / red | Wiki / white / " + Core.wiki + " |  if you want to manual install. / red");
 
                 } else {
 
@@ -100,7 +100,7 @@ public class TannyPackManager {
 
                     if (level_server != null) {
 
-                        GameUtils.misc.sendChatMessage(level_server, "@a", "TannyJung's Main Pack (" + Core.tanny_pack_type + ") is up to date / gray");
+                        GameUtils.Misc.sendChatMessage(level_server, "@a", "TannyJung's Main Pack (" + Core.tanny_pack_type + ") is up to date / gray");
 
                     } else {
 
@@ -110,13 +110,13 @@ public class TannyPackManager {
 
                 } else {
 
-                    String test = OutsideUtils.testVersion(Core.data_structure_version, url_data_structure_version);
+                    String test = OutsideUtils.testVersion(Core.data_structure_version_mod, url_data_structure_version);
 
                     if (test.equals("early") == true) {
 
                         if (level_server != null) {
 
-                            GameUtils.misc.sendChatMessage(level_server, "@a", "Seems like you update the mod very fast! TannyJung's Main Pack (" + Core.tanny_pack_type + ") haven't updated to support this mod version yet, please wait a bit for the update to be available. / gold");
+                            GameUtils.Misc.sendChatMessage(level_server, "@a", "Seems like you update the mod very fast! TannyJung's Main Pack (" + Core.tanny_pack_type + ") haven't updated to support this mod version yet, please wait a bit for the update to be available. / gold");
 
                         } else {
 
@@ -128,7 +128,7 @@ public class TannyPackManager {
 
                         if (level_server != null) {
 
-                            GameUtils.misc.sendChatMessage(level_server, "@a", "Detected new version of TannyJung's Main Pack (" + Core.tanny_pack_type + "), but it requires new mod version. Please update the mod if you want to install it. / gold");
+                            GameUtils.Misc.sendChatMessage(level_server, "@a", "Detected new version of TannyJung's Main Pack (" + Core.tanny_pack_type + "), but it requires new mod version. Please update the mod if you want to install it. / gold");
 
                         } else {
 
@@ -147,7 +147,7 @@ public class TannyPackManager {
 
                                     if (level_server != null) {
 
-                                        GameUtils.misc.sendChatMessage(level_server, "@a", "Detected new version of TannyJung's Main Pack (" + Core.tanny_pack_type + "). Starting auto update... / gray");
+                                        GameUtils.Misc.sendChatMessage(level_server, "@a", "Detected new version of TannyJung's Main Pack (" + Core.tanny_pack_type + "). Starting auto update... / gray");
 
                                     } else {
 
@@ -161,7 +161,7 @@ public class TannyPackManager {
 
                                     if (level_server != null) {
 
-                                        GameUtils.misc.sendChatMessage(level_server, "@a", "Detected new version of TannyJung's Main Pack (" + Core.tanny_pack_type + "). You can manual update by follow  / gold | Installation Guide / white / " + Core.wiki + " |  or click  / gold | here / white / /" + Core.mod_id_big + " tanny_pack update" + " |  to let the mod do it automatically. / gold");
+                                        GameUtils.Misc.sendChatMessage(level_server, "@a", "Detected new version of TannyJung's Main Pack (" + Core.tanny_pack_type + "). You can manual update by follow  / gold | Installation Guide / white / " + Core.wiki + " |  or click  / gold | here / white / /" + Core.mod_id_big + " tanny_pack update" + " |  to let the mod do it automatically. / gold");
 
                                     } else {
 
@@ -180,7 +180,7 @@ public class TannyPackManager {
 
                                 if (level_server != null) {
 
-                                    GameUtils.misc.sendChatMessage(level_server, "@a", "Not detected TannyJung's Main Pack (" + Core.tanny_pack_type + ") in custom packs folder. Starting auto install... / gold");
+                                    GameUtils.Misc.sendChatMessage(level_server, "@a", "Not detected TannyJung's Main Pack (" + Core.tanny_pack_type + ") in custom packs folder. Starting auto install... / gold");
 
                                 } else {
 
@@ -200,7 +200,7 @@ public class TannyPackManager {
 
             }
 
-            Core.logger.info("Data Structure Version -> Mod {} GitHub {} / Pack Version -> Mod {} GitHub {}", Core.data_structure_version, url_data_structure_version, pack_version, url_pack_version);
+            Core.logger.info("Data Structure Version -> Mod {} GitHub {} / Pack Version -> Mod {} GitHub {}", Core.data_structure_version_mod, url_data_structure_version, pack_version, url_pack_version);
 
         }
 
@@ -210,56 +210,52 @@ public class TannyPackManager {
 
         Runnable runnable = () -> {
 
-            synchronized (Core.global_locking) {
+            String url = "https://github.com/TannyJungMC/" + Core.github_pack + "/archive/refs/heads/" + Core.tanny_pack_type.toLowerCase() + ".zip";
 
-                String url = "https://github.com/TannyJungMC/" + Core.github_pack + "/archive/refs/heads/" + Core.tanny_pack_type.toLowerCase() + ".zip";
+            if (level_server != null) {
+
+                GameUtils.Misc.sendChatMessage(level_server, "@a", "Installing ZIP from GitHub. This may take a while. / gray");
+
+            } else {
+
+                Core.logger.info("Installing ZIP from GitHub. This may take a while.");
+
+            }
+
+            String path = Core.path_config + "/custom_packs/#TannyJung-Main-Pack";
+            FileManager.delete(Core.path_config + "/custom_packs/#TannyJung-Main-Pack");
+            FileManager.delete(Core.path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack");
+            FileManager.delete(Core.path_config + "/custom_packs/#TannyJung-Main-Pack.zip");
+            FileManager.delete(Core.path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack.zip");
+
+            if (OutsideUtils.download(url, path + ".zip") == true) {
+
+                FileManager.extractZIP(path + ".zip", path, true, "");
+                FileManager.delete(path + ".zip");
+                FileManager.compressZIP(path + ".zip", new File(path));
+                FileManager.delete(path);
 
                 if (level_server != null) {
 
-                    GameUtils.misc.sendChatMessage(level_server, "@a", "Installing ZIP from GitHub. This may take a while. / gray");
+                    GameUtils.Misc.sendChatMessage(level_server, "@a", "Install Completed! / gray");
 
                 } else {
 
-                    Core.logger.info("Installing ZIP from GitHub. This may take a while.");
+                    Core.logger.info("Install Completed!");
 
                 }
 
-                String path = Core.path_config + "/custom_packs/#TannyJung-Main-Pack";
-                FileManager.delete(Core.path_config + "/custom_packs/#TannyJung-Main-Pack");
-                FileManager.delete(Core.path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack");
-                FileManager.delete(Core.path_config + "/custom_packs/#TannyJung-Main-Pack.zip");
-                FileManager.delete(Core.path_config + "/custom_packs/[INCOMPATIBLE] #TannyJung-Main-Pack.zip");
+                Core.Restart.run(level_server, "config / world", true);
 
-                if (OutsideUtils.download(url, path + ".zip") == true) {
+            } else {
 
-                    FileManager.extractZIP(path + ".zip", path, true, "");
-                    FileManager.delete(path + ".zip");
-                    FileManager.compressZIP(path + ".zip", new File(path));
-                    FileManager.delete(path);
+                if (level_server != null) {
 
-                    if (level_server != null) {
-
-                        GameUtils.misc.sendChatMessage(level_server, "@a", "Install Completed! / gray");
-
-                    } else {
-
-                        Core.logger.info("Install Completed!");
-
-                    }
-
-                    Core.restart(level_server, "config / world", true);
+                    GameUtils.Misc.sendChatMessage(level_server, "@a", "Can't install right now, because the mod can't connect to GitHub. This maybe the website is currently down or there's a new mod update. The most serious case is your country blocked GitHub website, that will need to manual install with VPN enabled. Here is / red | Installation Guide / white / " + Core.wiki + " |  if you want to manual install. / red");
 
                 } else {
 
-                    if (level_server != null) {
-
-                        GameUtils.misc.sendChatMessage(level_server, "@a", "Can't install right now, because the mod can't connect to GitHub. This maybe the website is currently down or there's a new mod update. The most serious case is your country blocked GitHub website, that will need to manual install with VPN enabled. Here is / red | Installation Guide / white / " + Core.wiki + " |  if you want to manual install. / red");
-
-                    } else {
-
-                        Core.logger.error("Can't install right now, because the mod can't connect to GitHub. This maybe the website is currently down or there's a new mod update. The most serious case is your country blocked GitHub website, that will need to manual install with VPN enabled. Here is installation wiki if you want to manual install ({}).", Core.wiki);
-
-                    }
+                    Core.logger.error("Can't install right now, because the mod can't connect to GitHub. This maybe the website is currently down or there's a new mod update. The most serious case is your country blocked GitHub website, that will need to manual install with VPN enabled. Here is installation wiki if you want to manual install ({}).", Core.wiki);
 
                 }
 
@@ -269,6 +265,7 @@ public class TannyPackManager {
 
         if (level_server != null) {
 
+            Core.Restart.testLock();
             Core.thread_main.submit(runnable);
 
         } else {

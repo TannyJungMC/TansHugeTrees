@@ -1,8 +1,6 @@
 package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.FileManager;
 import tannyjung.tanshugetrees_core.game.GameUtils;
@@ -13,65 +11,112 @@ import java.util.List;
 
 public class SaplingTrader {
 
-    public static void summonTrader (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ) {
+    public static void summonTrader (ServerLevel level_server, int posX, int posY, int posZ) {
 
         File[] files = new File(Core.path_config + "/#dev/#temporary/sapling_trader").listFiles();
-        StringBuilder data = new StringBuilder();
-        data.append("{VillagerData:{level:99},CustomName:'{\"text\":\"Sapling Trader\"}',ArmorItems:[{},{},{},{id:\"tanshugetrees:sapling_yokai\",Count:1b}],DeathLootTable:\"minecraft:empty\",ArmorDropChances:[0.0f,0.0f,0.0f,0.0f],Offers:{Recipes:[");
+        StringBuilder write = new StringBuilder();
 
-        if (files != null) {
+        // Generate Data
+        {
 
-            // Get Data
-            {
+            write.append("{ArmorItems:[{},{},{},{id:\"tanshugetrees:sapling_yokai\",Count:1b}],DeathLootTable:\"minecraft:empty\",ArmorDropChances:[0.0f,0.0f,0.0f,0.0f],VillagerData:{level:99},Offers:{Recipes:[");
 
-                List<String> get = new ArrayList<>();
+            if (files != null) {
 
-                for (File file : files) {
+                // Get Data
+                {
 
-                    get.clear();
+                    List<String> data = new ArrayList<>();
 
-                    for (String read_all : FileManager.readTXT(file.getPath())) {
+                    for (File file : files) {
 
-                        if (read_all.isEmpty() == false) {
+                        if (file.isDirectory() == false) {
 
-                            get.add(read_all);
+                            data.clear();
+
+                            // Get Data
+                            {
+
+                                for (String read_all : FileManager.readTXT(file.getPath())) {
+
+                                    if (read_all.isEmpty() == false) {
+
+                                        if (read_all.equals("-") == true) {
+
+                                            data.add("");
+
+                                        } else {
+
+                                            data.add(read_all);
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                            // Edit
+                            {
+
+                                if (data.get(4).isEmpty() == false) {
+
+                                    data.set(4, "path:\"" + data.get(4) + "\"");
+
+                                }
+
+                                if (data.get(10).isEmpty() == false) {
+
+                                    data.set(10, "path:\"" + data.get(10) + "\"");
+
+                                }
+
+                                if (data.get(16).isEmpty() == false) {
+
+                                    data.set(16, "path:\"" + data.get(16) + "\"");
+
+                                }
+
+                            }
+
+                            // Write
+                            {
+
+                                /*
+                                (1.20.1)
+                                write.append("{buy:{id:\"").append(data.get(0)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(1), data.get(2), data.get(3), data.get(4))).append("},Count:").append(data.get(5));
+                                write.append("},buyB:{id:\"").append(data.get(6)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(7), data.get(8), data.get(9), data.get(10))).append("},Count:").append(data.get(11));
+                                write.append("},sell:{id:\"").append(data.get(12)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(13), data.get(14), data.get(15), data.get(16))).append("},Count:").append(data.get(17));
+                                (1.21.1)
+                                write.append("{buy:{id:\"").append(data.get(0)).append("\",components:{").append(GameUtils.Data.createItem(data.get(1), data.get(2), data.get(3), data.get(4))).append("},count:").append(data.get(5));
+                                write.append("},buyB:{id:\"").append(data.get(6)).append("\",components:{").append(GameUtils.Data.createItem(data.get(7), data.get(8), data.get(9), data.get(10))).append("},count:").append(data.get(11));
+                                write.append("},sell:{id:\"").append(data.get(12)).append("\",components:{").append(GameUtils.Data.createItem(data.get(13), data.get(14), data.get(15), data.get(16))).append("},count:").append(data.get(17));
+                                */
+                                write.append("{buy:{id:\"").append(data.get(0)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(1), data.get(2), data.get(3), data.get(4))).append("},Count:").append(data.get(5));
+                                write.append("},buyB:{id:\"").append(data.get(6)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(7), data.get(8), data.get(9), data.get(10))).append("},Count:").append(data.get(11));
+                                write.append("},sell:{id:\"").append(data.get(12)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(13), data.get(14), data.get(15), data.get(16))).append("},Count:").append(data.get(17));
+
+                            }
+
+                            write.append("},rewardExp:0b,maxUses:9999999},");
 
                         }
 
                     }
 
-                    data.append("{buy:{id:\"");
-                    data.append(get.get(0));
-                    data.append("\",tag:");
-                    data.append(get.get(1));
-                    data.append(",Count:");
-                    data.append(get.get(2));
-                    data.append("},buyB:{id:\"");
-                    data.append(get.get(3));
-                    data.append("\",tag:");
-                    data.append(get.get(4));
-                    data.append(",Count:");
-                    data.append(get.get(5));
-                    data.append("},sell:{id:\"");
-                    data.append(get.get(6));
-                    data.append("\",tag:");
-                    data.append(get.get(7));
-                    data.append(",Count:");
-                    data.append(get.get(8));
-                    data.append("},rewardExp:0b,maxUses:9999999},");
-
                 }
 
             }
 
+            write.append("]}}");
+
         }
 
-        data.append("]}}");
-        GameUtils.entity.summon(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "minecraft:wandering_trader", "Sapling Trader", "TANSHUGETREES-sapling_trader", data.toString());
-        GameUtils.misc.spawnParticle(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 0, 0, 0, 0, 1, "minecraft:flash");
-        GameUtils.misc.spawnParticle(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 0.5, 0.5, 0.5, 0.01, 20, "minecraft:campfire_signal_smoke");
-        GameUtils.misc.playSound(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 2, 0, "minecraft:entity.illusioner.cast_spell");
-        level_accessor.removeBlock(new BlockPos(posX, posY, posZ), false);
+        GameUtils.Mob.summon(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "minecraft:wandering_trader", "Sapling Trader / dark_green", "TANSHUGETREES-sapling_trader", write.toString());
+        GameUtils.Misc.spawnParticle(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 0, 0, 0, 0, 1, "minecraft:flash");
+        GameUtils.Misc.spawnParticle(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 0.5, 0.5, 0.5, 0.01, 20, "minecraft:campfire_signal_smoke");
+        GameUtils.Misc.playSound(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 2, 0, "minecraft:entity.illusioner.cast_spell");
 
     }
 

@@ -1,6 +1,7 @@
 package tannyjung.tanshugetrees_core.outside;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
@@ -406,7 +407,7 @@ public class CustomPackOrganizing {
                             if (pack_id == null) {
 
                                 FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                                addError("pack", "pack / pack ID not found", pack.getPath(), pack.getName());
+                                addError("pack", "packs / pack ID not found. Make sure you're using the version that includes pack ID.", pack.getPath(), pack.getName());
                                 break test;
 
                             }
@@ -419,7 +420,7 @@ public class CustomPackOrganizing {
                             if (Core.data_structure_version_pack.equals(data_structure_version) == false) {
 
                                 FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                                addError("pack", "pack / unsupported mod version", pack.getPath(), pack.getName());
+                                addError("pack", "packs / unsupported data structure version. Your version is " + Core.data_structure_version_pack + " but these packs require a different version.", pack.getPath(), pack.getName() + " > " + data_structure_version);
                                 break test;
 
                             }
@@ -432,7 +433,7 @@ public class CustomPackOrganizing {
                             if (pack_id_duplicated_test.contains(pack_id) == true) {
 
                                 FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                                addError("pack", "pack / duplicated pack ID", pack.getPath(), pack.getName() + " > " + pack_id);
+                                addError("pack", "packs / duplicated pack ID. Seems like your installed packs have duplicate names. You can report this to the pack authors to help them fix it.", pack.getPath(), pack.getName() + " > " + pack_id);
 
                                 while (cache_pack_ids.containsValue(pack_id) == true) {
 
@@ -457,7 +458,7 @@ public class CustomPackOrganizing {
                                     if (cache_pack_ids.containsValue(value) == false) {
 
                                         FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                                        addError("pack", "pack / required pack not found", pack.getPath(), pack.getName() + " > " + value);
+                                        addError("pack", "packs / required packs not found. Make sure you're using required packs of these packs.", pack.getPath(), pack.getName() + " > " + value);
                                         break test;
 
                                     }
@@ -475,10 +476,10 @@ public class CustomPackOrganizing {
 
                                 for (String value : required_mods.split(" / ")) {
 
-                                    if (GameUtils.misc.isModLoaded(value) == false) {
+                                    if (GameUtils.Misc.isModLoaded(value) == false) {
 
                                         FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                                        addError("pack", "pack / required mod not found", pack.getPath(), pack.getName() + " > " + value);
+                                        addError("pack", "packs / required mods not found. Make sure you're using required mods of these packs.", pack.getPath(), pack.getName() + " > " + value);
                                         break test;
 
                                     }
@@ -496,7 +497,7 @@ public class CustomPackOrganizing {
                 } else {
 
                     FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                    addError("pack", "pack / info file not found", pack.getPath(), pack.getName());
+                    addError("pack", "packs / info file not found. Make sure you're using the version that includes info file.", pack.getPath(), pack.getName());
 
                 }
 
@@ -535,9 +536,9 @@ public class CustomPackOrganizing {
 
                                         if (value.isEmpty() == false) {
 
-                                            if (GameUtils.block.fromText(value.replace(" keep", "")).getBlock() == Blocks.AIR) {
+                                            if (GameUtils.Tile.fromText(value.replace(" keep", "")).getBlock() == Blocks.AIR) {
 
-                                                addError("file", "settings file / unknown block ID", file_each.getPath(), name + " > " + value);
+                                                addError("file", "settings file / unknown block IDs. This will discontinue these trees and skip them in region pre-location.", file_each.getPath(), name + " > " + value);
                                                 break;
 
                                             }
@@ -556,7 +557,7 @@ public class CustomPackOrganizing {
 
                                             if (new File(Core.path_config + "/#dev/#temporary/functions/" + value + ".txt").exists() == false) {
 
-                                                addError("file", "settings file / unknown function", file_each.getPath(), name + " > " + value);
+                                                addError("file", "settings file / unknown functions. This will skip these functions from running.", file_each.getPath(), name + " > " + value);
                                                 break;
 
                                             }
@@ -616,14 +617,14 @@ public class CustomPackOrganizing {
 
                                             if (file_test.listFiles() == null) {
 
-                                                addError("file", "world gen file / empty storage", file_each.getPath(), name);
+                                                addError("file", "world gen files / empty storage. This will discontinue these trees and skip them in region pre-location.", file_each.getPath(), name);
                                                 break;
 
                                             }
 
                                         } else {
 
-                                            addError("file", "world gen file / storage not found", file_each.getPath(), name);
+                                            addError("file", "world gen files / storage not found. This will discontinue these trees and skip them in region pre-location.", file_each.getPath(), name);
                                             break;
 
                                         }
@@ -638,7 +639,7 @@ public class CustomPackOrganizing {
 
                                         if (file_test.exists() == false) {
 
-                                            addError("file", "world gen file / settings not found", file_each.getPath(), name);
+                                            addError("file", "world gen files / settings not found. This will skip them in region pre-location.", file_each.getPath(), name);
                                             break;
 
                                         }
@@ -774,11 +775,11 @@ public class CustomPackOrganizing {
             for (Map.Entry<String, List<String>> entry : errors.get(type).entrySet()) {
 
                 split = entry.getKey().split(" / ");
-                message = "Detected incompatible " + split[0] + ". Caused by " + split[1] + ".";
+                message = "Detected incompatible " + split[0] + ". Caused by " + split[1];
 
                 if (level_server != null) {
 
-                    GameUtils.misc.sendChatMessage(level_server, "@a", message + " / red");
+                    GameUtils.Misc.sendChatMessage(level_server, "@a", message + " / red");
 
                 } else {
 
@@ -790,7 +791,7 @@ public class CustomPackOrganizing {
 
                     if (level_server != null) {
 
-                        GameUtils.misc.sendChatMessage(level_server, "@a", get + " / dark_gray");
+                        GameUtils.Misc.sendChatMessage(level_server, "@a", get + " / dark_gray");
 
                     } else {
 

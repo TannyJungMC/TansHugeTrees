@@ -15,7 +15,7 @@ public class Overlays {
 
         if (screen instanceof TitleScreen) {
 
-            OverlayMaker.createImage(graphic, true, "https://cdn.modrinth.com/data/WRxnjKgn/images/2060ba0dc071e60ea941d8a5ca546f7f6af60b7c.png", "", 10, 10, 1920 >> 3, 991 >> 3, 1, 1, 0);
+            OverlayMaker.createImage(graphic, true, "https://cdn.modrinth.com/data/WRxnjKgn/images/2060ba0dc071e60ea941d8a5ca546f7f6af60b7c.png", "tanshugetrees:textures/screens/overlay_region_gen.png", "tanshugetrees:textures/screens/overlay_region_gen_bar.png", 10, 10, 1920 >> 4, 991 >> 4, 1, 1, 0);
 
         } else if (screen instanceof LevelLoadingScreen) {
 
@@ -23,8 +23,8 @@ public class Overlays {
 
                 if (TreeLocation.world_gen_overlay_animation != 0) {
 
-                    OverlayMaker.createImage(graphic, false, "tanshugetrees:textures/screens/overlay_region_gen.png", "", 8, 8, 64, 16, 4, 1, TreeLocation.world_gen_overlay_animation - 1);
-                    OverlayMaker.createImage(graphic, false, "tanshugetrees:textures/screens/overlay_region_gen_bar.png", "", 27, 8, 17, 16, 17, 1, (int) Math.round(((double) TreeLocation.world_gen_overlay_bar / 1024) * 16));
+                    OverlayMaker.createImage(graphic, false, "tanshugetrees:textures/screens/overlay_region_gen.png", "", "", 8, 8, 64, 16, 4, 1, TreeLocation.world_gen_overlay_animation - 1);
+                    OverlayMaker.createImage(graphic, false, "tanshugetrees:textures/screens/overlay_region_gen_bar.png", "", "", 27, 8, 17, 16, 17, 1, (int) Math.round(((double) TreeLocation.world_gen_overlay_bar / 1024) * 16));
                     OverlayMaker.createText(graphic, screen_width, screen_height, "top-left", 8, 32, 1.0, -10066330, false, "Biome : " + TreeLocation.world_gen_overlay_details_biome);
                     OverlayMaker.createText(graphic, screen_width, screen_height, "top-left", 8, 44, 1.0, -10066330, false, "Tree : " + TreeLocation.world_gen_overlay_details_tree);
                     OverlayMaker.createText(graphic, screen_width, screen_height, "top-left", 8, 64, 1.0, -3381760, false, "Generating tree locations. This may take a while.");
@@ -50,8 +50,8 @@ public class Overlays {
 
             if (TreeLocation.world_gen_overlay_animation != 0) {
 
-                OverlayMaker.createImage(graphic, false, "tanshugetrees:textures/screens/overlay_region_gen.png", "", 8, 8, 64, 16, 4, 1, TreeLocation.world_gen_overlay_animation - 1);
-                OverlayMaker.createImage(graphic, false, "tanshugetrees:textures/screens/overlay_region_gen_bar.png", "", 27, 8, 17, 16, 17, 1, (int) Math.round(((double) TreeLocation.world_gen_overlay_bar / 1024) * 16));
+                OverlayMaker.createImage(graphic, false, "tanshugetrees:textures/screens/overlay_region_gen.png", "", "", 8, 8, 64, 16, 4, 1, TreeLocation.world_gen_overlay_animation - 1);
+                OverlayMaker.createImage(graphic, false, "tanshugetrees:textures/screens/overlay_region_gen_bar.png", "", "", 27, 8, 17, 16, 17, 1, (int) Math.round(((double) TreeLocation.world_gen_overlay_bar / 1024) * 16));
 
                 if (FileConfig.developer_mode == true) {
 

@@ -51,7 +51,7 @@ public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
                             pos = new BlockPos(center_pos.getX() + scanX, center_pos.getY() + scanY, center_pos.getZ() + scanZ);
                             previous_block = level_accessor.getBlockState(pos);
 
-                            if (GameUtils.block.isTaggedAs(previous_block, "minecraft:sand") == true || GameUtils.block.isTaggedAs(previous_block, "minecraft:base_stone_overworld") == true) {
+                            if (GameUtils.Tile.isTaggedAs(previous_block, "minecraft:sand") == true || GameUtils.Tile.isTaggedAs(previous_block, "minecraft:base_stone_overworld") == true) {
 
                                 if (Math.random() < 0.5 && level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ())).isAir() == true) {
 

@@ -35,20 +35,20 @@ public class DataMigration {
 
             }
 
-            if (version.equals("missing") == false && Core.data_structure_version.equals(version) == false) {
+            if (version.equals("missing") == false && Core.data_structure_version_mod.equals(version) == false) {
 
                 config.test(version);
 
             }
 
-            FileManager.writeTXT(path, Core.data_structure_version, false);
+            FileManager.writeTXT(path, Core.data_structure_version_mod, false);
 
         }
 
         if (type.contains("world") == true) {
 
-            String path = Core.path_world_data + "/version.txt";
-            File test_exist = new File(Core.path_world_data).getParentFile();
+            String path = Core.path_world_mod + "/version.txt";
+            File test_exist = new File(Core.path_world_mod).getParentFile();
             String version = "";
 
             // Get Version
@@ -70,13 +70,13 @@ public class DataMigration {
 
             }
 
-            if (version.equals("missing") == false && Core.data_structure_version.equals(version) == false) {
+            if (version.equals("missing") == false && Core.data_structure_version_mod.equals(version) == false) {
 
                 world.test(version);
 
             }
 
-            FileManager.writeTXT(path, Core.data_structure_version, false);
+            FileManager.writeTXT(path, Core.data_structure_version_mod, false);
 
         }
 
@@ -132,7 +132,7 @@ public class DataMigration {
                 // Rename "tanshugetrees" to "tannyjung_tanshugetrees"
                 {
 
-                    File file = new File(new File(Core.path_world_data).getParentFile().getPath() + "/tanshugetrees");
+                    File file = new File(new File(Core.path_world_mod).getParentFile().getPath() + "/tanshugetrees");
 
                     if (file.exists() == true && file.isDirectory() == true) {
 

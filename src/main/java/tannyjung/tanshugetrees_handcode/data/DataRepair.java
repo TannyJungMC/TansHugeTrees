@@ -5,9 +5,15 @@ import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.CustomPackOrganizing;
 import tannyjung.tanshugetrees_core.outside.FileManager;
 
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class DataRepair {
 
@@ -25,12 +31,71 @@ public class DataRepair {
         FileShapeConverter.start();
         FileConfig.apply();
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        try {
+
+            InputStream stream = Core.class.getResourceAsStream("/data/" + Core.mod_id + "/#TannyJung-Main-Pack.zip");
+
+            if (stream != null) {
+
+                Files.copy(stream, Path.of(Core.path_config + "/#dev/#temporary/#TannyJung-Main-Pack.zip"), StandardCopyOption.REPLACE_EXISTING);
+                stream.close();
+
+            }
+
+        } catch (Exception e) {
+
+            e.getStackTrace();
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
-    public static void messagePackErrors (ServerLevel level_server, String type) {
+    public static void messagePackErrors (ServerLevel level_server) {
 
-        if (type.contains("pack") == true) CustomPackOrganizing.sendErrorMessage(level_server, pack_errors, "pack");
-        if (type.contains("file") == true) CustomPackOrganizing.sendErrorMessage(level_server, pack_errors, "file");
+        CustomPackOrganizing.sendErrorMessage(level_server, pack_errors, "pack");
+
+        if (FileConfig.developer_mode == true) {
+
+            CustomPackOrganizing.sendErrorMessage(level_server, pack_errors, "file");
+
+        } else {
+
+            CustomPackOrganizing.sendErrorMessage(null, pack_errors, "file");
+
+        }
 
     }
 

@@ -83,9 +83,9 @@
   "item.tanshugetrees.tree_summoner_staff": "Tree Summoner Staff",
   "item.tanshugetrees.tree_summoner_staff.description_2": "",
   "item.tanshugetrees.tree_summoner_staff.description_0": "§8--------------------------------------------------",
-  "item.tanshugetrees.tree_summoner_staff.description_1": "§8Summon a tree by just one click. Just for fun. Can be useful for world builders, no need to place saplings and bone meal them every time.",
+  "item.tanshugetrees.tree_summoner_staff.description_1": "§8Summon a tree by just one click. Can be useful for tree preset developers and map builders. The path will be test from extracted packs first, then from unextracted packs if failed.",
   "gui.tanshugetrees.tree_summoner_staff_gui.button_apply": "Apply",
-  "gui.tanshugetrees.tree_summoner_staff_gui.path": "Example : #TannyJung-Main-Pack/redwood",
+  "gui.tanshugetrees.tree_summoner_staff_gui.path": "",
   "block.tanshugetrees.sapling_christmas_tree.description_1": "§8This is a tree generator sapling. It may take long time to generate!",
   "block.tanshugetrees.sapling_christmas_tree.description_0": "§8--------------------------------------------------",
   "block.tanshugetrees.sapling_christmas_tree.description_2": "§8--------------------------------------------------",
@@ -149,5 +149,7 @@
   "block.tanshugetrees.sapling_catalyst": "Sapling : Catalyst",
   "block.tanshugetrees.sapling_catalyst.description_2": "§8--------------------------------------------------",
   "block.tanshugetrees.sapling_catalyst.description_1": "§8This is a tree generator sapling. It may take long time to generate!",
-  "block.tanshugetrees.sapling_catalyst.description_0": "§8--------------------------------------------------"
+  "block.tanshugetrees.sapling_catalyst.description_0": "§8--------------------------------------------------",
+  "gui.tanshugetrees.tree_summoner_staff_gui.label_currently_not_working": "Currently not working",
+  "gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr": "Example : #TannyJung-Main-Pack/redwood"
 }
