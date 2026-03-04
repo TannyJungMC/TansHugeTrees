@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.data;
+package tannyjung.tanshugetrees_handcode.config;
 
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.ConfigMaker;
@@ -9,7 +9,6 @@ import java.util.*;
 public class FileConfig {
 
 	public static boolean auto_check_update = false;
-	public static boolean auto_update = false;
 	public static boolean wip_version = false;
 
 	public static double region_scan_percent = 0.0;
@@ -80,9 +79,6 @@ public class FileConfig {
                 
                 auto_check_update = true
                 | Check for new update from GitHub every time the world starts
-                
-                auto_update = false
-                | Auto update the pack every time the world starts, if there's new update from GitHub. To use this feature, the "auto_check_update" config must be enable.
                 
                 wip_version = false
                 | Use development version of the pack, instead of release version. Not recommended for game play, as it's still in development, it might unstable. Sometimes it needed development version of the mod.
@@ -252,7 +248,6 @@ public class FileConfig {
 		Map<String, String> data = ConfigMaker.getValues(Core.path_config + "/config.txt");
 
 		auto_check_update = Boolean.parseBoolean(data.get("auto_check_update"));
-		auto_update = Boolean.parseBoolean(data.get("auto_update"));
 		wip_version = Boolean.parseBoolean(data.get("wip_version"));
 
         region_scan_percent = Double.parseDouble(data.get("region_scan_percent"));

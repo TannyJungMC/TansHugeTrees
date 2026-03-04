@@ -14,7 +14,7 @@ import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
-import tannyjung.tanshugetrees_handcode.data.FileConfig;
+import tannyjung.tanshugetrees_handcode.config.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.Caches;
 
 import java.io.File;
@@ -509,7 +509,7 @@ public class LivingTreeMechanics {
                                             // Don't create animation, if there's a block below.
                                             if (GameUtils.Tile.isTaggedAs(level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())), "tanshugetrees:passable_blocks") == true) {
 
-                                                GameUtils.Mob.summon(level_server, pos.getX(), pos.getY(), pos.getZ(), "minecraft:block_display", "Falling Leaf", "TANSHUGETREES-leaf_drop", "{transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.Tile.toTextID(block) + "\"},ForgeData:{tanshugetrees:{block:\"" + GameUtils.Tile.toText(block) + "\"}}}");
+                                                GameUtils.Mob.summon(level_server, pos.getX(), pos.getY(), pos.getZ(), "minecraft:block_display", "Falling Leaf", "TANSHUGETREES-leaf_drop", "{transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.Tile.toText(block)[0] + "\"},ForgeData:{tanshugetrees:{block:\"" + GameUtils.Tile.toText(block)[0] + "\"}}}");
                                                 GameUtils.Score.add(level_server, "TANSHUGETREES", "leaf_drop", 1);
 
                                             }
@@ -645,7 +645,7 @@ public class LivingTreeMechanics {
 
                     if (GameUtils.Score.get(level_server, "TANSHUGETREES", "leaf_litter_remover") < FileConfig.leaf_litter_remover_count_limit) {
 
-                        GameUtils.Mob.summon(level_server, pos.getX(), pos.getY(), pos.getZ(), "minecraft:marker", "Leaf Litter Remover", "TANSHUGETREES-leaf_litter_remover", "{ForgeData:{tanshugetrees:{block:\"" + GameUtils.Tile.toText(block) + "\"}}}");
+                        GameUtils.Mob.summon(level_server, pos.getX(), pos.getY(), pos.getZ(), "minecraft:marker", "Leaf Litter Remover", "TANSHUGETREES-leaf_litter_remover", "{ForgeData:{tanshugetrees:{block:\"" + GameUtils.Tile.toText(block)[0] + "\"}}}");
                         GameUtils.Score.add(level_server, "TANSHUGETREES", "leaf_litter_remover", 1);
 
                     }

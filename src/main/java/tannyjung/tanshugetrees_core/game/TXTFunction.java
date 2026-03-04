@@ -100,7 +100,7 @@ public class TXTFunction {
 
                                             if (random.nextDouble() < chance) {
 
-                                                Core.logger.info(variable_text + "   |   Testing > " + run_test + "   |   Result > " + run_test_result + "   |   Skip > " + run_skip + "   |   Break > " + run_break);
+                                                Core.logger.info("{}   |   Testing > {}   |   Result > {}   |   Skip > {}   |   Break > {}", variable_text, run_test, run_test_result, run_skip, run_break);
 
                                             }
 

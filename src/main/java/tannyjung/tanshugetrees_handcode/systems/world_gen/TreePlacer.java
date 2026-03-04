@@ -20,7 +20,7 @@ import tannyjung.tanshugetrees_core.outside.FileManager;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_core.game.TXTFunction;
-import tannyjung.tanshugetrees_handcode.data.FileConfig;
+import tannyjung.tanshugetrees_handcode.config.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.Caches;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LeafLitter;
 

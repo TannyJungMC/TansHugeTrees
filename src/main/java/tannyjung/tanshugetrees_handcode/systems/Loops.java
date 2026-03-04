@@ -9,7 +9,7 @@ import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_core.game.TXTFunction;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.data.FileConfig;
+import tannyjung.tanshugetrees_handcode.config.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.compatibility.CompatibilitySereneSeasons;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanics;
 import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.LivingTreeMechanicsLeafDrop;

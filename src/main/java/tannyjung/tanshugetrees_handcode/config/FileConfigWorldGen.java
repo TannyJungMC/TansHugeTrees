@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.data;
+package tannyjung.tanshugetrees_handcode.config;
 
 
 import tannyjung.tanshugetrees_core.Core;
@@ -94,7 +94,7 @@ public class FileConfigWorldGen {
                     write.append("----------------------------------------------------------------------------------------------------");
                     write.append("\n");
                     write.append("\n");
-                    write.append("Not found any world gen file. This maybe because you haven't start a world yet or haven't run restart command yet. Try join a world or run restart command [ /TANSHUGETREES restart ].");
+                    write.append("Not found any world gen file. This maybe because you haven't start a world yet or haven't run restart command yet. Try join a world or run [ /TANSHUGETREES restart ] command.");
                     write.append("\n");
                     write.append("\n");
 

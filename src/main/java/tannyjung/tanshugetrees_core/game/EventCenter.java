@@ -11,9 +11,9 @@ import net.minecraft.world.level.storage.LevelResource;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepLast;
 import tannyjung.tanshugetrees_core.outside.TannyPackManager;
-import tannyjung.tanshugetrees_handcode.data.DataMigration;
-import tannyjung.tanshugetrees_handcode.data.DataRepair;
-import tannyjung.tanshugetrees_handcode.data.FileConfig;
+import tannyjung.tanshugetrees_handcode.DataMigration;
+import tannyjung.tanshugetrees_handcode.DataRepair;
+import tannyjung.tanshugetrees_handcode.config.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.Commands;
 import tannyjung.tanshugetrees_handcode.systems.Events;
 import tannyjung.tanshugetrees_handcode.systems.Overlays;
@@ -147,13 +147,17 @@ public class EventCenter {
 
                 Core.DelayedWorks.create(true, 100, () -> {
 
-                    DataRepair.messagePackErrors(level_server);
+                    Core.thread_main.submit(() -> {
 
-                    if (FileConfig.auto_check_update == true) {
+                        DataRepair.messagePackErrors(level_server);
 
-                        TannyPackManager.checkUpdate(level_server);
+                        if (FileConfig.auto_check_update == true) {
 
-                    }
+                            TannyPackManager.runCheckUpdate(level_server);
+
+                        }
+
+                    });
 
                 });
 

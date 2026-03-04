@@ -57,7 +57,7 @@ public class Sapling {
                             // General
                             {
 
-                                String name = GameUtils.Tile.toTextID(level_accessor.getBlockState(new BlockPos(posX, posY, posZ))).substring("tanshugetrees:sapling_".length());
+                                String name = GameUtils.Tile.toText(level_accessor.getBlockState(new BlockPos(posX, posY, posZ)))[0].substring("tanshugetrees:sapling_".length());
                                 File file = new File(Core.path_config + "/#dev/#temporary/presets/#TannyJung-Main-Pack/" + name + "/" + name + ".txt");
 
                                 if (file.exists() == true && file.isDirectory() == false) {

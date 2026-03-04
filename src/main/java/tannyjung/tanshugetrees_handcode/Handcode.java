@@ -2,7 +2,7 @@ package tannyjung.tanshugetrees_handcode;
 
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
-import tannyjung.tanshugetrees_handcode.data.FileConfig;
+import tannyjung.tanshugetrees_handcode.config.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.FeatureAreaDirt;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.FeatureAreaGrass;
 
@@ -15,7 +15,7 @@ public class Handcode {
         Core.data_structure_version_core = 1;
         Core.data_structure_version_mod = "1.8.0";
         Core.data_structure_version_pack = "1.8.0";
-        Core.tanny_pack_type = "WIP";
+        Core.tanny_pack_type = "Beta";
 
         Core.mod_name = "Tan's Huge Trees";
         Core.mod_id = "tanshugetrees";

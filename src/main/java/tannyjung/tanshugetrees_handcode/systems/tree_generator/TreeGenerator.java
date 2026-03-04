@@ -12,7 +12,7 @@ import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.TXTFunction;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
-import tannyjung.tanshugetrees_handcode.data.FileConfig;
+import tannyjung.tanshugetrees_handcode.config.FileConfig;
 
 import java.io.File;
 
@@ -156,7 +156,7 @@ public class TreeGenerator {
             }
 
             entity.setPos(entity.getX(), entity.getY() + GameUtils.Data.getEntityNumber(entity, "start_height"), entity.getZ());
-            GameUtils.Mob.summon(level_server, entity.getX(), entity.getY() + 1, entity.getZ(), "text_display", "Tree Generator Status", "TANSHUGETREES-" + GameUtils.Data.getEntityText(entity, "id") + " / TANSHUGETREES-tree_generator_status", "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"In Progress...\",\"color\":\"white\"}'}");
+            GameUtils.Mob.summon(level_server, entity.getX(), entity.getY() + 1, entity.getZ(), "text_display", "Tree Generator Status", "TANSHUGETREES-" + GameUtils.Data.getEntityText(entity, "id") + " / TANSHUGETREES-tree_generator_status", "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"In Progress\",\"color\":\"white\"}'}");
             TXTFunction.run(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), "functions/" + GameUtils.Data.getEntityText(entity, "function_start"), true);
 
         } else {
@@ -1512,7 +1512,7 @@ public class TreeGenerator {
 
                     {
 
-                        previous_block = GameUtils.Tile.toTextID(level_accessor.getBlockState(pos));
+                        previous_block = GameUtils.Tile.toText(level_accessor.getBlockState(pos))[0];
 
                         if (previous_block.startsWith("tanshugetrees:block_placer_") == false) {
 

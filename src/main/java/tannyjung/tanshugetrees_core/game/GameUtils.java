@@ -15,7 +15,6 @@ import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,10 +37,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
-import net.minecraftforge.event.server.ServerLifecycleEvent;
-import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import tannyjung.tanshugetrees.init.TanshugetreesModMenus;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.FileManager;
@@ -76,11 +72,11 @@ public class GameUtils {
 
         }
 
-        public static boolean testCustomBiome (Holder<Biome> biome, String config_value) {
+        public static boolean testCustomBiome (Holder<Biome> biome, String test) {
 
 			boolean result = false;
 
-            if (config_value.equals("all") == true) {
+            if (test.equals("all") == true) {
 
                 result = true;
 
@@ -88,7 +84,7 @@ public class GameUtils {
 
                 String biome_centerID = Space.getBiomeID(biome);
 
-                for (String split : config_value.split(" / ")) {
+                for (String split : test.split(" / ")) {
 
                     result = true;
 
@@ -270,7 +266,7 @@ public class GameUtils {
 
 			}
 
-            Command.run(level_server, 0, 0, 0, "tellraw " + target + " [{\"text\":\"\"}," + Data.createTextData("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod |   | " + data) + "]");
+            Command.run(level_server, 0, 0, 0, "tellraw " + target + " [{\"text\":\"\"}," + Data.createText("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod |   | " + data) + "]");
 
         }
 
@@ -457,12 +453,12 @@ public class GameUtils {
 
 				}
 
-				/*
-				(1.20.1) (1.21.1)
+				if (id.contains("lang")) {
 
-				(1.21.8)
+					System.out.println(data);
 
-				*/
+				}
+
 				Block block_test = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(id));
 
 				if (block_test != null) {
@@ -516,16 +512,9 @@ public class GameUtils {
 
 		}
 
-		public static String toText (BlockState block) {
+		public static String[] toText (BlockState block) {
 
-			return block.toString().replace("Block{", "").replace("}", "");
-
-		}
-
-		public static String toTextID (BlockState block) {
-
-			String return_text = block.getBlock().toString();
-			return return_text.substring("Block{".length(), return_text.length() - 1);
+			return block.toString().substring("Block{".length()).split("}");
 
 		}
 
@@ -760,7 +749,7 @@ public class GameUtils {
 
 				}
 
-				entity.setCustomName(Data.convertJSONToComponent("[" + Data.createTextData(name) + "]"));
+				entity.setCustomName(Data.convertJSONToComponent("[" + Data.createText(name) + "]"));
 
 				if (name.contains(" / ") == true) {
 
@@ -1052,7 +1041,7 @@ public class GameUtils {
 
 		}
 
-		public static String createTextData (String data) {
+		public static String createText (String data) {
 
 			StringBuilder convert = new StringBuilder();
 			String[] split = new String[0];
@@ -1090,13 +1079,13 @@ public class GameUtils {
 
 						if (split[2].startsWith("https") == true) {
 
-							convert.append(",\"underlined\":true,\"clickEvent\":{\"action\":\"open_url\",\"value\":\"");
+							convert.append(",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"");
 							convert.append(split[2]);
 							convert.append("\"}");
 
 						} else if (split[2].startsWith("/") == true) {
 
-							convert.append(",\"underlined\":true,\"clickEvent\":{\"action\":\"run_command\",\"value\":\"");
+							convert.append(",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"");
 							convert.append(split[2]);
 							convert.append("\"}");
 
@@ -1118,9 +1107,9 @@ public class GameUtils {
 
 		}
 
-		public static String createTextDataDoubleBackslash (String data) {
+		public static String createTextDoubleBackslash (String data) {
 
-			return createTextData(data).replace("\"", "\\\"");
+			return createText(data).replace("\"", "\\\"");
 
 		}
 
@@ -1138,8 +1127,8 @@ public class GameUtils {
 			String part_custom_data = "custom_data:{" + custom_data + "},";
 			String part_forge_data = "block_entity_data:{id:\"\",ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
 			*/
-			String part_name = "display:{Name:\"" + createTextDataDoubleBackslash(name) + "\"},";
-			String part_lore = "Lore:[\"" + Data.createTextDataDoubleBackslash(lore) + "\"],";
+			String part_name = "display:{Name:\"" + createTextDoubleBackslash(name) + "\"},";
+			String part_lore = "Lore:[\"" + Data.createTextDoubleBackslash(lore) + "\"],";
 			String part_custom_data = "tag:{" + Core.mod_id + ":{" + custom_data + "}},";
 			String part_forge_data = "BlockEntityData:{ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
 

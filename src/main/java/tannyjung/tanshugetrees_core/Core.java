@@ -10,8 +10,8 @@ import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepFirst;
 import tannyjung.tanshugetrees_core.outside.CacheManager;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.data.DataMigration;
-import tannyjung.tanshugetrees_handcode.data.DataRepair;
+import tannyjung.tanshugetrees_handcode.DataMigration;
+import tannyjung.tanshugetrees_handcode.DataRepair;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -130,7 +130,7 @@ public class Core {
 
                     if (detail_info == true) {
 
-                        GameUtils.Misc.sendChatMessage(level_server, "@a", "Restarting... / gray");
+                        GameUtils.Misc.sendChatMessage(level_server, "@a", "Restarting the mod... / gray");
 
                     }
 
@@ -140,7 +140,7 @@ public class Core {
 
                         if (detail_info == true) {
 
-                            GameUtils.Misc.sendChatMessage(level_server, "@a", "Restarted and cleared main caches (About " + CacheManager.clear() + " MB) / gray");
+                            GameUtils.Misc.sendChatMessage(level_server, "@a", "Restarted and cleared main caches, about " + CacheManager.clear() + " MB. / gray");
 
                         }
 

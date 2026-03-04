@@ -283,14 +283,24 @@ public class CommandMaker {
                 private static void check_update (CommandContext<CommandSourceStack> data) {
 
                     ServerLevel level_server = data.getSource().getLevel();
-                    TannyPackManager.checkUpdate(level_server);
+
+                    Core.thread_main.submit(() -> {
+
+                        TannyPackManager.runCheckUpdate(level_server);
+
+                    });
 
                 }
 
                 private static void update (CommandContext<CommandSourceStack> data) {
 
                     ServerLevel level_server = data.getSource().getLevel();
-                    TannyPackManager.reinstall(level_server);
+
+                    Core.thread_main.submit(() -> {
+
+                        TannyPackManager.runUpdate(level_server);
+
+                    });
 
                 }
 

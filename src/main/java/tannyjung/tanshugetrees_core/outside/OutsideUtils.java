@@ -59,7 +59,7 @@ public class OutsideUtils {
         test:
         {
 
-            if (Core.data_structure_version_mod.equals(version) == true) {
+            if (version_main.equals(version) == true) {
 
                 result = "same";
 
@@ -104,8 +104,6 @@ public class OutsideUtils {
 
         }
 
-        System.out.println("+++ " + result + " <--- " + version_main + " / " + version);
-
         return result;
 
     }
@@ -132,38 +130,41 @@ public class OutsideUtils {
 
     public static boolean download (String url, String to) {
 
-        if (OutsideUtils.isURLAvailable(url) == true) {
+        boolean complete = false;
+        FileManager.createEmptyFile(to, false);
 
-            FileManager.createEmptyFile(to, false);
+        // Download
+        {
 
-            {
+            try (FileOutputStream output = new FileOutputStream(to)) {
 
-                try (FileOutputStream output = new FileOutputStream(to)) {
+                BufferedInputStream input = new BufferedInputStream(new URI(url).toURL().openStream());
+                byte[] buffer = new byte[1024];
+                int bytesRead;
 
-                    BufferedInputStream input = new BufferedInputStream(new URI(url).toURL().openStream());
-                    byte[] buffer = new byte[1024];
-                    int bytesRead;
+                while ((bytesRead = input.read(buffer, 0, 1024)) != -1) {
 
-                    while ((bytesRead = input.read(buffer, 0, 1024)) != -1) {
-
-                        output.write(buffer, 0, bytesRead);
-
-                    }
-
-                } catch (Exception exception) {
-
-                    OutsideUtils.exception(new Exception(), exception, "");
-
-                    FileManager.delete(to);
-                    return false;
+                    output.write(buffer, 0, bytesRead);
 
                 }
+
+                complete = true;
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception, "");
 
             }
 
         }
 
-        return true;
+        if (complete == false) {
+
+            FileManager.delete(to);
+
+        }
+
+        return complete;
 
     }
 

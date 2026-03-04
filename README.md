@@ -11,7 +11,7 @@ Thank you for playing my mods! I'm very happy to see people enjoy my hobby. You 
 
 Hope you understand and respect in what I am. I maybe not a great modder who open to all requests and suggestions. I made mods for my feeling first just like doing artworks. I do what I want to do, with my ideas, for my imaginary world, using the way I like.
 
-Will I do Fabric port of my mods? Unfortunately, no, I'm not fan of it. Also please understand that I have more than one mod, each one also complicated and detailed. Fabric port will be too much hard work for me. There maybe someone in the future who interested in helping to port it, but that I have to consider that first and they must agree with my decision of only porting not adding new things.
+Will I do Fabric port of my mods? Unfortunately, no. I'm not fan of it. Also please understand that I have more than one mod, each one also complicated and detailed. Fabric port will be too much hard work for me. There maybe someone in the future who interested in helping to port it, but that I have to consider that first and they must agree with my decision of only porting not adding new things.
 
 There's also terms of use. By using my mods, you must agree with my these decisions.
 

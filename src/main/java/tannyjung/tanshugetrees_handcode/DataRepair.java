@@ -1,19 +1,20 @@
-package tannyjung.tanshugetrees_handcode.data;
+package tannyjung.tanshugetrees_handcode;
 
 import net.minecraft.server.level.ServerLevel;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.CustomPackOrganizing;
 import tannyjung.tanshugetrees_core.outside.FileManager;
+import tannyjung.tanshugetrees_handcode.config.FileConfig;
+import tannyjung.tanshugetrees_handcode.config.FileConfigWorldGen;
+import tannyjung.tanshugetrees_handcode.config.FileShapeConverter;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class DataRepair {
 
@@ -30,56 +31,6 @@ public class DataRepair {
         FileConfigWorldGen.start();
         FileShapeConverter.start();
         FileConfig.apply();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        try {
-
-            InputStream stream = Core.class.getResourceAsStream("/data/" + Core.mod_id + "/#TannyJung-Main-Pack.zip");
-
-            if (stream != null) {
-
-                Files.copy(stream, Path.of(Core.path_config + "/#dev/#temporary/#TannyJung-Main-Pack.zip"), StandardCopyOption.REPLACE_EXISTING);
-                stream.close();
-
-            }
-
-        } catch (Exception e) {
-
-            e.getStackTrace();
-
-        }
-
-
-
-
-
-
-
-
-
-
-
 
     }
 
