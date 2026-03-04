@@ -146,19 +146,31 @@ public class GameUtils {
 
         }
 
-        public static boolean testCustomBlock (BlockState test_block, String config_value) {
+        public static boolean testCustomBlock (BlockState block, String test) {
 
             boolean return_logic = false;
 
-            if (config_value.equals("all") == true) {
+            if (test.equals("all") == true) {
 
                 return_logic = true;
 
             } else {
 
-                String value = "";
+				String[] data = GameUtils.Tile.toText(block);
+				String block_id = data[0];
+				List<String> properties = new ArrayList<>();
 
-                for (String split : config_value.split(" / ")) {
+				if (data.length > 1) {
+
+					properties = Arrays.stream(data[1].substring(1, data[1].length() - 1).split(",")).toList();
+
+				}
+
+				String value = "";
+				int index = 0;
+				String block_test = "";
+
+                for (String split : test.split(" / ")) {
 
                     return_logic = true;
 
@@ -170,7 +182,7 @@ public class GameUtils {
 
                             if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
 
-                                if (Tile.isTaggedAs(test_block, value) == false) {
+                                if (Tile.isTaggedAs(block, value) == false) {
 
                                     return_logic = false;
 
@@ -178,11 +190,42 @@ public class GameUtils {
 
                             } else {
 
-                                if (test_block.equals(Tile.fromText(value)) == false) {
+								index = value.indexOf("[");
 
-                                    return_logic = false;
+								if (index == -1) {
 
-                                }
+									block_test = value;
+
+									if (block_id.equals(block_test) == false) {
+
+										return_logic = false;
+
+									}
+
+								} else {
+
+									block_test = value.substring(0, index);
+
+									if (block_id.equals(block_test) == false) {
+
+										return_logic = false;
+
+									} else {
+
+										for (String property : value.substring(index + 1, value.length() - 1).split(",")) {
+
+											if (properties.contains(property) == false) {
+
+												return_logic = false;
+												break;
+
+											}
+
+										}
+
+									}
+
+								}
 
                             }
 
