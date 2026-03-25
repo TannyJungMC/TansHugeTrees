@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics;
+package tannyjung.tanshugetrees_handcode.systems.living_mechanics;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -14,13 +14,13 @@ import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
-import tannyjung.tanshugetrees_handcode.config.FileConfig;
+import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.Caches;
 
 import java.io.File;
 import java.util.*;
 
-public class LivingTreeMechanics {
+public class LivingMechanics {
 
     public static void start (Entity entity) {
 
@@ -48,9 +48,9 @@ public class LivingTreeMechanics {
         // Read Settings
         {
 
-            String[] tree_settings = Caches.getTreeSettings(GameUtils.Data.getEntityText(entity, "tree_settings"));
+            List<String> tree_settings = Caches.getTreeSettings(GameUtils.Data.getEntityText(entity, "tree_settings"));
 
-            if (tree_settings.length == 0) {
+            if (tree_settings.isEmpty() == true) {
 
                 return;
 
@@ -138,8 +138,8 @@ public class LivingTreeMechanics {
 
             if (FileConfig.developer_mode == true) {
 
-                GameUtils.Misc.spawnParticle(level_server, entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0, 0, 1, "minecraft:flash");
-                GameUtils.Misc.spawnParticle(level_server, entity.getX(), entity.getY() + 100, entity.getZ(), 0, 25, 0, 0, 300, "minecraft:totem_of_undying");
+                GameUtils.Misc.spawnParticle(level_server, entity.position(), 0, 0, 0, 0, 1, "minecraft:flash");
+                GameUtils.Misc.spawnParticle(level_server, entity.position().add(0, 100, 0), 0, 25, 0, 0, 300, "minecraft:totem_of_undying");
 
             }
 
@@ -151,7 +151,7 @@ public class LivingTreeMechanics {
             // Biome Type Test
             {
 
-                Holder<Biome> biome = GameUtils.Space.getBiomeAt(level_server, center_pos.getX(), center_pos.getY(), center_pos.getZ());
+                Holder<Biome> biome = GameUtils.Space.getBiomeAt(level_accessor, level_server, center_pos);
 
                 if (GameUtils.Space.isBiomeTaggedAs(biome, "tanshugetrees:snowy_biomes") == true) {
 
@@ -179,7 +179,7 @@ public class LivingTreeMechanics {
             BlockState block = Blocks.AIR.defaultBlockState();
             String[] pre_block_data = new String[0];
 
-            for (short read_all : Caches.getTreeShapePart3(path_storage + "/" + chosen)) {
+            for (short read_all : Caches.getTreeShapeData(path_storage + "/" + chosen)) {
 
                 // Loop and Get Data
                 {
@@ -228,9 +228,9 @@ public class LivingTreeMechanics {
                         // Out of Process Limit
                         {
 
-                            if (FileConfig.living_tree_mechanics_process_limit > 0) {
+                            if (FileConfig.living_mechanics_process_limit > 0) {
 
-                                if (GameUtils.Data.getEntityNumber(entity, "process_save") + FileConfig.living_tree_mechanics_process_limit <= process) {
+                                if (GameUtils.Data.getEntityNumber(entity, "process_save") + FileConfig.living_mechanics_process_limit <= process) {
 
                                     GameUtils.Data.setEntityNumber(entity, "process_save", process);
                                     return;
@@ -507,9 +507,9 @@ public class LivingTreeMechanics {
                                         if (GameUtils.Score.get(level_server, "TANSHUGETREES", "leaf_drop") < FileConfig.leaf_drop_animation_count_limit) {
 
                                             // Don't create animation, if there's a block below.
-                                            if (GameUtils.Tile.isTaggedAs(level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ())), "tanshugetrees:passable_blocks") == true) {
+                                            if (GameUtils.Tile.isTaggedAs(level_accessor.getBlockState(pos.below()), "tanshugetrees:passable_blocks") == true) {
 
-                                                GameUtils.Mob.summon(level_server, pos.getX(), pos.getY(), pos.getZ(), "minecraft:block_display", "Falling Leaf", "TANSHUGETREES-leaf_drop", "{transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.Tile.toText(block)[0] + "\"},ForgeData:{tanshugetrees:{block:\"" + GameUtils.Tile.toText(block)[0] + "\"}}}");
+                                                GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:block_display", "Falling Leaf", "TANSHUGETREES-leaf_drop", "{transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.Tile.toText(block)[0] + "\"},ForgeData:{tanshugetrees:{block:\"" + GameUtils.Tile.toText(block)[0] + "\"}}}");
                                                 GameUtils.Score.add(level_server, "TANSHUGETREES", "leaf_drop", 1);
 
                                             }
@@ -527,7 +527,7 @@ public class LivingTreeMechanics {
 
                                         if (height_motion != GameUtils.Space.getBuildHeight(level_accessor, false) && height_motion < pos.getY()) {
 
-                                            LeafLitter.create(level_accessor, level_server, pos.getX(), height_motion, pos.getZ(), block, false);
+                                            LeafLitter.create(level_accessor, level_server, pos.atY(height_motion), block, false);
 
                                         }
 
@@ -645,7 +645,7 @@ public class LivingTreeMechanics {
 
                     if (GameUtils.Score.get(level_server, "TANSHUGETREES", "leaf_litter_remover") < FileConfig.leaf_litter_remover_count_limit) {
 
-                        GameUtils.Mob.summon(level_server, pos.getX(), pos.getY(), pos.getZ(), "minecraft:marker", "Leaf Litter Remover", "TANSHUGETREES-leaf_litter_remover", "{ForgeData:{tanshugetrees:{block:\"" + GameUtils.Tile.toText(block)[0] + "\"}}}");
+                        GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Leaf Litter Remover", "TANSHUGETREES-leaf_litter_remover", "{ForgeData:{tanshugetrees:{block:\"" + GameUtils.Tile.toText(block)[0] + "\"}}}");
                         GameUtils.Score.add(level_server, "TANSHUGETREES", "leaf_litter_remover", 1);
 
                     }

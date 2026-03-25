@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.FileManager;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class SaplingTrader {
 
-    public static void summonTrader (ServerLevel level_server, int posX, int posY, int posZ) {
+    public static void summonTrader (ServerLevel level_server, BlockPos pos) {
 
         File[] files = new File(Core.path_config + "/#dev/#temporary/sapling_trader").listFiles();
         StringBuilder write = new StringBuilder();
@@ -113,10 +114,10 @@ public class SaplingTrader {
 
         }
 
-        GameUtils.Mob.summon(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "minecraft:wandering_trader", "Sapling Trader / dark_green", "TANSHUGETREES-sapling_trader", write.toString());
-        GameUtils.Misc.spawnParticle(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 0, 0, 0, 0, 1, "minecraft:flash");
-        GameUtils.Misc.spawnParticle(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 0.5, 0.5, 0.5, 0.01, 20, "minecraft:campfire_signal_smoke");
-        GameUtils.Misc.playSound(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, 2, 0, "minecraft:entity.illusioner.cast_spell");
+        GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:wandering_trader", "Sapling Trader / dark_green", "TANSHUGETREES-sapling_trader", write.toString());
+        GameUtils.Misc.spawnParticle(level_server, pos.getCenter(), 0, 0, 0, 0, 1, "minecraft:flash");
+        GameUtils.Misc.spawnParticle(level_server, pos.getCenter(), 0.5, 0.5, 0.5, 0.01, 20, "minecraft:campfire_signal_smoke");
+        GameUtils.Misc.playSound(level_server, pos, 2, 0, "minecraft:entity.illusioner.cast_spell");
 
     }
 

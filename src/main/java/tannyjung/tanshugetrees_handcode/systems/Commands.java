@@ -2,11 +2,12 @@ package tannyjung.tanshugetrees_handcode.systems;
 
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.phys.Vec3;
 import tannyjung.tanshugetrees_core.game.CommandMaker;
-import tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics.Seasons;
+import tannyjung.tanshugetrees_handcode.systems.living_mechanics.Seasons;
 import tannyjung.tanshugetrees_handcode.systems.tree_generator.*;
 
 public class Commands {
@@ -102,21 +103,17 @@ public class Commands {
             private static void summon_tree (CommandContext<CommandSourceStack> data) {
 
                 ServerLevel level_server = data.getSource().getLevel();
-                int posX = (int) Math.floor(data.getSource().getPosition().x());
-                int posY = (int) Math.floor(data.getSource().getPosition().y());
-                int posZ = (int) Math.floor(data.getSource().getPosition().z());
+                Vec3 vec3 = data.getSource().getPosition();
                 String variable_text = CommandMaker.Argument.getText(data);
-                TreeGenerator.create(level_server, posX, posY, posZ, variable_text);
+                TreeGenerator.create(level_server, BlockPos.containing(vec3), variable_text);
 
             }
 
             private static void summon_sapling_trader (CommandContext<CommandSourceStack> data) {
 
                 ServerLevel level_server = data.getSource().getLevel();
-                int posX = (int) Math.floor(data.getSource().getPosition().x());
-                int posY = (int) Math.floor(data.getSource().getPosition().y());
-                int posZ = (int) Math.floor(data.getSource().getPosition().z());
-                SaplingTrader.summonTrader(level_server, posX, posY, posZ);
+                Vec3 vec3 = data.getSource().getPosition();
+                SaplingTrader.summonTrader(level_server, BlockPos.containing(vec3));
 
             }
 

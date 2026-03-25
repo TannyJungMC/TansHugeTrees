@@ -9,16 +9,16 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import tannyjung.tanshugetrees_core.Core;
-import tannyjung.tanshugetrees_core.game.TXTFunction;
+import tannyjung.tanshugetrees_core.outside.TXTFunction;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
-import tannyjung.tanshugetrees_handcode.config.FileConfig;
+import tannyjung.tanshugetrees_handcode.data.FileConfig;
 
 import java.io.File;
 
 public class TreeGenerator {
 
-    public static void create (ServerLevel level_server, int posX, int posY, int posZ, String path) {
+    public static void create (ServerLevel level_server, BlockPos pos, String path) {
 
         String name_pack = "";
         String name_tree = "";
@@ -39,8 +39,8 @@ public class TreeGenerator {
 
         if (file.exists() == true && file.isDirectory() == false) {
 
-            GameUtils.Mob.summon(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", GameUtils.Data.convertFileToForgeData(file.getPath()));
-            GameUtils.Misc.sendChatMessage(level_server, "@a", "Summoned tree generator at " + posX + " " + posY + " " + posZ + "  / gray | [?] / dark_gray / " + path + " (Extracted)");
+            GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", GameUtils.Data.convertFileToForgeData(file.getPath()));
+            GameUtils.Misc.sendChatMessage(level_server, "@a", "Summoned tree generator at " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + "  / gray | [?] / dark_gray / " + path + " (Extracted)");
 
         } else {
 
@@ -48,8 +48,8 @@ public class TreeGenerator {
 
             if (file.exists() == true && file.isDirectory() == false) {
 
-                GameUtils.Misc.sendChatMessage(level_server, "@a", "Summoned tree generator at " + posX + " " + posY + " " + posZ + "  / gray | [?] / dark_gray / " + path + " (Unxtracted)");
-                GameUtils.Mob.summon(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", GameUtils.Data.convertFileToForgeData(file.getPath()));
+                GameUtils.Misc.sendChatMessage(level_server, "@a", "Summoned tree generator at " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + "  / gray | [?] / dark_gray / " + path + " (Unxtracted)");
+                GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", GameUtils.Data.convertFileToForgeData(file.getPath()));
 
             } else {
 
@@ -64,7 +64,7 @@ public class TreeGenerator {
     public static void run (LevelAccessor level_accessor, Entity entity) {
 
         ServerLevel level_server = (ServerLevel) level_accessor;
-        GameUtils.Misc.spawnParticle(level_server, entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0, 0, 1, "minecraft:composter");
+        GameUtils.Misc.spawnParticle(level_server, entity.position(), 0, 0, 0, 0, 1, "minecraft:composter");
 
         if (GameUtils.Data.getEntityLogic(entity, "start") == false) {
 
@@ -147,7 +147,7 @@ public class TreeGenerator {
 
             }
 
-            Entity entity_countdown = GameUtils.Mob.getAtAreaOne(level_server, entity.getX(), entity.getY() + 1, entity.getZ(), 1, true, "minecraft:text_display", "TANSHUGETREES-tree_countdown");
+            Entity entity_countdown = GameUtils.Mob.getAtAreaOne(level_server, entity.position().add(0, 1, 0), 1, true, "minecraft:text_display", "TANSHUGETREES-tree_countdown");
 
             if (entity_countdown != null) {
 
@@ -156,8 +156,8 @@ public class TreeGenerator {
             }
 
             entity.setPos(entity.getX(), entity.getY() + GameUtils.Data.getEntityNumber(entity, "start_height"), entity.getZ());
-            GameUtils.Mob.summon(level_server, entity.getX(), entity.getY() + 1, entity.getZ(), "text_display", "Tree Generator Status", "TANSHUGETREES-" + GameUtils.Data.getEntityText(entity, "id") + " / TANSHUGETREES-tree_generator_status", "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"In Progress\",\"color\":\"white\"}'}");
-            TXTFunction.run(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), "functions/" + GameUtils.Data.getEntityText(entity, "function_start"), true);
+            GameUtils.Mob.summon(level_server, entity.position().add(0, 1, 0), "text_display", "Tree Generator Status", "TANSHUGETREES-" + GameUtils.Data.getEntityText(entity, "id") + " / TANSHUGETREES-tree_generator_status", "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"In Progress\",\"color\":\"white\"}'}");
+            TXTFunction.run(level_accessor, level_server, entity.blockPosition(), "functions/" + GameUtils.Data.getEntityText(entity, "function_start"), true);
 
         } else {
 
@@ -531,7 +531,7 @@ public class TreeGenerator {
                 if (entity_at != null) {
 
                     Vec3 vec3 = GameUtils.Space.getPosLook(entity_at, horizontal, vertical, forward);
-                    Entity entity_summon = GameUtils.Mob.summon(level_server, vec3.x, vec3.y + height, vec3.z, "minecraft:marker", "Tree Generator (" + type + ")", "TANSHUGETREES-" + id + " / TANSHUGETREES-generator_" + type, "");
+                    Entity entity_summon = GameUtils.Mob.summon(level_server, vec3.add(0, height, 0), "minecraft:marker", "Tree Generator (" + type + ")", "TANSHUGETREES-" + id + " / TANSHUGETREES-generator_" + type, "");
 
                     if (is_taproot_trunk == true) {
 
@@ -1595,12 +1595,12 @@ public class TreeGenerator {
 
                         if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                            GameUtils.Misc.spawnParticle(level_server, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, 0, 0, 0, 1, "minecraft:flash");
+                            GameUtils.Misc.spawnParticle(level_server, pos.getCenter(), 0, 0, 0, 0, 1, "minecraft:flash");
                             level_accessor.setBlock(pos, GameUtils.Tile.fromText("tanshugetrees:block_placer_" + block_placer), 2);
 
-                            GameUtils.Data.setBlockText(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), "block", GameUtils.Data.getEntityText(entity, block));
-                            GameUtils.Data.setBlockText(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), "function", function[1]);
-                            GameUtils.Data.setBlockText(level_accessor, level_server, pos.getX(), pos.getY(), pos.getZ(), "function_style", function[2]);
+                            GameUtils.Data.setBlockText(level_accessor, level_server, pos, "block", GameUtils.Data.getEntityText(entity, block));
+                            GameUtils.Data.setBlockText(level_accessor, level_server, pos, "function", function[1]);
+                            GameUtils.Data.setBlockText(level_accessor, level_server, pos, "function_style", function[2]);
 
                         } else {
 
@@ -1716,7 +1716,7 @@ public class TreeGenerator {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
 
-                TXTFunction.run(level_accessor, level_server, entity.getBlockX(), entity.getBlockY(), entity.getBlockZ(), "functions/" + GameUtils.Data.getEntityText(entity, "function_end"), true);
+                TXTFunction.run(level_accessor, level_server, entity.blockPosition(), "functions/" + GameUtils.Data.getEntityText(entity, "function_end"), true);
 
             } else {
 
@@ -1725,10 +1725,10 @@ public class TreeGenerator {
 
             }
 
-            GameUtils.Mob.summon(level_server, entity.getX() + 20, entity.getY() + 10, entity.getZ() + 20, "minecraft:firework_rocket", "", "", "{LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
-            GameUtils.Mob.summon(level_server, entity.getX() + 20, entity.getY() + 10, entity.getZ() - 20, "minecraft:firework_rocket", "", "", "{LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
-            GameUtils.Mob.summon(level_server, entity.getX() - 20, entity.getY() + 10, entity.getZ() + 20, "minecraft:firework_rocket", "", "", "{LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
-            GameUtils.Mob.summon(level_server, entity.getX() - 20, entity.getY() + 10, entity.getZ() - 20, "minecraft:firework_rocket", "", "", "{LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
+            GameUtils.Mob.summon(level_server, entity.position().add(20.0, 10.0, 20.0), "minecraft:firework_rocket", "", "", "{LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
+            GameUtils.Mob.summon(level_server, entity.position().add(20.0, 10.0, -20.0), "minecraft:firework_rocket", "", "", "{LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
+            GameUtils.Mob.summon(level_server, entity.position().add(-20.0, 10.0, 20.0), "minecraft:firework_rocket", "", "", "{LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
+            GameUtils.Mob.summon(level_server, entity.position().add(-20.0, 10.0, -20.0), "minecraft:firework_rocket", "", "", "{LifeTime:40,FireworksItem:{id:firework_rocket,Count:1,tag:{Fireworks:{Flight:2,Explosions:[{Type:4,Flicker:1,Trail:1,Colors:[I;3887386,4312372],FadeColors:[I;3887386,4312372]}]}}}}");
 
             for (Entity entity_import : GameUtils.Mob.getAtEverywhere(level_server, "", "TANSHUGETREES-" + id)) {
 

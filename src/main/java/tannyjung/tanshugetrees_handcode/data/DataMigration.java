@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode;
+package tannyjung.tanshugetrees_handcode.data;
 
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.FileManager;

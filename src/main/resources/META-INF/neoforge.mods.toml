@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[47,)"
+loaderVersion="[4,)"
 license="All Rights Reserved"
 
 [[mods]]
@@ -15,10 +15,21 @@ description="Generate trees and nature stuffs around the world"
 # Start of user code block mod configuration
 # End of user code block mod configuration
 
+
+# Start of user code block custom mixins
+# End of user code block custom mixins
+
+[[dependencies.tanshugetrees]]
+    modId="neoforge"
+    type="required"
+    versionRange="[21.1.190,)"
+    ordering="AFTER"
+    side="BOTH"
+
 [[dependencies.tanshugetrees]]
     modId="minecraft"
-    mandatory=true
-    versionRange="[1.20.1]"
+    type="required"
+    versionRange="[1.21.1]"
     ordering="AFTER"
     side="BOTH"
 

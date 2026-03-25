@@ -1,7 +1,7 @@
-package tannyjung.tanshugetrees_handcode.config;
+package tannyjung.tanshugetrees_handcode.data;
 
 import tannyjung.tanshugetrees_core.Core;
-import tannyjung.tanshugetrees_core.outside.ConfigMaker;
+import tannyjung.tanshugetrees_core.outside.ConfigClassic;
 
 public class FileShapeConverter {
 
@@ -18,7 +18,7 @@ public class FileShapeConverter {
 					----------------------------------------------------------------------------------------------------
 					""";
 
-        ConfigMaker.repair(Core.path_config + "/#dev/shape_file_converter/#shape_file_converter.txt", write);
+        ConfigClassic.repair(Core.path_config + "/#dev/shape_file_converter/#shape_file_converter.txt", write);
 
 	}
 

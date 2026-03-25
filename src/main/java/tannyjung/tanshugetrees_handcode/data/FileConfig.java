@@ -1,7 +1,7 @@
-package tannyjung.tanshugetrees_handcode.config;
+package tannyjung.tanshugetrees_handcode.data;
 
 import tannyjung.tanshugetrees_core.Core;
-import tannyjung.tanshugetrees_core.outside.ConfigMaker;
+import tannyjung.tanshugetrees_core.outside.ConfigClassic;
 
 
 import java.util.*;
@@ -34,10 +34,10 @@ public class FileConfig {
 	public static int surface_smoothness_detection_height_down = 0;
     public static int structure_detection_size = 0;
 
-	public static boolean living_tree_mechanics = false;
-	public static int living_tree_mechanics_tick = 0;
-	public static int living_tree_mechanics_process_limit = 0;
-	public static int living_tree_mechanics_simulation = 0;
+	public static boolean living_mechanics = false;
+	public static int living_mechanics_tick = 0;
+	public static int living_mechanics_process_limit = 0;
+	public static int living_mechanics_simulation = 0;
 	public static boolean leaf_litter = false;
 	public static boolean leaf_litter_classic = false;
 	public static boolean leaf_litter_classic_only = false;
@@ -98,7 +98,7 @@ public class FileConfig {
                 | These number will be multiplied to all tree config in these types
                 
                 tree_location = true
-                | Enable marker entity for tree location to store some tree data and for some custom features. Disable this can reduce number of entities, but some features will not work such as living tree mechanics.
+                | Enable marker entity for tree location to store some tree data and for some custom features. Disable this can reduce number of entities, but some features will not work such as living mechanics.
                 
                 world_gen_roots = true
                 | Enable tree roots when generate in world gen. Note that disable this will no affect to some trees, because roots is important part for them. Also will no affect to taproot part.
@@ -143,19 +143,19 @@ public class FileConfig {
                 | Cancel trees if they detect structure in their area based from their size. This number will be plus with their size, higher number bigger distance. Note that this feature is not perfect, trees with long size might not be canceled. Only support number between is 0 to 9. Set to 0 for only chunks that marked as having structures. Set to -1 to disable this feature.
                 
                 ----------------------------------------------------------------------------------------------------
-                Living Tree Mechanics
+                Living Mechanics
                 ----------------------------------------------------------------------------------------------------
                 
-                living_tree_mechanics = true
+                living_mechanics = true
                 | Enable some custom systems to make the trees from this mod feel more alive. Such as leaf drop and regrowth, leaf decay, leaf litter, and abscission.
                 
-                living_tree_mechanics_tick = 5
-                | How fast in tick of living tree mechanics system. Set to 0 to temporary pause the tick.
+                living_mechanics_tick = 5
+                | How fast in tick of living mechanics system. Set to 0 to temporary pause the tick.
                 
-                living_tree_mechanics_process_limit = 500
+                living_mechanics_process_limit = 500
                 | How many process for trees to run this system per time. Set to 0 for one time process.
                 
-                living_tree_mechanics_simulation = 100
+                living_mechanics_simulation = 100
                 | Simulate fake trees to slowdown the process. For example, when I set tree speed for 100 trees. But there's only 1 tree in the area, it will drop and regrow leaves very fast because that's the speed for 100 trees. Set this config will simulate fake trees and make that 1 tree slowdown it process like there's 99 trees around it.
                 
                 leaf_litter = true
@@ -186,7 +186,7 @@ public class FileConfig {
                 | Chance of leaves to drop themselves when they're dead by light level and missing center block
                 
                 ----------------------------------------------------------------------------------------------------
-                Living Tree Mechanics : Leaf Cycle and Seasons
+                Living Mechanics : Leaf Cycle and Seasons
                 ----------------------------------------------------------------------------------------------------
                 
                 compatibility_serene_seasons = true
@@ -239,13 +239,13 @@ public class FileConfig {
                 ----------------------------------------------------------------------------------------------------
                 """;
 
-		ConfigMaker.repair(Core.path_config + "/config.txt", write);
+		ConfigClassic.repair(Core.path_config + "/config.txt", write);
 
 	}
 
 	public static void apply () {
 
-		Map<String, String> data = ConfigMaker.getValues(Core.path_config + "/config.txt");
+		Map<String, String> data = ConfigClassic.getValues(Core.path_config + "/config.txt");
 
 		auto_check_update = Boolean.parseBoolean(data.get("auto_check_update"));
 		wip_version = Boolean.parseBoolean(data.get("wip_version"));
@@ -273,10 +273,10 @@ public class FileConfig {
         surface_smoothness_detection_height_down = Integer.parseInt(data.get("surface_smoothness_detection_height_down"));
         structure_detection_size = Integer.parseInt(data.get("structure_detection_size"));
 
-		living_tree_mechanics = Boolean.parseBoolean(data.get("living_tree_mechanics"));
-		living_tree_mechanics_tick = Integer.parseInt(data.get("living_tree_mechanics_tick"));
-		living_tree_mechanics_process_limit = Integer.parseInt(data.get("living_tree_mechanics_process_limit"));
-		living_tree_mechanics_simulation = Integer.parseInt(data.get("living_tree_mechanics_simulation"));
+		living_mechanics = Boolean.parseBoolean(data.get("living_mechanics"));
+		living_mechanics_tick = Integer.parseInt(data.get("living_mechanics_tick"));
+		living_mechanics_process_limit = Integer.parseInt(data.get("living_mechanics_process_limit"));
+		living_mechanics_simulation = Integer.parseInt(data.get("living_mechanics_simulation"));
 		leaf_litter = Boolean.parseBoolean(data.get("leaf_litter"));
 		leaf_litter_classic = Boolean.parseBoolean(data.get("leaf_litter_classic"));
 		leaf_litter_classic_only = Boolean.parseBoolean(data.get("leaf_litter_classic_only"));

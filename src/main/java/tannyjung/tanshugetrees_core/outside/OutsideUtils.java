@@ -9,10 +9,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class OutsideUtils {
 
@@ -383,110 +381,6 @@ public class OutsideUtils {
         }
 
         return convertListToArray(data);
-
-    }
-
-    public static class Cache {
-
-        public static int sizeMapByteBuffer (Map<String, ByteBuffer> test) {
-
-            int return_number = 0;
-
-            for (Map.Entry<String, ByteBuffer> entry : test.entrySet()) {
-
-                return_number = return_number + entry.getValue().capacity();
-
-            }
-
-            return return_number;
-
-        }
-
-        public static int sizeMapNumberShort (Map<String, Map<String, short[]>> test) {
-
-            int return_number = 0;
-
-            for (Map.Entry<String, Map<String, short[]>> entry1 : test.entrySet()) {
-
-                for (Map.Entry<String, short[]> entry2 : entry1.getValue().entrySet()) {
-
-                    return_number = return_number + entry2.getValue().length * Short.BYTES;
-
-                }
-
-            }
-
-            return return_number;
-
-        }
-
-        public static int sizeMapNumberInt (Map<String, Map<String, int[]>> test) {
-
-            int return_number = 0;
-
-            for (Map.Entry<String, Map<String, int[]>> entry1 : test.entrySet()) {
-
-                for (Map.Entry<String, int[]> entry2 : entry1.getValue().entrySet()) {
-
-                    return_number = return_number + entry2.getValue().length * Integer.BYTES;
-
-                }
-
-            }
-
-            return return_number;
-
-        }
-
-        public static int sizeMapText (Map<String, Map<String, String>> test) {
-
-            int return_number = 0;
-
-            for (Map.Entry<String, Map<String, String>> entry1 : test.entrySet()) {
-
-                for (Map.Entry<String, String> entry2 : entry1.getValue().entrySet()) {
-
-                    return_number = return_number + entry2.getValue().length() * Character.BYTES;
-
-                }
-
-            }
-
-            return return_number;
-
-        }
-
-        public static int sizeMapTextList (Map<String, Map<String, String[]>> test) {
-
-            int return_number = 0;
-
-            for (Map.Entry<String, Map<String, String[]>> entry1 : test.entrySet()) {
-
-                for (Map.Entry<String, String[]> entry2 : entry1.getValue().entrySet()) {
-
-                    return_number = return_number + entry2.getValue().length * Integer.BYTES;
-
-                }
-
-            }
-
-            return return_number;
-
-        }
-
-        public static int sizeArrayText (String[] test) {
-
-            int return_number = 0;
-
-            for (String get : test) {
-
-                return_number = return_number + get.length() * Integer.BYTES;
-
-            }
-
-            return return_number;
-
-        }
 
     }
 

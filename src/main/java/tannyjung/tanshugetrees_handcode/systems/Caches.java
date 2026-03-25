@@ -2,6 +2,7 @@ package tannyjung.tanshugetrees_handcode.systems;
 
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.CacheManager;
+import tannyjung.tanshugetrees_core.outside.ConfigDynamic;
 import tannyjung.tanshugetrees_core.outside.FileManager;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 
@@ -14,229 +15,118 @@ public class Caches {
 
     private static void getTreeShape (String id) {
 
-        synchronized (CacheManager.lock) {
+        if (CacheManager.Data.existNumberShortArray("tree_shape_size", id) == false) {
 
-            if (CacheManager.cache_number_short_list.containsKey("tree_shape_part1") == false) {
+            short[] data_size = new short[0];
+            int[] data_block_count = new int[0];
+            short[] data_shape = new short[0];
 
-                CacheManager.cache_number_short_list.put("tree_shape_part1", new HashMap<>());
-                CacheManager.cache_number_int_list.put("tree_shape_part2", new HashMap<>());
-                CacheManager.cache_number_short_list.put("tree_shape_part3", new HashMap<>());
+            // Get Data
+            {
 
-            }
+                String[] split = id.split("/");
+                String path = "";
 
-            if (CacheManager.cache_number_short_list.get("tree_shape_part1").containsKey(id) == false) {
+                try {
 
-                short[] data1 = new short[0];
-                int[] data2 = new int[0];
-                short[] data3 = new short[0];
+                    path = Core.path_config + "/#dev/#temporary/presets/" + split[0] + "/" + split[1] + "/storage/" + split[2];
 
-                get_data:
-                {
+                } catch (Exception exception) {
 
-                    String[] split = id.split("/");
-                    String path = "";
+                    OutsideUtils.exception(new Exception(), exception, "");
 
-                    try {
+                }
 
-                        path = Core.path_config + "/#dev/#temporary/presets/" + split[0] + "/" + split[1] + "/storage/" + split[2];
+                ByteBuffer buffer = FileManager.readBIN(path);
 
-                    } catch (Exception exception) {
+                if (buffer.remaining() > 0) {
 
-                        OutsideUtils.exception(new Exception(), exception, "");
-                        break get_data;
+                    // Size
+                    {
+
+                        int count = 6;
+                        data_size = new short[count];
+
+                        for (int number = 0; number < count; number++) {
+
+                            data_size[number] = buffer.getShort();
+
+                        }
 
                     }
 
-                    ByteBuffer buffer = FileManager.readBIN(path);
+                    // Block Count
+                    {
 
-                    if (buffer.remaining() > 0) {
+                        int count = 6;
+                        data_block_count = new int[count];
 
-                        // Part 1
-                        {
+                        for (int number = 0; number < count; number++) {
 
-                            int count = 6;
-                            data1 = new short[count];
-
-                            for (int number = 0; number < count; number++) {
-
-                                data1[number] = buffer.getShort();
-
-                            }
+                            data_block_count[number] = buffer.getInt();
 
                         }
 
-                        // Part 2
-                        {
+                    }
 
-                            int count = 6;
-                            data2 = new int[count];
+                    // Shape
+                    {
 
-                            for (int number = 0; number < count; number++) {
-
-                                data2[number] = buffer.getInt();
-
-                            }
-
-                        }
-
-                        // Part 3
-                        {
-
-                            ShortBuffer buffer_convert = buffer.asShortBuffer();
-                            data3 = new short[buffer_convert.remaining()];
-                            buffer_convert.get(data3);
-
-                        }
+                        ShortBuffer buffer_convert = buffer.asShortBuffer();
+                        data_shape = new short[buffer_convert.remaining()];
+                        buffer_convert.get(data_shape);
 
                     }
 
                 }
 
-                CacheManager.cache_number_short_list.get("tree_shape_part1").put(id, data1);
-                CacheManager.cache_number_int_list.get("tree_shape_part2").put(id, data2);
-                CacheManager.cache_number_short_list.get("tree_shape_part3").put(id, data3);
-
             }
+
+            CacheManager.Data.setNumberShortArray("tree_shape_size", id, data_size);
+            CacheManager.Data.setNumberIntArray("tree_shape_block_count", id, data_block_count);
+            CacheManager.Data.setNumberShortArray("tree_shape_data", id, data_shape);
 
         }
 
     }
 
-    public static short[] getTreeShapePart1 (String id) {
+    public static short[] getTreeShapeSize (String id) {
 
         getTreeShape(id);
-        return CacheManager.cache_number_short_list.get("tree_shape_part1").get(id);
+        return CacheManager.Data.getNumberShortArray("tree_shape_size", id);
 
     }
 
-    public static int[] getTreeShapePart2 (String id) {
+    public static int[] getTreeShapeBlockCount (String id) {
 
         getTreeShape(id);
-        return CacheManager.cache_number_int_list.get("tree_shape_part2").get(id);
+        return CacheManager.Data.getNumberIntArray("tree_shape_block_count", id);
 
     }
 
-    public static short[] getTreeShapePart3 (String id) {
+    public static short[] getTreeShapeData (String id) {
 
         getTreeShape(id);
-        return CacheManager.cache_number_short_list.get("tree_shape_part3").get(id);
+        return CacheManager.Data.getNumberShortArray("tree_shape_data", id);
 
     }
 
-    public static String[] getWorldGenSettings (String id) {
+    public static Map<String, Map<String, String>> getConfigWorldGen () {
 
-        synchronized (CacheManager.lock) {
-
-            if (CacheManager.cache_string_list.containsKey("world_gen_settings") == false) {
-
-                CacheManager.cache_string_list.put("world_gen_settings", new HashMap<>());
-
-            }
-
-            if (CacheManager.cache_string_list.get("world_gen_settings").containsKey(id) == false) {
-
-                String[] data = FileManager.readTXT(Core.path_config + "/#dev/#temporary/world_gen/" + id + ".txt");
-                CacheManager.cache_string_list.get("world_gen_settings").put(id, data);
-
-            }
-
-        }
-
-        return CacheManager.cache_string_list.get("world_gen_settings").get(id);
+        return ConfigDynamic.getData("worldgen", "enable -> false / biome -> none / ground_block -> none / rarity -> 0 / min_distance -> 0 / group_size -> 0 <> 0 / waterside_chance -> 0.0 / dead_tree_chance -> 0.0 / dead_tree_level -> auto / start_height_offset -> 0 <> 0 / rotation -> random / mirrored -> random / path_storage -> none / path_settings -> none");
 
     }
 
-    public static String[] getTreeSettings (String id) {
+    public static List<String> getTreeSettings (String id) {
 
-        synchronized (CacheManager.lock) {
+        if (CacheManager.Data.existTextList("tree_settings", id) == false) {
 
-            if (CacheManager.cache_string_list.containsKey("tree_settings") == false) {
-
-                CacheManager.cache_string_list.put("tree_settings", new HashMap<>());
-
-            }
-
-            if (CacheManager.cache_string_list.get("tree_settings").containsKey(id) == false) {
-
-                String[] data = FileManager.readTXT(Core.path_config + "/#dev/#temporary/presets/" + id + "_settings.txt");
-                CacheManager.cache_string_list.get("tree_settings").put(id, data);
-
-            }
+            List<String> data = FileManager.readTXT(Core.path_config + "/#dev/#temporary/presets/" + id + "_settings.txt");
+            CacheManager.Data.setTextList("tree_settings", id, data);
 
         }
 
-        return CacheManager.cache_string_list.get("tree_settings").get(id);
-
-    }
-
-    public static String[] getTreeDecorationList (String id) {
-
-        synchronized (CacheManager.lock) {
-
-            if (CacheManager.cache_string_list.containsKey("tree_decoration") == false) {
-
-                CacheManager.cache_string_list.put("tree_decoration", new HashMap<>());
-
-            }
-
-            if (CacheManager.cache_string_list.get("tree_decoration").containsKey(id) == false) {
-
-                String[] data = new String[0];
-
-                // Get Data
-                {
-
-                    File[] packs = new File(Core.path_config + "/#dev/#temporary/tree_decoration").listFiles();
-
-                    if (packs != null) {
-
-                        List<String> names = new ArrayList<>();
-                        File[] files = new File[0];
-                        String path_prefix = "";
-
-                        for (File pack : packs) {
-
-                            if (id.equals("decay") == true) {
-
-                                path_prefix = pack.getName() + "/decay";
-
-                            } else {
-
-                                path_prefix = pack.getName();
-
-                            }
-
-                            files = new File(Core.path_config + "/#dev/#temporary/tree_decoration/" + path_prefix).listFiles();
-
-                            if (files != null) {
-
-                                for (File file : files) {
-
-                                    if (file.isDirectory() == false) {
-
-                                        names.add(path_prefix + "/" + file.getName().replace(".txt", ""));
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-
-                        data = OutsideUtils.convertListToArray(names);
-
-                    }
-
-                }
-
-                CacheManager.cache_string_list.get("tree_decoration").put(id, data);
-
-            }
-
-        }
-
-        return CacheManager.cache_string_list.get("tree_decoration").get(id);
+        return CacheManager.Data.getTextList("tree_settings", id);
 
     }
 

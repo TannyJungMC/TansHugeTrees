@@ -5,9 +5,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.*;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -21,8 +19,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.*;
@@ -31,15 +31,17 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
-import net.minecraftforge.registries.ForgeRegistries;
-import tannyjung.tanshugetrees.init.TanshugetreesModMenus;
+import tannyjung.tanshugetrees.init.TanshugetreesModMenus.MenuAccessor;
 import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.outside.CacheManager;
 import tannyjung.tanshugetrees_core.outside.FileManager;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 
@@ -51,16 +53,25 @@ import java.util.List;
 /*
 (1.20.1)
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.data.worldgen.features.FeatureUtils;
 (1.21.1)
 import net.neoforged.fml.ModList;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.scores.ScoreHolder;
 */
-import net.minecraftforge.fml.ModList;
-import net.minecraft.world.level.chunk.ChunkStatus;
+import net.neoforged.fml.ModList;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.scores.ScoreHolder;
 
 public class GameUtils {
 
@@ -72,148 +83,174 @@ public class GameUtils {
 
         }
 
-        public static boolean testCustomBiome (Holder<Biome> biome, String test) {
+        public static boolean testBiome (Holder<Biome> biome, String test) {
 
-			boolean result = false;
+			if (test.equals("none") == true) {
 
-            if (test.equals("all") == true) {
+				return false;
 
-                result = true;
+			} else if (test.equals("all") == true) {
+
+                return true;
 
             } else {
 
                 String biome_centerID = Space.getBiomeID(biome);
 
-                for (String split : test.split(" / ")) {
+				if (CacheManager.Data.existLogic("biome_test", biome + " | " + test) == false) {
 
-                    result = true;
+					boolean result = false;
 
-                    for (String split2 : split.split(", ")) {
+					{
 
-                        String split_get = split2.replaceAll("[#!]", "");
+						for (String split : test.split(" / ")) {
 
-                        {
+							result = true;
 
-                            if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
+							for (String split2 : split.split(", ")) {
 
-                                if (Space.isBiomeTaggedAs(biome, split_get) == false) {
+								String split_get = split2.replaceAll("[#!]", "");
 
-                                    result = false;
+								{
 
-                                }
+									if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
 
-                            } else {
+										if (Space.isBiomeTaggedAs(biome, split_get) == false) {
 
-                                if (biome_centerID.equals(split_get) == false) {
+											result = false;
 
-                                    result = false;
-
-                                }
-
-                            }
-
-                            if (split2.startsWith("!") == true) {
-
-                                result = !result;
-
-                            }
-
-                        }
-
-                        if (result == false) {
-
-                            break;
-
-                        }
-
-                    }
-
-                    if (result == true) {
-
-                        break;
-
-                    }
-
-                }
-
-            }
-
-            return result;
-
-        }
-
-        public static boolean testCustomBlock (BlockState block, String test) {
-
-            boolean return_logic = false;
-
-            if (test.equals("all") == true) {
-
-                return_logic = true;
-
-            } else {
-
-				String[] data = GameUtils.Tile.toText(block);
-				String block_id = data[0];
-				List<String> properties = new ArrayList<>();
-
-				if (data.length > 1) {
-
-					properties = Arrays.stream(data[1].substring(1, data[1].length() - 1).split(",")).toList();
-
-				}
-
-				String value = "";
-				int index = 0;
-				String block_test = "";
-
-                for (String split : test.split(" / ")) {
-
-                    return_logic = true;
-
-                    for (String split2 : split.split(", ")) {
-
-                        value = split2.replaceAll("[#!]", "");
-
-                        {
-
-                            if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
-
-                                if (Tile.isTaggedAs(block, value) == false) {
-
-                                    return_logic = false;
-
-                                }
-
-                            } else {
-
-								index = value.indexOf("[");
-
-								if (index == -1) {
-
-									block_test = value;
-
-									if (block_id.equals(block_test) == false) {
-
-										return_logic = false;
-
-									}
-
-								} else {
-
-									block_test = value.substring(0, index);
-
-									if (block_id.equals(block_test) == false) {
-
-										return_logic = false;
+										}
 
 									} else {
 
-										for (String property : value.substring(index + 1, value.length() - 1).split(",")) {
+										if (biome_centerID.equals(split_get) == false) {
 
-											if (properties.contains(property) == false) {
+											result = false;
 
-												return_logic = false;
-												break;
+										}
+
+									}
+
+									if (split2.startsWith("!") == true) {
+
+										result = !result;
+
+									}
+
+								}
+
+								if (result == false) {
+
+									break;
+
+								}
+
+							}
+
+							if (result == true) {
+
+								break;
+
+							}
+
+						}
+
+					}
+
+					CacheManager.Data.setLogic("biome_test", biome + " | " + test, result);
+
+				}
+
+				return CacheManager.Data.getLogic("biome_test", biome + " | " + test);
+
+            }
+
+        }
+
+        public static boolean testBlock (BlockState block, String test) {
+
+			if (test.equals("none") == true) {
+
+				return false;
+
+			} else if (test.equals("all") == true) {
+
+				return true;
+
+			} else {
+
+				if (CacheManager.Data.existLogic("block_test", block + " | " + test) == false) {
+
+					boolean result = false;
+
+					{
+
+						String[] data = GameUtils.Tile.toText(block);
+						String block_id = data[0];
+						List<String> properties = new ArrayList<>();
+
+						if (data.length > 1) {
+
+							properties = Arrays.stream(data[1].substring(1, data[1].length() - 1).split(",")).toList();
+
+						}
+
+						String value = "";
+						int index = 0;
+						String block_test = "";
+
+						for (String split : test.split(" / ")) {
+
+							result = true;
+
+							for (String split2 : split.split(", ")) {
+
+								value = split2.replaceAll("[#!]", "");
+
+								{
+
+									if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
+
+										if (Tile.isTaggedAs(block, value) == false) {
+
+											result = false;
+
+										}
+
+									} else {
+
+										index = value.indexOf("[");
+
+										if (index == -1) {
+
+											block_test = value;
+
+											if (block_id.equals(block_test) == false) {
+
+												result = false;
+
+											}
+
+										} else {
+
+											block_test = value.substring(0, index);
+
+											if (block_id.equals(block_test) == false) {
+
+												result = false;
+
+											} else {
+
+												for (String property : value.substring(index + 1, value.length() - 1).split(",")) {
+
+													if (properties.contains(property) == false) {
+
+														result = false;
+														break;
+
+													}
+
+												}
 
 											}
 
@@ -221,39 +258,65 @@ public class GameUtils {
 
 									}
 
+									if (split2.startsWith("!") == true) {
+
+										result = !result;
+
+									}
+
 								}
 
-                            }
+								if (result == false) {
 
-                            if (split2.startsWith("!") == true) {
+									break;
 
-                                return_logic = !return_logic;
+								}
 
-                            }
+							}
 
-                        }
+							if (result == true) {
 
-                        if (return_logic == false) {
+								break;
 
-                            break;
+							}
 
-                        }
+						}
 
-                    }
+					}
 
-                    if (return_logic == true) {
+					CacheManager.Data.setLogic("block_test", block + " | " + test, result);
 
-                        break;
+				}
 
-                    }
+				return CacheManager.Data.getLogic("block_test", block + " | " + test);
 
-                }
-
-            }
-
-            return return_logic;
+			}
 
         }
+
+		public static String testVariant (String test) {
+
+			if (test.equals("none") == false) {
+
+				String[] split = new String[0];
+
+				for (String variant : test.split(" \\| ")) {
+
+					split = variant.split(" / ");
+
+					if (Math.random() < Double.parseDouble(split[0])) {
+
+						return split[1];
+
+					}
+
+				}
+
+			}
+
+			return "";
+
+		}
 
 		public static void sendChatMessage (ServerLevel level_server, String target, String data) {
 
@@ -266,19 +329,25 @@ public class GameUtils {
 
 			}
 
-            Command.run(level_server, 0, 0, 0, "tellraw " + target + " [{\"text\":\"\"}," + Data.createText("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod |   | " + data) + "]");
+            Command.run(level_server, Vec3.ZERO, "tellraw " + target + " [{\"text\":\"\"}," + GameUtils.Data.createText("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod |   | " + data) + "]");
 
         }
 
-		public static void spawnParticle (ServerLevel level_server, double posX, double posY, double posZ, double spreadX, double spreadY, double spreadZ, double speed, int count, String id) {
+		public static void spawnParticle (ServerLevel level_server, Vec3 vec3, double spreadX, double spreadY, double spreadZ, double speed, int count, String id) {
 
+			/*
+			(1.20.1)
 			ParticleType<?> particle = ForgeRegistries.PARTICLE_TYPES.getValue(ResourceLocation.parse(id));
+			(1.21.1)
+			ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE.get(ResourceLocation.parse(id));
+			*/
+			ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE.get(ResourceLocation.parse(id));
 
 			if (particle != null) {
 
 				for (ServerPlayer player : level_server.players()) {
 
-					level_server.sendParticles(player, (ParticleOptions) particle, true, posX, posY, posZ, count, spreadX, spreadY, spreadZ, speed);
+					level_server.sendParticles(player, (ParticleOptions) particle, true, vec3.x, vec3.y, vec3.z, count, spreadX, spreadY, spreadZ, speed);
 
 				}
 
@@ -286,15 +355,52 @@ public class GameUtils {
 
 		}
 
-		public static void playSound (ServerLevel level_server, double posX, double posY, double posZ, float volume, float pitch, String id) {
+		public static void playSound (ServerLevel level_server, BlockPos pos, double volume, double pitch, String id) {
 
+			/*
+			(1.20.1)
 			SoundEvent sound = ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation.parse(id));
+			(1.21.1)
+			SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse(id));
+			*/
+			SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse(id));
 
 			if (sound != null) {
 
-				level_server.playSound(null, BlockPos.containing(posX, posY, posZ), sound, SoundSource.NEUTRAL, volume, pitch);
+				level_server.playSound(null, pos, sound, SoundSource.NEUTRAL, (float) volume, (float) pitch);
 
 			}
+
+		}
+
+		public static Entity summonText (ServerLevel level_server, Vec3 vec3, double size, String data, boolean temporary) {
+
+			Entity entity = GameUtils.Mob.summon(level_server, vec3, "minecraft:text_display", "Display Text", Core.mod_id_big + "-display_text", "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[" + size + "f," + size + "f," + size + "f]},billboard:vertical,text:'" + GameUtils.Data.createText(data) + "'}");
+
+			if (temporary == true) {
+
+				Core.DelayedWorks.create(false, 200, () -> {
+
+					for (Entity scan : Mob.getAtArea(level_server, vec3, 1, true, 0, "minecraft:text_display", Core.mod_id_big + "-display_text")) {
+
+						GameUtils.Mob.remove(scan, false);
+
+					}
+
+				});
+
+			}
+
+			return entity;
+
+		}
+
+		public static Entity summonBlock (ServerLevel level_server, Vec3 vec3, String name, String tag, double offsetX, double offsetY, double offsetZ, double sizeX, double sizeY, double sizeZ, int rotate_horizontal, int rotate_vertical, String id) {
+
+			offsetX = offsetX - (sizeX / 2);
+			offsetZ = offsetZ - (sizeZ / 2);
+			offsetY = offsetY - 0.5;
+			return GameUtils.Mob.summon(level_server, vec3, "minecraft:block_display", name, tag, "{transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],translation:[" + offsetX + "f," + offsetY + "f," + offsetZ + "f],scale:[" + sizeX + "f," + sizeY + "f," + sizeZ + "f]},Rotation:[" + rotate_horizontal + "f," + rotate_vertical + "f],block_state:{Name:\"" + id + "\"}}");
 
 		}
 
@@ -302,15 +408,15 @@ public class GameUtils {
 
 	public static class Command {
 
-		public static void run (ServerLevel level_server, double posX, double posY, double posZ, String command) {
+		public static void run (ServerLevel level_server, Vec3 vec3, String command) {
 			
 			/*
 			(1.20.1) (1.21.1)
-			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
+			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, vec3, Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
 			(1.21.8)
-			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, PermissionSet.ALL_PERMISSIONS, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
+			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, vec3, Vec2.ZERO, level_server, PermissionSet.ALL_PERMISSIONS, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
 			*/
-			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
+			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, vec3, Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null).withSuppressedOutput(), command);
 
 		}
 
@@ -330,7 +436,7 @@ public class GameUtils {
 
 		}
 
-		public static boolean result (ServerLevel level_server, double posX, double posY, double posZ, String command) {
+		public static boolean result (ServerLevel level_server, Vec3 vec3, String command) {
 
 			StringBuilder result = new StringBuilder();
 
@@ -360,11 +466,11 @@ public class GameUtils {
 
 			/*
 			(1.20.1) (1.21.1)
-			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null), command);
+			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, vec3, Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null), command);
 			(1.21.8)
-			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, PermissionSet.ALL_PERMISSIONS, "", Component.literal(""), level_server.getServer(), null), command);
+			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, vec3, Vec2.ZERO, level_server, PermissionSet.ALL_PERMISSIONS, "", Component.literal(""), level_server.getServer(), null), command);
 			*/
-			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, new Vec3(posX, posY, posZ), Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null), command);
+			level_server.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(data_consumer, vec3, Vec2.ZERO, level_server, 4, "", Component.literal(""), level_server.getServer(), null), command);
 
 			return result.toString().equals("pass");
 
@@ -412,6 +518,58 @@ public class GameUtils {
 
 	public static class Tile {
 
+		public static void set (LevelAccessor level_accessor, BlockPos pos, BlockState block, boolean is_world_gen) {
+
+			// Waterlogged
+			{
+
+				if (level_accessor.isWaterAt(pos) == true) {
+
+					block = GameUtils.Tile.setPropertyLogic(block, "waterlogged", true);
+
+				}
+
+			}
+
+			int type = 0;
+
+			if (is_world_gen == false) {
+
+				type = 2;
+
+			}
+
+			level_accessor.setBlock(pos, block, type);
+
+		}
+
+		public static void remove (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, boolean is_world_gen) {
+
+			BlockState block = Blocks.AIR.defaultBlockState();
+
+			if (level_accessor.isWaterAt(pos) == true) {
+
+				block = Blocks.WATER.defaultBlockState();
+
+			}
+
+			set(level_accessor, pos, block, is_world_gen);
+
+			if (is_world_gen == false) {
+
+				level_server.neighborChanged(pos.above(), level_server.getBlockState(pos.above()).getBlock(), pos);
+
+			}
+
+		}
+
+		public static void removeDrop (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos) {
+
+			GameUtils.Item.spawn(level_server, pos.getCenter(), level_accessor.getBlockState(pos).getBlock().asItem().getDefaultInstance());
+			remove(level_accessor, level_server, pos, false);
+
+		}
+
 		public static boolean isTaggedAs (BlockState block, String tag) {
 
 			try {
@@ -453,13 +611,13 @@ public class GameUtils {
 
 				}
 
-				if (id.contains("lang")) {
-
-					System.out.println(data);
-
-				}
-
+				/*
+				(1.20.1)
 				Block block_test = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(id));
+				(1.21.1)
+				Block block_test = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
+				*/
+				Block block_test = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
 
 				if (block_test != null) {
 
@@ -467,7 +625,7 @@ public class GameUtils {
 
 					if (data.endsWith("}") == true) {
 
-						// To Do -> Put "{...}" from data into the block
+						// TODO -> Put "{...}" from data into the block
 
 						data = data.substring(0, data.indexOf("{"));
 
@@ -518,9 +676,31 @@ public class GameUtils {
 
 		}
 
-		public static void setScheduleTick (ServerLevel level_server, int posX, int posY, int posZ, int value) {
+		public static BlockState randomRotation (BlockState block) {
 
-			level_server.scheduleTick(new BlockPos(posX, posY, posZ), level_server.getBlockState(new BlockPos(posX, posY, posZ)).getBlock(), value);
+			if (Math.random() < 0.25) {
+
+				return GameUtils.Tile.setPropertyCustom(block, "facing", "north");
+
+			} else if (Math.random() < 0.25) {
+
+				return GameUtils.Tile.setPropertyCustom(block, "facing", "west");
+
+			} else if (Math.random() < 0.25) {
+
+				return GameUtils.Tile.setPropertyCustom(block, "facing", "east");
+
+			} else {
+
+				return GameUtils.Tile.setPropertyCustom(block, "facing", "south");
+
+			}
+
+		}
+
+		public static void setScheduleTick (ServerLevel level_server, BlockPos pos, int value) {
+
+			level_server.scheduleTick(pos, level_server.getBlockState(pos).getBlock(), value);
 
 		}
 
@@ -574,7 +754,11 @@ public class GameUtils {
 
 				if (property instanceof BooleanProperty property_instance) {
 
-					block = block.setValue(property_instance, value);
+					if (property_instance.getValue(String.valueOf(value)).isPresent() == true) {
+
+						block = block.setValue(property_instance, value);
+
+					}
 
 				}
 
@@ -592,7 +776,11 @@ public class GameUtils {
 
 				if (property instanceof IntegerProperty property_instance) {
 
-					block = block.setValue(property_instance, value);
+					if (property_instance.getValue(String.valueOf(value)).isPresent() == true) {
+
+						block = block.setValue(property_instance, value);
+
+					}
 
 				}
 
@@ -604,23 +792,13 @@ public class GameUtils {
 
 		public static BlockState setPropertyCustom (BlockState block, String name, String value) {
 
-			if (name.equals("facing") == true) {
+			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
 
-				if (block.hasProperty(DirectionalBlock.FACING) == true) {
+			if (property instanceof EnumProperty property_instance) {
 
-					block = block.setValue(DirectionalBlock.FACING, Direction.valueOf(value.toUpperCase()));
+				if (property_instance.getValue(value).isPresent() == true) {
 
-				} else if (block.hasProperty(HorizontalDirectionalBlock.FACING) == true) {
-
-					block = block.setValue(HorizontalDirectionalBlock.FACING, Direction.valueOf(value.toUpperCase()));
-
-				}
-
-			} else if (name.equals("type") == true) {
-
-				if (block.hasProperty(SlabBlock.TYPE) == true) {
-
-					block = block.setValue(SlabBlock.TYPE, SlabType.valueOf(value.toUpperCase()));
+					block = block.setValue(property_instance, (Enum) property_instance.getValue(value).get());
 
 				}
 
@@ -634,17 +812,15 @@ public class GameUtils {
 
 	public static class Mob {
 
-		public static List<Entity> getAtArea (ServerLevel level_server, double posX, double posY, double posZ, int distance, boolean is_box, int count, String id, String tag) {
+		public static List<Entity> getAtArea (ServerLevel level_server, Vec3 vec3, int distance, boolean is_box, int count, String id, String tag) {
 
-			Vec3 center = new Vec3(posX, posY, posZ);
-			int distance_power = distance * distance;
 			List<String> tags = Arrays.stream(tag.split(" / ")).toList();
 
-			List<Entity> entities = level_server.getEntitiesOfClass(Entity.class, new AABB(center, center).inflate(distance), entity -> {
+			List<Entity> entities = level_server.getEntitiesOfClass(Entity.class, new AABB(vec3, vec3).inflate(distance), entity -> {
 
 				boolean test = false;
 
-				if (is_box == true || entity.distanceToSqr(center) <= distance_power) {
+				if (is_box == true || entity.position().distanceTo(vec3) <= distance) {
 
 					if (id.isEmpty() == true || EntityType.getKey(entity.getType()).toString().equals(id) == true) {
 
@@ -664,7 +840,7 @@ public class GameUtils {
 
 			if (distance > 0) {
 
-				entities = entities.stream().sorted(Comparator.comparingDouble(entity -> entity.distanceToSqr(center))).toList();
+				entities = entities.stream().sorted(Comparator.comparingDouble(entity -> entity.position().distanceTo(vec3))).toList();
 
 			}
 
@@ -705,13 +881,13 @@ public class GameUtils {
 
 		}
 
-		public static Entity getAtAreaOne (ServerLevel level_server, double posX, double posY, double posZ, int distance, boolean is_box, String id, String tag) {
+		public static Entity getAtAreaOne (ServerLevel level_server, Vec3 vec3, int distance, boolean is_box, String id, String tag) {
 
-			List<Entity> entities = GameUtils.Mob.getAtArea(level_server, posX, posY, posZ, distance, is_box, 1, id, tag);
+			List<Entity> entities = GameUtils.Mob.getAtArea(level_server, vec3, distance, is_box, 1, id, tag);
 
 			if (entities.isEmpty() == false) {
 
-				return entities.get(0);
+				return entities.getFirst();
 
 			} else {
 
@@ -737,19 +913,25 @@ public class GameUtils {
 
 		}
 
-		public static Entity summon (ServerLevel level_server, double posX, double posY, double posZ, String id, String name, String tag, String custom) {
+		public static Entity summon (ServerLevel level_server, Vec3 vec3, String id, String name, String tag, String custom) {
 
+			/*
+			(1.20.1)
+			Entity entity = ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.parse(id)).create(level_server);
+			(1.21.1)
+			Entity entity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(id)).create(level_server);
+			*/
 			Entity entity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(id)).create(level_server);
 
 			if (entity != null) {
 
 				if (custom.isEmpty() == false) {
 
-					entity.load(Data.convertJSONToTag(custom));
+					entity.load(GameUtils.Data.convertJSONToTag(custom));
 
 				}
 
-				entity.setCustomName(Data.convertJSONToComponent("[" + Data.createText(name) + "]"));
+				entity.setCustomName(GameUtils.Data.convertJSONToComponent("[" + GameUtils.Data.createText(name) + "]"));
 
 				if (name.contains(" / ") == true) {
 
@@ -766,7 +948,7 @@ public class GameUtils {
 
 				}
 
-				entity.setPos(posX, posY, posZ);
+				entity.setPos(vec3);
 				level_server.addFreshEntity(entity);
 
 			}
@@ -775,13 +957,33 @@ public class GameUtils {
 
 		}
 
-		public static void summonWorldGen (ServerLevel level_server, double posX, double posY, double posZ, String id, String name, String tag, String custom) {
+		public static void summonWorldGen (ServerLevel level_server, Vec3 vec3, String id, String name, String tag, String custom) {
 
 			level_server.getServer().execute(() -> {
 
-				GameUtils.Mob.summon(level_server, posX, posY, posZ, id, name, tag, custom);
+				GameUtils.Mob.summon(level_server, vec3, id, name, tag, custom);
 
 			});
+
+		}
+
+		public static void remove (Entity entity, boolean is_kill_style) {
+
+			if (is_kill_style == false) {
+
+				entity.discard();
+
+			} else {
+
+				entity.kill();
+
+			}
+
+		}
+
+		public static boolean canTickingAt (ServerLevel level_server, BlockPos pos) {
+
+			return level_server.isPositionEntityTicking(pos);
 
 		}
 
@@ -797,9 +999,15 @@ public class GameUtils {
 
 		}
 
-		public static boolean canTickingAt (ServerLevel level_server, int posX, int posY, int posZ) {
+		public static boolean isSneaking (Entity entity) {
 
-			return level_server.isPositionEntityTicking(new BlockPos(posX, posY, posZ));
+			if (entity instanceof Player player) {
+
+				return player.isShiftKeyDown();
+
+			}
+
+			return false;
 
 		}
 
@@ -816,6 +1024,12 @@ public class GameUtils {
 			}
 
 			return ItemStack.EMPTY;
+
+		}
+
+		public static boolean isTaggedAs (ItemStack item, String tag) {
+
+			return item.is(ItemTags.create(ResourceLocation.parse(tag))) == true;
 
 		}
 
@@ -841,6 +1055,54 @@ public class GameUtils {
 
 		}
 
+		public static void setCooldown (Entity entity, ItemStack item, int tick) {
+
+			if (entity instanceof Player player) {
+
+				player.getCooldowns().addCooldown(item.getItem(), tick);
+
+			}
+
+		}
+
+		public static void addDamage (ItemStack item, int value) {
+
+			item.setDamageValue(item.getDamageValue() + value);
+
+			if (item.getMaxDamage() < item.getDamageValue()) {
+
+				item.shrink(1);
+
+			}
+
+		}
+
+		public static void spawn (ServerLevel level_server, Vec3 vec3, ItemStack item) {
+
+			ItemEntity entityToSpawn = new ItemEntity(level_server, vec3.x, vec3.y, vec3.z, item);
+			level_server.addFreshEntity(entityToSpawn);
+
+		}
+
+		public static String toID (ItemStack item) {
+
+			String id = item.getDescriptionId();
+			return id.substring(id.indexOf(".") + 1).replace(".", ":");
+
+		}
+
+		public static ItemStack fromID (String id) {
+
+			/*
+			(1.20.1)
+			return ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(id)).getDefaultInstance();
+			(1.21.1)
+			return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)).getDefaultInstance();
+			*/
+			return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)).getDefaultInstance();
+
+		}
+
 	}
 
 	public static class Space {
@@ -857,15 +1119,9 @@ public class GameUtils {
 
 		}
 
-		public static int[] getWorldSpawnPos (LevelAccessor level_accessor) {
+		public static BlockPos getWorldSpawnPos (LevelAccessor level_accessor) {
 
-			/*
-			(1.20.1)
-			return new int[]{level_accessor.getLevelData().getXSpawn(), level_accessor.getLevelData().getZSpawn()};
-			(1.21.1)
-			return new int[]{level_accessor.getLevelData().getSpawnPos().getX(), level_accessor.getLevelData().getSpawnPos().getZ()};
-			*/
-			return new int[]{level_accessor.getLevelData().getXSpawn(), level_accessor.getLevelData().getZSpawn()};
+			return level_accessor.getLevelData().getSpawnPos();
 
 		}
 
@@ -895,16 +1151,15 @@ public class GameUtils {
 
 		}
 
-		public static boolean testChunkStatus (LevelAccessor level_accessor, int chunkX, int chunkZ, ChunkStatus status) {
+		public static boolean testChunkStatus (LevelAccessor level_accessor, ChunkPos chunk_pos, String status) {
 
-			return level_accessor.hasChunk(chunkX, chunkZ) == true && level_accessor.getChunk(chunkX, chunkZ).getHighestGeneratedStatus().isOrAfter(status) == true;
+			return level_accessor.hasChunk(chunk_pos.x, chunk_pos.z) == true && level_accessor.getChunk(chunk_pos.x, chunk_pos.z).getHighestGeneratedStatus().isOrAfter(ChunkStatus.byName(status)) == true;
 
 		}
 
-		public static void placeFeature (LevelAccessor level_accessor, int posX, int posY, int posZ, String id) {
+		public static void placeFeature (LevelAccessor level_accessor, BlockPos pos, String id) {
 
 			WorldGenLevel level_world_gen = (WorldGenLevel) level_accessor;
-			BlockPos pos = new BlockPos(posX, posY, posZ);
 
 			/*
 			(1.20.1)
@@ -914,7 +1169,7 @@ public class GameUtils {
 			(1.21.8)
 			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getValueOrThrow(FeatureUtils.createKey(id)).place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
 			*/
-			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+			level_world_gen.holderOrThrow(ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(id))).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
 
 		}
 
@@ -941,12 +1196,20 @@ public class GameUtils {
 
 		}
 
-		public static Holder<Biome> getBiomeAt (ServerLevel level_server, int posX, int posY, int posZ) {
+		public static Holder<Biome> getBiomeAt (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos) {
 
-			int quartX = posX >> 2;
-			int quartY = posY >> 2;
-			int quartZ = posZ >> 2;
-			return level_server.getChunkSource().getGenerator().getBiomeSource().getNoiseBiome(quartX, quartY, quartZ, level_server.getChunkSource().randomState().sampler());
+			if (testChunkStatus(level_accessor, new ChunkPos(pos), "biomes") == true) {
+
+				return level_server.getBiome(pos);
+
+			} else {
+
+				int quartX = pos.getX() >> 2;
+				int quartY = pos.getY() >> 2;
+				int quartZ = pos.getZ() >> 2;
+				return level_server.getChunkSource().getGenerator().getBiomeSource().getNoiseBiome(quartX, quartY, quartZ, level_server.getChunkSource().randomState().sampler());
+
+			}
 
 		}
 
@@ -973,6 +1236,20 @@ public class GameUtils {
 		public static Vec3 getPosRay (Entity entity, double distance) {
 
 			return entity.level().clip(new ClipContext(entity.getEyePosition(1f), entity.getEyePosition(1f).add(entity.getViewVector(1f).scale(distance)), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, entity)).getLocation();
+
+		}
+
+		public static int getHeight (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, int posX, int posZ, String type) {
+
+			if (testChunkStatus(level_accessor, new ChunkPos(posX >> 4, posZ >> 4), "surface") == true) {
+
+				return level_accessor.getHeight(Heightmap.Types.valueOf(type), posX, posZ);
+
+			} else {
+
+				return chunk_generator.getBaseHeight(posX, posZ, Heightmap.Types.valueOf(type), level_accessor, level_server.getChunkSource().randomState());
+
+			}
 
 		}
 
@@ -1010,7 +1287,7 @@ public class GameUtils {
 				(1.21.1)
 				component = Component.Serializer.fromJson(data, RegistryAccess.EMPTY);
 				*/
-				component = Component.Serializer.fromJson(data);
+				component = Component.Serializer.fromJson(data, RegistryAccess.EMPTY);
 
 			} catch (Exception ignored) {
 
@@ -1037,7 +1314,7 @@ public class GameUtils {
 
 			}
 
-			return "{ForgeData:{" + Core.mod_id + ":{" + data + "}}}";
+			return "{NeoForgeData:{" + Core.mod_id + ":{" + data + "}}}";
 
 		}
 
@@ -1117,20 +1394,20 @@ public class GameUtils {
 
 			/*
 			(1.20.1)
-			String part_name = "display:{Name:\"" + createTextDataDoubleBackslash(name) + "\"},";
-			String part_lore = "Lore:[\"" + Data.createTextDataDoubleBackslash(lore) + "\"],";
-			String part_custom_data = "tag:{" + Core.mod_id + ":{" + custom_data + "}},";
-			String part_forge_data = "BlockEntityData:{ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
-			(1.21.1)
-			String part_name = "custom_name:\"" + createTextDataDoubleBackslash(name) + "\",";
-			String part_lore = "lore:[\"" + Data.createTextDataDoubleBackslash(lore) + "\"],";
-			String part_custom_data = "custom_data:{" + custom_data + "},";
-			String part_forge_data = "block_entity_data:{id:\"\",ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
-			*/
 			String part_name = "display:{Name:\"" + createTextDoubleBackslash(name) + "\"},";
-			String part_lore = "Lore:[\"" + Data.createTextDoubleBackslash(lore) + "\"],";
+			String part_lore = "Lore:[\"" + createTextDoubleBackslash(lore) + "\"],";
 			String part_custom_data = "tag:{" + Core.mod_id + ":{" + custom_data + "}},";
-			String part_forge_data = "BlockEntityData:{ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
+			String part_forge_data = "BlockEntityData:{NeoForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
+			(1.21.1)
+			String part_name = "custom_name:\"" + createTextDoubleBackslash(name) + "\",";
+			String part_lore = "lore:[\"" + createTextDoubleBackslash(lore) + "\"],";
+			String part_custom_data = "custom_data:{" + custom_data + "},";
+			String part_forge_data = "block_entity_data:{id:\"\",NeoForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
+			*/
+			String part_name = "custom_name:\"" + createTextDoubleBackslash(name) + "\",";
+			String part_lore = "lore:[\"" + createTextDoubleBackslash(lore) + "\"],";
+			String part_custom_data = "custom_data:{" + custom_data + "},";
+			String part_forge_data = "block_entity_data:{id:\"\",NeoForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
 
 			StringBuilder write = new StringBuilder();
 			if (name.isEmpty() == false) write.append(part_name);
@@ -1275,13 +1552,13 @@ public class GameUtils {
 
 		}
 
-		public static String getBlockText (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+		public static String getBlockText (LevelAccessor level_accessor, BlockPos pos, String name) {
 
 			return new Object() {
 
-				public String getValue (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+				public String getValue (LevelAccessor level_accessor, BlockPos pos, String name) {
 
-					BlockEntity blockEntity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+					BlockEntity blockEntity = level_accessor.getBlockEntity(pos);
 
 					if (blockEntity != null) {
 
@@ -1299,17 +1576,17 @@ public class GameUtils {
 
 				}
 
-			}.getValue(level_accessor, posX, posY, posZ, name);
+			}.getValue(level_accessor, pos, name);
 
 		}
 
-		public static double getBlockNumber (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+		public static double getBlockNumber (LevelAccessor level_accessor, BlockPos pos, String name) {
 
 			return new Object() {
 
-				public double getValue (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+				public double getValue (LevelAccessor level_accessor, BlockPos pos, String name) {
 
-					BlockEntity blockEntity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+					BlockEntity blockEntity = level_accessor.getBlockEntity(pos);
 
 					if (blockEntity != null) {
 
@@ -1327,17 +1604,17 @@ public class GameUtils {
 
 				}
 
-			}.getValue(level_accessor, posX, posY, posZ, name);
+			}.getValue(level_accessor, pos, name);
 
 		}
 
-		public static boolean getBlockLogic (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+		public static boolean getBlockLogic (LevelAccessor level_accessor, BlockPos pos, String name) {
 
 			return new Object() {
 
-				public boolean getValue (LevelAccessor level_accessor, int posX, int posY, int posZ, String name) {
+				public boolean getValue (LevelAccessor level_accessor, BlockPos pos, String name) {
 
-					BlockEntity blockEntity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+					BlockEntity blockEntity = level_accessor.getBlockEntity(pos);
 
 					if (blockEntity != null) {
 
@@ -1355,13 +1632,13 @@ public class GameUtils {
 
 				}
 
-			}.getValue(level_accessor, posX, posY, posZ, name);
+			}.getValue(level_accessor, pos, name);
 
 		}
 
-		public static void setBlockText (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, String value) {
+		public static void setBlockText (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String name, String value) {
 
-			BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+			BlockEntity block_entity = level_accessor.getBlockEntity(pos);
 
 			if (block_entity != null) {
 
@@ -1370,16 +1647,16 @@ public class GameUtils {
 				tag_add.putString(name, value);
 				tag.put(Core.mod_id, tag_add);
 				block_entity.getPersistentData().merge(tag);
-				BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
-				level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
+				BlockState block = level_accessor.getBlockState(pos);
+				level_server.sendBlockUpdated(pos, block, block, 2);
 
 			}
 
 		}
 
-		public static void setBlockLogic (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, boolean value) {
+		public static void setBlockLogic (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String name, boolean value) {
 
-			BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+			BlockEntity block_entity = level_accessor.getBlockEntity(pos);
 
 			if (block_entity != null) {
 
@@ -1388,16 +1665,16 @@ public class GameUtils {
 				tag_add.putBoolean(name, value);
 				tag.put(Core.mod_id, tag_add);
 				block_entity.getPersistentData().merge(tag);
-				BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
-				level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
+				BlockState block = level_accessor.getBlockState(pos);
+				level_server.sendBlockUpdated(pos, block, block, 2);
 
 			}
 
 		}
 
-		public static void setBlockNumber (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, double value) {
+		public static void setBlockNumber (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String name, double value) {
 
-			BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+			BlockEntity block_entity = level_accessor.getBlockEntity(pos);
 
 			if (block_entity != null) {
 
@@ -1406,16 +1683,16 @@ public class GameUtils {
 				tag_add.putDouble(name, value);
 				tag.put(Core.mod_id, tag_add);
 				block_entity.getPersistentData().merge(tag);
-				BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
-				level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
+				BlockState block = level_accessor.getBlockState(pos);
+				level_server.sendBlockUpdated(pos, block, block, 2);
 
 			}
 
 		}
 
-		public static void addBlockNumber (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String name, double value) {
+		public static void addBlockNumber (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String name, double value) {
 
-			BlockEntity block_entity = level_accessor.getBlockEntity(new BlockPos(posX, posY, posZ));
+			BlockEntity block_entity = level_accessor.getBlockEntity(pos);
 
 			if (block_entity != null) {
 
@@ -1427,8 +1704,8 @@ public class GameUtils {
 				*/
 				block_entity.getPersistentData().getCompound(Core.mod_id).putDouble(name, block_entity.getPersistentData().getCompound(Core.mod_id).getDouble(name) + value);
 
-				BlockState block = level_accessor.getBlockState(new BlockPos(posX, posY, posZ));
-				level_server.sendBlockUpdated(new BlockPos(posX, posY, posZ), block, block, 2);
+				BlockState block = level_accessor.getBlockState(pos);
+				level_server.sendBlockUpdated(pos, block, block, 2);
 
 			}
 
@@ -1442,7 +1719,7 @@ public class GameUtils {
 			(1.21.1)
 			return Item.getSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
 			*/
-			return Item.getSlot(entity, slot).getOrCreateTag().getCompound(Core.mod_id).getString(name);
+			return Item.getSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
 
 		}
 
@@ -1459,7 +1736,7 @@ public class GameUtils {
 			(1.21.1)
 			CustomData.update(DataComponents.CUSTOM_DATA, Item.getSlot(entity, slot), test -> test.merge(tag));
 			*/
-			Item.getSlot(entity, slot).getOrCreateTag().merge(tag);
+			CustomData.update(DataComponents.CUSTOM_DATA, Item.getSlot(entity, slot), test -> test.merge(tag));
 
 		}
 
@@ -1480,7 +1757,7 @@ public class GameUtils {
 				(1.21.1)
 				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER, true, null);
 				*/
-				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER);
+				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER, true, null);
 
 			}
 
@@ -1499,7 +1776,7 @@ public class GameUtils {
 				(1.21.1)
 				return score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).get();
 				*/
-				return score.getOrCreatePlayerScore(player, objective_test).getScore();
+				return score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).get();
 
 			}
 
@@ -1520,7 +1797,7 @@ public class GameUtils {
 				(1.21.1)
 				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(value);
 				*/
-				score.getOrCreatePlayerScore(player, objective_test).setScore(value);
+				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(value);
 
 			}
 
@@ -1541,7 +1818,7 @@ public class GameUtils {
 				(1.21.1)
 				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(old_value + value);
 				*/
-				score.getOrCreatePlayerScore(player, objective_test).setScore(old_value + value);
+				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(old_value + value);
 
 			}
 
@@ -1555,7 +1832,7 @@ public class GameUtils {
 
 			if (entity instanceof Player player) {
 
-				if (player.containerMenu instanceof TanshugetreesModMenus.MenuAccessor menu) {
+				if (player.containerMenu instanceof MenuAccessor menu) {
 
 					return menu.getMenuState(0, name, "");
 
@@ -1571,7 +1848,7 @@ public class GameUtils {
 
 			if (entity instanceof Player player) {
 
-				if (player.containerMenu instanceof TanshugetreesModMenus.MenuAccessor menu) {
+				if (player.containerMenu instanceof MenuAccessor menu) {
 
 					menu.sendMenuStateUpdate(player, 0, name, value, true);
 

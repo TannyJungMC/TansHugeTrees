@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems.world_gen;
+package tannyjung.tanshugetrees_core.game.world_gen;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -10,9 +10,9 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 
-public class FeatureAreaDirt extends Feature <NoneFeatureConfiguration> {
+public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
 
-    public FeatureAreaDirt () {
+    public FeatureAreaGrass () {
 
         super(NoneFeatureConfiguration.CODEC);
 
@@ -51,9 +51,13 @@ public class FeatureAreaDirt extends Feature <NoneFeatureConfiguration> {
                             pos = new BlockPos(center_pos.getX() + scanX, center_pos.getY() + scanY, center_pos.getZ() + scanZ);
                             previous_block = level_accessor.getBlockState(pos);
 
-                            if (GameUtils.Tile.isTaggedAs(previous_block, "minecraft:dirt") == true || GameUtils.Tile.isTaggedAs(previous_block, "minecraft:sand") == true || GameUtils.Tile.isTaggedAs(previous_block, "minecraft:base_stone_overworld") == true) {
+                            if (GameUtils.Tile.isTaggedAs(previous_block, "minecraft:sand") == true || GameUtils.Tile.isTaggedAs(previous_block, "minecraft:base_stone_overworld") == true) {
 
-                                if (level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ())).isAir() == true) {
+                                if (Math.random() < 0.5 && level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ())).isAir() == true) {
+
+                                    block = Blocks.GRASS_BLOCK.defaultBlockState();
+
+                                } else {
 
                                     block = Blocks.COARSE_DIRT.defaultBlockState();
 
@@ -72,7 +76,6 @@ public class FeatureAreaDirt extends Feature <NoneFeatureConfiguration> {
             }
 
         }
-
 
         return true;
 

@@ -1,21 +1,21 @@
-package tannyjung.tanshugetrees_core.game;
+package tannyjung.tanshugetrees_core.outside;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkStatus;
 import tannyjung.tanshugetrees_core.Core;
-import tannyjung.tanshugetrees_core.outside.CacheManager;
+import tannyjung.tanshugetrees_core.game.GameUtils;
 
 public class TXTFunction {
 
-	public static void run (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ, String path, boolean randomly) {
+	public static void run (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String path, boolean randomly) {
 
-        boolean chunk_loaded = GameUtils.Mob.canTickingAt(level_server, posX, posY, posZ);
+        boolean chunk_loaded = GameUtils.Mob.canTickingAt(level_server, pos);
         RandomSource random = null;
 
         if (randomly == true) {
@@ -24,7 +24,7 @@ public class TXTFunction {
 
         } else {
 
-            random = RandomSource.create(level_server.getSeed() ^ ((posX * 341873128712L) + posY + (posZ * 132897987541L)));
+            random = RandomSource.create(level_server.getSeed() ^ ((pos.getX() * 341873128712L) + pos.getY() + (pos.getZ() * 132897987541L)));
 
         }
 
@@ -32,9 +32,7 @@ public class TXTFunction {
         boolean run_test_result = true;
         boolean run_skip = false;
         boolean run_break = false;
-        int convert_posX = 0;
-        int convert_posY = 0;
-        int convert_posZ = 0;
+        BlockPos pos_convert = null;
 
         String[] get = new String[0];
         double chance = 0.0;
@@ -230,11 +228,9 @@ public class TXTFunction {
 
                                                                 }
 
-                                                                convert_posX = posX + offset_posX;
-                                                                convert_posY = posY + offset_posY;
-                                                                convert_posZ = posZ + offset_posZ;
+                                                                pos_convert = pos.offset(offset_posX, offset_posY, offset_posZ);
 
-                                                                if (GameUtils.Misc.testCustomBiome(GameUtils.Space.getBiomeAt(level_server, convert_posX, convert_posY, convert_posZ), variable_text) == true) {
+                                                                if (GameUtils.Misc.testBiome(GameUtils.Space.getBiomeAt(level_accessor, level_server, pos_convert), variable_text) == true) {
 
                                                                     continue;
 
@@ -261,13 +257,11 @@ public class TXTFunction {
 
                                                                 }
 
-                                                                convert_posX = offset_posX + posX;
-                                                                convert_posY = offset_posY + posY;
-                                                                convert_posZ = offset_posZ + posZ;
+                                                                pos_convert = pos.offset(offset_posX, offset_posY, offset_posZ);
 
-                                                                if (GameUtils.Space.testChunkStatus(level_accessor, convert_posX >> 4, convert_posZ >> 4, ChunkStatus.SURFACE) == true) {
+                                                                if (GameUtils.Space.testChunkStatus(level_accessor, new ChunkPos(pos_convert), "surface") == true) {
 
-                                                                    if (GameUtils.Misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(convert_posX, convert_posY, convert_posZ)), variable_text) == true) {
+                                                                    if (GameUtils.Misc.testBlock(level_accessor.getBlockState(pos_convert), variable_text) == true) {
 
                                                                         continue;
 
@@ -305,53 +299,55 @@ public class TXTFunction {
 
                                                                 }
 
-                                                                if (random.nextDouble() < chance && variable_block != Blocks.AIR.defaultBlockState()) {
+                                                                if (random.nextDouble() < chance) {
 
-                                                                    // Get Pos
-                                                                    {
+                                                                    if (variable_block != Blocks.AIR.defaultBlockState()) {
 
-                                                                        try {
+                                                                        // Get Pos
+                                                                        {
 
-                                                                            offset_pos = get[1].split("/");
-                                                                            offset_posX = Integer.parseInt(offset_pos[0]);
-                                                                            offset_posY = Integer.parseInt(offset_pos[1]);
-                                                                            offset_posZ = Integer.parseInt(offset_pos[2]);
+                                                                            try {
 
-                                                                            min_max = get[2].split("/");
-                                                                            minX = Integer.parseInt(min_max[0]);
-                                                                            minY = Integer.parseInt(min_max[1]);
-                                                                            minZ = Integer.parseInt(min_max[2]);
-                                                                            maxX = Integer.parseInt(min_max[3]);
-                                                                            maxY = Integer.parseInt(min_max[4]);
-                                                                            maxZ = Integer.parseInt(min_max[5]);
+                                                                                offset_pos = get[1].split("/");
+                                                                                offset_posX = Integer.parseInt(offset_pos[0]);
+                                                                                offset_posY = Integer.parseInt(offset_pos[1]);
+                                                                                offset_posZ = Integer.parseInt(offset_pos[2]);
 
-                                                                        } catch (Exception ignored) {
+                                                                                min_max = get[2].split("/");
+                                                                                minX = Integer.parseInt(min_max[0]);
+                                                                                minY = Integer.parseInt(min_max[1]);
+                                                                                minZ = Integer.parseInt(min_max[2]);
+                                                                                maxX = Integer.parseInt(min_max[3]);
+                                                                                maxY = Integer.parseInt(min_max[4]);
+                                                                                maxZ = Integer.parseInt(min_max[5]);
 
-                                                                            return;
+                                                                            } catch (Exception ignored) {
+
+                                                                                return;
+
+                                                                            }
 
                                                                         }
 
-                                                                    }
+                                                                        for (int testX = minX; testX <= maxX; testX++) {
 
-                                                                    for (int testX = minX; testX <= maxX; testX++) {
+                                                                            for (int testY = minY; testY <= maxY; testY++) {
 
-                                                                        for (int testY = minY; testY <= maxY; testY++) {
+                                                                                for (int testZ = minZ; testZ <= maxZ; testZ++) {
 
-                                                                            for (int testZ = minZ; testZ <= maxZ; testZ++) {
+                                                                                    pos_convert = pos.offset(offset_posX, offset_posY, offset_posZ);
 
-                                                                                convert_posX = posX + offset_posX + testX;
-                                                                                convert_posY = posY + offset_posY + testY;
-                                                                                convert_posZ = posZ + offset_posZ + testZ;
+                                                                                    if (level_accessor.hasChunk(pos_convert.getX() >> 4, pos_convert.getZ() >> 4) == true) {
 
-                                                                                if (level_accessor.hasChunk(convert_posX >> 4, convert_posZ >> 4) == true) {
+                                                                                        if (GameUtils.Misc.testBlock(level_accessor.getBlockState(pos_convert), variable_text) == false) {
 
-                                                                                    if (GameUtils.Misc.testCustomBlock(level_accessor.getBlockState(new BlockPos(convert_posX, convert_posY, convert_posZ)), variable_text) == false) {
+                                                                                            continue;
 
-                                                                                        continue;
+                                                                                        }
+
+                                                                                        GameUtils.Tile.set(level_accessor, pos_convert, variable_block, false);
 
                                                                                     }
-
-                                                                                    level_accessor.setBlock(new BlockPos(convert_posX, convert_posY, convert_posZ), variable_block, 2);
 
                                                                                 }
 
@@ -387,13 +383,11 @@ public class TXTFunction {
 
                                                                 if (random.nextDouble() < chance) {
 
-                                                                    convert_posX = posX + offset_posX;
-                                                                    convert_posY = posY + offset_posY;
-                                                                    convert_posZ = posZ + offset_posZ;
+                                                                    pos_convert = pos.offset(offset_posX, offset_posY, offset_posZ);
 
                                                                     try {
 
-                                                                        GameUtils.Space.placeFeature(level_accessor, convert_posX, convert_posY, convert_posZ, variable_text);
+                                                                        GameUtils.Space.placeFeature(level_accessor, pos_convert, variable_text);
 
                                                                     } catch (Exception ignored) {
 
@@ -427,10 +421,8 @@ public class TXTFunction {
 
                                                                 if (random.nextDouble() < chance) {
 
-                                                                    convert_posX = posX + offset_posX;
-                                                                    convert_posY = posY + offset_posY;
-                                                                    convert_posZ = posZ + offset_posZ;
-                                                                    TXTFunction.run(level_accessor, level_server, convert_posX, convert_posY, convert_posZ, variable_text, false);
+                                                                    pos_convert = pos.offset(offset_posX, offset_posY, offset_posZ);
+                                                                    TXTFunction.run(level_accessor, level_server, pos_convert, variable_text, false);
 
                                                                 }
 
@@ -460,7 +452,7 @@ public class TXTFunction {
 
                                                                         level_server.getServer().execute(() -> {
 
-                                                                            GameUtils.Command.run(level_server, posX, posY, posZ, variable_text_final);
+                                                                            GameUtils.Command.run(level_server, pos.getCenter(), variable_text_final);
 
                                                                         });
 
@@ -514,7 +506,7 @@ public class TXTFunction {
                 }
 
                 String command_final = command.replace("'", "*").replace("\"", "$");
-                GameUtils.Mob.summonWorldGen(level_server, posX + 0.5, posY + 0.5, posZ + 0.5, "marker", "Delayed Command", "TANSHUGETREES-delayed_command", "{ForgeData:{" + Core.mod_id + ":{command:\"" + command_final + "\"}}}");
+                GameUtils.Mob.summonWorldGen(level_server, pos.getCenter(), "marker", "Delayed Command", "TANSHUGETREES-delayed_command", "{NeoForgeData:{" + Core.mod_id + ":{command:\"" + command_final + "\"}}}");
                 
             }
 
@@ -524,17 +516,13 @@ public class TXTFunction {
 
     public static void runDelayedCommand (ServerLevel level_server, Entity entity) {
 
-        int posX = entity.getBlockX();
-        int posY = entity.getBlockY();
-        int posZ = entity.getBlockZ();
-
-        if (GameUtils.Mob.canTickingAt(level_server, posX, posY, posZ) == true) {
+        if (GameUtils.Mob.canTickingAt(level_server, entity.blockPosition()) == true) {
 
             for (String command : GameUtils.Data.getEntityText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
 
                 level_server.getServer().execute(() -> {
 
-                    GameUtils.Command.run(level_server, posX, posY, posZ, command);
+                    GameUtils.Command.run(level_server, entity.position(), command);
 
                 });
 

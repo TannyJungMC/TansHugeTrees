@@ -6,8 +6,7 @@ import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -151,16 +150,16 @@ public class FileManager {
 
 	}
 
-	public static String[] readTXT (String path) {
+	public static List<String> readTXT (String path) {
 
-		String[] return_array = new String[0];
+        List<String> return_array = new ArrayList<>();
 		File file = new File(path);
 
-		if (file.exists() == true && file.isDirectory() == false) {
+		if (file.exists() == true) {
 
 			try {
 
-				return_array = Files.readAllLines(file.toPath()).toArray(new String[0]);
+				return_array = Files.readAllLines(file.toPath());
 
 			} catch (Exception exception) {
 
@@ -233,7 +232,7 @@ public class FileManager {
         byte[] data = new byte[0];
         File file = new File(path);
 
-        if (file.exists() == true && file.isDirectory() == false) {
+        if (file.exists() == true) {
 
             try {
 
@@ -377,6 +376,180 @@ public class FileManager {
         } catch (Exception exception) {
 
             OutsideUtils.exception(new Exception(), exception, "");
+
+        }
+
+    }
+
+    public static void mergeTXT (File file_from, File file_to) {
+
+        if (file_to.exists() == false) {
+
+            copy(file_from.getPath(), file_to.getPath(), false);
+
+        } else {
+
+            List<String> data_new = FileManager.readTXT(file_from.getPath());
+
+            if (data_new.get(0).equals("# REPLACE") == true) {
+
+                StringBuilder write = new StringBuilder();
+
+                for (String read_all : data_new.subList(1, data_new.size())) {
+
+                    write.append(read_all).append("\n");
+
+                }
+
+                FileManager.writeTXT(file_to.getPath(), write.toString(), false);
+
+            } else {
+
+                List<String> data_old = FileManager.readTXT(file_to.getPath());
+                Map<String, String> data = new HashMap<>();
+                String[] split = new String[0];
+                String[] split2 = new String[0];
+
+                // Get Old Data
+                {
+
+                    for (String read_all : data_old) {
+
+                        if (read_all.isEmpty() == false) {
+
+                            if (read_all.startsWith("#") == false) {
+
+                                if (read_all.contains(" = ") == true) {
+
+                                    split = read_all.split(" = ");
+                                    data.put(split[0], split[1]);
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                List<String> write_add = new ArrayList<>();
+
+                // Get Data
+                {
+
+                    StringBuilder merge = new StringBuilder();
+
+                    for (String read_all : data_new) {
+
+                        if (read_all.isEmpty() == false) {
+
+                            if (read_all.contains(" = ") == true) {
+
+                                if (read_all.startsWith("# MERGE") == true) {
+
+                                    {
+
+                                        split = read_all.substring(read_all.indexOf(" -> ") + 4).split(" = ");
+
+                                        if (data.containsKey(split[0]) == false) {
+
+                                            write_add.add(split[0] + " = " + split[1]);
+
+                                        } else {
+
+                                            merge.setLength(0);
+                                            merge.append("|").append(data.get(split[0]).replace(" / ", "| / |")).append("|");
+
+                                            for (String scan : split[1].split(" / ")) {
+
+                                                if (merge.toString().contains("|" + scan + "|") == false) {
+
+                                                    merge.append(" / ").append(scan);
+
+                                                }
+
+                                            }
+
+                                            data.put(split[0], merge.toString().replace("|", ""));
+
+                                        }
+
+                                    }
+
+                                } else if (read_all.startsWith("# REPLACE") == true) {
+
+                                    {
+
+                                        split = read_all.substring(read_all.indexOf(" -> ") + 4).split(" = ");
+
+                                        if (data.containsKey(split[0]) == true) {
+
+                                            split2 = data.get(split[1]).split(" >>> ");
+                                            write_add.add(split[0] + " = " + data.get(split[0]).replace(split2[0], split2[1]));
+
+                                        }
+
+                                    }
+
+
+                                } else {
+
+                                    split = read_all.split(" = ");
+
+                                    if (data.containsKey(split[0]) == true) {
+
+                                        data.replace(split[0], split[1]);
+
+                                    } else {
+
+                                        write_add.add(read_all);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                // Write
+                {
+
+                    List<String> write = new ArrayList<>();
+
+                    for (String read_all : data_old) {
+
+                        if (read_all.contains(" = ") == false) {
+
+                            write.add(read_all);
+
+                        } else {
+
+                            if (read_all.startsWith("# MERGE") == true) {
+
+                                read_all = read_all.substring(read_all.indexOf(" -> ") + 4);
+
+                            }
+
+                            split = read_all.split(" = ");
+                            write.add(split[0] + " = " + data.get(split[0]));
+
+                        }
+
+                    }
+
+                    write.addAll(write_add);
+                    FileManager.writeTXT(file_to.getPath(), String.join("\n", write), false);
+
+                }
+
+            }
 
         }
 

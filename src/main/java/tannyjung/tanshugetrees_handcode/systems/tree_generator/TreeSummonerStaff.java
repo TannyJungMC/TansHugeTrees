@@ -38,10 +38,10 @@ public class TreeSummonerStaff {
 
         ServerLevel level_server = (ServerLevel) level_accessor;
         BlockPos pos = BlockPos.containing(GameUtils.Space.getPosRay(entity, 200));
-        GameUtils.Misc.playSound(level_server, entity.getX(), entity.getY(), entity.getZ(), 2, 2, "minecraft:entity.illusioner.mirror_move");
-        GameUtils.Misc.spawnParticle(level_server, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, 0, 0, 0, 1, "minecraft:flash");
-        GameUtils.Misc.playSound(level_server, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 2, 0, "minecraft:entity.illusioner.prepare_blindness");
-        TreeGenerator.create(level_server, pos.getX(), pos.getY(), pos.getZ(), GameUtils.Data.getItemText(entity, EquipmentSlot.MAINHAND, "path"));
+        GameUtils.Misc.playSound(level_server, entity.blockPosition(), 2, 2, "minecraft:entity.illusioner.mirror_move");
+        GameUtils.Misc.spawnParticle(level_server, pos.getCenter(), 0, 0, 0, 0, 1, "minecraft:flash");
+        GameUtils.Misc.playSound(level_server, pos, 2, 0, "minecraft:entity.illusioner.prepare_blindness");
+        TreeGenerator.create(level_server, pos, GameUtils.Data.getItemText(entity, EquipmentSlot.MAINHAND, "path"));
 
     }
 

@@ -1,8 +1,0 @@
-{
-  "type": "forge:add_features",
-  "biomes": {
-    "type": "forge:any"
-  },
-  "features": "tanshugetrees:world_gen_first",
-  "step": "raw_generation"
-}

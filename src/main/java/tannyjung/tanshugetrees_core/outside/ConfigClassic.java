@@ -4,7 +4,7 @@ import tannyjung.tanshugetrees_core.Core;
 
 import java.util.*;
 
-public class ConfigMaker {
+public class ConfigClassic {
 
 	public static void repair (String path, String original) {
 

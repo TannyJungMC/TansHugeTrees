@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems.living_tree_mechanics;
+package tannyjung.tanshugetrees_handcode.systems.living_mechanics;
 
 import net.minecraft.server.level.ServerLevel;
 import tannyjung.tanshugetrees_core.game.GameUtils;
