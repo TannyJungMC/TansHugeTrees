@@ -61,7 +61,7 @@ public class ConfigDynamic {
 
     private static void create (String name, String scan_at, String description) {
 
-        File file_organized = new File(Core.path_config + "/#dev/#temporary/" + scan_at);
+        File file_organized = new File(Core.path_config + "/#dev/temporary/" + scan_at);
 
         if (file_organized.exists() == true && file_organized.isDirectory() == true) {
 
@@ -125,7 +125,7 @@ public class ConfigDynamic {
 
     private static void write (String name, String scan_at, Path source) {
 
-        String path = Path.of(Core.path_config + "/#dev/#temporary/" + scan_at).relativize(source).toString().replace("\\", " > ").replace(".txt", "");;
+        String path = Path.of(Core.path_config + "/#dev/temporary/" + scan_at).relativize(source).toString().replace("\\", " > ").replace(".txt", "");;
         boolean incompatible = false;
 
         if (path.contains("[INCOMPATIBLE] ") == true) {

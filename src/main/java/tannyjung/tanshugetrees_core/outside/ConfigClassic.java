@@ -101,7 +101,6 @@ public class ConfigClassic {
         write.append("\n");
         write.append("- This config can be automatic repair itself to keep your unchanged values up to date, so don't panic when you see option values change by themselves!");
         write.append("\n");
-        write.append("\n");
 
         // Generate
         {

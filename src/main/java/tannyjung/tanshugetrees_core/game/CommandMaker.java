@@ -233,7 +233,7 @@ public class CommandMaker {
 
             if (player.hasPermissions(permission) == false) {
 
-                GameUtils.Misc.sendChatMessage(data.getSource().getLevel(), "@s", "You must have server permission minimum level " + permission + " to use this command. If you're in singleplayer, try enable cheat mode or temporary open LAN. If you're in multiplayer, try give yourself OP or contact server admin. / red");
+                GameUtils.Misc.sendChatMessagePrivate(entity, "You must have server permission minimum level " + permission + " to use this command. If you're in singleplayer, try enable cheat mode or temporary open LAN. If you're in multiplayer, try give yourself OP or contact server admin. / red");
                 return false;
 
             }

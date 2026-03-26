@@ -63,7 +63,7 @@ public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
 
                                 }
 
-                                level_accessor.setBlock(pos, block, 2);
+                                GameUtils.Tile.set(level_accessor, pos, block, false);
 
                             }
 

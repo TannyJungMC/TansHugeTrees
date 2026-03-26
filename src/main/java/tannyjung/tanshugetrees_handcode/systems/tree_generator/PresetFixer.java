@@ -17,11 +17,11 @@ public class PresetFixer {
 
     public static void start (ServerLevel level_server) {
 
-        File template = new File(Core.path_config + "/#dev/#temporary/preset_template.txt");
+        File template = new File(Core.path_config + "/#dev/temporary/#dev/preset_template.txt");
 
         if (template.exists() == true && template.isDirectory() == false) {
 
-            GameUtils.Misc.sendChatMessage(level_server, "@a", "Start fixing all tree presets from all extracted packs / gray");
+            GameUtils.Misc.sendChatMessage(level_server, "Start fixing all tree presets from all extracted packs / gray");
             boolean fix_at_least_one = false;
             File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 
@@ -63,17 +63,17 @@ public class PresetFixer {
 
             if (fix_at_least_one == true) {
 
-                GameUtils.Misc.sendChatMessage(level_server, "@a", "Completed! / gray");
+                GameUtils.Misc.sendChatMessage(level_server, "Completed! / gray");
 
             } else {
 
-                GameUtils.Misc.sendChatMessage(level_server, "@a", "There's nothing changed / gray");
+                GameUtils.Misc.sendChatMessage(level_server, "There's nothing changed / gray");
 
             }
 
         } else {
 
-            GameUtils.Misc.sendChatMessage(level_server, "@a", "Template not found / red");
+            GameUtils.Misc.sendChatMessage(level_server, "Template not found / red");
 
         }
 
@@ -160,7 +160,7 @@ public class PresetFixer {
                                         fix_at_least_one = true;
                                         value_old = data_unlock.get(name).substring(index + " = ".length()).replace("\"", "\\\"");
                                         value_new = read_all.substring(index + " = ".length()).replace("\"", "\\\"");
-                                        GameUtils.Misc.sendChatMessage(level_server, "@a", "Updated " + id + " > " + name + " > " + value_old + " > " + value_new + " / dark_gray");
+                                        GameUtils.Misc.sendChatMessage(level_server, "Updated " + id + " > " + name + " > " + value_old + " > " + value_new + " / dark_gray");
 
                                     }
 
@@ -175,7 +175,7 @@ public class PresetFixer {
 
                                     fix_at_least_one = true;
                                     write.append(read_all).append("\n");
-                                    GameUtils.Misc.sendChatMessage(level_server, "@a", "Added " + id + " > " + name + " / dark_gray");
+                                    GameUtils.Misc.sendChatMessage(level_server, "Added " + id + " > " + name + " / dark_gray");
 
                                 }
 

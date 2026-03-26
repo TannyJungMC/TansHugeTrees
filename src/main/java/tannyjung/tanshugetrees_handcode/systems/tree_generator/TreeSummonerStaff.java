@@ -38,10 +38,15 @@ public class TreeSummonerStaff {
 
         ServerLevel level_server = (ServerLevel) level_accessor;
         BlockPos pos = BlockPos.containing(GameUtils.Space.getPosRay(entity, 200));
-        GameUtils.Misc.playSound(level_server, entity.blockPosition(), 2, 2, "minecraft:entity.illusioner.mirror_move");
-        GameUtils.Misc.spawnParticle(level_server, pos.getCenter(), 0, 0, 0, 0, 1, "minecraft:flash");
-        GameUtils.Misc.playSound(level_server, pos, 2, 0, "minecraft:entity.illusioner.prepare_blindness");
-        TreeGenerator.create(level_server, pos, GameUtils.Data.getItemText(entity, EquipmentSlot.MAINHAND, "path"));
+
+        if (level_accessor.getBlockState(pos.above()).canBeReplaced() == false || level_accessor.getBlockState(pos.below()).canBeReplaced() == false || level_accessor.getBlockState(pos.north()).canBeReplaced() == false || level_accessor.getBlockState(pos.west()).canBeReplaced() == false || level_accessor.getBlockState(pos.east()).canBeReplaced() == false || level_accessor.getBlockState(pos.south()).canBeReplaced() == false) {
+
+            GameUtils.Misc.spawnParticle(level_server, pos.getCenter(), 0, 0, 0, 0, 1, "minecraft:flash");
+            GameUtils.Misc.playSound(level_server, entity.blockPosition(), 2, 2, "minecraft:entity.illusioner.mirror_move");
+            GameUtils.Misc.playSound(level_server, pos, 2, 0, "minecraft:entity.illusioner.prepare_blindness");
+            TreeGenerator.create(level_server, entity, pos, GameUtils.Data.getItemText(entity, EquipmentSlot.MAINHAND, "path"));
+
+        }
 
     }
 

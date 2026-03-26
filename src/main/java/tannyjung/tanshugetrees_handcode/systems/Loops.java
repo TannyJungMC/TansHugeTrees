@@ -39,7 +39,7 @@ public class Loops {
 
                     if (player != null) {
 
-                        for (Entity entity : GameUtils.Mob.getAtArea(level_server, player.position(), 500, true, FileConfig.tree_generator_count_limit, "minecraft:marker", "TANSHUGETREES-tree_generator")) {
+                        for (Entity entity : GameUtils.Mob.getAtArea(level_server, player.position(), 2000, true, FileConfig.tree_generator_count_limit, "minecraft:marker", "TANSHUGETREES-tree_generator")) {
 
                             TreeGenerator.run(level_accessor, entity);
 

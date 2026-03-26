@@ -1198,7 +1198,7 @@ public class GameUtils {
 
 		public static Holder<Biome> getBiomeAt (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos) {
 
-			if (testChunkStatus(level_accessor, new ChunkPos(pos), "biomes") == true) {
+			if (testChunkStatus(level_accessor, new ChunkPos(pos), "full") == true) {
 
 				return level_server.getBiome(pos);
 
@@ -1207,7 +1207,16 @@ public class GameUtils {
 				int quartX = pos.getX() >> 2;
 				int quartY = pos.getY() >> 2;
 				int quartZ = pos.getZ() >> 2;
-				return level_server.getChunkSource().getGenerator().getBiomeSource().getNoiseBiome(quartX, quartY, quartZ, level_server.getChunkSource().randomState().sampler());
+
+				if (testChunkStatus(level_accessor, new ChunkPos(pos), "biomes") == true) {
+
+					return level_server.getUncachedNoiseBiome(quartX, quartY, quartZ);
+
+				} else {
+
+					return level_server.getChunkSource().getGenerator().getBiomeSource().getNoiseBiome(quartX, quartY, quartZ, level_server.getChunkSource().randomState().sampler());
+
+				}
 
 			}
 

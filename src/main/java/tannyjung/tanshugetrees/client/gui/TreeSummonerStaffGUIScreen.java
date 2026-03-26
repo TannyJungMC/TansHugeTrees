@@ -55,7 +55,13 @@ public class TreeSummonerStaffGUIScreen extends AbstractContainerScreen<TreeSumm
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 		path.render(guiGraphics, mouseX, mouseY, partialTicks);
-		this.renderTooltip(guiGraphics, mouseX, mouseY);
+		boolean customTooltipShown = false;
+		if (mouseX > leftPos + 72 && mouseX < leftPos + 120 && mouseY > topPos + 16 && mouseY < topPos + 40) {
+			guiGraphics.renderTooltip(font, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.tooltip_theres_a_bug_on_1201_that_you"), mouseX, mouseY);
+			customTooltipShown = true;
+		}
+		if (!customTooltipShown)
+			this.renderTooltip(guiGraphics, mouseX, mouseY);
 	}
 
 	@Override

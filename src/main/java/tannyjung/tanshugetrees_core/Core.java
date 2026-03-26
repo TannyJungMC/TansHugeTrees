@@ -123,7 +123,7 @@ public class Core {
 
                     if (chat_message == true) {
 
-                        GameUtils.Misc.sendChatMessage(level_server, "@a", "Restarting the mod... / gray");
+                        GameUtils.Misc.sendChatMessage(level_server, "Restarting the mod... / gray");
 
                     }
 
@@ -133,7 +133,7 @@ public class Core {
 
                         if (chat_message == true) {
 
-                            GameUtils.Misc.sendChatMessage(level_server, "@a", "Restarted and cleared main caches, about " + CacheManager.clear() + ". / gray");
+                            GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches, about " + CacheManager.clear() + ". / gray");
 
                         }
 

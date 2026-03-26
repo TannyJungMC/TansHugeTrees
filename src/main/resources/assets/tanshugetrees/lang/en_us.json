@@ -151,5 +151,6 @@
   "block.tanshugetrees.sapling_catalyst.description_1": "§8This is a tree generator sapling. It may take long time to generate!",
   "block.tanshugetrees.sapling_catalyst.description_0": "§8--------------------------------------------------",
   "gui.tanshugetrees.tree_summoner_staff_gui.label_currently_not_working": "Currently not working",
-  "gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr": "Example : #TannyJung-Main-Pack/redwood"
+  "gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr": "Example : #TannyJung-Main-Pack/redwood",
+  "gui.tanshugetrees.tree_summoner_staff_gui.tooltip_theres_a_bug_on_1201_that_you": "There\u0027s a bug on 1.20.1 that your preset part not load when reopen the GUI, click this to manually restore that."
 }

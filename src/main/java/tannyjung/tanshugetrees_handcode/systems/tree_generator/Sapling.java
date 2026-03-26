@@ -58,7 +58,7 @@ public class Sapling {
                             {
 
                                 String name = GameUtils.Tile.toText(level_accessor.getBlockState(pos))[0].substring("tanshugetrees:sapling_".length());
-                                File file = new File(Core.path_config + "/#dev/#temporary/presets/#TannyJung-Main-Pack/" + name + "/" + name + ".txt");
+                                File file = new File(Core.path_config + "/#dev/temporary/presets/#TannyJung-Main-Pack/" + name + "/" + name + ".txt");
 
                                 if (file.exists() == true && file.isDirectory() == false) {
 
@@ -174,7 +174,7 @@ public class Sapling {
 
                         if (GameUtils.Data.getBlockText(level_accessor, pos, "path").isEmpty() == false) {
 
-                            TreeGenerator.create(level_server, pos, GameUtils.Data.getBlockText(level_accessor, pos, "path"));
+                            TreeGenerator.create(level_server, null, pos, GameUtils.Data.getBlockText(level_accessor, pos, "path"));
 
                         } else {
 

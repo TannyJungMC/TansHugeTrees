@@ -88,7 +88,7 @@ public class DataMigration {
             private static void before_1_8_0 () {
 
                 Core.logger.info("Running config data migration for 1.8.0");
-                FileManager.rename(Core.path_config + "/#dev/temporary", "#temporary");
+                FileManager.rename(Core.path_config + "/#dev/temporary", "temporary");
 
             }
 
@@ -117,7 +117,7 @@ public class DataMigration {
             private static void before_1_8_0 () {
 
                 Core.logger.info("Running world data migration for 1.8.0");
-                FileManager.delete(Core.path_world_mod + "/world_gen/detailed_detection");
+                FileManager.delete(Core.path_world_mod + "/world_gen");
 
             }
 

@@ -20,8 +20,8 @@ public class CustomPackOrganizing {
 
         cache_errors.clear();
 
-        FileManager.delete(Core.path_config + "/#dev/#temporary");
-        FileManager.createEmptyFile(Core.path_config + "/#dev/#temporary", true);
+        FileManager.delete(Core.path_config + "/#dev/temporary");
+        FileManager.createEmptyFile(Core.path_config + "/#dev/temporary", true);
         FileManager.createEmptyFile(Core.path_config + "/custom_packs", true);
 
         // Rename All Back
@@ -52,7 +52,7 @@ public class CustomPackOrganizing {
 
                     if (pack.getName().endsWith(".zip") == true) {
 
-                        FileManager.extractZIP(pack.getPath(), Core.path_config + "/#dev/#temporary/pack_zip/" + pack.getName(), false, "");
+                        FileManager.extractZIP(pack.getPath(), Core.path_config + "/#dev/temporary/pack_zip/" + pack.getName(), false, "");
 
                     }
 
@@ -69,7 +69,7 @@ public class CustomPackOrganizing {
 
                     if (pack.getName().endsWith(".zip") == true) {
 
-                        file = new File(Core.path_config + "/#dev/#temporary/pack_zip/" + pack.getName() + "/info.txt");
+                        file = new File(Core.path_config + "/#dev/temporary/pack_zip/" + pack.getName() + "/info.txt");
 
                     } else {
 
@@ -79,7 +79,7 @@ public class CustomPackOrganizing {
 
                     if (file.exists() == true) {
 
-                        FileManager.copy(file.getPath(), Core.path_config + "/#dev/#temporary/#info/" + pack.getName() + ".txt", false);
+                        FileManager.copy(file.getPath(), Core.path_config + "/#dev/temporary/info/" + pack.getName() + ".txt", false);
 
                     }
 
@@ -121,7 +121,7 @@ public class CustomPackOrganizing {
 
                     if (pack.getName().endsWith(".zip") == true) {
 
-                        pack = new File(Core.path_config + "/#dev/#temporary/pack_zip/" + pack.getName());
+                        pack = new File(Core.path_config + "/#dev/temporary/pack_zip/" + pack.getName());
 
                     }
 
@@ -139,7 +139,7 @@ public class CustomPackOrganizing {
 
                                         if (source.toFile().isDirectory() == false) {
 
-                                            String replace_to = Path.of(Core.path_config + "/#dev/#temporary").resolve(file.toPath().relativize(source)).toString();
+                                            String replace_to = Path.of(Core.path_config + "/#dev/temporary").resolve(file.toPath().relativize(source)).toString();
                                             FileManager.copy(source.toString(), replace_to, false);
 
                                         }
@@ -165,7 +165,7 @@ public class CustomPackOrganizing {
             // Edit
             {
 
-                File file = new File(Core.path_config + "/#dev/#temporary/#edit");
+                File file = new File(Core.path_config + "/#dev/temporary/#edit");
 
                 if (file.listFiles() != null) {
 
@@ -176,7 +176,7 @@ public class CustomPackOrganizing {
                             if (source.toFile().isDirectory() == false) {
 
                                 Path path_to = file.toPath().relativize(source);
-                                path_to = Path.of(Core.path_config + "/#dev/#temporary").resolve(path_to);
+                                path_to = Path.of(Core.path_config + "/#dev/temporary").resolve(path_to);
 
                                 if (path_to.toFile().exists() == true) {
 
@@ -213,7 +213,7 @@ public class CustomPackOrganizing {
 
         }
 
-        FileManager.delete(Core.path_config + "/#dev/#temporary/pack_zip");
+        FileManager.delete(Core.path_config + "/#dev/temporary/pack_zip");
         testSettings();
         testWorldGen();
 
@@ -223,7 +223,7 @@ public class CustomPackOrganizing {
 
     private static void getPackID () {
 
-        File[] files = new File(Core.path_config + "/#dev/#temporary/#info").listFiles();
+        File[] files = new File(Core.path_config + "/#dev/temporary/info").listFiles();
 
         if (files != null) {
 
@@ -265,7 +265,7 @@ public class CustomPackOrganizing {
 
             for (File pack : packs) {
 
-                file = new File(Core.path_config + "/#dev/#temporary/#info/" + pack.getName() + ".txt");
+                file = new File(Core.path_config + "/#dev/temporary/info/" + pack.getName() + ".txt");
 
                 if (file.exists() == true) {
 
@@ -405,7 +405,7 @@ public class CustomPackOrganizing {
 
     private static void testSettings () {
 
-        File file = new File(Core.path_config + "/#dev/#temporary/presets");
+        File file = new File(Core.path_config + "/#dev/temporary/presets");
 
         if (file.exists() == true && file.isDirectory() == true) {
 
@@ -417,7 +417,7 @@ public class CustomPackOrganizing {
 
                     if (file_each.getName().startsWith("[INCOMPATIBLE] ") == false && file_each.getName().endsWith("_settings.txt") == true) {
 
-                        String name = Path.of(Core.path_config + "/#dev/#temporary/presets").relativize(file_each.toPath()).toString().replace("\\", "/");
+                        String name = Path.of(Core.path_config + "/#dev/temporary/presets").relativize(file_each.toPath()).toString().replace("\\", "/");
                         String value = "";
 
                         for (String read_all : FileManager.readTXT(file_each.getPath())) {
@@ -451,7 +451,7 @@ public class CustomPackOrganizing {
 
                                         if (value.isEmpty() == false) {
 
-                                            if (new File(Core.path_config + "/#dev/#temporary/functions/" + value + ".txt").exists() == false) {
+                                            if (new File(Core.path_config + "/#dev/temporary/functions/" + value + ".txt").exists() == false) {
 
                                                 addError("file", "settings file / unknown functions. This will skip these functions from running.", file_each.getPath(), name + " > " + value);
                                                 break;
@@ -484,19 +484,19 @@ public class CustomPackOrganizing {
 
     private static void testWorldGen () {
 
-        File file = new File(Core.path_config + "/#dev/#temporary/world_gen");
+        File file = new File(Core.path_config + "/#dev/temporary/world_gen");
 
         if (file.exists() == true && file.isDirectory() == true) {
 
             try {
 
-                Files.walk(Path.of(Core.path_config + "/#dev/#temporary/world_gen")).forEach(source -> {
+                Files.walk(Path.of(Core.path_config + "/#dev/temporary/world_gen")).forEach(source -> {
 
                     File file_each = source.toFile();
 
                     if (file_each.getName().startsWith("[INCOMPATIBLE] ") == false && file_each.getName().endsWith(".txt") == true) {
 
-                        String name = Path.of(Core.path_config + "/#dev/#temporary/world_gen").relativize(file_each.toPath()).toString().replace("\\", "/");
+                        String name = Path.of(Core.path_config + "/#dev/temporary/world_gen").relativize(file_each.toPath()).toString().replace("\\", "/");
                         File file_test = null;
 
                         for (String read_all : FileManager.readTXT(file_each.getPath())) {
@@ -507,7 +507,7 @@ public class CustomPackOrganizing {
 
                                     {
 
-                                        file_test = new File(Core.path_config + "/#dev/#temporary/presets/" + read_all.substring("path_storage = ".length()) + "/storage");
+                                        file_test = new File(Core.path_config + "/#dev/temporary/presets/" + read_all.substring("path_storage = ".length()) + "/storage");
 
                                         if (file_test.exists() == true && file_test.isDirectory() == true) {
 
@@ -531,7 +531,7 @@ public class CustomPackOrganizing {
 
                                     {
 
-                                        file_test = new File(Core.path_config + "/#dev/#temporary/presets/" + read_all.substring("path_settings = ".length()) + ".txt");
+                                        file_test = new File(Core.path_config + "/#dev/temporary/presets/" + read_all.substring("path_settings = ".length()) + ".txt");
 
                                         if (file_test.exists() == false) {
 
@@ -571,7 +571,7 @@ public class CustomPackOrganizing {
 
             if (file_pack.getName().endsWith(".zip") == true) {
 
-                file_pack = new File(Core.path_config + "/#dev/#temporary/pack_zip/" + file_pack.getName());
+                file_pack = new File(Core.path_config + "/#dev/temporary/pack_zip/" + file_pack.getName());
 
             }
 
@@ -597,7 +597,7 @@ public class CustomPackOrganizing {
 
                             if (source.toFile().isDirectory() == false) {
 
-                                Path path_copy_to = Path.of(Core.path_config + "/#dev/#temporary/" + file.getName());
+                                Path path_copy_to = Path.of(Core.path_config + "/#dev/temporary/" + file.getName());
 
                                 // Convert Path
                                 {
@@ -670,7 +670,7 @@ public class CustomPackOrganizing {
 
                     if (level_server != null && to_chat == true) {
 
-                        GameUtils.Misc.sendChatMessage(level_server, "@a", message + " / red");
+                        GameUtils.Misc.sendChatMessage(level_server, message + " / red");
 
                     } else {
 
@@ -682,7 +682,7 @@ public class CustomPackOrganizing {
 
                         if (level_server != null && to_chat == true) {
 
-                            GameUtils.Misc.sendChatMessage(level_server, "@a", get + " / dark_gray");
+                            GameUtils.Misc.sendChatMessage(level_server, get + " / dark_gray");
 
                         } else {
 

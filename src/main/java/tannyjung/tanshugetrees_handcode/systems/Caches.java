@@ -25,12 +25,11 @@ public class Caches {
             {
 
                 String[] split = id.split("\\|");
-                String[] split_prefix = split[0].split("/");
                 String path = "";
 
                 try {
 
-                    path = Core.path_config + "/#dev/#temporary/presets/" + split_prefix[0] + "/" + split_prefix[1] + "/storage/" + split[1];
+                    path = Core.path_config + "/#dev/temporary/presets/" + split[0] + "/storage/" + split[1];
 
                 } catch (Exception exception) {
 
@@ -122,7 +121,7 @@ public class Caches {
 
         if (CacheManager.Data.existTextList("tree_settings", id) == false) {
 
-            List<String> data = FileManager.readTXT(Core.path_config + "/#dev/#temporary/presets/" + id + ".txt");
+            List<String> data = FileManager.readTXT(Core.path_config + "/#dev/temporary/presets/" + id + ".txt");
             CacheManager.Data.setTextList("tree_settings", id, data);
 
         }

@@ -335,7 +335,7 @@ public class TXTFunction {
 
                                                                                 for (int testZ = minZ; testZ <= maxZ; testZ++) {
 
-                                                                                    pos_convert = pos.offset(offset_posX, offset_posY, offset_posZ);
+                                                                                    pos_convert = pos.offset(offset_posX + testX, offset_posY + testY, offset_posZ + testZ);
 
                                                                                     if (level_accessor.hasChunk(pos_convert.getX() >> 4, pos_convert.getZ() >> 4) == true) {
 

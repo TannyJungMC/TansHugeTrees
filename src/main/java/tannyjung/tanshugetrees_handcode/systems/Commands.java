@@ -4,6 +4,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import tannyjung.tanshugetrees_core.game.CommandMaker;
@@ -43,7 +44,8 @@ public class Commands {
                 private static void get (CommandContext<CommandSourceStack> data) {
 
                     ServerLevel level_server = data.getSource().getLevel();
-                    Seasons.get(level_server);
+                    Entity entity = data.getSource().getEntity();
+                    Seasons.get(level_server, entity);
 
                 }
 
@@ -105,7 +107,8 @@ public class Commands {
                 ServerLevel level_server = data.getSource().getLevel();
                 Vec3 vec3 = data.getSource().getPosition();
                 String variable_text = CommandMaker.Argument.getText(data);
-                TreeGenerator.create(level_server, BlockPos.containing(vec3), variable_text);
+                Entity entity = data.getSource().getEntity();
+                TreeGenerator.create(level_server, entity, BlockPos.containing(vec3), variable_text);
 
             }
 

@@ -126,7 +126,7 @@ public class LivingMechanics {
         String[] file_path_data = GameUtils.Data.getEntityText(entity, "file").split("\\|");
         String path_storage = file_path_data[0];
         String chosen = file_path_data[1];
-        File file = new File(Core.path_config + "/#dev/#temporary/presets/" + path_storage + "/storage/" + chosen);
+        File file = new File(Core.path_config + "/#dev/temporary/presets/" + path_storage + "/storage/" + chosen);
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -139,7 +139,7 @@ public class LivingMechanics {
 
             boolean have_center_block = level_accessor.getBlockState(center_pos).isAir() == false;
             int rotation = (int) GameUtils.Data.getEntityNumber(entity, "rotation");
-            boolean mirrored = GameUtils.Data.getEntityLogic(entity, "mirrored");
+            int mirrored = (int) GameUtils.Data.getEntityNumber(entity, "mirrored");
             int biome_type = 0;
 
             // Biome Type Test
@@ -294,7 +294,7 @@ public class LivingMechanics {
                                             if (GameUtils.Tile.isTaggedAs(block, "minecraft:leaves") == true) {
 
                                                 block = GameUtils.Tile.setPropertyLogic(block, "persistent", false);
-                                                level_accessor.setBlock(pos, block, 2);
+                                                GameUtils.Tile.set(level_accessor, pos, block, false);
 
                                             } else {
 
@@ -489,7 +489,7 @@ public class LivingMechanics {
 
                         {
 
-                            level_accessor.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+                            GameUtils.Tile.remove(level_accessor, level_server, pos, false);
 
                             if (FileConfig.leaf_litter == true) {
 
@@ -619,7 +619,7 @@ public class LivingMechanics {
                         {
 
                             block = GameUtils.Tile.setPropertyLogic(block, "persistent", true);
-                            level_accessor.setBlock(pos, block, 2);
+                            GameUtils.Tile.set(level_accessor, pos, block, false);
 
                         }
 
