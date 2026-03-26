@@ -179,7 +179,7 @@ public class Sapling {
                         } else {
 
                             Entity entity_summon = GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", "");
-                            GameUtils.Command.runEntity(entity_summon, "data modify entity @s ForgeData.tanshugetrees set from block ~ ~ ~ ForgeData.tanshugetrees");
+                            GameUtils.Command.runEntity(entity_summon, "data modify entity @s NeoForgeData.tanshugetrees set from block ~ ~ ~ NeoForgeData.tanshugetrees");
 
                         }
 

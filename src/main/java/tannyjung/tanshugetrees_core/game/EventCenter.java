@@ -98,9 +98,9 @@ public class EventCenter {
         @SubscribeEvent
         public static void eventWorldAboutToStart (ServerAboutToStartEvent event) {
 
-            Core.path_world = event.getServer().getWorldPath(new LevelResource(".")).toString();
-            Core.path_world_core = Core.path_world + "/data/tannyjung/" + Core.data_structure_version_core;
-            Core.path_world_mod = Core.path_world + "/data/" + Core.mod_id;
+            String path_world = event.getServer().getWorldPath(new LevelResource(".")).toString();
+            Core.path_world_core = path_world + "/data/tannyjung/" + Core.data_structure_version_core;
+            Core.path_world_mod = path_world + "/data/" + Core.mod_id;
 
             DataMigration.run("world");
             Core.Restart.run(null, true, false);

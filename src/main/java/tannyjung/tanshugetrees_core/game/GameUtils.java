@@ -704,6 +704,12 @@ public class GameUtils {
 
 		}
 
+		public static boolean isPassable (LevelAccessor level_accessor, BlockPos pos) {
+
+			return level_accessor.getBlockState(pos).getCollisionShape(level_accessor, pos).isEmpty();
+
+		}
+
 		public static boolean getPropertyLogic (BlockState block, String name) {
 
 			Property<?> property = block.getBlock().getStateDefinition().getProperty(name);
@@ -981,12 +987,6 @@ public class GameUtils {
 
 		}
 
-		public static boolean canTickingAt (ServerLevel level_server, BlockPos pos) {
-
-			return level_server.isPositionEntityTicking(pos);
-
-		}
-
 		public static boolean isCreativeMode (Entity entity) {
 
 			if (entity instanceof Player player) {
@@ -1239,15 +1239,21 @@ public class GameUtils {
 
 		}
 
-		public static int getHeight (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, int posX, int posZ, String type) {
+		public static int getHeight (LevelAccessor level_accessor, int posX, int posZ, String type) {
 
-			if (testChunkStatus(level_accessor, new ChunkPos(posX >> 4, posZ >> 4), "surface") == true) {
+			return level_accessor.getHeight(Heightmap.Types.valueOf(type), posX, posZ);
 
-				return level_accessor.getHeight(Heightmap.Types.valueOf(type), posX, posZ);
+		}
+
+		public static int getHeightWorldGen (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, int posX, int posZ, String type_normal, String type_world_gen) {
+
+			if (chunk_generator == null || testChunkStatus(level_accessor, new ChunkPos(posX >> 4, posZ >> 4), "carvers") == true) {
+
+				return getHeight(level_accessor, posX, posZ, type_normal);
 
 			} else {
 
-				return chunk_generator.getBaseHeight(posX, posZ, Heightmap.Types.valueOf(type), level_accessor, level_server.getChunkSource().randomState());
+				return chunk_generator.getBaseHeight(posX, posZ, Heightmap.Types.valueOf(type_world_gen), level_accessor, level_server.getChunkSource().randomState());
 
 			}
 

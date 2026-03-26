@@ -15,7 +15,6 @@ public class FileConfig {
 	public static double multiply_rarity = 0.0;
 	public static double multiply_min_distance = 0.0;
 	public static double multiply_group_size = 0.0;
-	public static double multiply_waterside_chance = 0.0;
 	public static double multiply_dead_tree_chance = 0.0;
 	public static boolean tree_location = false;
 	public static boolean world_gen_roots = false;
@@ -93,7 +92,6 @@ public class FileConfig {
                 multiply_rarity = 1.0
                 multiply_min_distance = 1.0
                 multiply_group_size = 1.0
-                multiply_waterside_chance = 1.0
                 multiply_dead_tree_chance = 1.0
                 | These number will be multiplied to all tree config in these types
                 
@@ -106,7 +104,7 @@ public class FileConfig {
                 max_height_spawn = 0
                 | Cancel the trees when their spawn center is above this Y level. As some world gen mods such as ReTerraForged, replacing mountain block and my trees can't detect those new block, make them spawn on blocks that not in the list. Set to 0 to disable this.
                 
-                unviable_ecology_skip_chance = 0.9
+                unviable_ecology_skip_chance = 0.0
                 | Skip trees that generate in unviable ecosystems. For example, land trees that generate in water. This config only affect to dead trees, as normal trees already skip generate in unviable ecosystems.
                 
                 leaf_litter_world_gen = true
@@ -254,7 +252,6 @@ public class FileConfig {
 		multiply_rarity = Double.parseDouble(data.get("multiply_rarity"));
 		multiply_min_distance = Double.parseDouble(data.get("multiply_min_distance"));
 		multiply_group_size = Double.parseDouble(data.get("multiply_group_size"));
-		multiply_waterside_chance = Double.parseDouble(data.get("multiply_waterside_chance"));
 		multiply_dead_tree_chance = Double.parseDouble(data.get("multiply_dead_tree_chance"));
 		tree_location = Boolean.parseBoolean(data.get("tree_location"));
 		world_gen_roots = Boolean.parseBoolean(data.get("world_gen_roots"));

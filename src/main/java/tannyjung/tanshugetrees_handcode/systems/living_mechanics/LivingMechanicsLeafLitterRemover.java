@@ -10,16 +10,11 @@ public class LivingMechanicsLeafLitterRemover {
     public static void start (Entity entity) {
 
         LevelAccessor level_accessor = entity.level();
-        ServerLevel level_server = (ServerLevel) entity.level();
+        ServerLevel level_server = (ServerLevel) level_accessor;
 
-        // If Area Loaded
-        {
+        if (level_server.isLoaded(entity.blockPosition()) == false) {
 
-            if (level_server.isLoaded(entity.blockPosition()) == false) {
-
-                return;
-
-            }
+            return;
 
         }
 

@@ -31,11 +31,11 @@ public class LeafLitter {
                         // Place
                         {
 
-                            if (GameUtils.Tile.isTaggedAs(level_accessor.getBlockState(pos), "tanshugetrees:passable_blocks") == true) {
+                            if (level_accessor.getBlockState(pos).canBeReplaced() == true) {
 
-                                if (GameUtils.Tile.isTaggedAs(level_accessor.getBlockState(pos.below()), "tanshugetrees:passable_blocks") == true) {
+                                if (level_accessor.isWaterAt(pos.below()) == true) {
 
-                                    return;
+                                    pos = pos.below();
 
                                 }
 

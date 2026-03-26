@@ -15,7 +15,7 @@ public class TXTFunction {
 
 	public static void run (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String path, boolean randomly) {
 
-        boolean chunk_loaded = GameUtils.Mob.canTickingAt(level_server, pos);
+        boolean chunk_loaded = level_server.isPositionEntityTicking(pos);
         RandomSource random = null;
 
         if (randomly == true) {
@@ -516,7 +516,7 @@ public class TXTFunction {
 
     public static void runDelayedCommand (ServerLevel level_server, Entity entity) {
 
-        if (GameUtils.Mob.canTickingAt(level_server, entity.blockPosition()) == true) {
+        if (level_server.isPositionEntityTicking(entity.blockPosition()) == true) {
 
             for (String command : GameUtils.Data.getEntityText(entity, "command").replace("*", "'").replace("$", "\"").split("\\|")) {
 

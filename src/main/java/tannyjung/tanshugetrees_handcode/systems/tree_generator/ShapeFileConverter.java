@@ -117,7 +117,7 @@ public class ShapeFileConverter {
                 for (Entity entity_import : GameUtils.Mob.getAtArea(level_server, vec3, 1, true, 1, "minecraft:marker", "TANSHUGETREES-tree_generator")) {
 
                     String data_modify = "debug_mode:false,tree_generator_speed_global:false,tree_generator_speed_tick:1,tree_generator_speed_repeat:0,name:\"" + file_location[1] + "\"";
-                    GameUtils.Command.runEntity(entity_import, "data merge entity @s {ForgeData:{tanshugetrees:{" + data_modify + "}}}");
+                    GameUtils.Command.runEntity(entity_import, "data merge entity @s {NeoForgeData:{tanshugetrees:{" + data_modify + "}}}");
 
                 }
 
@@ -148,7 +148,7 @@ public class ShapeFileConverter {
             {
 
                 write
-                        .append("tree_type = ").append(GameUtils.Data.getEntityText(entity, "tree_type")).append("\n")
+                        .append("type = ").append(GameUtils.Data.getEntityText(entity, "type")).append("\n")
                         .append("start_height = ").append((int) GameUtils.Data.getEntityNumber(entity, "start_height")).append("\n")
                         .append("can_disable_roots = ").append(GameUtils.Data.getEntityLogic(entity, "can_disable_roots")).append("\n")
                         .append("can_leaves_decay = ").append(GameUtils.Data.getEntityLogic(entity, "can_leaves_decay")).append("\n")

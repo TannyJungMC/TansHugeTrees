@@ -9,7 +9,6 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.Heightmap;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 import tannyjung.tanshugetrees_core.game.GameUtils;
@@ -28,14 +27,9 @@ public class LivingMechanics {
         ServerLevel level_server = (ServerLevel) level_accessor;
         BlockPos center_pos = new BlockPos(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
 
-        // Only Loaded Chunks
-        {
+        if (level_server.isLoaded(center_pos) == false) {
 
-            if (level_server.isLoaded(center_pos) == false) {
-
-                return;
-
-            }
+            return;
 
         }
 
@@ -179,7 +173,7 @@ public class LivingMechanics {
             BlockState block = Blocks.AIR.defaultBlockState();
             String[] pre_block_data = new String[0];
 
-            for (short read_all : Caches.getTreeShapeData(path_storage + "/" + chosen)) {
+            for (short read_all : Caches.getTreeShapeData(path_storage + "|" + chosen)) {
 
                 // Loop and Get Data
                 {
@@ -509,7 +503,8 @@ public class LivingMechanics {
                                             // Don't create animation, if there's a block below.
                                             if (GameUtils.Tile.isTaggedAs(level_accessor.getBlockState(pos.below()), "tanshugetrees:passable_blocks") == true) {
 
-                                                GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:block_display", "Falling Leaf", "TANSHUGETREES-leaf_drop", "{transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.0f,1.0f,1.0f]},block_state:{Name:\"" + GameUtils.Tile.toText(block)[0] + "\"},ForgeData:{tanshugetrees:{block:\"" + GameUtils.Tile.toText(block)[0] + "\"}}}");
+                                                Entity entity_summon = GameUtils.Misc.summonBlock(level_server, pos.getCenter(), "Falling Leaf", "TANSHUGETREES-leaf_drop", 0, 0, 0, 1, 1, 1, 0, 0, GameUtils.Tile.toText(block)[0]);
+                                                GameUtils.Data.setEntityText(entity_summon, "block", GameUtils.Tile.toText(block)[0]);
                                                 GameUtils.Score.add(level_server, "TANSHUGETREES", "leaf_drop", 1);
 
                                             }
@@ -523,7 +518,7 @@ public class LivingMechanics {
                                     // No Animation
                                     {
 
-                                        int height_motion = level_accessor.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
+                                        int height_motion = GameUtils.Space.getHeight(level_accessor, pos.getX(), pos.getZ(), "MOTION_BLOCKING_NO_LEAVES");
 
                                         if (height_motion != GameUtils.Space.getBuildHeight(level_accessor, false) && height_motion < pos.getY()) {
 
@@ -645,7 +640,7 @@ public class LivingMechanics {
 
                     if (GameUtils.Score.get(level_server, "TANSHUGETREES", "leaf_litter_remover") < FileConfig.leaf_litter_remover_count_limit) {
 
-                        GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Leaf Litter Remover", "TANSHUGETREES-leaf_litter_remover", "{ForgeData:{tanshugetrees:{block:\"" + GameUtils.Tile.toText(block)[0] + "\"}}}");
+                        GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Leaf Litter Remover", "TANSHUGETREES-leaf_litter_remover", "{NeoForgeData:{tanshugetrees:{block:\"" + GameUtils.Tile.toText(block)[0] + "\"}}}");
                         GameUtils.Score.add(level_server, "TANSHUGETREES", "leaf_litter_remover", 1);
 
                     }

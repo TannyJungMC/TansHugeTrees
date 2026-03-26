@@ -67,7 +67,6 @@ public class Core {
     public static Logger logger = null;
     public static String path_game = FMLPaths.GAMEDIR.get().toString();
     public static String path_config = path_game + "/" + mod_id + "_error";
-    public static String path_world = path_game + "/" + mod_id + "_error";
     public static String path_world_core = path_game + "/" + mod_id + "_error";
     public static String path_world_mod = path_game + "/" + mod_id + "_error";
     public static final ExecutorService thread_main = Executors.newFixedThreadPool(1, name -> { Thread thread = new Thread(name); thread.setName(Core.mod_name); return thread; });
@@ -85,7 +84,6 @@ public class Core {
         Registry.start(bus);
         DataMigration.run("config");
         Restart.run(null, true, false);
-        TannyPackManager.runCheckUpdate(null);
 
     }
 
