@@ -9,10 +9,10 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.storage.LevelResource;
 
 import tannyjung.tanshugetrees_core.Core;
-import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepLast;
+import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepEnd;
+import tannyjung.tanshugetrees_core.outside.CustomPackOrganizing;
 import tannyjung.tanshugetrees_core.outside.TannyPackManager;
 import tannyjung.tanshugetrees_handcode.data.DataMigration;
-import tannyjung.tanshugetrees_handcode.data.DataRepair;
 import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.Commands;
 import tannyjung.tanshugetrees_handcode.systems.Events;
@@ -29,10 +29,10 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.api.distmarker.Dist;
 (1.21.1)
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -40,30 +40,31 @@ import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.api.distmarker.Dist;
 */
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGuiEvent;
-import net.minecraftforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.client.event.RenderGuiEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.api.distmarker.Dist;
 
 public class EventCenter {
     
-    @Mod.EventBusSubscriber({Dist.CLIENT})
+    @EventBusSubscriber({Dist.CLIENT})
     public static class Client {
 
         @SubscribeEvent(priority = EventPriority.NORMAL)
@@ -89,7 +90,7 @@ public class EventCenter {
 
     }
     
-    @Mod.EventBusSubscriber
+    @EventBusSubscriber
     public static class Server {
 
         private static boolean first_player_joined = false;
@@ -97,10 +98,12 @@ public class EventCenter {
         @SubscribeEvent
         public static void eventWorldAboutToStart (ServerAboutToStartEvent event) {
 
-            Core.path_world_core = event.getServer().getWorldPath(new LevelResource(".")) + "/data/tannyjung";
-            Core.path_world_mod = Core.path_world_core + "_" + Core.mod_id;
+            String path_world = event.getServer().getWorldPath(new LevelResource(".")).toString();
+            Core.path_world_core = path_world + "/data/tannyjung/" + Core.data_structure_version_core;
+            Core.path_world_mod = path_world + "/data/" + Core.mod_id;
+
             DataMigration.run("world");
-            Core.Restart.run(null, "config", true);
+            Core.Restart.run(null, true, false);
 
         }
 
@@ -108,7 +111,7 @@ public class EventCenter {
         public static void eventWorldStarted (ServerStartedEvent event) {
 
             ServerLevel level_server = event.getServer().overworld();
-            Core.Restart.run(level_server, "world", false);
+            Core.Restart.run(level_server, false, false);
 
         }
 
@@ -129,7 +132,7 @@ public class EventCenter {
                 String dimension = GameUtils.Space.getDimensionID(level_server).replace(":", "-");
                 ChunkPos chunk_pos = event.getChunk().getPos();
 
-                WorldGenStepLast.start(dimension, chunk_pos);
+                WorldGenStepEnd.start(dimension, chunk_pos);
 
             }
 
@@ -147,13 +150,17 @@ public class EventCenter {
 
                 Core.DelayedWorks.create(true, 100, () -> {
 
-                    DataRepair.messagePackErrors(level_server);
+                    Core.thread_main.submit(() -> {
 
-                    if (FileConfig.auto_check_update == true) {
+                        CustomPackOrganizing.sendErrorMessage(level_server);
 
-                        TannyPackManager.checkUpdate(level_server);
+                        if (FileConfig.auto_check_update == true) {
 
-                    }
+                            TannyPackManager.runCheckUpdate(level_server);
+
+                        }
+
+                    });
 
                 });
 
@@ -176,22 +183,32 @@ public class EventCenter {
         /*
         (1.20.1)
         public static void eventTickServer (TickEvent.ServerTickEvent event) {
+
+        ^^^ Maybe i can write as TickEvent.ServerTickEvent.Post ???
+
         (1.21.1)
         public static void eventTickServer (ServerTickEvent.Post event) {
         */
-        public static void eventTickServer (TickEvent.ServerTickEvent event) {
+        public static void eventTickServer (ServerTickEvent.Post event) {
 
-            if (event.phase == TickEvent.Phase.START) {
+            /*
+            (1.20.1)
+            if (event.phase == TickEvent.Phase.END) {
 
-                LevelAccessor level_accessor = event.getServer().overworld();
-                ServerLevel level_server = event.getServer().overworld();
+                return;
 
-                if (Core.in_restarting == false) {
+            }
+            */
 
-                    Core.DelayedWorks.runTick();
-                    Core.Loops.loopTick(level_accessor, level_server);
 
-                }
+
+            LevelAccessor level_accessor = event.getServer().overworld();
+            ServerLevel level_server = event.getServer().overworld();
+
+            if (Core.in_restarting == false) {
+
+                Core.DelayedWorks.runTick();
+                Core.Loops.loopTick(level_accessor, level_server);
 
             }
 

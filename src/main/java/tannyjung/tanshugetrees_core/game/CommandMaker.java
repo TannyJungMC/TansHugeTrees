@@ -5,6 +5,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.MessageArgument;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 import tannyjung.tanshugetrees_core.outside.TannyPackManager;
+import tannyjung.tanshugetrees_core.outside.TXTFunction;
 
 import java.util.function.Consumer;
 
@@ -21,7 +23,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 (1.21.1)
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 */
-import net.minecraftforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 public class CommandMaker {
 
@@ -261,11 +263,9 @@ public class CommandMaker {
 
                     LevelAccessor level_accessor = data.getSource().getLevel();
                     ServerLevel level_server = data.getSource().getLevel();
-                    int posX = (int) Math.floor(data.getSource().getPosition().x());
-                    int posY = (int) Math.floor(data.getSource().getPosition().y());
-                    int posZ = (int) Math.floor(data.getSource().getPosition().z());
+                    BlockPos pos = new BlockPos((int) Math.floor(data.getSource().getPosition().x()), (int) Math.floor(data.getSource().getPosition().y()), (int) Math.floor(data.getSource().getPosition().z()));
                     String variable_text = CommandMaker.Argument.getText(data);
-                    TXTFunction.run(level_accessor, level_server, posX, posY, posZ, variable_text, true);
+                    TXTFunction.run(level_accessor, level_server, pos, variable_text, true);
 
                 }
 
@@ -274,7 +274,7 @@ public class CommandMaker {
             private static void restart (CommandContext<CommandSourceStack> data) {
 
                 ServerLevel level_server = data.getSource().getLevel();
-                Core.Restart.run(level_server, "config / world", true);
+                Core.Restart.run(level_server, true, true);
 
             }
 
@@ -283,14 +283,24 @@ public class CommandMaker {
                 private static void check_update (CommandContext<CommandSourceStack> data) {
 
                     ServerLevel level_server = data.getSource().getLevel();
-                    TannyPackManager.checkUpdate(level_server);
+
+                    Core.thread_main.submit(() -> {
+
+                        TannyPackManager.runCheckUpdate(level_server);
+
+                    });
 
                 }
 
                 private static void update (CommandContext<CommandSourceStack> data) {
 
                     ServerLevel level_server = data.getSource().getLevel();
-                    TannyPackManager.reinstall(level_server);
+
+                    Core.thread_main.submit(() -> {
+
+                        TannyPackManager.runUpdate(level_server);
+
+                    });
 
                 }
 

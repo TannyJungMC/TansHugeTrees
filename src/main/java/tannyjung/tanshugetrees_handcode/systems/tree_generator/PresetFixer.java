@@ -21,7 +21,7 @@ public class PresetFixer {
 
         if (template.exists() == true && template.isDirectory() == false) {
 
-            GameUtils.Misc.sendChatMessage(level_server, "@a", "Start fixing all tree presets from all extracted packs... / gray");
+            GameUtils.Misc.sendChatMessage(level_server, "@a", "Start fixing all tree presets from all extracted packs / gray");
             boolean fix_at_least_one = false;
             File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 

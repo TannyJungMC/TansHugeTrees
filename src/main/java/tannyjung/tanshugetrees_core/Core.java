@@ -1,14 +1,18 @@
 package tannyjung.tanshugetrees_core;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import org.apache.logging.log4j.Logger;
 import tannyjung.tanshugetrees_core.game.GameUtils;
+import tannyjung.tanshugetrees_core.game.world_gen.FeatureAreaDirt;
+import tannyjung.tanshugetrees_core.game.world_gen.FeatureAreaGrass;
 import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepBeforePlants;
-import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepFirst;
 import tannyjung.tanshugetrees_core.outside.CacheManager;
+import tannyjung.tanshugetrees_core.outside.CustomPackOrganizing;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
+import tannyjung.tanshugetrees_core.outside.TannyPackManager;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.data.DataMigration;
 import tannyjung.tanshugetrees_handcode.data.DataRepair;
@@ -29,21 +33,18 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.registries.DeferredRegister;
 */
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class Core {
 
     /*
     (1.20.1)
     ___ForgeData___
-    (1.21.1) (1.21.8)
-    ___NeoForgeData___
-
-    (1.20.1)
     ___@Mod.EventBusSubscriber___
     (1.21.1) (1.21.8)
+    ___NeoForgeData___
     ___@EventBusSubscriber___
     */
     
@@ -61,36 +62,28 @@ public class Core {
     public static String github_pack = "";
     public static String wiki = "";
 
+    public static boolean have_world_data_cleaner = false;
+
     public static Logger logger = null;
-    public static final String path_game = FMLPaths.GAMEDIR.get().toString();
-    public static String path_config = "";
-    public static String path_world_core = "";
-    public static String path_world_mod = "";
-    public static final ExecutorService thread_main = Executors.newFixedThreadPool(1, name -> { Thread thread = new Thread(name); thread.setName("TannyJung - " + Core.mod_name); return thread; });
+    public static String path_game = FMLPaths.GAMEDIR.get().toString();
+    public static String path_config = path_game + "/" + mod_id + "_error";
+    public static String path_world_core = path_game + "/" + mod_id + "_error";
+    public static String path_world_mod = path_game + "/" + mod_id + "_error";
+    public static final ExecutorService thread_main = Executors.newFixedThreadPool(1, name -> { Thread thread = new Thread(name); thread.setName(Core.mod_name); return thread; });
 
     public static boolean in_restarting = false;
 
     public static void start (IEventBus bus) {
 
         Handcode.start();
-
         mod_id_big = mod_id.toUpperCase();
         tanny_pack_type_original = tanny_pack_type;
-        path_config = path_game + "/config/" + mod_id;
-        path_world_core = path_game + "/saves/" + mod_id + "-error";
-        path_world_mod = path_game + "/saves/" + mod_id + "-error";
         logger = LogManager.getLogger(mod_id);
+        path_config = path_game + "/config/" + mod_id;
 
-        Registries.start(bus);
-
-
-
-
-
-
-
+        Registry.start(bus);
         DataMigration.run("config");
-        Restart.run(null, "config", true);
+        Restart.run(null, true, false);
 
     }
 
@@ -98,18 +91,18 @@ public class Core {
 
         private static final Object lock = new Object();
 
-        public static void run (ServerLevel level_server, String type, boolean detail_info) {
+        public static void run (ServerLevel level_server, boolean config, boolean chat_message) {
 
             Runnable runnable = () -> {
 
-                if (type.contains("config") == true) {
+                if (config == true) {
 
                     DataRepair.start();
-                    DataRepair.messagePackErrors(level_server);
+                    CustomPackOrganizing.sendErrorMessage(level_server);
 
                 }
 
-                if (type.contains("world") == true) {
+                if (level_server != null) {
 
                     GameUtils.Score.create(level_server, mod_id_big);
 
@@ -128,9 +121,9 @@ public class Core {
 
                     Restart.runLock();
 
-                    if (detail_info == true) {
+                    if (chat_message == true) {
 
-                        GameUtils.Misc.sendChatMessage(level_server, "@a", "Restarting... / gray");
+                        GameUtils.Misc.sendChatMessage(level_server, "@a", "Restarting the mod... / gray");
 
                     }
 
@@ -138,9 +131,9 @@ public class Core {
 
                         runnable.run();
 
-                        if (detail_info == true) {
+                        if (chat_message == true) {
 
-                            GameUtils.Misc.sendChatMessage(level_server, "@a", "Restarted and cleared main caches (About " + CacheManager.clear() + " MB) / gray");
+                            GameUtils.Misc.sendChatMessage(level_server, "@a", "Restarted and cleared main caches, about " + CacheManager.clear() + ". / gray");
 
                         }
 
@@ -254,7 +247,7 @@ public class Core {
 
         private static void loopSecond (LevelAccessor level_accessor, ServerLevel level_server) {
 
-            tannyjung.tanshugetrees_handcode.systems.Loops.second(level_server);
+            tannyjung.tanshugetrees_handcode.systems.Loops.second(level_accessor, level_server);
             minute = minute + 1;
 
             if (minute > 60) {
@@ -274,20 +267,20 @@ public class Core {
 
     }
 
-    public static class Registries {
+    public static class Registry {
 
         public static Map<String, Supplier<Feature<?>>> features = new HashMap<>();
 
         public static void start (IEventBus bus) {
 
-            Handcode.registry();
-            Core.Registries.features.put("world_gen_first", WorldGenStepFirst::new);
-            Core.Registries.features.put("world_gen_before_plants", WorldGenStepBeforePlants::new);
+            features.put("world_gen_before_plants", WorldGenStepBeforePlants::new);
+            features.put("area_grass", FeatureAreaGrass::new);
+            features.put("area_dirt", FeatureAreaDirt::new);
 
             // Feature
             {
 
-                DeferredRegister<Feature<?>> deferred = DeferredRegister.create(net.minecraft.core.registries.Registries.FEATURE, mod_id);
+                DeferredRegister<Feature<?>> deferred = DeferredRegister.create(Registries.FEATURE, mod_id);
 
                 for (Map.Entry<String, Supplier<Feature<?>>> entry : features.entrySet()) {
 

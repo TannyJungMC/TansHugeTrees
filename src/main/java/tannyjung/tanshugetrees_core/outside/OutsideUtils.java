@@ -9,10 +9,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class OutsideUtils {
 
@@ -59,7 +57,7 @@ public class OutsideUtils {
         test:
         {
 
-            if (Core.data_structure_version_mod.equals(version) == true) {
+            if (version_main.equals(version) == true) {
 
                 result = "same";
 
@@ -104,8 +102,6 @@ public class OutsideUtils {
 
         }
 
-        System.out.println("+++ " + result + " <--- " + version_main + " / " + version);
-
         return result;
 
     }
@@ -132,38 +128,41 @@ public class OutsideUtils {
 
     public static boolean download (String url, String to) {
 
-        if (OutsideUtils.isURLAvailable(url) == true) {
+        boolean complete = false;
+        FileManager.createEmptyFile(to, false);
 
-            FileManager.createEmptyFile(to, false);
+        // Download
+        {
 
-            {
+            try (FileOutputStream output = new FileOutputStream(to)) {
 
-                try (FileOutputStream output = new FileOutputStream(to)) {
+                BufferedInputStream input = new BufferedInputStream(new URI(url).toURL().openStream());
+                byte[] buffer = new byte[1024];
+                int bytesRead;
 
-                    BufferedInputStream input = new BufferedInputStream(new URI(url).toURL().openStream());
-                    byte[] buffer = new byte[1024];
-                    int bytesRead;
+                while ((bytesRead = input.read(buffer, 0, 1024)) != -1) {
 
-                    while ((bytesRead = input.read(buffer, 0, 1024)) != -1) {
-
-                        output.write(buffer, 0, bytesRead);
-
-                    }
-
-                } catch (Exception exception) {
-
-                    OutsideUtils.exception(new Exception(), exception, "");
-
-                    FileManager.delete(to);
-                    return false;
+                    output.write(buffer, 0, bytesRead);
 
                 }
+
+                complete = true;
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception, "");
 
             }
 
         }
 
-        return true;
+        if (complete == false) {
+
+            FileManager.delete(to);
+
+        }
+
+        return complete;
 
     }
 
@@ -382,110 +381,6 @@ public class OutsideUtils {
         }
 
         return convertListToArray(data);
-
-    }
-
-    public static class Cache {
-
-        public static int sizeMapByteBuffer (Map<String, ByteBuffer> test) {
-
-            int return_number = 0;
-
-            for (Map.Entry<String, ByteBuffer> entry : test.entrySet()) {
-
-                return_number = return_number + entry.getValue().capacity();
-
-            }
-
-            return return_number;
-
-        }
-
-        public static int sizeMapNumberShort (Map<String, Map<String, short[]>> test) {
-
-            int return_number = 0;
-
-            for (Map.Entry<String, Map<String, short[]>> entry1 : test.entrySet()) {
-
-                for (Map.Entry<String, short[]> entry2 : entry1.getValue().entrySet()) {
-
-                    return_number = return_number + entry2.getValue().length * Short.BYTES;
-
-                }
-
-            }
-
-            return return_number;
-
-        }
-
-        public static int sizeMapNumberInt (Map<String, Map<String, int[]>> test) {
-
-            int return_number = 0;
-
-            for (Map.Entry<String, Map<String, int[]>> entry1 : test.entrySet()) {
-
-                for (Map.Entry<String, int[]> entry2 : entry1.getValue().entrySet()) {
-
-                    return_number = return_number + entry2.getValue().length * Integer.BYTES;
-
-                }
-
-            }
-
-            return return_number;
-
-        }
-
-        public static int sizeMapText (Map<String, Map<String, String>> test) {
-
-            int return_number = 0;
-
-            for (Map.Entry<String, Map<String, String>> entry1 : test.entrySet()) {
-
-                for (Map.Entry<String, String> entry2 : entry1.getValue().entrySet()) {
-
-                    return_number = return_number + entry2.getValue().length() * Character.BYTES;
-
-                }
-
-            }
-
-            return return_number;
-
-        }
-
-        public static int sizeMapTextList (Map<String, Map<String, String[]>> test) {
-
-            int return_number = 0;
-
-            for (Map.Entry<String, Map<String, String[]>> entry1 : test.entrySet()) {
-
-                for (Map.Entry<String, String[]> entry2 : entry1.getValue().entrySet()) {
-
-                    return_number = return_number + entry2.getValue().length * Integer.BYTES;
-
-                }
-
-            }
-
-            return return_number;
-
-        }
-
-        public static int sizeArrayText (String[] test) {
-
-            int return_number = 0;
-
-            for (String get : test) {
-
-                return_number = return_number + get.length() * Integer.BYTES;
-
-            }
-
-            return return_number;
-
-        }
 
     }
 

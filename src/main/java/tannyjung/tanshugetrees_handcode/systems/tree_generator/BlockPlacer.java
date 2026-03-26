@@ -4,26 +4,26 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.Core;
-import tannyjung.tanshugetrees_core.game.TXTFunction;
+import tannyjung.tanshugetrees_core.outside.TXTFunction;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 
 public class BlockPlacer {
 
-    public static void start (LevelAccessor level_accessor, ServerLevel level_server, int posX, int posY, int posZ) {
+    public static void start (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos) {
 
-        String function = GameUtils.Data.getBlockText(level_accessor, posX, posY, posZ, "function");
+        String function = GameUtils.Data.getBlockText(level_accessor, pos, "function");
 
-        if (GameUtils.Data.getBlockLogic(level_accessor, posX, posY, posZ, "delay1") == false) {
+        if (GameUtils.Data.getBlockLogic(level_accessor, pos, "delay1") == false) {
 
-            GameUtils.Data.setBlockLogic(level_accessor, level_server, posX, posY, posZ, "delay1", true);
-            GameUtils.Tile.setScheduleTick(level_server, posX, posY, posZ, 100);
+            GameUtils.Data.setBlockLogic(level_accessor, level_server, pos, "delay1", true);
+            GameUtils.Tile.setScheduleTick(level_server, pos, 100);
 
             // Test Function
             {
 
                 if (function.isEmpty() == false) {
 
-                    String[] styles = GameUtils.Data.getBlockText(level_accessor, posX, posY, posZ, "function_style").split("/");
+                    String[] styles = GameUtils.Data.getBlockText(level_accessor, pos, "function_style").split("/");
                     boolean pass = false;
 
                     for (String style : styles) {
@@ -34,7 +34,7 @@ public class BlockPlacer {
 
                         } else if (style.equals("up") == true) {
 
-                            if (level_accessor.getBlockState(new BlockPos(posX, posY + 1, posZ)).isAir() == true) {
+                            if (level_accessor.getBlockState(pos.above()).isAir() == true) {
 
                                 pass = true;
 
@@ -42,7 +42,7 @@ public class BlockPlacer {
 
                         } else if (style.equals("down") == true) {
 
-                            if (level_accessor.getBlockState(new BlockPos(posX, posY - 1, posZ)).isAir() == true) {
+                            if (level_accessor.getBlockState(pos.below()).isAir() == true) {
 
                                 pass = true;
 
@@ -50,19 +50,19 @@ public class BlockPlacer {
 
                         } else if (style.equals("side") == true) {
 
-                            if (level_accessor.getBlockState(new BlockPos(posX + 1, posY, posZ)).isAir() == true) {
+                            if (level_accessor.getBlockState(pos.north()).isAir() == true) {
 
                                 pass = true;
 
-                            } else if (level_accessor.getBlockState(new BlockPos(posX - 1, posY, posZ)).isAir() == true) {
+                            } else if (level_accessor.getBlockState(pos.west()).isAir() == true) {
 
                                 pass = true;
 
-                            } else if (level_accessor.getBlockState(new BlockPos(posX, posY, posZ + 1)).isAir() == true) {
+                            } else if (level_accessor.getBlockState(pos.east()).isAir() == true) {
 
                                 pass = true;
 
-                            } else if (level_accessor.getBlockState(new BlockPos(posX, posY, posZ - 1)).isAir() == true) {
+                            } else if (level_accessor.getBlockState(pos.south()).isAir() == true) {
 
                                 pass = true;
 
@@ -74,7 +74,7 @@ public class BlockPlacer {
 
                     if (pass == false) {
 
-                        GameUtils.Data.setBlockText(level_accessor, level_server, posX, posY, posZ, "function", "");
+                        GameUtils.Data.setBlockText(level_accessor, level_server, pos, "function", "");
 
                     }
 
@@ -84,20 +84,20 @@ public class BlockPlacer {
 
         } else {
 
-            if (GameUtils.Data.getBlockLogic(level_accessor, posX, posY, posZ, "delay2") == false) {
+            if (GameUtils.Data.getBlockLogic(level_accessor, pos, "delay2") == false) {
 
-                GameUtils.Data.setBlockLogic(level_accessor, level_server, posX, posY, posZ, "delay2", true);
-                GameUtils.Tile.setScheduleTick(level_server, posX, posY, posZ, 100);
+                GameUtils.Data.setBlockLogic(level_accessor, level_server, pos, "delay2", true);
+                GameUtils.Tile.setScheduleTick(level_server, pos, 100);
 
             } else {
 
-                level_accessor.setBlock(new BlockPos(posX, posY, posZ), GameUtils.Tile.fromText(GameUtils.Data.getBlockText(level_accessor, posX, posY, posZ, "block")), 2);
+                GameUtils.Tile.set(level_accessor, pos, GameUtils.Tile.fromText(GameUtils.Data.getBlockText(level_accessor, pos, "block")), false);
 
                 if (function.isEmpty() == false) {
 
                     Core.DelayedWorks.create(false, 20, () -> {
 
-                        TXTFunction.run(level_accessor, level_server, posX, posY, posZ, "functions/" + function, true);
+                        TXTFunction.run(level_accessor, level_server, pos, "functions/" + function, true);
 
                     });
 

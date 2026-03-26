@@ -92,31 +92,34 @@ public class OverlayMaker {
 
                             if (OutsideUtils.isURLAvailable(path) == true) {
 
-                                try {
+                                // Download Online
+                                {
 
-                                    BufferedImage buffer = ImageIO.read(URI.create(path).toURL());
-                                    NativeImage native_image = new NativeImage(buffer.getWidth(), buffer.getHeight(), false);
+                                    try {
 
-                                    // Color Convert
-                                    {
+                                        BufferedImage buffer = ImageIO.read(URI.create(path).toURL());
+                                        NativeImage native_image = new NativeImage(buffer.getWidth(), buffer.getHeight(), false);
 
-                                        int argb = 0;
-                                        int a = 0;
-                                        int r = 0;
-                                        int g = 0;
-                                        int b = 0;
-                                        int abgr = 0;
+                                        // Color Convert
+                                        {
 
-                                        for (int scanY = 0; scanY < buffer.getHeight(); scanY++) {
+                                            int argb = 0;
+                                            int a = 0;
+                                            int r = 0;
+                                            int g = 0;
+                                            int b = 0;
+                                            int abgr = 0;
 
-                                            for (int scanX = 0; scanX < buffer.getWidth(); scanX++) {
+                                            for (int scanY = 0; scanY < buffer.getHeight(); scanY++) {
 
-                                                argb = buffer.getRGB(scanX, scanY);
-                                                a = (argb >>> 24) & 0xFF;
-                                                r = (argb >>> 16) & 0xFF;
-                                                g = (argb >>> 8) & 0xFF;
-                                                b = (argb) & 0xFF;
-                                                abgr = (a << 24) | (b << 16) | (g << 8) | r;
+                                                for (int scanX = 0; scanX < buffer.getWidth(); scanX++) {
+
+                                                    argb = buffer.getRGB(scanX, scanY);
+                                                    a = (argb >>> 24) & 0xFF;
+                                                    r = (argb >>> 16) & 0xFF;
+                                                    g = (argb >>> 8) & 0xFF;
+                                                    b = (argb) & 0xFF;
+                                                    abgr = (a << 24) | (b << 16) | (g << 8) | r;
 
                                         /*
                                         (1.20.1) (1.21.1)
@@ -124,13 +127,13 @@ public class OverlayMaker {
                                         (1.21.8)
                                         native_image.setPixelABGR(scanX, scanY, abgr);
                                         */
-                                                native_image.setPixelRGBA(scanX, scanY, abgr);
+                                                    native_image.setPixelRGBA(scanX, scanY, abgr);
+
+                                                }
 
                                             }
 
                                         }
-
-                                    }
 
                                     /*
                                     (1.20.1) (1.21.1)
@@ -138,16 +141,22 @@ public class OverlayMaker {
                                     (1.21.8)
                                     Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(() -> "test", native_image));
                                     */
-                                    Minecraft.getInstance().getTextureManager().register(ResourceLocation.parse(name_final), new DynamicTexture(native_image));
+                                        Minecraft.getInstance().getTextureManager().register(ResourceLocation.parse(name_final), new DynamicTexture(native_image));
 
-                                    status.put(name_final, "available");
+                                        status.put(name_final, "available");
 
-                                } catch (Exception exception) {
+                                    } catch (Exception exception) {
 
-                                    status.put(name_final, "fail");
-                                    OutsideUtils.exception(new Exception(), exception, "");
+                                        status.put(name_final, "fail");
+                                        OutsideUtils.exception(new Exception(), exception, "");
+
+                                    }
 
                                 }
+
+                            } else {
+
+                                status.put(name_final, "fail");
 
                             }
 
