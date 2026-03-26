@@ -1,8 +1,0 @@
-{
-  "type": "neoforge:add_features",
-  "biomes": {
-    "type": "neoforge:any"
-  },
-  "features": "tanshugetrees:world_gen_first",
-  "step": "raw_generation"
-}
