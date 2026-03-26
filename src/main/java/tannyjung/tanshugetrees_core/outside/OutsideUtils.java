@@ -22,11 +22,10 @@ public class OutsideUtils {
 
             StackTraceElement from_get = from.getStackTrace()[0];
             Core.logger.error("Found an error reported from {} -> {} -> {}", from_get.getClassName(), from_get.getMethodName(), from_get.getLineNumber());
-            Core.logger.error(exception.getMessage());
 
-            for (StackTraceElement get : exception.getStackTrace()) {
+            if (details.isEmpty() == false) {
 
-                if (get.toString().contains("tannyjung") == true) {
+                for (String get : details.split(" / ")) {
 
                     Core.logger.error(get);
 
@@ -34,9 +33,11 @@ public class OutsideUtils {
 
             }
 
-            if (details.isEmpty() == false) {
+            Core.logger.error(exception.getMessage());
 
-                for (String get : details.split(" / ")) {
+            for (StackTraceElement get : exception.getStackTrace()) {
+
+                if (get.toString().contains("tannyjung") == true) {
 
                     Core.logger.error(get);
 
@@ -166,14 +167,18 @@ public class OutsideUtils {
 
     }
 
-    public static int[] convertPosRotationMirrored (int rotation, boolean mirrored, int posX, int posZ) {
+    public static int[] convertPosRotationMirrored (int rotation, int mirrored, int posX, int posZ) {
 
         int save_posX = posX;
         int save_posZ = posZ;
 
-        if (mirrored == true) {
+        if (mirrored == 1) {
 
             posX = save_posX * (-1);
+
+        } else if (mirrored == 2) {
+
+            posZ = save_posZ * (-1);
 
         }
 
@@ -230,16 +235,20 @@ public class OutsideUtils {
 
     }
 
-    public static int[] convertSizeRotationMirrored (int rotation, boolean mirrored, int sizeX, int sizeZ, int center_sizeX, int center_sizeZ) {
+    public static int[] convertSizeRotationMirrored (int rotation, int mirrored, int sizeX, int sizeZ, int center_sizeX, int center_sizeZ) {
 
         int save_sizeX = sizeX;
         int save_sizeZ = sizeZ;
         int save_center_sizeX = center_sizeX;
         int save_center_sizeZ = center_sizeZ;
 
-        if (mirrored == true) {
+        if (mirrored == 1) {
 
             center_sizeX = save_sizeX - save_center_sizeX;
+
+        } else if (mirrored == 2) {
+
+            center_sizeZ = save_sizeZ - save_center_sizeZ;
 
         }
 
@@ -311,20 +320,6 @@ public class OutsideUtils {
 
     }
 
-    public static String[] convertListToArray (List<String> list) {
-
-        String[] array = new String[list.size()];
-
-        for (int count = 0; count < list.size(); count++) {
-
-            array[count] = list.get(count);
-
-        }
-
-        return array;
-
-    }
-
     public static String getQuardtree (int level, int chunkX, int chunkZ) {
 
         StringBuilder return_text = new StringBuilder();
@@ -353,7 +348,7 @@ public class OutsideUtils {
 
     }
 
-    public static String[] readOnlineTXT (String url) {
+    public static List<String> readOnlineTXT (String url) {
 
         List<String> data = new ArrayList<>();
 
@@ -380,7 +375,7 @@ public class OutsideUtils {
 
         }
 
-        return convertListToArray(data);
+        return data;
 
     }
 

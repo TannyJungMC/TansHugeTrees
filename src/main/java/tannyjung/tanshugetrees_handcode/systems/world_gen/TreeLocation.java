@@ -544,7 +544,7 @@ public class TreeLocation {
     private static void writeData (LevelAccessor level_accessor, RandomSource random, int centerX, int centerZ, String id, Map<String, String> data) {
 
         String path_storage = data.get("path_storage");
-        File chosen = new File(Core.path_config + "/#dev/#temporary/presets/" + path_storage + "/storage");
+        File chosen = new File(Core.path_config + "/#dev/temporary/presets/" + path_storage + "/storage");
 
         // Random Select File
         {
@@ -629,13 +629,41 @@ public class TreeLocation {
 
                     if (mirrored.equals("random") == true) {
 
-                        mirrored = String.valueOf(random.nextBoolean());
+                        mirrored = String.valueOf(random.nextInt(3));
+
+                    } else if (mirrored.equals("off") == true) {
+
+                        mirrored = "0";
+
+                    } else {
+
+                        if (random.nextBoolean() == true) {
+
+                            if (mirrored.equals("random_x") == true) {
+
+                                mirrored = "1";
+
+                            } else if (mirrored.equals("random_z") == true) {
+
+                                mirrored = "2";
+
+                            } else {
+
+                                mirrored = "0";
+
+                            }
+
+                        } else {
+
+                            mirrored = "0";
+
+                        }
 
                     }
 
                 }
 
-                int[] convert = OutsideUtils.convertSizeRotationMirrored(Integer.parseInt(rotation), mirrored.equals("true"), sizeX, sizeZ, center_sizeX, center_sizeZ);
+                int[] convert = OutsideUtils.convertSizeRotationMirrored(Integer.parseInt(rotation), Integer.parseInt(mirrored), sizeX, sizeZ, center_sizeX, center_sizeZ);
                 sizeX = convert[0];
                 sizeZ = convert[1];
                 center_sizeX = convert[2];
@@ -724,7 +752,7 @@ public class TreeLocation {
                     write.add("i" + centerX);
                     write.add("i" + centerZ);
                     write.add("b" + rotation);
-                    write.add("l" + mirrored);
+                    write.add("b" + mirrored);
                     write.add("s" + start_height_offset);
                     write.add("s" + CacheManager.getDictionary(data.get("ground_block"), false));
                     write.add("s" + dead_tree_level);
@@ -935,7 +963,16 @@ public class TreeLocation {
                 }
 
                 convert = CacheManager.Data.getNumberIntArray("dead_tree_auto_level", id);
-                return convert[random.nextInt(convert.length)];
+
+                if (convert.length > 0) {
+
+                    return convert[random.nextInt(convert.length)];
+
+                } else {
+
+                    return 0;
+
+                }
 
             }
 

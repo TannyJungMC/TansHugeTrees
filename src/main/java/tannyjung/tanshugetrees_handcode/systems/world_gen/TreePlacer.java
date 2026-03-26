@@ -40,7 +40,7 @@ public class TreePlacer {
         int centerX = 0;
         int centerZ = 0;
         int rotation = 0;
-        boolean mirrored = false;
+        int mirrored = 0;
         int start_height_offset = 0;
         String ground_block = "";
         int dead_tree_level = 0;
@@ -61,7 +61,7 @@ public class TreePlacer {
                     centerX = data.getInt();
                     centerZ = data.getInt();
                     rotation = data.get();
-                    mirrored = data.get() == 1;
+                    mirrored = data.get();
                     start_height_offset = data.getShort();
                     ground_block = CacheManager.getDictionary(String.valueOf(data.getShort()), true);
                     dead_tree_level = data.getShort();
@@ -87,7 +87,7 @@ public class TreePlacer {
 
     }
 
-    private static void test (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos, int from_chunkX, int from_chunkZ, int to_chunkX, int to_chunkZ, String id, String chosen, int centerX, int centerZ, int rotation, boolean mirrored, int start_height_offset, String ground_block, int dead_tree_level) {
+    private static void test (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos, int from_chunkX, int from_chunkZ, int to_chunkX, int to_chunkZ, String id, String chosen, int centerX, int centerZ, int rotation, int mirrored, int start_height_offset, String ground_block, int dead_tree_level) {
 
         Map<String, Map<String, String>> config = Caches.getConfigWorldGen();
         String path_storage = "";
@@ -203,50 +203,6 @@ public class TreePlacer {
                 test:
                 {
 
-                    // Structure Detection
-                    {
-
-                        int size = FileConfig.structure_detection_size;
-                        ChunkPos chunk_pos_test = null;
-
-                        if (size >= 0) {
-
-                            Map<Structure, LongSet> references = new HashMap<>();
-
-                            for (int scanX = from_chunkX - size; scanX <= to_chunkX + size; scanX++) {
-
-                                for (int scanZ = from_chunkZ - size; scanZ <= to_chunkZ + size; scanZ++) {
-
-                                    chunk_pos_test = new ChunkPos(scanX, scanZ);
-
-                                    if (GameUtils.Space.testChunkStatus(level_accessor, chunk_pos_test, "structure_references") == true) {
-
-                                        references = level_accessor.getChunk(chunk_pos_test.x, chunk_pos_test.z).getAllReferences();
-
-                                        if (references.size() > 0) {
-
-                                            for (Structure structure : references.keySet().toArray(new Structure[0])) {
-
-                                                if (structure.step().equals(GenerationStep.Decoration.SURFACE_STRUCTURES) == true) {
-
-                                                    break test;
-
-                                                }
-
-                                            }
-
-                                        }
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
                     BlockPos pos_original = new BlockPos(centerX, GameUtils.Space.getHeightWorldGen(level_accessor, level_server, chunk_generator, centerX, centerZ, "OCEAN_FLOOR", "OCEAN_FLOOR_WG"), centerZ);
 
                     // Ground Level
@@ -279,7 +235,7 @@ public class TreePlacer {
 
                             if ((type.equals("terrestrial") == true && (pos_original.getY() < highestY)) || (type.equals("aquatic") == true && (pos_original.getY() == highestY))) {
 
-                                RandomSource random = RandomSource.create(level_server.getSeed() ^ ((centerX * 341873128712L) + (centerZ * 132897987541L) + centerY));
+                                RandomSource random = RandomSource.create(level_server.getSeed() ^ ((centerX * 341873128712L) + (centerZ * 132897987541L)));
 
                                 if (random.nextDouble() < FileConfig.unviable_ecology_skip_chance) {
 
@@ -323,7 +279,7 @@ public class TreePlacer {
 
                         } catch (Exception exception) {
 
-                            OutsideUtils.exception(new Exception(), exception, "ID = " + location);
+                            OutsideUtils.exception(new Exception(), exception, "This is normal error when a tree shape is no longer in your world. Here is that shape ID \"" + location + "\"");
                             break test;
 
                         }
@@ -398,6 +354,50 @@ public class TreePlacer {
 
                     }
 
+                    // Structure Detection
+                    {
+
+                        int size = FileConfig.structure_detection_size;
+                        ChunkPos chunk_pos_test = null;
+
+                        if (size >= 0) {
+
+                            Map<Structure, LongSet> references = new HashMap<>();
+
+                            for (int scanX = from_chunkX - size; scanX <= to_chunkX + size; scanX++) {
+
+                                for (int scanZ = from_chunkZ - size; scanZ <= to_chunkZ + size; scanZ++) {
+
+                                    chunk_pos_test = new ChunkPos(scanX, scanZ);
+
+                                    if (GameUtils.Space.testChunkStatus(level_accessor, chunk_pos_test, "structure_references") == true) {
+
+                                        references = level_accessor.getChunk(chunk_pos_test.x, chunk_pos_test.z).getAllReferences();
+
+                                        if (references.size() > 0) {
+
+                                            for (Structure structure : references.keySet().toArray(new Structure[0])) {
+
+                                                if (structure.step().equals(GenerationStep.Decoration.SURFACE_STRUCTURES) == true) {
+
+                                                    break test;
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
                     if (testSurfaceSmoothness(level_accessor, level_server, chunk_generator, location, centerX, centerY, centerZ, sizeX, sizeZ, center_sizeX, center_sizeY, center_sizeZ, rotation, mirrored, fallen_direction, dead_tree_level, pos_original) == false) {
 
                         break test;
@@ -451,7 +451,7 @@ public class TreePlacer {
 
     }
 
-    private static boolean testSurfaceSmoothness (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String location, int centerX, int centerY, int centerZ, int sizeX, int sizeZ, int center_sizeX, int center_sizeY, int center_sizeZ, int rotation, boolean mirrored, int fallen_direction, int dead_tree_level, BlockPos pos_original) {
+    private static boolean testSurfaceSmoothness (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String location, int centerX, int centerY, int centerZ, int sizeX, int sizeZ, int center_sizeX, int center_sizeY, int center_sizeZ, int rotation, int mirrored, int fallen_direction, int dead_tree_level, BlockPos pos_original) {
 
         if (FileConfig.surface_smoothness_detection == true) {
 
@@ -861,7 +861,7 @@ public class TreePlacer {
 
     }
 
-    private static void place (LevelAccessor level_accessor, ServerLevel level_server, ChunkPos chunk_pos, String id, String location, String path_settings, BlockPos pos_center, int rotation, boolean mirrored, int dead_tree_level, int fallen_direction, boolean in_snowy_biome) {
+    private static void place (LevelAccessor level_accessor, ServerLevel level_server, ChunkPos chunk_pos, String id, String location, String path_settings, BlockPos pos_center, int rotation, int mirrored, int dead_tree_level, int fallen_direction, boolean in_snowy_biome) {
 
         short[] shape = Caches.getTreeShapeData(location);
 
@@ -1367,7 +1367,7 @@ public class TreePlacer {
 
                                     }
 
-                                    level_accessor.setBlock(pos, block, 0);
+                                    GameUtils.Tile.set(level_accessor, pos, block, true);
 
                                 }
 
@@ -1405,7 +1405,7 @@ public class TreePlacer {
                                                 {
 
                                                     List<String> data = new ArrayList<>();
-                                                    String[] names = new File(Core.path_config + "/#dev/#temporary/tree_decoration").list();
+                                                    String[] names = new File(Core.path_config + "/#dev/temporary/tree_decoration").list();
 
                                                     if (names != null) {
 
@@ -1445,7 +1445,7 @@ public class TreePlacer {
                                                     {
 
                                                         List<String> data = new ArrayList<>();
-                                                        String[] names = new File(Core.path_config + "/#dev/#temporary/tree_decoration/decay").list();
+                                                        String[] names = new File(Core.path_config + "/#dev/temporary/tree_decoration/decay").list();
 
                                                         if (names != null) {
 
