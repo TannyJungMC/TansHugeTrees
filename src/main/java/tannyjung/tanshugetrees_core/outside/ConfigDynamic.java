@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class ConfigDynamic {
 
-    public static void reorganize (String name, String scan_at) {
+    public static void reorganize (String name, String scan_at, String description) {
 
         File file = new File(Core.path_config + "/config_" + name + ".txt");
         File file_temp = new File(Core.path_config + "/config_" + name + "_temp.txt");
@@ -36,7 +36,7 @@ public class ConfigDynamic {
 
         }
 
-        create(name, scan_at);
+        create(name, scan_at, description);
 
         // Delete Temp
         {
@@ -59,7 +59,7 @@ public class ConfigDynamic {
 
     }
 
-    private static void create (String name, String scan_at) {
+    private static void create (String name, String scan_at, String description) {
 
         File file_organized = new File(Core.path_config + "/#dev/#temporary/" + scan_at);
 
@@ -74,28 +74,19 @@ public class ConfigDynamic {
 
                 {
 
-                    write.append("""
-                            Important Notes
-                            
-                            - No need to run restart command to apply this config, as it's automatic applying.
-                            - To repair missing values, run this command [ /TANSHUGETREES restart ] or restart the world.
-                            - Very important! You must lock the trees you have edited to prevent them from resetting. Do it by change "[]" at font of ID to "[LOCK]". This is for keeping config values you haven't changed to always up to date.
-                            
-                            Config Description
-                            
-                            - world_gen : Enable world generation for that tree by set to [ true ], or disable by [ false ].
-                            - biome / ground_block : Change the biome and ground block that tree can place on. Supported both IDs and tags. These config supported multiple conditions, use [ / ] for [ OR ], use [ , ] for [ AND ]. For example, a tree that spawn in 2 main biomes. One is biomes tagged as forest, but not birch forest. Other one is taiga forest. It will be [ #minecraft:is_forest, !minecraft:birch_forest / minecraft:taiga ]. Important note for ground block, it not works with trees that one side farther than 48 blocks.
-                            - rarity : Change how common of that tree. Lower means rarer. Only supported number between 0 and 100 (can be non-integer number).
-                            - min_distance : Change distance of trees in the same species. This is distance in block with Y position ignored. Only supported number between 0 to 500.
-                            - group_size : Use other placement system to spawn that tree in group style. To use this, set min and max count of trees per group that upper than 1. For example, min 1 and max 5, will be [ 1 <> 5 ]. Be careful to use this, as it can affect scan time. This config also change the way other config options work. Rarity will be how common of the group. Min distance is between trees, not between groups. Waterside config will only detect once at spawn location of that group.
-                            - waterside_chance : Force that tree to only spawn near water biomes. If this chance is not full, it will spawn like normal for that chance left. For example, set this to 0.75, it will spawn like normal tree for 0.25 chance. When use this option with group spawning, it will only detect once at spawn location of that group.
-                            - dead_tree_chance : Set how common of that tree to spawn as dead tree. Note that this config only affect trees in their viable ecosystems, you may found some trees that become dead trees without this config, because that's by tree type inside tree settings. Land trees can't survive in water, etc.
-                            - dead_tree_level : Randomly select style of dead trees, make that tree looks more variants when it's dead tree. This config will be random select a number from the list, or use "auto" and "auto_pine" for automatic selection. Only supported numbers 1XX/2XX/3XX with sub numbers 10/20/30/40/50/60/70/80/90 and 11/21/31/41/51. Set to 1XX for normal dead trees, 2XX and 3XX for coarse woody debris style but with and without roots. For sub numbers 10/20/30/40/50 is no leaves, no sprig, no twig, no limb, and no branch. With random decay 10-50%. For 11/21/31/41/51 is the same as previous but no random decay. For 60/70 is only trunk with random length 50-100% and hollowed. For 80/90 is only trunk with random length 0-50% and hollowed.
-                            - start_height_offset : Randomly spawn that tree with custom height from the ground. To use this, set min and max height. For example, lowest -10 highest +10, will be [ -10 <> 10 ].
-                            - rotation : Set rotation of that tree. For random direction, use [ random ]. For specific direction, use [ north ], [ west ], [ east ], or [ south ]. Only supported one value per tree.
-                            - mirrored : Set mirror effect for that tree. For random value, use [ random ]. For specific value, use [ true ] or [ false ]. Only supported one value per tree.
-                            
-                            """);
+                    write.append("Important Notes");
+                    write.append("\n");
+                    write.append("\n");
+                    write.append("- To apply this config and repair missing values, run this command [ /").append(Core.mod_id_big).append(" restart ] or restart the world.");
+                    write.append("\n");
+                    write.append("- Very important! You must lock the trees you have edited to prevent them from resetting. Do it by change \"[]\" at font of ID to \"[LOCK]\". This is for keeping config values you haven't changed to always up to date.");
+                    write.append("\n");
+                    write.append("\n");
+                    write.append("Config Description");
+                    write.append("\n");
+                    write.append("\n");
+                    write.append(description);
+                    write.append("\n");
 
                 }
 
@@ -155,7 +146,7 @@ public class ConfigDynamic {
 
                     if (read_all.startsWith("[") == true && read_all.endsWith("] " + path) == true) {
 
-                        if (read_all.replace("[INCOMPATIBLE] ", "").startsWith("[LOCK] ") == true) {
+                        if (read_all.replace("[INCOMPATIBLE]", "").startsWith("[LOCK]") == true) {
 
                             replace = false;
 
@@ -314,7 +305,7 @@ public class ConfigDynamic {
                             } else {
 
                                 skip = false;
-                                id = read_all.substring(read_all.indexOf("]") + 2);
+                                id = read_all.substring(read_all.indexOf("]") + 2).replace(" > ", "/");
 
                             }
 
