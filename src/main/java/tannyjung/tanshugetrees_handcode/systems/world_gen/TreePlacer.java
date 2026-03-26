@@ -360,7 +360,7 @@ public class TreePlacer {
 
                     centerY = pos_original.getY();
 
-                    if (dead_tree_level > 200) {
+                    if (dead_tree_level < 300) {
 
                         centerY = centerY + start_height + start_height_offset;
 
