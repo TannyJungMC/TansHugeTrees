@@ -318,7 +318,7 @@ public class GameUtils {
 
 		}
 
-		public static void sendChatMessage (ServerLevel level_server, String target, String data) {
+		public static void sendChatMessage (ServerLevel level_server, String data) {
 
 			String[] split = data.split(" \\| ")[0].split(" / ");
 			String prefix_color = "white";
@@ -329,9 +329,34 @@ public class GameUtils {
 
 			}
 
-            Command.run(level_server, Vec3.ZERO, "tellraw " + target + " [{\"text\":\"\"}," + GameUtils.Data.createText("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod |   | " + data) + "]");
+            Command.run(level_server, Vec3.ZERO, "tellraw @a [{\"text\":\"\"}," + GameUtils.Data.createText("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod (Global) |   | " + data) + "]");
 
         }
+
+		public static void sendChatMessagePrivate (Entity entity, String data) {
+
+			String[] split = data.split(" \\| ")[0].split(" / ");
+			String prefix_color = "white";
+
+			if (split.length > 1) {
+
+				prefix_color = split[1];
+
+			}
+
+			Command.runEntity(entity, "tellraw @s [{\"text\":\"\"}," + GameUtils.Data.createText("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod (Private) |   | " + data) + "]");
+
+		}
+
+		public static void sendChatMessagePrivateGroup (List<Entity> entities, String data) {
+
+			for (Entity entity : entities) {
+
+				sendChatMessagePrivate(entity, data);
+
+			}
+
+		}
 
 		public static void spawnParticle (ServerLevel level_server, Vec3 vec3, double spreadX, double spreadY, double spreadZ, double speed, int count, String id) {
 
@@ -520,6 +545,21 @@ public class GameUtils {
 
 		public static void set (LevelAccessor level_accessor, BlockPos pos, BlockState block, boolean is_world_gen) {
 
+			// World Height Limit
+			{
+
+				if (Space.getBuildHeight(level_accessor, false) > pos.getY()) {
+
+					return;
+
+				} else if (Space.getBuildHeight(level_accessor, true) < pos.getY()) {
+
+					return;
+
+				}
+
+			}
+
 			// Waterlogged
 			{
 
@@ -544,6 +584,21 @@ public class GameUtils {
 		}
 
 		public static void remove (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, boolean is_world_gen) {
+
+			// World Height Limit
+			{
+
+				if (Space.getBuildHeight(level_accessor, false) > pos.getY()) {
+
+					return;
+
+				} else if (Space.getBuildHeight(level_accessor, true) < pos.getY()) {
+
+					return;
+
+				}
+
+			}
 
 			BlockState block = Blocks.AIR.defaultBlockState();
 
