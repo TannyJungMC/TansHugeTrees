@@ -64,14 +64,12 @@ public class TreeLocation {
 
         int regionX = chunk_pos.x >> 5;
         int regionZ = chunk_pos.z >> 5;
-        File file_region = new File(Core.path_world_mod + "/world_gen/#regions/" + dimension + "/" + regionX + "," + regionZ + ".bin");
+        File file_region = new File(Core.path_world_mod + "/world_gen/regions/" + dimension + "/" + regionX + "," + regionZ + ".bin");
 
         if (file_region.exists() == false) {
 
             FileManager.writeBIN(file_region.getPath(), new ArrayList<>(), false);
             Core.logger.info("Generating tree locations for a new region ({} -> {}/{})", dimension.replace("-", ":"), regionX, regionZ);
-
-            RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((regionX * 341873128712L) + (regionZ * 132897987541L)));
             world_gen_overlay_animation = 4;
             world_gen_overlay_bar = 0;
 
@@ -84,18 +82,22 @@ public class TreeLocation {
             // Scanning
             {
 
+                RandomSource random = null;
                 int posX = regionX * 32;
                 int posZ = regionZ * 32;
+                ChunkPos chunk_pos_scan = null;
 
                 for (int scanX = 0; scanX < 32; scanX++) {
 
                     for (int scanZ = 0; scanZ < 32; scanZ++) {
 
                         world_gen_overlay_bar = world_gen_overlay_bar + 1;
+                        chunk_pos_scan = new ChunkPos(posX + scanX, posZ + scanZ);
+                        random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((chunk_pos_scan.x * 341873128712L) + (chunk_pos_scan.z * 132897987541L)));
 
                         if (random.nextDouble() < FileConfig.region_scan_percent * 0.01) {
 
-                            getData(level_accessor, level_server, dimension, random, new ChunkPos(posX + scanX, posZ + scanZ), config);
+                            getData(level_accessor, level_server, dimension, chunk_pos_scan, config);
 
                         }
 
@@ -149,7 +151,7 @@ public class TreeLocation {
 
     }
 
-    private static void getData (LevelAccessor level_accessor, ServerLevel level_server, String dimension, RandomSource random, ChunkPos chunk_pos, Map<String, Map<String, String>> config) {
+    private static void getData (LevelAccessor level_accessor, ServerLevel level_server, String dimension, ChunkPos chunk_pos, Map<String, Map<String, String>> config) {
 
         String biome = "";
         Holder<Biome> biome_center = null;
@@ -160,12 +162,15 @@ public class TreeLocation {
         int min_distance = 0;
         String key = "";
         String[] split = new String[0];
+        RandomSource random = null;
 
         world_gen_overlay_details_tree = "No Matching";
 
         for (Map.Entry<String, Map<String, String>> entry : config.entrySet()) {
 
             if (entry.getValue().get("enable").equals("true") == true) {
+
+                random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((chunk_pos.x * 341873128712L) + (chunk_pos.z * 132897987541L)) + entry.getKey().hashCode());
 
                 if (random.nextDouble() < (Double.parseDouble(entry.getValue().get("rarity")) * 0.01) * FileConfig.multiply_rarity) {
 
@@ -211,16 +216,16 @@ public class TreeLocation {
 
                     }
 
-                    // Waterside and Landside
+                    // Shoreline
                     {
 
-                        if (entry.getValue().get("spawn_type").equals("waterside") == true || entry.getValue().get("spawn_type").equals("landside") == true) {
+                        if (entry.getValue().get("spawn_type").equals("normal") == false) {
 
-                            if (FileConfig.waterside_detection == false) {
+                            if (FileConfig.shoreline_detection == false) {
 
                                 continue;
 
-                            } else if (testWatersideLandside(level_accessor, level_server, new ChunkPos(center_posX >> 4, center_posZ >> 4)) == false) {
+                            } else if (testShoreline(level_accessor, level_server, new ChunkPos(center_posX >> 4, center_posZ >> 4)) == false) {
 
                                 continue;
 
@@ -234,7 +239,7 @@ public class TreeLocation {
                     group_size = (int) ((double) Mth.nextInt(random, Integer.parseInt(split[0]), Integer.parseInt(split[1])) * FileConfig.multiply_group_size);
                     world_gen_overlay_details_biome = biome_center_id;
                     world_gen_overlay_details_tree = entry.getKey();
-                    writeData(level_accessor, random, center_posX, center_posZ, entry.getKey(), entry.getValue());
+                    writeData(level_accessor, center_posX, center_posZ, entry.getKey(), entry.getValue());
 
                     if (group_size > 1) {
 
@@ -245,9 +250,9 @@ public class TreeLocation {
 
                                 biome = "tanshugetrees:water_biomes";
 
-                            } else {
+                            } else if (entry.getValue().get("spawn_type").equals("shoreline") == true) {
 
-                                biome = entry.getValue().get("biome");
+                                biome = biome + " / tanshugetrees:water_biomes";
 
                             }
 
@@ -293,7 +298,7 @@ public class TreeLocation {
 
                                 }
 
-                                writeData(level_accessor, random, center_posX, center_posZ, entry.getKey(), entry.getValue());
+                                writeData(level_accessor, center_posX, center_posZ, entry.getKey(), entry.getValue());
 
                             }
 
@@ -519,9 +524,9 @@ public class TreeLocation {
 
     }
 
-    private static boolean testWatersideLandside (LevelAccessor level_accessor, ServerLevel level_server, ChunkPos center_chunk_pos) {
+    private static boolean testShoreline (LevelAccessor level_accessor, ServerLevel level_server, ChunkPos center_chunk_pos) {
 
-        if (FileConfig.waterside_detection == false) {
+        if (FileConfig.shoreline_detection == false) {
 
             return false;
 
@@ -541,10 +546,11 @@ public class TreeLocation {
 
     }
 
-    private static void writeData (LevelAccessor level_accessor, RandomSource random, int centerX, int centerZ, String id, Map<String, String> data) {
+    private static void writeData (LevelAccessor level_accessor, int centerX, int centerZ, String id, Map<String, String> data) {
 
         String path_storage = data.get("path_storage");
-        File chosen = new File(Core.path_config + "/#dev/temporary/presets/" + path_storage + "/storage");
+        File chosen = new File(Core.path_config + "/dev/temporary/presets/" + path_storage + "/storage");
+        RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((centerX * 341873128712L) + (centerZ * 132897987541L)));
 
         // Random Select File
         {

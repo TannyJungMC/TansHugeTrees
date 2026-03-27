@@ -67,7 +67,7 @@ public class ShapeFileConverter {
         // Get data
         {
 
-            File file = new File(Core.path_config + "/#dev/shape_file_converter/#shape_file_converter.txt");
+            File file = new File(Core.path_config + "/dev/shape_file_converter/settings.txt");
 
             if (file.exists() == true && file.isDirectory() == false) {
 
@@ -93,7 +93,15 @@ public class ShapeFileConverter {
 
         }
 
-        File file = new File(Core.path_config + "/#dev/temporary/presets/" + file_location[0] + "/" + file_location[1] + "/" + file_location[1] + ".txt");
+        boolean is_extracted = true;
+        File file = new File(Core.path_config + "/custom_packs/" + file_location[0] + "/presets/" + file_location[1] + "/" + file_location[1] + ".txt");
+
+        if (file.exists() == false) {
+
+            is_extracted = false;
+            file = new File(Core.path_config + "/dev/temporary/presets/" + file_location[0] + "/" + file_location[1] + "/" + file_location[1] + ".txt");
+
+        }
 
         if (file.exists() == true && file.isDirectory() == false) {
 
@@ -119,6 +127,7 @@ public class ShapeFileConverter {
                 GameUtils.Data.setEntityNumber(entity_summon, "tree_generator_speed_tick", 1);
                 GameUtils.Data.setEntityNumber(entity_summon, "tree_generator_speed_repeat", 0);
                 GameUtils.Data.setEntityText(entity_summon, "name", file_location[1]);
+                GameUtils.Data.setEntityLogic(entity_summon, "is_extracted", is_extracted);
 
             }
 
@@ -137,7 +146,16 @@ public class ShapeFileConverter {
         String name = GameUtils.Data.getEntityText(entity, "name");
         String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss-SSS").format(Calendar.getInstance().getTime());
         GameUtils.Data.setEntityText(entity, "export_file_name", name + "_" + time + ".bin");
-        GameUtils.Misc.sendChatMessage(level_server, "Generating  / aqua | " + GameUtils.Data.getEntityText(entity, "export_file_name").replace(" (generating)", ""));
+
+        if (GameUtils.Data.getEntityLogic(entity, "is_extracted") == true) {
+
+            GameUtils.Misc.sendChatMessage(level_server, "Generating  / aqua | " + GameUtils.Data.getEntityText(entity, "export_file_name").replace(" (generating)", "") + "  | [?] / dark_gray / From Extracted");
+
+        } else {
+
+            GameUtils.Misc.sendChatMessage(level_server, "Generating  / aqua | " + GameUtils.Data.getEntityText(entity, "export_file_name").replace(" (generating)", "") + "  | [?] / dark_gray / From Unextracted");
+
+        }
 
         // Write Settings
         {
@@ -181,7 +199,7 @@ public class ShapeFileConverter {
 
             }
 
-            FileManager.writeTXT(Core.path_config + "/#dev/shape_file_converter/" + name + "/" + name + "_settings.txt", write.toString(), false);
+            FileManager.writeTXT(Core.path_config + "/dev/shape_file_converter/" + name + "/" + name + "_settings.txt", write.toString(), false);
 
         }
 
@@ -503,7 +521,7 @@ public class ShapeFileConverter {
 
         }
 
-        String path = Core.path_config + "/#dev/shape_file_converter/" + GameUtils.Data.getEntityText(entity, "name") + "/storage/" + GameUtils.Data.getEntityText(entity, "export_file_name");
+        String path = Core.path_config + "/dev/shape_file_converter/" + GameUtils.Data.getEntityText(entity, "name") + "/storage/" + GameUtils.Data.getEntityText(entity, "export_file_name");
         FileManager.writeBIN(path, start_data, false);
         FileManager.writeBIN(path, data, true);
         GameUtils.Misc.sendChatMessage(level_server, "Completed! / green");

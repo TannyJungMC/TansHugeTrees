@@ -130,10 +130,11 @@ public class Core {
                     DelayedWorks.create(true, 20, () -> {
 
                         runnable.run();
+                        String cache_size = CacheManager.clear();
 
                         if (chat_message == true) {
 
-                            GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches, about " + CacheManager.clear() + ". / gray");
+                            GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches, about " + cache_size + ". / gray");
 
                         }
 

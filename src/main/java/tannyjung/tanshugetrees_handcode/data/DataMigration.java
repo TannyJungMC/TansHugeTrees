@@ -12,7 +12,7 @@ public class DataMigration {
 
         if (type.contains("config") == true) {
 
-            String path = Core.path_config + "/#dev/version.txt";
+            String path = Core.path_config + "/dev/version.txt";
             File test_exist = new File(Core.path_config).getParentFile();
             String version = "";
 
@@ -31,7 +31,7 @@ public class DataMigration {
 
             }
 
-            config.test(version);
+            runConfig(version);
             FileManager.writeTXT(path, Core.data_structure_version_mod, false);
 
         }
@@ -57,38 +57,34 @@ public class DataMigration {
 
             }
 
-            world.test(version);
+            runWorld(version);
             FileManager.writeTXT(path, Core.data_structure_version_mod, false);
 
         }
 
     }
 
-    private static class config {
+    private static void runConfig (String version) {
 
-        private static void test (String version) {
+        if (version.isEmpty() == true) {
 
-            if (version.isEmpty() == true) DataMigration.config.run.failed();
-            if (OutsideUtils.testVersion("1.8.0", version).equals("outdated") == true) run.before_1_8_0();
-
-        }
-
-        private static class run {
-
-            private static void failed () {
+            {
 
                 Core.logger.info("Running config data migration for failed condition");
                 FileManager.delete(Core.path_config + "/#dev");
                 FileManager.rename(Core.path_config + "/custom_packs/THT-tree_pack-main", "#TannyJung-Main-Pack");
                 FileManager.rename(Core.path_config + "/custom_packs/TannyJung-Main-Pack", "#TannyJung-Main-Pack");
-                FileManager.rename(Core.path_config + "/config_world_gen.txt", "config_worldgen.txt");
 
             }
 
-            private static void before_1_8_0 () {
+        }
+
+        if (OutsideUtils.testVersion("1.8.0", version).equals("outdated") == true) {
+
+            {
 
                 Core.logger.info("Running config data migration for 1.8.0");
-                FileManager.rename(Core.path_config + "/#dev/temporary", "temporary");
+                FileManager.rename(Core.path_config + "/config_worldgen.txt", "config_world_gen.txt");
 
             }
 
@@ -96,28 +92,27 @@ public class DataMigration {
 
     }
 
-    private static class world {
+    private static void runWorld (String version) {
 
-        private static void test (String version) {
+        if (version.isEmpty() == true) {
 
-            if (version.isEmpty() == true) run.failed();
-            if (OutsideUtils.testVersion("1.8.0", version).equals("outdated") == true) run.before_1_8_0();
-
-        }
-
-        private static class run {
-
-            private static void failed () {
+            {
 
                 Core.logger.info("Running world data migration for failed condition");
                 FileManager.delete(Core.path_world_mod);
 
             }
 
-            private static void before_1_8_0 () {
+        }
+
+        if (OutsideUtils.testVersion("1.8.0", version).equals("outdated") == true) {
+
+            {
 
                 Core.logger.info("Running world data migration for 1.8.0");
-                FileManager.delete(Core.path_world_mod + "/world_gen");
+                FileManager.delete(Core.path_world_mod + "/world_gen/place");
+                FileManager.delete(Core.path_world_mod + "/world_gen/detailed_detection");
+                FileManager.rename(Core.path_world_mod + "/world_gen/#regions", "regions");
 
             }
 

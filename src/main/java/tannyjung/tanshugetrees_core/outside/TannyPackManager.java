@@ -96,7 +96,7 @@ public class TannyPackManager {
                     // Get Version (Your)
                     {
 
-                        for (String read_all : FileManager.readTXT(Core.path_config + "/#dev/temporary/info/" + pack.getName() + ".txt")) {
+                        for (String read_all : FileManager.readTXT(Core.path_config + "/dev/temporary/info/" + pack.getName() + ".txt")) {
 
                             if (read_all.startsWith("pack_version = ")) {
 

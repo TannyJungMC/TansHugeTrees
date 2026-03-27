@@ -17,7 +17,7 @@ public class PresetFixer {
 
     public static void start (ServerLevel level_server) {
 
-        File template = new File(Core.path_config + "/#dev/temporary/#dev/preset_template.txt");
+        File template = new File(Core.path_config + "/dev/temporary/#dev/preset_template.txt");
 
         if (template.exists() == true && template.isDirectory() == false) {
 

@@ -17,7 +17,7 @@ public class WorldGenStepEnd {
 
             String path_suffix = dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + ".bin";
 
-            File file = new File(Core.path_world_mod + "/world_gen/#regions/" + path_suffix);
+            File file = new File(Core.path_world_mod + "/world_gen/regions/" + path_suffix);
             List<String> test = new ArrayList<>();
             test.add("b0");
             FileManager.writeBIN(file.getPath(), test, true);

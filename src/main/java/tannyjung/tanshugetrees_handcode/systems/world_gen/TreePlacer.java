@@ -1405,7 +1405,7 @@ public class TreePlacer {
                                                 {
 
                                                     List<String> data = new ArrayList<>();
-                                                    String[] names = new File(Core.path_config + "/#dev/temporary/tree_decoration").list();
+                                                    String[] names = new File(Core.path_config + "/dev/temporary/tree_decoration").list();
 
                                                     if (names != null) {
 
@@ -1445,7 +1445,7 @@ public class TreePlacer {
                                                     {
 
                                                         List<String> data = new ArrayList<>();
-                                                        String[] names = new File(Core.path_config + "/#dev/temporary/tree_decoration/decay").list();
+                                                        String[] names = new File(Core.path_config + "/dev/temporary/tree_decoration/decay").list();
 
                                                         if (names != null) {
 

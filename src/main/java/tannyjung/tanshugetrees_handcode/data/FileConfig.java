@@ -26,7 +26,7 @@ public class FileConfig {
 	public static boolean abscission_world_gen = false;
     public static Set<String> dead_tree_auto_level = new HashSet<>();
 
-	public static boolean waterside_detection = false;
+	public static boolean shoreline_detection = false;
 	public static boolean surface_smoothness_detection = false;
     public static int surface_smoothness_detection_percent = 0;
     public static int surface_smoothness_detection_height_up = 0;
@@ -123,8 +123,8 @@ public class FileConfig {
                 World Generation : Surrounding Area Detection
                 ----------------------------------------------------------------------------------------------------
                 
-                waterside_detection = true
-                | Enable waterside system for trees that use this feature. If disable this, all waterside trees will be skipped and not spawn anywhere.
+                shoreline_detection = true
+                | Enable shoreline system for trees that use this feature. If disable this, all trees that spawn at waterside, landside, and shoreline will be skipped and not spawn anywhere.
                 
                 surface_smoothness_detection = true
                 | Force the trees to only spawn on good areas. Note that this system only detects 4 points around tree center, so it's not 100% perfect.
@@ -264,7 +264,7 @@ public class FileConfig {
 		abscission_world_gen = Boolean.parseBoolean(data.get("abscission_world_gen"));
         dead_tree_auto_level = new HashSet<>(List.of(data.get("dead_tree_auto_level").split(" / ")));
 
-		waterside_detection = Boolean.parseBoolean(data.get("waterside_detection"));
+		shoreline_detection = Boolean.parseBoolean(data.get("shoreline_detection"));
         surface_smoothness_detection = Boolean.parseBoolean(data.get("surface_smoothness_detection"));
 		surface_smoothness_detection_percent = Integer.parseInt(data.get("surface_smoothness_detection_percent"));
         surface_smoothness_detection_height_up = Integer.parseInt(data.get("surface_smoothness_detection_height_up"));

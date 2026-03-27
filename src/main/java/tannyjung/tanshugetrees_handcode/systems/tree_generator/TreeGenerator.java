@@ -38,18 +38,18 @@ public class TreeGenerator {
 
         File file = new File(Core.path_config + "/custom_packs/" + name_pack + "/presets/" + name_tree + "/" + name_tree + ".txt");
 
-        if (file.exists() == true && file.isDirectory() == false) {
+        if (file.exists() == true) {
 
             GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", GameUtils.Data.convertFileToForgeData(file.getPath()));
             GameUtils.Misc.sendChatMessage(level_server, "Summoned a tree generator at " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + "  / gray | [?] / dark_gray / " + path + " (Extracted)");
 
         } else {
 
-            file = new File(Core.path_config + "/#dev/temporary/presets/" + name_pack + "/" + name_tree + "/" + name_tree + ".txt");
+            file = new File(Core.path_config + "/dev/temporary/presets/" + name_pack + "/" + name_tree + "/" + name_tree + ".txt");
 
-            if (file.exists() == true && file.isDirectory() == false) {
+            if (file.exists() == true) {
 
-                GameUtils.Misc.sendChatMessage(level_server, "Summoned a tree generator at " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + "  / gray | [?] / dark_gray / " + path + " (Unxtracted)");
+                GameUtils.Misc.sendChatMessage(level_server, "Summoned a tree generator at " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + "  / gray | [?] / dark_gray / " + path + " (Unextracted)");
                 GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", GameUtils.Data.convertFileToForgeData(file.getPath()));
 
             } else {
@@ -211,20 +211,32 @@ public class TreeGenerator {
 
             if (gen_step.equals("summon") == true) {
 
-                Step.summon(level_server, entity, id, gen_type, type_pre_next);
+                if (Step.summon(level_server, entity, id, gen_type, type_pre_next) == false) {
+
+                    return;
+
+                }
 
             } else if (gen_step.equals("calculation") == true) {
 
-                Step.calculation(level_server, entity, id, gen_type, type_pre_next);
+                if (Step.calculation(level_server, entity, id, gen_type, type_pre_next) == false) {
+
+                    return;
+
+                }
 
             } else if (gen_step.equals("build") == true) {
 
-                Step.build(level_accessor, level_server, entity, id, gen_type, type_pre_next);
+                if (Step.build(level_accessor, level_server, entity, id, gen_type, type_pre_next) == false) {
+
+                    return;
+
+                }
 
             } else {
 
                 Step.end(level_accessor, level_server, entity, id);
-                break;
+                return;
 
             }
 
@@ -345,7 +357,7 @@ public class TreeGenerator {
 
     private static class Step {
 
-        private static void summon (ServerLevel level_server, Entity entity, String id, String gen_type, String[] type_pre_next) {
+        private static boolean summon (ServerLevel level_server, Entity entity, String id, String gen_type, String[] type_pre_next) {
 
             boolean is_taproot_trunk = gen_type.equals("taproot") == true || gen_type.equals("trunk") == true;
 
@@ -529,29 +541,33 @@ public class TreeGenerator {
 
                 Entity entity_at = GameUtils.Mob.getAtEverywhereOne(level_server, "minecraft:marker", "TANSHUGETREES-" + id + " / TANSHUGETREES-" + at_part);
 
-                if (entity_at != null) {
+                if (entity_at == null) {
 
-                    Vec3 vec3 = GameUtils.Space.getPosLook(entity_at, horizontal, vertical, forward);
-                    Entity entity_summon = GameUtils.Mob.summon(level_server, vec3.add(0, height, 0), "minecraft:marker", "Tree Generator (" + gen_type + ")", "TANSHUGETREES-" + id + " / TANSHUGETREES-generator_" + gen_type, "");
+                    return false;
 
-                    if (is_taproot_trunk == true) {
+                }
 
-                        entity_summon.setXRot(Mth.nextInt(RandomSource.create(), (int) GameUtils.Data.getEntityNumber(entity, gen_type + "_start_gravity_max"), (int) GameUtils.Data.getEntityNumber(entity, gen_type + "_start_gravity_min")));
-                        entity_summon.setYRot(Mth.nextInt(RandomSource.create(), (int) GameUtils.Data.getEntityNumber(entity, gen_type + "_start_direction_min"), (int) GameUtils.Data.getEntityNumber(entity, gen_type + "_start_direction_max")));
+                Vec3 vec3 = GameUtils.Space.getPosLook(entity_at, horizontal, vertical, forward);
+                Entity entity_summon = GameUtils.Mob.summon(level_server, vec3.add(0, height, 0), "minecraft:marker", "Tree Generator (" + gen_type + ")", "TANSHUGETREES-" + id + " / TANSHUGETREES-generator_" + gen_type, "");
 
-                    } else {
+                if (is_taproot_trunk == true) {
 
-                        Entity entity_pre = GameUtils.Mob.getAtEverywhereOne(level_server, "minecraft:marker", "TANSHUGETREES-" + id + " / TANSHUGETREES-generator_" + type_pre_next[0]);
+                    entity_summon.setXRot(Mth.nextInt(RandomSource.create(), (int) GameUtils.Data.getEntityNumber(entity, gen_type + "_start_gravity_max"), (int) GameUtils.Data.getEntityNumber(entity, gen_type + "_start_gravity_min")));
+                    entity_summon.setYRot(Mth.nextInt(RandomSource.create(), (int) GameUtils.Data.getEntityNumber(entity, gen_type + "_start_direction_min"), (int) GameUtils.Data.getEntityNumber(entity, gen_type + "_start_direction_max")));
 
-                        if (entity_pre != null) {
+                } else {
 
-                            entity_summon.lookAt(EntityAnchorArgument.Anchor.FEET, entity_pre.position());
-                            entity_summon.setPos(entity_pre.position());
-                            entity_summon.lookAt(EntityAnchorArgument.Anchor.FEET, GameUtils.Space.getPosLook(entity_summon, 0, 0, -1));
+                    Entity entity_pre = GameUtils.Mob.getAtEverywhereOne(level_server, "minecraft:marker", "TANSHUGETREES-" + id + " / TANSHUGETREES-generator_" + type_pre_next[0]);
 
-                        }
+                    if (entity_pre == null) {
+
+                        return false;
 
                     }
+
+                    entity_summon.lookAt(EntityAnchorArgument.Anchor.FEET, entity_pre.position());
+                    entity_summon.setPos(entity_pre.position());
+                    entity_summon.lookAt(EntityAnchorArgument.Anchor.FEET, GameUtils.Space.getPosLook(entity_summon, 0, 0, -1));
 
                 }
 
@@ -573,6 +589,7 @@ public class TreeGenerator {
             }
 
             GameUtils.Data.addEntityNumber(entity, gen_type + "_count", -1);
+            return true;
 
         }
 
@@ -615,13 +632,13 @@ public class TreeGenerator {
             return return_number;
         }
 
-        private static void calculation (ServerLevel level_server, Entity entity, String id, String gen_type, String[] type_pre_next) {
+        private static boolean calculation (ServerLevel level_server, Entity entity, String id, String gen_type, String[] type_pre_next) {
 
             Entity entity_current = GameUtils.Mob.getAtEverywhereOne(level_server, "minecraft:marker", "TANSHUGETREES-" + id + " / TANSHUGETREES-generator_" + gen_type);
 
             if (entity_current == null) {
 
-                return;
+                return false;
 
             }
 
@@ -742,19 +759,21 @@ public class TreeGenerator {
 
                                     Entity entity_trunk = GameUtils.Mob.getAtEverywhereOne(level_server, "minecraft:marker", "TANSHUGETREES-" + id + " / TANSHUGETREES-generator_trunk");
 
-                                    if (entity_trunk != null) {
+                                    if (entity_trunk == null) {
 
-                                        Vec3 vec3 = entity_current.position();
-
-                                        entity_current.setPos(GameUtils.Space.getPosLook(entity_current, 0, 0, 1));
-                                        entity_current.lookAt(EntityAnchorArgument.Anchor.FEET, entity_trunk.position());
-                                        entity_current.setPos(GameUtils.Space.getPosLook(entity_current, 0, 0, -(centripetal)));
-
-                                        entity_current.lookAt(EntityAnchorArgument.Anchor.FEET, vec3);
-                                        entity_current.setPos(vec3);
-                                        entity_current.lookAt(EntityAnchorArgument.Anchor.FEET, GameUtils.Space.getPosLook(entity_current, 0, 0, -1));
+                                        return false;
 
                                     }
+
+                                    Vec3 vec3 = entity_current.position();
+
+                                    entity_current.setPos(GameUtils.Space.getPosLook(entity_current, 0, 0, 1));
+                                    entity_current.lookAt(EntityAnchorArgument.Anchor.FEET, entity_trunk.position());
+                                    entity_current.setPos(GameUtils.Space.getPosLook(entity_current, 0, 0, -(centripetal)));
+
+                                    entity_current.lookAt(EntityAnchorArgument.Anchor.FEET, vec3);
+                                    entity_current.setPos(vec3);
+                                    entity_current.lookAt(EntityAnchorArgument.Anchor.FEET, GameUtils.Space.getPosLook(entity_current, 0, 0, -1));
 
                                 }
 
@@ -844,9 +863,11 @@ public class TreeGenerator {
 
             }
 
+            return true;
+
         }
 
-        private static void build (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, String id, String gen_type, String[] type_pre_next) {
+        private static boolean build (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, String id, String gen_type, String[] type_pre_next) {
 
             double thickness = GameUtils.Data.getEntityNumber(entity, gen_type + "_thickness");
             double size = 0.0;
@@ -894,7 +915,7 @@ public class TreeGenerator {
 
                             if (entity_current == null) {
 
-                                return;
+                                return false;
 
                             }
 
@@ -913,7 +934,7 @@ public class TreeGenerator {
 
                                 if (entity_pre == null) {
 
-                                    return;
+                                    return false;
 
                                 }
 
@@ -1085,12 +1106,7 @@ public class TreeGenerator {
 
                                                 String previous_block = buildGetPreviousBlock(level_accessor, pos);
                                                 String block_type = buildGetBlockType(entity, gen_type, previous_block, radius, build_area);
-
-                                                if (buildPlaceBlock(level_accessor, level_server, entity, pos, gen_type, block_type, previous_block, replace) == false) {
-
-                                                    return;
-
-                                                }
+                                                buildPlaceBlock(level_accessor, level_server, entity, pos, gen_type, block_type, previous_block, replace);
 
                                             }
 
@@ -1120,13 +1136,11 @@ public class TreeGenerator {
 
                                                         if (buildPlaceBlock(level_accessor, level_server, entity, pos_leaves, gen_type, block_type, previous_block, replace) == false) {
 
-                                                            return;
+                                                            break;
 
                                                         }
 
                                                     }
-
-                                                    return;
 
                                                 }
 
@@ -1151,6 +1165,7 @@ public class TreeGenerator {
             // If it builds to the end without any break
             GameUtils.Data.setEntityLogic(entity, "still_building", false);
             GameUtils.Data.setEntityText(entity, "gen_step", "calculation");
+            return true;
 
         }
 

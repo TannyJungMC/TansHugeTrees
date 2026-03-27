@@ -29,7 +29,7 @@ public class Caches {
 
                 try {
 
-                    path = Core.path_config + "/#dev/temporary/presets/" + split[0] + "/storage/" + split[1];
+                    path = Core.path_config + "/dev/temporary/presets/" + split[0] + "/storage/" + split[1];
 
                 } catch (Exception exception) {
 
@@ -113,7 +113,7 @@ public class Caches {
 
     public static Map<String, Map<String, String>> getConfigWorldGen () {
 
-        return ConfigDynamic.getData("worldgen", "enable -> false / spawn_type -> normal / biome -> none / ground_block -> none / rarity -> 0 / min_distance -> 0 / group_size -> 0 <> 0 / waterside_chance -> 0.0 / dead_tree_chance -> 0.0 / dead_tree_level -> auto / start_height_offset -> 0 <> 0 / rotation -> random / mirrored -> random / path_storage -> none / path_settings -> none");
+        return ConfigDynamic.getData("world_gen", "enable -> false / spawn_type -> normal / biome -> none / ground_block -> none / rarity -> 0 / min_distance -> 0 / group_size -> 0 <> 0 / waterside_chance -> 0.0 / dead_tree_chance -> 0.0 / dead_tree_level -> auto / start_height_offset -> 0 <> 0 / rotation -> random / mirrored -> random / path_storage -> none / path_settings -> none");
 
     }
 
@@ -121,7 +121,7 @@ public class Caches {
 
         if (CacheManager.Data.existTextList("tree_settings", id) == false) {
 
-            List<String> data = FileManager.readTXT(Core.path_config + "/#dev/temporary/presets/" + id + ".txt");
+            List<String> data = FileManager.readTXT(Core.path_config + "/dev/temporary/presets/" + id + ".txt");
             CacheManager.Data.setTextList("tree_settings", id, data);
 
         }

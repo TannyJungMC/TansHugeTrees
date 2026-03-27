@@ -14,7 +14,7 @@ public class SaplingTrader {
 
     public static void summonTrader (ServerLevel level_server, BlockPos pos) {
 
-        File[] files = new File(Core.path_config + "/#dev/temporary/sapling_trader").listFiles();
+        File[] files = new File(Core.path_config + "/dev/temporary/sapling_trader").listFiles();
         StringBuilder write = new StringBuilder();
 
         // Generate Data

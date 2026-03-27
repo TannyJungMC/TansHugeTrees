@@ -206,7 +206,7 @@ public class CacheManager {
 
             if (cache_text_list.get("functions").containsKey(path) == false) {
 
-                List<String> data = FileManager.readTXT(Core.path_config + "/#dev/temporary/" + path + ".txt");
+                List<String> data = FileManager.readTXT(Core.path_config + "/dev/temporary/" + path + ".txt");
                 cache_text_list.get("functions").put(path, data);
 
             }

@@ -37,7 +37,7 @@ public class TreeSummonerStaff {
         }
 
         ServerLevel level_server = (ServerLevel) level_accessor;
-        BlockPos pos = BlockPos.containing(GameUtils.Space.getPosRay(entity, 200));
+        BlockPos pos = BlockPos.containing(GameUtils.Space.getPosRay(entity, 500));
 
         if (level_accessor.getBlockState(pos.above()).canBeReplaced() == false || level_accessor.getBlockState(pos.below()).canBeReplaced() == false || level_accessor.getBlockState(pos.north()).canBeReplaced() == false || level_accessor.getBlockState(pos.west()).canBeReplaced() == false || level_accessor.getBlockState(pos.east()).canBeReplaced() == false || level_accessor.getBlockState(pos.south()).canBeReplaced() == false) {
 

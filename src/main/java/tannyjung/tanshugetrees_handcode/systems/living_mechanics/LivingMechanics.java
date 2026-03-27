@@ -126,7 +126,7 @@ public class LivingMechanics {
         String[] file_path_data = GameUtils.Data.getEntityText(entity, "file").split("\\|");
         String path_storage = file_path_data[0];
         String chosen = file_path_data[1];
-        File file = new File(Core.path_config + "/#dev/temporary/presets/" + path_storage + "/storage/" + chosen);
+        File file = new File(Core.path_config + "/dev/temporary/presets/" + path_storage + "/storage/" + chosen);
 
         if (file.exists() == true && file.isDirectory() == false) {
 
