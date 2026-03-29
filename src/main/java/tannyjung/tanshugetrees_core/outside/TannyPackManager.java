@@ -612,7 +612,7 @@ public class TannyPackManager {
 
                     }
 
-                    Core.Restart.run(level_server, true, true);
+                    Core.Restart.run(level_server, true);
 
                 }
 

@@ -10,6 +10,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.CacheManager;
+import tannyjung.tanshugetrees_core.outside.ConfigDynamic;
 import tannyjung.tanshugetrees_core.outside.FileManager;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 import tannyjung.tanshugetrees_core.game.GameUtils;
@@ -38,7 +39,7 @@ public class TreeLocation {
 
         synchronized (lock) {
 
-            Map<String, Map<String, String>> config = Caches.getConfigWorldGen();
+            Map<String, Map<String, String>> config = ConfigDynamic.getData("world_gen");
 
             if (config.isEmpty() == false) {
 
@@ -831,7 +832,7 @@ public class TreeLocation {
 
                 int[] convert = new int[0];
 
-                if (CacheManager.Data.existTextList("dead_tree_auto_level", id) == false) {
+                if (CacheManager.Data.existMapTextListText("dead_tree_auto_level", id) == false) {
 
                     int is_pine = 0;
 
@@ -964,11 +965,11 @@ public class TreeLocation {
 
                     }
 
-                    CacheManager.Data.setNumberIntArray("dead_tree_auto_level", id, convert);
+                    CacheManager.Data.setMapStringArrayNumberInt("dead_tree_auto_level", id, convert);
 
                 }
 
-                convert = CacheManager.Data.getNumberIntArray("dead_tree_auto_level", id);
+                convert = CacheManager.Data.getMapStringArrayNumberInt("dead_tree_auto_level").get(id);
 
                 if (convert.length > 0) {
 

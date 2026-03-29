@@ -15,7 +15,7 @@ public class Caches {
 
     private static void getTreeShape (String id) {
 
-        if (CacheManager.Data.existNumberShortArray("tree_shape_size", id) == false) {
+        if (CacheManager.Data.existMapStringArrayNumberShort("tree_shape_size", id) == false) {
 
             short[] data_size = new short[0];
             int[] data_block_count = new int[0];
@@ -82,9 +82,9 @@ public class Caches {
 
             }
 
-            CacheManager.Data.setNumberShortArray("tree_shape_size", id, data_size);
-            CacheManager.Data.setNumberIntArray("tree_shape_block_count", id, data_block_count);
-            CacheManager.Data.setNumberShortArray("tree_shape_data", id, data_shape);
+            CacheManager.Data.setMapStringArrayNumberShort("tree_shape_size", id, data_size);
+            CacheManager.Data.setMapStringArrayNumberInt("tree_shape_block_count", id, data_block_count);
+            CacheManager.Data.setMapStringArrayNumberShort("tree_shape_data", id, data_shape);
 
         }
 
@@ -93,40 +93,34 @@ public class Caches {
     public static short[] getTreeShapeSize (String id) {
 
         getTreeShape(id);
-        return CacheManager.Data.getNumberShortArray("tree_shape_size", id);
+        return CacheManager.Data.getMapStringArrayNumberShort("tree_shape_size").get(id);
 
     }
 
     public static int[] getTreeShapeBlockCount (String id) {
 
         getTreeShape(id);
-        return CacheManager.Data.getNumberIntArray("tree_shape_block_count", id);
+        return CacheManager.Data.getMapStringArrayNumberInt("tree_shape_block_count").get(id);
 
     }
 
     public static short[] getTreeShapeData (String id) {
 
         getTreeShape(id);
-        return CacheManager.Data.getNumberShortArray("tree_shape_data", id);
-
-    }
-
-    public static Map<String, Map<String, String>> getConfigWorldGen () {
-
-        return ConfigDynamic.getData("world_gen", "enable -> false / spawn_type -> normal / biome -> none / ground_block -> none / rarity -> 0 / min_distance -> 0 / group_size -> 0 <> 0 / waterside_chance -> 0.0 / dead_tree_chance -> 0.0 / dead_tree_level -> auto / start_height_offset -> 0 <> 0 / rotation -> random / mirrored -> random / path_storage -> none / path_settings -> none");
+        return CacheManager.Data.getMapStringArrayNumberShort("tree_shape_data").get(id);
 
     }
 
     public static List<String> getTreeSettings (String id) {
 
-        if (CacheManager.Data.existTextList("tree_settings", id) == false) {
+        if (CacheManager.Data.existMapTextListText("tree_settings", id) == false) {
 
             List<String> data = FileManager.readTXT(Core.path_config + "/dev/temporary/presets/" + id + ".txt");
-            CacheManager.Data.setTextList("tree_settings", id, data);
+            CacheManager.Data.setMapTextListText("tree_settings", id, data);
 
         }
 
-        return CacheManager.Data.getTextList("tree_settings", id);
+        return CacheManager.Data.getMapTextListText("tree_settings").get(id);
 
     }
 

@@ -89,7 +89,7 @@ public class TreePlacer {
 
     private static void test (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos, int from_chunkX, int from_chunkZ, int to_chunkX, int to_chunkZ, String id, String chosen, int centerX, int centerZ, int rotation, int mirrored, int start_height_offset, String ground_block, int dead_tree_level) {
 
-        Map<String, Map<String, String>> config = Caches.getConfigWorldGen();
+        Map<String, Map<String, String>> config = ConfigDynamic.getData("world_gen");
         String path_storage = "";
         String path_settings = "";
 
@@ -245,7 +245,7 @@ public class TreePlacer {
 
                                 if (dead_tree_level == 0) {
 
-                                    Map<String, String> data = Caches.getConfigWorldGen().get(id);
+                                    Map<String, String> data = ConfigDynamic.getData("world_gen").get(id);
                                     dead_tree_level = TreeLocation.getDeadTreeLevel(data, random, location, id, true);
 
                                 }
@@ -1400,7 +1400,7 @@ public class TreePlacer {
                                         // Normal
                                         {
 
-                                            if (CacheManager.Data.existTextList("tree_decoration", "normal") == false) {
+                                            if (CacheManager.Data.existMapTextListText("tree_decoration", "normal") == false) {
 
                                                 {
 
@@ -1421,13 +1421,13 @@ public class TreePlacer {
 
                                                     }
 
-                                                    CacheManager.Data.setTextList("tree_decoration", "normal", data);
+                                                    CacheManager.Data.setMapTextListText("tree_decoration", "normal", data);
 
                                                 }
 
                                             }
 
-                                            for (String name : CacheManager.Data.getTextList("tree_decoration", "normal")) {
+                                            for (String name : CacheManager.Data.getMapTextListText("tree_decoration").get("normal")) {
 
                                                 functionAdd(chunk_pos, pos, "tree_decoration/" + name);
 
@@ -1440,7 +1440,7 @@ public class TreePlacer {
                                             // Decay
                                             {
 
-                                                if (CacheManager.Data.existTextList("tree_decoration", "decay") == false) {
+                                                if (CacheManager.Data.existMapTextListText("tree_decoration", "decay") == false) {
 
                                                     {
 
@@ -1461,13 +1461,13 @@ public class TreePlacer {
 
                                                         }
 
-                                                        CacheManager.Data.setTextList("tree_decoration", "decay", data);
+                                                        CacheManager.Data.setMapTextListText("tree_decoration", "decay", data);
 
                                                     }
 
                                                 }
 
-                                                for (String name : CacheManager.Data.getTextList("tree_decoration", "decay")) {
+                                                for (String name : CacheManager.Data.getMapTextListText("tree_decoration").get("decay")) {
 
                                                     functionAdd(chunk_pos, pos, "tree_decoration/decay/" + name);
 

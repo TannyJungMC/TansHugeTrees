@@ -264,7 +264,7 @@ public class CommandMaker {
                     LevelAccessor level_accessor = data.getSource().getLevel();
                     ServerLevel level_server = data.getSource().getLevel();
                     BlockPos pos = new BlockPos((int) Math.floor(data.getSource().getPosition().x()), (int) Math.floor(data.getSource().getPosition().y()), (int) Math.floor(data.getSource().getPosition().z()));
-                    String variable_text = CommandMaker.Argument.getText(data);
+                    String variable_text = Argument.getText(data);
                     TXTFunction.run(level_accessor, level_server, pos, variable_text, true);
 
                 }
@@ -274,7 +274,7 @@ public class CommandMaker {
             private static void restart (CommandContext<CommandSourceStack> data) {
 
                 ServerLevel level_server = data.getSource().getLevel();
-                Core.Restart.run(level_server, true, true);
+                Core.Restart.run(level_server, true);
 
             }
 

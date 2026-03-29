@@ -102,8 +102,8 @@ public class EventCenter {
             Core.path_world_core = path_world + "/data/tannyjung/" + Core.data_structure_version_core;
             Core.path_world_mod = path_world + "/data/" + Core.mod_id;
 
-            DataMigration.run("world");
-            Core.Restart.run(null, true, false);
+            DataMigration.run(false, true);
+            Core.Restart.run(null, true);
 
         }
 
@@ -111,7 +111,7 @@ public class EventCenter {
         public static void eventWorldStarted (ServerStartedEvent event) {
 
             ServerLevel level_server = event.getServer().overworld();
-            Core.Restart.run(level_server, false, false);
+            Core.Restart.run(level_server, false);
 
         }
 

@@ -209,11 +209,10 @@ public class CustomPackOrganizing {
         if (packs != null) {
 
             File file = null;
-            String pack_id = "";
-            List<String> pack_id_duplicated_test = new ArrayList<>();
             String data_structure_version = "";
             String required_packs = "";
             String required_mods = "";
+            List<String> pack_id_scan = new ArrayList<>();
 
             for (File pack : packs) {
 
@@ -244,15 +243,13 @@ public class CustomPackOrganizing {
 
                     }
 
-                    pack_id = cache_pack_ids.get(pack.getName());
-
                     test:
                     {
 
                         // Pack ID
                         {
 
-                            if (pack_id == null) {
+                            if (cache_pack_ids.containsKey(pack.getName()) == false) {
 
                                 FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
                                 addError("pack", "packs / pack ID not found. This will results skipping these packs. Make sure you're using the version that includes pack ID.", pack.getPath(), pack.getName());
@@ -278,19 +275,21 @@ public class CustomPackOrganizing {
                         // Duplicated Pack ID
                         {
 
-                            if (pack_id_duplicated_test.contains(pack_id) == true) {
+                            pack_id_scan.clear();
 
-                                FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                                addError("pack", "packs / duplicated pack ID. This will results skipping these packs. You can report this to the pack authors to help them fix it.", pack.getPath(), pack.getName() + " > " + pack_id);
+                            for (String id : cache_pack_ids.values()) {
 
-                                while (cache_pack_ids.containsValue(pack_id) == true) {
+                                if (pack_id_scan.contains(id) == false) {
 
-                                    pack_id = pack_id + "X";
+                                    pack_id_scan.add(id);
+
+                                } else {
+
+                                    FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                                    addError("pack", "packs / duplicated pack IDs. This will results skipping these packs. You can report this to the pack authors to help them fix it.", pack.getPath(), pack.getName() + " > " + id);
+                                    break test;
 
                                 }
-
-                                cache_pack_ids.put(pack.getName(), pack_id);
-                                break test;
 
                             }
 
@@ -339,8 +338,6 @@ public class CustomPackOrganizing {
                         }
 
                     }
-
-                    pack_id_duplicated_test.add(pack_id);
 
                 } else {
 
@@ -556,7 +553,7 @@ public class CustomPackOrganizing {
 
                                     if (is_separate_multiple_final == true) {
 
-                                        path_copy_to = path_copy_to.resolve(file_pack_final.getName());
+                                        path_copy_to = path_copy_to.resolve(cache_pack_ids.get(file_pack_final.getName()));
 
                                     }
 

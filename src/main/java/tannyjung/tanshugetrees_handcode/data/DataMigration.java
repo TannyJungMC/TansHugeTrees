@@ -8,9 +8,9 @@ import java.io.*;
 
 public class DataMigration {
 
-    public static void run (String type) {
+    public static void run (boolean config, boolean world) {
 
-        if (type.contains("config") == true) {
+        if (config == true) {
 
             String path = Core.path_config + "/dev/version.txt";
             File test_exist = new File(Core.path_config).getParentFile();
@@ -27,16 +27,25 @@ public class DataMigration {
 
                     }
 
+                } else {
+
+                    version = "not found";
+
                 }
 
             }
 
-            runConfig(version);
+            if (version.equals("not found") == false) {
+
+                runConfig(version);
+
+            }
+
             FileManager.writeTXT(path, Core.data_structure_version_mod, false);
 
         }
 
-        if (type.contains("world") == true) {
+        if (world == true) {
 
             String path = Core.path_world_mod + "/version.txt";
             File test_exist = new File(Core.path_world_mod).getParentFile();
@@ -53,11 +62,20 @@ public class DataMigration {
 
                     }
 
+                } else {
+
+                    version = "not found";
+
                 }
 
             }
 
-            runWorld(version);
+            if (version.equals("not found") == false) {
+
+                runWorld(version);
+
+            }
+
             FileManager.writeTXT(path, Core.data_structure_version_mod, false);
 
         }

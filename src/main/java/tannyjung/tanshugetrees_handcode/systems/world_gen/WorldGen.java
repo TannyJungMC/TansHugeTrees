@@ -17,13 +17,19 @@ public class WorldGen {
 
     }
 
-    public static void stepPlants (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, int chunkX, int chunkZ) {
+    public static void stepPlants (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos) {
 
 
 
     }
 
-    public static void stepLast (String dimension, ChunkPos chunk_pos) {
+    public static void stepLast (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos) {
+
+
+
+    }
+
+    public static void stepEnd (String dimension, ChunkPos chunk_pos) {
 
         // World Gen Folder Cleaner
         {

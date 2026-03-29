@@ -97,7 +97,7 @@ public class GameUtils {
 
                 String biome_centerID = Space.getBiomeID(biome);
 
-				if (CacheManager.Data.existLogic("biome_test", biome + " | " + test) == false) {
+				if (CacheManager.Data.existMapTextLogic("biome_test", biome + " | " + test) == false) {
 
 					boolean result = false;
 
@@ -157,11 +157,11 @@ public class GameUtils {
 
 					}
 
-					CacheManager.Data.setLogic("biome_test", biome + " | " + test, result);
+					CacheManager.Data.setMapTextLogic("biome_test", biome + " | " + test, result);
 
 				}
 
-				return CacheManager.Data.getLogic("biome_test", biome + " | " + test);
+				return CacheManager.Data.getMapTextLogic("biome_test").get(biome + " | " + test);
 
             }
 
@@ -179,13 +179,13 @@ public class GameUtils {
 
 			} else {
 
-				if (CacheManager.Data.existLogic("block_test", block + " | " + test) == false) {
+				if (CacheManager.Data.existMapTextLogic("block_test", block + " | " + test) == false) {
 
 					boolean result = false;
 
 					{
 
-						String[] data = GameUtils.Tile.toText(block);
+						String[] data = Tile.toText(block);
 						String block_id = data[0];
 						List<String> properties = new ArrayList<>();
 
@@ -284,11 +284,11 @@ public class GameUtils {
 
 					}
 
-					CacheManager.Data.setLogic("block_test", block + " | " + test, result);
+					CacheManager.Data.setMapTextLogic("block_test", block + " | " + test, result);
 
 				}
 
-				return CacheManager.Data.getLogic("block_test", block + " | " + test);
+				return CacheManager.Data.getMapTextLogic("block_test").get(block + " | " + test);
 
 			}
 
@@ -329,7 +329,7 @@ public class GameUtils {
 
 			}
 
-            Command.run(level_server, Vec3.ZERO, "tellraw @a [{\"text\":\"\"}," + GameUtils.Data.createText("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod (Global) |   | " + data) + "]");
+            Command.run(level_server, Vec3.ZERO, "tellraw @a [{\"text\":\"\"}," + Data.createText("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod (Global) |   | " + data) + "]");
 
         }
 
@@ -344,7 +344,7 @@ public class GameUtils {
 
 			}
 
-			Command.runEntity(entity, "tellraw @s [{\"text\":\"\"}," + GameUtils.Data.createText("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod (Private) |   | " + data) + "]");
+			Command.runEntity(entity, "tellraw @s [{\"text\":\"\"}," + Data.createText("[" + Core.mod_id_short + "] / " + prefix_color + " / This message was sent from " + Core.mod_name + " mod (Private) |   | " + data) + "]");
 
 		}
 
@@ -400,7 +400,7 @@ public class GameUtils {
 
 		public static Entity summonText (ServerLevel level_server, Vec3 vec3, double size, String data, boolean temporary) {
 
-			Entity entity = GameUtils.Mob.summon(level_server, vec3, "minecraft:text_display", "Display Text", Core.mod_id_big + "-display_text", "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[" + size + "f," + size + "f," + size + "f]},billboard:vertical,text:'" + GameUtils.Data.createText(data) + "'}");
+			Entity entity = Mob.summon(level_server, vec3, "minecraft:text_display", "Display Text", Core.mod_id_big + "-display_text", "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[" + size + "f," + size + "f," + size + "f]},billboard:vertical,text:'" + Data.createText(data) + "'}");
 
 			if (temporary == true) {
 
@@ -408,7 +408,7 @@ public class GameUtils {
 
 					for (Entity scan : Mob.getAtArea(level_server, vec3, 1, true, 0, "minecraft:text_display", Core.mod_id_big + "-display_text")) {
 
-						GameUtils.Mob.remove(scan, false);
+						Mob.remove(scan, false);
 
 					}
 
@@ -425,7 +425,7 @@ public class GameUtils {
 			offsetX = offsetX - (sizeX / 2);
 			offsetZ = offsetZ - (sizeZ / 2);
 			offsetY = offsetY - 0.5;
-			return GameUtils.Mob.summon(level_server, vec3, "minecraft:block_display", name, tag, "{transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],translation:[" + offsetX + "f," + offsetY + "f," + offsetZ + "f],scale:[" + sizeX + "f," + sizeY + "f," + sizeZ + "f]},Rotation:[" + rotate_horizontal + "f," + rotate_vertical + "f],block_state:{Name:\"" + id + "\"}}");
+			return Mob.summon(level_server, vec3, "minecraft:block_display", name, tag, "{transformation:{left_rotation:[0.0f,0.0f,0.0f,1.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f],translation:[" + offsetX + "f," + offsetY + "f," + offsetZ + "f],scale:[" + sizeX + "f," + sizeY + "f," + sizeZ + "f]},Rotation:[" + rotate_horizontal + "f," + rotate_vertical + "f],block_state:{Name:\"" + id + "\"}}");
 
 		}
 
@@ -565,7 +565,7 @@ public class GameUtils {
 
 				if (level_accessor.isWaterAt(pos) == true) {
 
-					block = GameUtils.Tile.setPropertyLogic(block, "waterlogged", true);
+					block = Tile.setPropertyLogic(block, "waterlogged", true);
 
 				}
 
@@ -620,7 +620,7 @@ public class GameUtils {
 
 		public static void removeDrop (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos) {
 
-			GameUtils.Item.spawn(level_server, pos.getCenter(), level_accessor.getBlockState(pos).getBlock().asItem().getDefaultInstance());
+			Item.spawn(level_server, pos.getCenter(), level_accessor.getBlockState(pos).getBlock().asItem().getDefaultInstance());
 			remove(level_accessor, level_server, pos, false);
 
 		}
@@ -735,19 +735,19 @@ public class GameUtils {
 
 			if (Math.random() < 0.25) {
 
-				return GameUtils.Tile.setPropertyCustom(block, "facing", "north");
+				return Tile.setPropertyCustom(block, "facing", "north");
 
 			} else if (Math.random() < 0.25) {
 
-				return GameUtils.Tile.setPropertyCustom(block, "facing", "west");
+				return Tile.setPropertyCustom(block, "facing", "west");
 
 			} else if (Math.random() < 0.25) {
 
-				return GameUtils.Tile.setPropertyCustom(block, "facing", "east");
+				return Tile.setPropertyCustom(block, "facing", "east");
 
 			} else {
 
-				return GameUtils.Tile.setPropertyCustom(block, "facing", "south");
+				return Tile.setPropertyCustom(block, "facing", "south");
 
 			}
 
@@ -944,7 +944,7 @@ public class GameUtils {
 
 		public static Entity getAtAreaOne (ServerLevel level_server, Vec3 vec3, int distance, boolean is_box, String id, String tag) {
 
-			List<Entity> entities = GameUtils.Mob.getAtArea(level_server, vec3, distance, is_box, 1, id, tag);
+			List<Entity> entities = Mob.getAtArea(level_server, vec3, distance, is_box, 1, id, tag);
 
 			if (entities.isEmpty() == false) {
 
@@ -960,7 +960,7 @@ public class GameUtils {
 
 		public static Entity getAtEverywhereOne (ServerLevel level_server, String id, String tag) {
 
-			List<Entity> entities = GameUtils.Mob.getAtEverywhere(level_server, id, tag);
+			List<Entity> entities = Mob.getAtEverywhere(level_server, id, tag);
 
 			if (entities.isEmpty() == false) {
 
@@ -988,11 +988,11 @@ public class GameUtils {
 
 				if (custom.isEmpty() == false) {
 
-					entity.load(GameUtils.Data.convertJSONToTag(custom));
+					entity.load(Data.convertJSONToTag(custom));
 
 				}
 
-				entity.setCustomName(GameUtils.Data.convertJSONToComponent("[" + GameUtils.Data.createText(name) + "]"));
+				entity.setCustomName(Data.convertJSONToComponent("[" + Data.createText(name) + "]"));
 
 				if (name.contains(" / ") == true) {
 
@@ -1022,7 +1022,7 @@ public class GameUtils {
 
 			level_server.getServer().execute(() -> {
 
-				GameUtils.Mob.summon(level_server, vec3, id, name, tag, custom);
+				Mob.summon(level_server, vec3, id, name, tag, custom);
 
 			});
 

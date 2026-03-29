@@ -29,7 +29,7 @@ public class WorldGenStepEnd {
                 FileManager.writeBIN(file.getPath(), test, false);
 
                 new File(Core.path_world_mod + "/world_gen/blacklist_chunks/" + path_suffix).delete();
-                WorldGen.stepLast(dimension, chunk_pos);
+                WorldGen.stepEnd(dimension, chunk_pos);
 
             }
 

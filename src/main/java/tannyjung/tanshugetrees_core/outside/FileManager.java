@@ -555,4 +555,32 @@ public class FileManager {
 
     }
 
+    public static Map<String, String> convertFileToDataMap (String path) {
+
+        Map<String, String> data = new HashMap<>();
+        String[] split = new String[0];
+
+        for (String read_all : FileManager.readTXT(path)) {
+
+            {
+
+                if (read_all.isEmpty() == false) {
+
+                    if (read_all.contains(" = ") == true) {
+
+                        split = read_all.split(" = ");
+                        data.put(split[0], split[1]);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        return data;
+
+    }
+
 }

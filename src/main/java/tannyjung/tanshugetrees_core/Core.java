@@ -9,10 +9,10 @@ import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_core.game.world_gen.FeatureAreaDirt;
 import tannyjung.tanshugetrees_core.game.world_gen.FeatureAreaGrass;
 import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepBeforePlants;
+import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepLast;
 import tannyjung.tanshugetrees_core.outside.CacheManager;
 import tannyjung.tanshugetrees_core.outside.CustomPackOrganizing;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
-import tannyjung.tanshugetrees_core.outside.TannyPackManager;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.data.DataMigration;
 import tannyjung.tanshugetrees_handcode.data.DataRepair;
@@ -82,8 +82,8 @@ public class Core {
         path_config = path_game + "/config/" + mod_id;
 
         Registry.start(bus);
-        DataMigration.run("config");
-        Restart.run(null, true, false);
+        DataMigration.run(true, false);
+        Restart.run(null, true);
 
     }
 
@@ -91,7 +91,7 @@ public class Core {
 
         private static final Object lock = new Object();
 
-        public static void run (ServerLevel level_server, boolean config, boolean chat_message) {
+        public static void run (ServerLevel level_server, boolean config) {
 
             Runnable runnable = () -> {
 
@@ -112,8 +112,8 @@ public class Core {
 
             if (level_server == null) {
 
-                runnable.run();
                 CacheManager.clear();
+                runnable.run();
 
             } else {
 
@@ -121,7 +121,7 @@ public class Core {
 
                     Restart.runLock();
 
-                    if (chat_message == true) {
+                    if (config == true) {
 
                         GameUtils.Misc.sendChatMessage(level_server, "Restarting the mod... / gray");
 
@@ -129,15 +129,14 @@ public class Core {
 
                     DelayedWorks.create(true, 20, () -> {
 
-                        runnable.run();
-                        String cache_size = CacheManager.clear();
+                        if (config == true) {
 
-                        if (chat_message == true) {
-
-                            GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches, about " + cache_size + ". / gray");
+                            String cache_size = CacheManager.clear();
+                            GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches about " + cache_size + " / gray");
 
                         }
 
+                        runnable.run();
                         Restart.runUnlock();
 
                     });
@@ -275,6 +274,7 @@ public class Core {
         public static void start (IEventBus bus) {
 
             features.put("world_gen_before_plants", WorldGenStepBeforePlants::new);
+            features.put("world_gen_last", WorldGenStepLast::new);
             features.put("area_grass", FeatureAreaGrass::new);
             features.put("area_dirt", FeatureAreaDirt::new);
 
