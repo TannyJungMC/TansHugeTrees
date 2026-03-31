@@ -7,7 +7,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.GenerationStep;
@@ -15,10 +14,11 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.*;
 import tannyjung.tanshugetrees_core.game.GameUtils;
-import tannyjung.tanshugetrees_handcode.data.FileConfig;
+import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.systems.Caches;
 import tannyjung.tanshugetrees_handcode.systems.living_mechanics.LeafLitter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -26,64 +26,151 @@ import java.util.*;
 public class TreePlacer {
 
     private static final Object lock = new Object();
-    private static final Map<ChunkPos, Map<BlockPos, List<String>>> functions = new HashMap<>();
+    public static final Map<String, Map<ChunkPos, ByteArrayOutputStream>> cache_bin_convert = new HashMap<>();
+    private static final Map<ChunkPos, Map<BlockPos, List<String>>> cache_functions = new HashMap<>();
 
     public static void start (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos) {
 
-        ByteBuffer data = FileManager.readBIN(Core.path_world_mod + "/world_gen/place/" + dimension + "/" + (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5) + ".bin");
-        int from_chunkX = 0;
-        int from_chunkZ = 0;
-        int to_chunkX = 0;
-        int to_chunkZ = 0;
-        String id = "";
-        String chosen = "";
-        int centerX = 0;
-        int centerZ = 0;
-        int rotation = 0;
-        int mirrored = 0;
-        int start_height_offset = 0;
-        String ground_block = "";
-        int dead_tree_level = 0;
+        Core.GlobalLocking.test();
 
-        while (data.remaining() > 0) {
+        {
 
-            // Get data
-            {
+            ByteBuffer data = null;
+            int from_chunkX = 0;
+            int from_chunkZ = 0;
+            int to_chunkX = 0;
+            int to_chunkZ = 0;
+            String id = "";
+            String chosen = "";
+            int centerX = 0;
+            int centerZ = 0;
+            int rotation = 0;
+            int mirrored = 0;
+            int start_height_offset = 0;
+            String ground_block = "";
+            int dead_tree_level = 0;
 
-                try {
+            String key = (chunk_pos.x >> 5) + "," + (chunk_pos.z >> 5);
 
-                    from_chunkX = data.getInt();
-                    from_chunkZ = data.getInt();
-                    to_chunkX = data.getInt();
-                    to_chunkZ = data.getInt();
-                    id = CacheManager.getDictionary(String.valueOf(data.getShort()), true);
-                    chosen = CacheManager.getDictionary(String.valueOf(data.getShort()), true);
-                    centerX = data.getInt();
-                    centerZ = data.getInt();
-                    rotation = data.get();
-                    mirrored = data.get();
-                    start_height_offset = data.getShort();
-                    ground_block = CacheManager.getDictionary(String.valueOf(data.getShort()), true);
-                    dead_tree_level = data.getShort();
+            if (cache_bin_convert.containsKey(key) == false) {
 
-                } catch (Exception exception) {
+                cache_bin_convert.put(key, new HashMap<>());
 
-                    OutsideUtils.exception(new Exception(), exception, "");
-                    return;
+                // Convert
+                {
+
+                    ByteArrayOutputStream data_convert = new ByteArrayOutputStream();
+                    data = FileManager.readBIN(Core.path_world_mod + "/world_gen/place/" + dimension + "/" + key + ".bin");
+
+                    while (data.remaining() > 0) {
+
+                        try {
+
+                            // Read
+                            {
+
+                                from_chunkX = data.getInt();
+                                from_chunkZ = data.getInt();
+                                to_chunkX = data.getInt();
+                                to_chunkZ = data.getInt();
+                                id = String.valueOf(data.getShort());
+                                chosen = String.valueOf(data.getShort());
+                                centerX = data.getInt();
+                                centerZ = data.getInt();
+                                rotation = data.get();
+                                mirrored = data.get();
+                                start_height_offset = data.getShort();
+                                ground_block = String.valueOf(data.getShort());
+                                dead_tree_level = data.getShort();
+
+                                data_convert.reset();
+                                data_convert.write(OutsideUtils.ByteConverter.fromInt(from_chunkX));
+                                data_convert.write(OutsideUtils.ByteConverter.fromInt(from_chunkZ));
+                                data_convert.write(OutsideUtils.ByteConverter.fromInt(to_chunkX));
+                                data_convert.write(OutsideUtils.ByteConverter.fromInt(to_chunkZ));
+                                data_convert.write(OutsideUtils.ByteConverter.fromShort(Short.parseShort(id)));
+                                data_convert.write(OutsideUtils.ByteConverter.fromShort(Short.parseShort(chosen)));
+                                data_convert.write(OutsideUtils.ByteConverter.fromInt(centerX));
+                                data_convert.write(OutsideUtils.ByteConverter.fromInt(centerZ));
+                                data_convert.write((byte) rotation);
+                                data_convert.write((byte) mirrored);
+                                data_convert.write(OutsideUtils.ByteConverter.fromShort((short) start_height_offset));
+                                data_convert.write(OutsideUtils.ByteConverter.fromShort(Short.parseShort(ground_block)));
+                                data_convert.write(OutsideUtils.ByteConverter.fromShort((short) dead_tree_level));
+
+                            }
+
+                            for (int scanX = from_chunkX; scanX <= to_chunkX; scanX++) {
+
+                                for (int scanZ = from_chunkZ; scanZ <= to_chunkZ; scanZ++) {
+
+                                    if (key.equals((scanX >> 5) + "," + (scanZ >> 5)) == true) {
+
+                                        cache_bin_convert.get(key).computeIfAbsent(new ChunkPos(scanX, scanZ), create -> new ByteArrayOutputStream()).write(data_convert.toByteArray());
+
+                                    }
+
+                                }
+
+                            }
+
+                        } catch (Exception exception) {
+
+                            OutsideUtils.exception(new Exception(), exception, "");
+                            return;
+
+                        }
+
+                    }
 
                 }
 
             }
 
-            if ((from_chunkX <= chunk_pos.x && chunk_pos.x <= to_chunkX) && (from_chunkZ <= chunk_pos.z && chunk_pos.z <= to_chunkZ)) {
+            if (cache_bin_convert.get(key).containsKey(chunk_pos) == true) {
 
-                test(level_accessor, level_server, chunk_generator, dimension, chunk_pos, from_chunkX, from_chunkZ, to_chunkX, to_chunkZ, id, chosen, centerX, centerZ, rotation, mirrored, start_height_offset, ground_block, dead_tree_level);
+                data = ByteBuffer.wrap(cache_bin_convert.get(key).get(chunk_pos).toByteArray());
+                cache_bin_convert.get(key).remove(chunk_pos);
+
+                while (data.remaining() > 0) {
+
+                    // Get data
+                    {
+
+                        try {
+
+                            from_chunkX = data.getInt();
+                            from_chunkZ = data.getInt();
+                            to_chunkX = data.getInt();
+                            to_chunkZ = data.getInt();
+                            id = CacheManager.getDictionary(String.valueOf(data.getShort()), true);
+                            chosen = CacheManager.getDictionary(String.valueOf(data.getShort()), true);
+                            centerX = data.getInt();
+                            centerZ = data.getInt();
+                            rotation = data.get();
+                            mirrored = data.get();
+                            start_height_offset = data.getShort();
+                            ground_block = CacheManager.getDictionary(String.valueOf(data.getShort()), true);
+                            dead_tree_level = data.getShort();
+
+                        } catch (Exception exception) {
+
+                            OutsideUtils.exception(new Exception(), exception, "");
+                            return;
+
+                        }
+
+                    }
+
+                    test(level_accessor, level_server, chunk_generator, dimension, chunk_pos, from_chunkX, from_chunkZ, to_chunkX, to_chunkZ, id, chosen, centerX, centerZ, rotation, mirrored, start_height_offset, ground_block, dead_tree_level);
+
+                }
+
+                functionRun(level_accessor, level_server, chunk_pos);
 
             }
 
         }
-
-        functionRun(level_accessor, level_server, chunk_pos);
 
     }
 
@@ -108,7 +195,6 @@ public class TreePlacer {
         boolean pass = false;
         int centerY = 0;
         int fallen_direction = 0;
-        boolean in_snowy_biome = false;
         String location = path_storage + "|" + chosen;
 
         if (dead_tree_level > 200) {
@@ -138,7 +224,6 @@ public class TreePlacer {
                         get_posY = data.getInt();
                         get_posZ = data.getInt();
                         get_dead_tree_level = data.getShort();
-                        in_snowy_biome = data.get() == 1;
 
                     } catch (Exception exception) {
 
@@ -216,7 +301,7 @@ public class TreePlacer {
 
                                 break test;
 
-                            } else if (GameUtils.Misc.testBlock(block, ground_block) == false) {
+                            } else if (GameUtils.Tile.test(block, ground_block) == false) {
 
                                 break test;
 
@@ -237,7 +322,7 @@ public class TreePlacer {
 
                                 RandomSource random = RandomSource.create(level_server.getSeed() ^ ((centerX * 341873128712L) + (centerZ * 132897987541L)));
 
-                                if (random.nextDouble() < FileConfig.unviable_ecology_skip_chance) {
+                                if (random.nextDouble() < Handcode.Config.unviable_ecology_skip_chance) {
 
                                     break test;
 
@@ -342,9 +427,9 @@ public class TreePlacer {
                     // Max Height Spawn
                     {
 
-                        if (FileConfig.max_height_spawn != 0) {
+                        if (Handcode.Config.max_height_spawn != 0) {
 
-                            if (pos_original.getY() > FileConfig.max_height_spawn) {
+                            if (pos_original.getY() > Handcode.Config.max_height_spawn) {
 
                                 break test;
 
@@ -357,7 +442,7 @@ public class TreePlacer {
                     // Structure Detection
                     {
 
-                        int size = FileConfig.structure_detection_size;
+                        int size = Handcode.Config.structure_detection_size;
                         ChunkPos chunk_pos_test = null;
 
                         if (size >= 0) {
@@ -404,8 +489,6 @@ public class TreePlacer {
 
                     }
 
-                    in_snowy_biome = GameUtils.Space.isBiomeTaggedAs(GameUtils.Space.getBiomeAt(level_accessor, level_server, pos_original), "tanshugetrees:snowy_biomes");
-
                     pass = true;
 
                 }
@@ -424,7 +507,6 @@ public class TreePlacer {
                     write.add("i" + centerY);
                     write.add("i" + centerZ);
                     write.add("s" + dead_tree_level);
-                    write.add("l" + in_snowy_biome);
 
                     for (int scanX = from_regionX; scanX <= to_regionX; scanX++) {
 
@@ -445,7 +527,7 @@ public class TreePlacer {
         if (pass == true) {
 
             BlockPos pos_center = new BlockPos(centerX, centerY, centerZ);
-            place(level_accessor, level_server, chunk_pos, id, location, path_settings, pos_center, rotation, mirrored, dead_tree_level, fallen_direction, in_snowy_biome);
+            place(level_accessor, level_server, chunk_pos, id, location, path_settings, pos_center, rotation, mirrored, dead_tree_level, fallen_direction);
 
         }
 
@@ -453,7 +535,7 @@ public class TreePlacer {
 
     private static boolean testSurfaceSmoothness (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String location, int centerX, int centerY, int centerZ, int sizeX, int sizeZ, int center_sizeX, int center_sizeY, int center_sizeZ, int rotation, int mirrored, int fallen_direction, int dead_tree_level, BlockPos pos_original) {
 
-        if (FileConfig.surface_smoothness_detection == true) {
+        if (Handcode.Config.surface_smoothness_detection == true) {
 
             if (sizeX != 0 || sizeZ != 0) {
 
@@ -717,9 +799,9 @@ public class TreePlacer {
 
                     {
 
-                        int height_up = (int) Math.ceil(pos_original.getY() + ((sizeX - center_sizeX) * (FileConfig.surface_smoothness_detection_height_up * 0.01)));
-                        int height_down = (int) Math.ceil(pos_original.getY() - (center_sizeY * (FileConfig.surface_smoothness_detection_height_down * 0.01)));
-                        double distance_multiply = FileConfig.surface_smoothness_detection_percent * 0.01;
+                        int height_up = (int) Math.ceil(pos_original.getY() + ((sizeX - center_sizeX) * (Handcode.Config.surface_smoothness_detection_height_up * 0.01)));
+                        int height_down = (int) Math.ceil(pos_original.getY() - (center_sizeY * (Handcode.Config.surface_smoothness_detection_height_down * 0.01)));
+                        double distance_multiply = Handcode.Config.surface_smoothness_detection_percent * 0.01;
 
                         int test_center_sizeX = (int) Math.ceil(center_sizeX * distance_multiply);
                         int test_center_sizeZ = (int) Math.ceil(center_sizeZ * distance_multiply);
@@ -861,7 +943,7 @@ public class TreePlacer {
 
     }
 
-    private static void place (LevelAccessor level_accessor, ServerLevel level_server, ChunkPos chunk_pos, String id, String location, String path_settings, BlockPos pos_center, int rotation, int mirrored, int dead_tree_level, int fallen_direction, boolean in_snowy_biome) {
+    private static void place (LevelAccessor level_accessor, ServerLevel level_server, ChunkPos chunk_pos, String id, String location, String path_settings, BlockPos pos_center, int rotation, int mirrored, int dead_tree_level, int fallen_direction) {
 
         short[] shape = Caches.getTreeShapeData(location);
 
@@ -879,86 +961,80 @@ public class TreePlacer {
             // Get Tree Settings File
             {
 
-                List<String> tree_settings = Caches.getTreeSettings(path_settings);
+                String type_id = "";
+                String value = "";
 
-                if (tree_settings.isEmpty() == false) {
+                for (String read_all : Caches.getTreeSettings(path_settings)) {
 
-                    String type_id = "";
-                    String value = "";
+                    {
 
-                    for (String read_all : tree_settings) {
+                        if (read_all.startsWith("can_leaves_decay = ") == true) {
 
-                        {
+                            can_leaves_decay = Boolean.parseBoolean(read_all.substring("can_leaves_decay = ".length()));
 
-                            if (read_all.startsWith("can_leaves_decay = ") == true) {
+                        } else if (read_all.startsWith("can_leaves_drop = ") == true) {
 
-                                can_leaves_decay = Boolean.parseBoolean(read_all.substring("can_leaves_decay = ".length()));
+                            can_leaves_drop = Boolean.parseBoolean(read_all.substring("can_leaves_drop = ".length()));
 
-                            } else if (read_all.startsWith("can_leaves_drop = ") == true) {
+                        } else if (read_all.startsWith("can_leaves_regrow = ") == true) {
 
-                                can_leaves_drop = Boolean.parseBoolean(read_all.substring("can_leaves_drop = ".length()));
+                            can_leaves_regrow = Boolean.parseBoolean(read_all.substring("can_leaves_regrow = ".length()));
 
-                            } else if (read_all.startsWith("can_leaves_regrow = ") == true) {
+                        } else if (read_all.startsWith("can_disable_roots") == true) {
 
-                                can_leaves_regrow = Boolean.parseBoolean(read_all.substring("can_leaves_regrow = ".length()));
+                            can_disable_roots = Boolean.parseBoolean(read_all.substring("can_disable_roots = ".length()));
 
-                            } else if (read_all.startsWith("can_disable_roots") == true) {
+                        } else if (read_all.startsWith("Block ") == true) {
 
-                                can_disable_roots = Boolean.parseBoolean(read_all.substring("can_disable_roots = ".length()));
+                            {
 
-                            } else if (read_all.startsWith("Block ") == true) {
+                                type_id = read_all.substring("Block ### ".length(), "Block ### ####".length());
+                                value = read_all.substring("Block ### #### = ".length());
 
+                                if (value.endsWith(" keep") == true) {
+
+                                    map_block_keep.put(type_id, true);
+                                    value = value.replace(" keep", "");
+
+                                } else {
+
+                                    map_block_keep.put(type_id, false);
+
+                                }
+
+                                map_block.put(type_id, GameUtils.Tile.fromText(value));
+
+                                // Test Leaves Types
                                 {
 
-                                    type_id = read_all.substring("Block ### ".length(), "Block ### ####".length());
-                                    value = read_all.substring("Block ### #### = ".length());
+                                    if (type_id.startsWith("120") == true) {
 
-                                    if (value.endsWith(" keep") == true) {
+                                        // Get ID
+                                        {
 
-                                        map_block_keep.put(type_id, true);
-                                        value = value.replace(" keep", "");
+                                            if (value.endsWith(" keep") == true) {
 
-                                    } else {
-
-                                        map_block_keep.put(type_id, false);
-
-                                    }
-
-                                    map_block.put(type_id, GameUtils.Tile.fromText(value));
-
-                                    // Test Leaves Types
-                                    {
-
-                                        if (type_id.startsWith("120") == true) {
-
-                                            // Get ID
-                                            {
-
-                                                if (value.endsWith(" keep") == true) {
-
-                                                    value = value.substring(0, value.length() - (" keep").length());
-
-                                                }
-
-                                                if (value.endsWith("]") == true) {
-
-                                                    value = value.substring(0, value.indexOf("["));
-
-                                                }
+                                                value = value.substring(0, value.length() - (" keep").length());
 
                                             }
 
-                                            int number = Integer.parseInt(type_id.substring(2)) - 1;
+                                            if (value.endsWith("]") == true) {
 
-                                            if (FileConfig.deciduous_leaves_list.contains(value) == true) {
-
-                                                leaves_type[number] = 1;
-
-                                            } else if (FileConfig.coniferous_leaves_list.contains(value) == true) {
-
-                                                leaves_type[number] = 2;
+                                                value = value.substring(0, value.indexOf("["));
 
                                             }
+
+                                        }
+
+                                        int number = Integer.parseInt(type_id.substring(2)) - 1;
+
+                                        if (Handcode.Config.deciduous_leaves_list.contains(value) == true) {
+
+                                            leaves_type[number] = 1;
+
+                                        } else if (Handcode.Config.coniferous_leaves_list.contains(value) == true) {
+
+                                            leaves_type[number] = 2;
 
                                         }
 
@@ -966,15 +1042,15 @@ public class TreePlacer {
 
                                 }
 
-                            } else if (read_all.startsWith("Function ") == true) {
+                            }
 
-                                {
+                        } else if (read_all.startsWith("Function ") == true) {
 
-                                    type_id = read_all.substring("Function ## ".length(), "Function ## ###".length());
-                                    value = read_all.substring("Function ## ### = ".length());
-                                    map_function.put(type_id, value);
+                            {
 
-                                }
+                                type_id = read_all.substring("Function ## ".length(), "Function ## ###".length());
+                                value = read_all.substring("Function ## ### = ".length());
+                                map_function.put(type_id, value);
 
                             }
 
@@ -986,7 +1062,8 @@ public class TreePlacer {
 
             }
 
-            boolean no_roots = (FileConfig.world_gen_roots == false && can_disable_roots);
+            boolean in_snowy_biome = GameUtils.Environment.test(GameUtils.Environment.getAt(level_accessor, pos_center), "#tanshugetrees:snowy_biomes");
+            boolean no_roots = Handcode.Config.world_gen_roots == false && can_disable_roots == true;
             boolean coarse_woody_debris = false;
             boolean hollowed = false;
             int reduce_trunk = 0;
@@ -1039,6 +1116,8 @@ public class TreePlacer {
             // Read File
             {
 
+                RandomSource random = RandomSource.create(level_server.getSeed() ^ ((chunk_pos.x * 341873128712L) + (chunk_pos.z * 132897987541L)));
+
                 int loop = 0;
                 String type = "";
                 int posX = 0;
@@ -1052,6 +1131,8 @@ public class TreePlacer {
                 BlockPos pos = null;
                 double leaf_litter_world_gen_chance = 0.0;
                 int height_motion = 0;
+
+                List<String> tree_decoration = new ArrayList<>();
 
                 for (short read_all : shape) {
 
@@ -1226,16 +1307,25 @@ public class TreePlacer {
 
                             if (type.startsWith("1") == true) {
 
-                                block = map_block.getOrDefault(type, Blocks.AIR.defaultBlockState());
-
-                                if (block == Blocks.AIR.defaultBlockState()) {
-
-                                    continue;
-
-                                }
+                                block = map_block.get(type);
 
                                 // Test and Place Block
                                 {
+
+                                    // Keep
+                                    {
+
+                                        if (map_block_keep.get(type) == true) {
+
+                                            if (level_accessor.getBlockState(pos).isAir() == false) {
+
+                                                continue;
+
+                                            }
+
+                                        }
+
+                                    }
 
                                     // No Roots
                                     {
@@ -1274,40 +1364,25 @@ public class TreePlacer {
 
                                     }
 
-                                    // Keep
-                                    {
-
-                                        if (map_block_keep.get(type) == true) {
-
-                                            if (level_accessor.getBlockState(pos).isAir() == false) {
-
-                                                continue;
-
-                                            }
-
-                                        }
-
-                                    }
-
                                     // Leaves
                                     {
 
-                                        if (type.startsWith("120") == true && GameUtils.Tile.isTaggedAs(block, "minecraft:leaves") == true) {
+                                        if (type.startsWith("120") == true && GameUtils.Tile.test(block, "#minecraft:leaves") == true) {
 
                                             // Pre Leaves Drop
                                             {
 
-                                                if (FileConfig.leaf_litter == true && FileConfig.leaf_litter_world_gen == true) {
+                                                if (Handcode.Config.leaf_litter == true && Handcode.Config.leaf_litter_world_gen == true) {
 
                                                     if (can_leaves_drop == true) {
 
                                                         if ((type.endsWith("1") == true && leaves_type[0] == 2) || (type.endsWith("2") == true && leaves_type[1] == 2)) {
 
-                                                            leaf_litter_world_gen_chance = FileConfig.leaf_litter_world_gen_chance_coniferous;
+                                                            leaf_litter_world_gen_chance = Handcode.Config.leaf_litter_world_gen_chance_coniferous;
 
                                                         } else {
 
-                                                            leaf_litter_world_gen_chance = FileConfig.leaf_litter_world_gen_chance;
+                                                            leaf_litter_world_gen_chance = Handcode.Config.leaf_litter_world_gen_chance;
 
                                                         }
 
@@ -1336,7 +1411,7 @@ public class TreePlacer {
                                             // Abscission (World Gen)
                                             {
 
-                                                if (FileConfig.abscission_world_gen == true) {
+                                                if (Handcode.Config.abscission_world_gen == true) {
 
                                                     if (in_snowy_biome == true) {
 
@@ -1356,17 +1431,6 @@ public class TreePlacer {
 
                                     }
 
-                                    // Automatic Waterlogged
-                                    {
-
-                                        if (level_accessor.isWaterAt(pos) == true) {
-
-                                            block = GameUtils.Tile.setPropertyLogic(block, "waterlogged", true);
-
-                                        }
-
-                                    }
-
                                     GameUtils.Tile.set(level_accessor, pos, block, true);
 
                                 }
@@ -1377,11 +1441,11 @@ public class TreePlacer {
                                     // At Center
                                     if (posX == 0 && posY == 0 && posZ == 0) {
 
-                                        if (FileConfig.tree_location == true && dead_tree_level == 0) {
+                                        if (Handcode.Config.tree_location == true && dead_tree_level == 0) {
 
                                             if (can_leaves_decay == true || can_leaves_drop == true || can_leaves_regrow == true) {
 
-                                                String marker_data = "{NeoForgeData:{tanshugetrees:{file:\"" + location + "\",tree_settings:\"" + path_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}}}";
+                                                String marker_data = "{ForgeData:{tanshugetrees:{file:\"" + location + "\",tree_settings:\"" + path_settings + "\",rotation:" + rotation + ",mirrored:" + mirrored + "}}}";
                                                 GameUtils.Mob.summonWorldGen(level_server, pos.getCenter(), "minecraft:marker", id, "TANSHUGETREES-tree_location", marker_data);
                                                 
                                             }
@@ -1395,17 +1459,16 @@ public class TreePlacer {
                                 // Tree Decoration
                                 {
 
-                                    if (type.startsWith("120") == false) {
+                                    if (Handcode.Config.tree_decorations_normal == true && random.nextDouble() < Handcode.Config.tree_decorations_normal_chance) {
 
-                                        // Normal
-                                        {
+                                        if (type.startsWith("120") == false) {
 
                                             if (CacheManager.Data.existMapTextListText("tree_decoration", "normal") == false) {
 
                                                 {
 
-                                                    List<String> data = new ArrayList<>();
                                                     String[] names = new File(Core.path_config + "/dev/temporary/tree_decoration").list();
+                                                    List<String> data = new ArrayList<>();
 
                                                     if (names != null) {
 
@@ -1427,51 +1490,54 @@ public class TreePlacer {
 
                                             }
 
-                                            for (String name : CacheManager.Data.getMapTextListText("tree_decoration").get("normal")) {
+                                            tree_decoration = CacheManager.Data.getMapTextListText("tree_decoration").get("normal");
 
-                                                functionAdd(chunk_pos, pos, "tree_decoration/" + name);
+                                            if (tree_decoration.isEmpty() == false) {
+
+                                                functionAdd(chunk_pos, pos, "tree_decoration/" + tree_decoration.get(random.nextInt(tree_decoration.size())));
 
                                             }
 
                                         }
 
-                                        if (dead_tree_level != 0) {
+                                    }
 
-                                            // Decay
-                                            {
+                                    if (dead_tree_level > 0) {
 
-                                                if (CacheManager.Data.existMapTextListText("tree_decoration", "decay") == false) {
+                                        if (Handcode.Config.tree_decorations_decay == true && random.nextDouble() < Handcode.Config.tree_decorations_decay_chance) {
 
-                                                    {
+                                            if (CacheManager.Data.existMapTextListText("tree_decoration", "decay") == false) {
 
-                                                        List<String> data = new ArrayList<>();
-                                                        String[] names = new File(Core.path_config + "/dev/temporary/tree_decoration/decay").list();
+                                                {
 
-                                                        if (names != null) {
+                                                    String[] names = new File(Core.path_config + "/dev/temporary/tree_decoration/decay").list();
+                                                    List<String> data = new ArrayList<>();
 
-                                                            for (String name : names) {
+                                                    if (names != null) {
 
-                                                                if (name.endsWith(".txt") == true) {
+                                                        for (String name : names) {
 
-                                                                    data.add(name.replace(".txt", ""));
+                                                            if (name.endsWith(".txt") == true) {
 
-                                                                }
+                                                                data.add(name.replace(".txt", ""));
 
                                                             }
 
                                                         }
 
-                                                        CacheManager.Data.setMapTextListText("tree_decoration", "decay", data);
-
                                                     }
 
-                                                }
-
-                                                for (String name : CacheManager.Data.getMapTextListText("tree_decoration").get("decay")) {
-
-                                                    functionAdd(chunk_pos, pos, "tree_decoration/decay/" + name);
+                                                    CacheManager.Data.setMapTextListText("tree_decoration", "decay", data);
 
                                                 }
+
+                                            }
+
+                                            tree_decoration = CacheManager.Data.getMapTextListText("tree_decoration").get("decay");
+
+                                            if (tree_decoration.isEmpty() == false) {
+
+                                                functionAdd(chunk_pos, pos, "tree_decoration/decay/" + tree_decoration.get(random.nextInt(tree_decoration.size())));
 
                                             }
 
@@ -1519,42 +1585,25 @@ public class TreePlacer {
 
     private static void functionAdd (ChunkPos chunk_pos, BlockPos pos, String path) {
 
-        functions.computeIfAbsent(chunk_pos, test -> new HashMap<>()).computeIfAbsent(pos, test -> new ArrayList<>()).add(path);
+        cache_functions.computeIfAbsent(chunk_pos, create -> new HashMap<>()).computeIfAbsent(pos, create -> new ArrayList<>()).add(path);
 
     }
 
     private static void functionRun (LevelAccessor level_accessor, ServerLevel level_server, ChunkPos chunk_pos) {
 
-        synchronized (lock) {
+        if (cache_functions.containsKey(chunk_pos) == true) {
 
-            // Run Functions
-            {
+            for (Map.Entry<BlockPos, List<String>> entry : cache_functions.get(chunk_pos).entrySet()) {
 
-                BlockPos pos = null;
+                for (String get : entry.getValue()) {
 
-                for (Map.Entry<ChunkPos, Map<BlockPos, List<String>>> entry1 : functions.entrySet()) {
-
-                    if (chunk_pos.equals(entry1.getKey()) == true) {
-
-                        for (Map.Entry<BlockPos, List<String>> entry2 : entry1.getValue().entrySet()) {
-
-                            pos = entry2.getKey();
-
-                            for (String get : entry2.getValue()) {
-
-                                TXTFunction.run(level_accessor, level_server, pos, get, false);
-
-                            }
-
-                        }
-
-                    }
+                    TXTFunction.run(level_accessor, level_server, entry.getKey(), get, false);
 
                 }
 
-                functions.remove(chunk_pos);
-
             }
+
+            cache_functions.remove(chunk_pos);
 
         }
 
