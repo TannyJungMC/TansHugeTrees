@@ -10,7 +10,6 @@ public class ConfigClassic {
 
         Map<String, Boolean> should_keep = new HashMap<>();
         Map<String, String> old_values = new HashMap<>();
-        String[] read_original = original.split("\\n");
 
         // Get Old Values
         {
@@ -26,7 +25,7 @@ public class ConfigClassic {
 
                 for (String read_all : FileManager.readTXT(path)) {
 
-                    if (read_all.startsWith("|") == false && read_all.contains(" = ") == true) {
+                    if (read_all.contains(" = ") == true) {
 
                         split = read_all.split(" = ");
                         options.add(split[0]);
@@ -39,9 +38,15 @@ public class ConfigClassic {
                         read_all = read_all.substring(2, read_all.length() - 2);
                         defaults.addAll(Arrays.asList(read_all.split(" ] \\[ ")));
 
-                        while (options.size() > defaults.size()) {
+                        while (values.size() > defaults.size()) {
 
                             defaults.add("");
+
+                        }
+
+                        while (values.size() < defaults.size()) {
+
+                            values.add("");
 
                         }
 
@@ -51,41 +56,24 @@ public class ConfigClassic {
 
             }
 
-            if (options.size() == defaults.size()) {
+            // Test Keep
+            {
 
-                // Test Keep
-                {
+                boolean test = false;
 
-                    boolean keep = false;
+                for (int loop = 0; loop < options.size(); loop++) {
 
-                    for (int loop = 0; loop < options.size(); loop++) {
+                    if (defaults.get(loop).isEmpty() == true) {
 
-                        if (defaults.get(loop).isEmpty() == true) {
+                        test = false;
 
-                            keep = false;
+                    } else {
 
-                        } else {
-
-                            keep = values.get(loop).equals(defaults.get(loop)) == false;
-
-                        }
-
-                        should_keep.put(options.get(loop), keep);
+                        test = values.get(loop).equals(defaults.get(loop)) == false;
 
                     }
 
-                }
-
-            } else {
-
-                // All Keep To False
-                {
-
-                    for (String option : options) {
-
-                        should_keep.put(option, false);
-
-                    }
+                    should_keep.put(options.get(loop), test);
 
                 }
 
@@ -110,7 +98,7 @@ public class ConfigClassic {
             String[] split = new String[0];
             List<String> written_values = new ArrayList<>();
 
-            for (String read_all : read_original) {
+            for (String read_all : original.split("\\n")) {
 
                 if (read_all.startsWith("|") == false && read_all.contains(" = ") == true) {
 
@@ -121,9 +109,17 @@ public class ConfigClassic {
                         option = split[0];
                         value = split[1];
 
-                        if (should_keep.getOrDefault(option, false) == true) {
+                        if (old_values.containsKey(option) == true) {
 
-                            write.append(option).append(" = ").append(old_values.get(option));
+                            if (should_keep.get(option) == true) {
+
+                                write.append(option).append(" = ").append(old_values.get(option));
+
+                            } else {
+
+                                write.append(read_all);
+
+                            }
 
                         } else {
 

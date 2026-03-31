@@ -4,10 +4,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
-import tannyjung.tanshugetrees_handcode.data.FileConfig;
+import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -16,7 +15,7 @@ public class CustomPackOrganizing {
     private static final Map<String, String> cache_pack_ids = new HashMap<>();
     private static final Map<String, Map<String, List<String>>> cache_errors = new HashMap<>();
 
-    public static void start (String pack_separate_multiple) {
+    public static void start (String pack_separate_multiple, String folder_settings, String folder_functions) {
 
         cache_errors.clear();
 
@@ -89,7 +88,7 @@ public class CustomPackOrganizing {
 
             getPackID();
             testInfo();
-            pack_separate_multiple = "/" + pack_separate_multiple + "/";
+            pack_separate_multiple = " / " + pack_separate_multiple + " / ";
 
             // Organizing Data
             {
@@ -119,31 +118,27 @@ public class CustomPackOrganizing {
 
                 File file = new File(Core.path_config + "/dev/temporary/edit");
 
-                if (file.listFiles() != null) {
+                if (file.exists() == true) {
 
-                    try {
+                    for (File scan : FileManager.getAllFiles(file.getPath())) {
 
-                        Files.walk(file.toPath()).forEach(source -> {
+                        {
 
-                            if (source.toFile().isDirectory() == false) {
+                            Path path_to = file.toPath().relativize(scan.toPath());
+                            path_to = Path.of(Core.path_config + "/dev/temporary").resolve(path_to);
 
-                                Path path_to = file.toPath().relativize(source);
-                                path_to = Path.of(Core.path_config + "/dev/temporary").resolve(path_to);
+                            if (path_to.toFile().exists() == true) {
 
-                                if (path_to.toFile().exists() == true) {
+                                // Edit
+                                {
 
-                                    // Edit
-                                    {
+                                    if (scan.getName().endsWith(".txt") == true) {
 
-                                        if (source.toString().endsWith(".txt") == true) {
+                                        FileManager.mergeTXT(scan, path_to.toFile());
 
-                                            FileManager.mergeTXT(source.toFile(), path_to.toFile());
+                                    } else {
 
-                                        } else {
-
-                                            FileManager.copy(source.toString(), path_to.toString(), false);
-
-                                        }
+                                        FileManager.copy(scan.getPath(), path_to.toString(), false);
 
                                     }
 
@@ -151,11 +146,7 @@ public class CustomPackOrganizing {
 
                             }
 
-                        });
-
-                    } catch (Exception exception) {
-
-                        OutsideUtils.exception(new Exception(), exception, "");
+                        }
 
                     }
 
@@ -165,10 +156,9 @@ public class CustomPackOrganizing {
 
         }
 
+        test(folder_settings, false);
+        test(folder_functions, true);
         FileManager.delete(Core.path_config + "/dev/temporary/pack_zip");
-        testSettings();
-        testWorldGen();
-
         cache_pack_ids.clear();
 
     }
@@ -352,60 +342,148 @@ public class CustomPackOrganizing {
 
     }
 
-    private static void testSettings () {
+    private static void test (String folders, boolean is_function) {
 
-        File file = new File(Core.path_config + "/dev/temporary/presets");
+        for (String folder : folders.split(" / ")) {
 
-        if (file.exists() == true && file.isDirectory() == true) {
+            String suffix = "";
 
-            try {
+            if (folder.contains(" + ") == true) {
 
-                Files.walk(file.toPath()).forEach(source -> {
+                String[] split = folder.split(" + ");
+                folder = split[0];
+                suffix = split[1];
 
-                    File file_each = source.toFile();
+            }
 
-                    if (file_each.getName().startsWith("[INCOMPATIBLE] ") == false && file_each.getName().endsWith("_settings.txt") == true) {
+            File file = new File(Core.path_config + "/dev/temporary/" + folder);
 
-                        String name = Path.of(Core.path_config + "/dev/temporary/presets").relativize(file_each.toPath()).toString().replace("\\", "/");
-                        String value = "";
+            if (file.exists() == true) {
 
-                        for (String read_all : FileManager.readTXT(file_each.getPath())) {
+                for (File scan : FileManager.getAllFiles(file.getPath())) {
 
-                            if (read_all.contains(" = ") == true) {
+                    {
 
-                                if (read_all.startsWith("Block ") == true) {
+                        if (scan.getName().endsWith(".txt") == true) {
 
-                                    {
+                            if (scan.getName().startsWith("[INCOMPATIBLE] ") == false && scan.getName().endsWith(suffix) == true) {
 
-                                        value = read_all.substring(read_all.indexOf(" = ") + 3);
+                                testFile(scan.getPath(), is_function);
 
-                                        if (value.isEmpty() == false) {
+                            }
 
-                                            if (GameUtils.Tile.fromText(value.replace(" keep", "")).getBlock() == Blocks.AIR) {
+                        }
 
-                                                addError("file", "settings file / unknown block IDs. This will results discontinue these trees and skip them in region pre-location.", file_each.getPath(), name + " > " + value);
-                                                break;
+                    }
 
-                                            }
+                }
+
+            }
+
+        }
+
+    }
+
+    private static boolean testFile (String path, boolean is_function) {
+
+        File file = new File(path);
+        String id = Path.of(Core.path_config + "/dev/temporary/").relativize(file.toPath()).toString().replace("\\", "/");
+        String[] split = new String[0];
+        File file_test = null;
+
+        for (String read_all : FileManager.readTXT(file.getPath())) {
+
+            if (read_all.contains(" = ") == true) {
+
+                split = read_all.split(" = ");
+
+                if (split.length == 2 && split[1].isEmpty() == false) {
+
+                    if (is_function == false) {
+
+                        {
+
+                            if (split[0].equals("path_storage = ") == true) {
+
+                                {
+
+                                    file_test = new File(Core.path_config + "/dev/temporary/presets/" + read_all.substring("path_storage = ".length()) + "/storage");
+
+                                    if (file_test.exists() == true) {
+
+                                        if (file_test.listFiles() == null) {
+
+                                            addError("file", "world gen files / empty storage. This will results skipping them in mod systems.", file.getPath(), id);
+                                            return false;
+
+                                        }
+
+                                    } else {
+
+                                        addError("file", "world gen files / storage not found. This will results skipping them in mod systems.", file.getPath(), id);
+                                        return false;
+
+                                    }
+
+                                }
+
+                            } else if (split[0].equals("path_settings = ") == true) {
+
+                                {
+
+                                    file_test = new File(Core.path_config + "/dev/temporary/presets/" + read_all.substring("path_settings = ".length()) + ".txt");
+
+                                    if (file_test.exists() == false) {
+
+                                        addError("file", "world gen files / settings not found. This will results skipping them in mod systems.", file.getPath(), id);
+                                        return false;
+
+                                    } else {
+
+                                        if (testFile(file_test.getPath(), false) == false) {
+
+                                            addError("file", "world gen files / settings is mark as incompatible. This will results skipping them in mod systems.", file.getPath(), id);
+                                            return false;
 
                                         }
 
                                     }
 
-                                } else if (read_all.startsWith("Function ") == true) {
+                                }
 
-                                    {
+                            } else if (split[0].startsWith("Block ") == true) {
 
-                                        value = read_all.substring(read_all.indexOf(" = ") + 3);
+                                {
 
-                                        if (value.isEmpty() == false) {
+                                    split[1] = split[1].replace(" keep", "");
 
-                                            if (new File(Core.path_config + "/dev/temporary/functions/" + value + ".txt").exists() == false) {
+                                    if (GameUtils.Tile.fromText(split[1]).getBlock() == Blocks.AIR) {
 
-                                                addError("file", "settings file / unknown functions. This will results skip these functions from running.", file_each.getPath(), name + " > " + value);
-                                                break;
+                                        addError("file", "settings file / unknown block IDs. This will results skipping them in mod systems.", file.getPath(), id + " > " + split[1]);
+                                        return false;
 
-                                            }
+                                    }
+
+                                }
+
+                            } else if (split[0].startsWith("Function ") == true) {
+
+                                {
+
+                                    file_test = new File(Core.path_config + "/dev/temporary/functions/" + split[1] + ".txt");
+
+
+                                    if (file_test.exists() == false) {
+
+                                        addError("file", "settings file / unknown functions. This will results skipping them in mod systems.", file.getPath(), id + " > " + split[1]);
+                                        return false;
+
+                                    } else {
+
+                                        if (testFile(file_test.getPath(), true) == false) {
+
+                                            addError("file", "settings files / functions is mark as incompatible. This will results skipping them in mod systems.", file.getPath(), id);
+                                            return false;
 
                                         }
 
@@ -417,165 +495,78 @@ public class CustomPackOrganizing {
 
                         }
 
+                    } else {
+
+                        // TODO
+
                     }
 
-                });
-
-            } catch (Exception exception) {
-
-                OutsideUtils.exception(new Exception(), exception, "");
+                }
 
             }
 
         }
 
-    }
-
-    private static void testWorldGen () {
-
-        File file = new File(Core.path_config + "/dev/temporary/world_gen");
-
-        if (file.exists() == true && file.isDirectory() == true) {
-
-            try {
-
-                Files.walk(Path.of(Core.path_config + "/dev/temporary/world_gen")).forEach(source -> {
-
-                    File file_each = source.toFile();
-
-                    if (file_each.getName().startsWith("[INCOMPATIBLE] ") == false && file_each.getName().endsWith(".txt") == true) {
-
-                        String name = Path.of(Core.path_config + "/dev/temporary/world_gen").relativize(file_each.toPath()).toString().replace("\\", "/");
-                        File file_test = null;
-
-                        for (String read_all : FileManager.readTXT(file_each.getPath())) {
-
-                            if (read_all.contains(" = ") == true) {
-
-                                if (read_all.startsWith("path_storage = ") == true) {
-
-                                    {
-
-                                        file_test = new File(Core.path_config + "/dev/temporary/presets/" + read_all.substring("path_storage = ".length()) + "/storage");
-
-                                        if (file_test.exists() == true && file_test.isDirectory() == true) {
-
-                                            if (file_test.listFiles() == null) {
-
-                                                addError("file", "world gen files / empty storage. This will results discontinue these trees and skip them in world gen.", file_each.getPath(), name);
-                                                break;
-
-                                            }
-
-                                        } else {
-
-                                            addError("file", "world gen files / storage not found. This will results discontinue these trees and skip them in world gen.", file_each.getPath(), name);
-                                            break;
-
-                                        }
-
-                                    }
-
-                                } else if (read_all.startsWith("path_settings = ") == true) {
-
-                                    {
-
-                                        file_test = new File(Core.path_config + "/dev/temporary/presets/" + read_all.substring("path_settings = ".length()) + ".txt");
-
-                                        if (file_test.exists() == false) {
-
-                                            addError("file", "world gen files / settings not found. This will results skip them in world gen.", file_each.getPath(), name);
-                                            break;
-
-                                        }
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                });
-
-            } catch (Exception exception) {
-
-                OutsideUtils.exception(new Exception(), exception, "");
-
-            }
-
-        }
+        return true;
 
     }
 
-    private static void organize (File file_pack, String pack_separate_multiple) {
+    private static void organize (File pack, String pack_separate_multiple) {
 
-        boolean incompatible = file_pack.getName().startsWith("[INCOMPATIBLE] ") == true;
+        boolean incompatible = pack.getName().startsWith("[INCOMPATIBLE] ") == true;
 
         // Get Real Pack Path
         {
 
-            if (file_pack.getName().endsWith(".zip") == true) {
+            if (pack.getName().endsWith(".zip") == true) {
 
-                file_pack = new File(Core.path_config + "/dev/temporary/pack_zip/" + file_pack.getName());
+                pack = new File(Core.path_config + "/dev/temporary/pack_zip/" + pack.getName());
 
             }
 
         }
 
-        File[] files = file_pack.listFiles();
+        File[] files = pack.listFiles();
 
         if (files != null) {
 
-            File file_pack_final = file_pack;
             boolean is_separate_multiple = false;
 
             for (File file : files) {
 
                 if (file.isDirectory() == true) {
 
-                    is_separate_multiple = pack_separate_multiple.contains("/" + file.getName() + "/") == true;
+                    is_separate_multiple = pack_separate_multiple.contains(" / " + file.getName() + " / ") == true;
                     boolean is_separate_multiple_final = is_separate_multiple;
 
-                    try {
+                    for (File scan : FileManager.getAllFiles(file.getPath())) {
 
-                        Files.walk(file.toPath()).forEach(source -> {
+                        {
 
-                            if (source.toFile().isDirectory() == false) {
+                            Path path_copy_to = Path.of(Core.path_config + "/dev/temporary/" + file.getName());
 
-                                Path path_copy_to = Path.of(Core.path_config + "/dev/temporary/" + file.getName());
+                            // Convert Path
+                            {
 
-                                // Convert Path
-                                {
+                                if (is_separate_multiple_final == true) {
 
-                                    if (is_separate_multiple_final == true) {
-
-                                        path_copy_to = path_copy_to.resolve(cache_pack_ids.get(file_pack_final.getName()));
-
-                                    }
-
-                                    path_copy_to = path_copy_to.resolve(file_pack_final.toPath().resolve(file.getName()).relativize(source));
-
-                                    if (incompatible == true) {
-
-                                        path_copy_to = path_copy_to.getParent().resolve("[INCOMPATIBLE] " + path_copy_to.toFile().getName());
-
-                                    }
+                                    path_copy_to = path_copy_to.resolve(cache_pack_ids.get(pack.getName()));
 
                                 }
 
-                                FileManager.copy(source.toString(), path_copy_to.toString(), false);
+                                path_copy_to = path_copy_to.resolve(pack.toPath().resolve(file.getName()).relativize(scan.toPath()));
+
+                                if (incompatible == true) {
+
+                                    path_copy_to = path_copy_to.getParent().resolve("[INCOMPATIBLE] " + path_copy_to.toFile().getName());
+
+                                }
 
                             }
 
-                        });
+                            FileManager.copy(scan.getPath(), path_copy_to.toString(), false);
 
-                    } catch (Exception exception) {
-
-                        OutsideUtils.exception(new Exception(), exception, "");
+                        }
 
                     }
 
@@ -589,12 +580,12 @@ public class CustomPackOrganizing {
 
     private static void addError (String type, String error, String path, String troublemaker) {
 
-        cache_errors.computeIfAbsent(type, test -> new HashMap<>()).computeIfAbsent(error, test -> new ArrayList<>()).add(troublemaker);
+        cache_errors.computeIfAbsent(type, create -> new HashMap<>()).computeIfAbsent(error, create -> new ArrayList<>()).add(troublemaker);
         File file = new File(path);
 
         if (file.getName().startsWith("[INCOMPATIBLE] ") == false) {
 
-            file.renameTo(new File(file.getParentFile().toPath() + "/[INCOMPATIBLE] " + file.getName()));
+            FileManager.rename(path, "[INCOMPATIBLE] " + file.getName());
 
         }
 
@@ -608,7 +599,7 @@ public class CustomPackOrganizing {
 
         for (Map.Entry<String, Map<String, List<String>>> entry1 : cache_errors.entrySet()) {
 
-            to_chat = entry1.getKey().equals("pack") == true || FileConfig.developer_mode == true;
+            to_chat = entry1.getKey().equals("pack") == true || Handcode.Config.developer_mode == true;
 
             for (Map.Entry<String, List<String>> entry2 : entry1.getValue().entrySet()) {
 

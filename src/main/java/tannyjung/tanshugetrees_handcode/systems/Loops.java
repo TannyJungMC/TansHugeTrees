@@ -9,7 +9,6 @@ import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_core.outside.TXTFunction;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.data.FileConfig;
 import tannyjung.tanshugetrees_handcode.systems.compatibility.CompatibilitySereneSeasons;
 import tannyjung.tanshugetrees_handcode.systems.living_mechanics.LivingMechanics;
 import tannyjung.tanshugetrees_handcode.systems.living_mechanics.LivingMechanicsLeafDrop;
@@ -33,13 +32,13 @@ public class Loops {
             // Tree Generator
             {
 
-                if (FileConfig.tree_generator_speed_tick > 0) {
+                if (Handcode.Config.tree_generator_speed_tick > 0) {
 
                     ServerPlayer player = level_server.getRandomPlayer();
 
                     if (player != null) {
 
-                        for (Entity entity : GameUtils.Mob.getAtArea(level_server, player.position(), 2000, true, FileConfig.tree_generator_count_limit, "minecraft:marker", "TANSHUGETREES-tree_generator")) {
+                        for (Entity entity : GameUtils.Mob.getAtArea(level_server, player.position(), 2000, true, Handcode.Config.tree_generator_count_limit, "minecraft:marker", "TANSHUGETREES-tree_generator")) {
 
                             TreeGenerator.run(level_accessor, entity);
 
@@ -61,15 +60,15 @@ public class Loops {
                 // Main
                 {
 
-                    if (FileConfig.living_mechanics == true && FileConfig.living_mechanics_tick > 0) {
+                    if (Handcode.Config.living_mechanics == true && Handcode.Config.living_mechanics_tick > 0) {
 
                         living_mechanics_tick = living_mechanics_tick + 1;
 
-                        if (living_mechanics_tick >= FileConfig.living_mechanics_tick) {
+                        if (living_mechanics_tick >= Handcode.Config.living_mechanics_tick) {
 
                             living_mechanics_tick = 0;
 
-                            if (Math.random() < (double) GameUtils.Score.get(level_server, "TANSHUGETREES", "tree_location") / (double) FileConfig.living_mechanics_simulation) {
+                            if (Math.random() < (double) GameUtils.Score.get(level_server, "TANSHUGETREES", "tree_location") / (double) Handcode.Config.living_mechanics_simulation) {
 
                                 List<Entity> entities = GameUtils.Mob.getAtEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-tree_location");
 
@@ -124,7 +123,7 @@ public class Loops {
         // Developer Mode
         {
 
-            if (FileConfig.developer_mode == true) {
+            if (Handcode.Config.developer_mode == true) {
 
                 for (Entity entity : GameUtils.Mob.getAtEverywhere(level_server, "", "TANSHUGETREES")) {
 

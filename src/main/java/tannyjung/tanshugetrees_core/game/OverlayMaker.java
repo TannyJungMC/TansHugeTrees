@@ -121,12 +121,12 @@ public class OverlayMaker {
                                                     b = (argb) & 0xFF;
                                                     abgr = (a << 24) | (b << 16) | (g << 8) | r;
 
-                                        /*
-                                        (1.20.1) (1.21.1)
-                                        native_image.setPixelRGBA(scanX, scanY, abgr);
-                                        (1.21.8)
-                                        native_image.setPixelABGR(scanX, scanY, abgr);
-                                        */
+                                                    /*
+                                                    (1.20.1) (1.21.1)
+                                                    native_image.setPixelRGBA(scanX, scanY, abgr);
+                                                    (1.21.8)
+                                                    native_image.setPixelABGR(scanX, scanY, abgr);
+                                                    */
                                                     native_image.setPixelRGBA(scanX, scanY, abgr);
 
                                                 }
@@ -135,12 +135,12 @@ public class OverlayMaker {
 
                                         }
 
-                                    /*
-                                    (1.20.1) (1.21.1)
-                                    Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(native_image));
-                                    (1.21.8)
-                                    Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(() -> "test", native_image));
-                                    */
+                                        /*
+                                        (1.20.1) (1.21.1)
+                                        Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(native_image));
+                                        (1.21.8)
+                                        Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(() -> "test", native_image));
+                                        */
                                         Minecraft.getInstance().getTextureManager().register(ResourceLocation.parse(name_final), new DynamicTexture(native_image));
 
                                         status.put(name_final, "available");

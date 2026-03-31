@@ -5,7 +5,7 @@ import net.minecraft.client.gui.screens.DatapackLoadFailureScreen;
 import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import net.minecraft.client.gui.screens.Screen;
 import tannyjung.tanshugetrees_core.game.OverlayMaker;
-import tannyjung.tanshugetrees_handcode.data.FileConfig;
+import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.TreeLocation;
 
 public class Overlays {
@@ -16,7 +16,7 @@ public class Overlays {
 
             {
 
-                if (FileConfig.world_gen_icon == true) {
+                if (Handcode.Config.world_gen_icon == true) {
 
                     if (TreeLocation.world_gen_overlay_animation != 0) {
 
@@ -49,14 +49,14 @@ public class Overlays {
 
     public static void eventInGame (GuiGraphics graphic, int screen_width, int screen_height) {
 
-        if (FileConfig.world_gen_icon == true) {
+        if (Handcode.Config.world_gen_icon == true) {
 
             if (TreeLocation.world_gen_overlay_animation != 0) {
 
                 OverlayMaker.createImage(graphic, false, "tanshugetrees:textures/screens/overlay_region_gen.png", "", "", 8, 8, 64, 16, 4, 1, TreeLocation.world_gen_overlay_animation - 1);
                 OverlayMaker.createImage(graphic, false, "tanshugetrees:textures/screens/overlay_region_gen_bar.png", "", "", 27, 8, 17, 16, 17, 1, (int) Math.round(((double) TreeLocation.world_gen_overlay_bar / 1024) * 16));
 
-                if (FileConfig.developer_mode == true) {
+                if (Handcode.Config.developer_mode == true) {
 
                     OverlayMaker.createText(graphic, screen_width, screen_height, "top-left", 8, 32, 1.0, -10066330, false, "Biome : " + TreeLocation.world_gen_overlay_details_biome);
                     OverlayMaker.createText(graphic, screen_width, screen_height, "top-left", 8, 44, 1.0, -11908534, false, "Tree : " + TreeLocation.world_gen_overlay_details_tree);

@@ -13,7 +13,7 @@ import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
-import tannyjung.tanshugetrees_handcode.data.FileConfig;
+import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.systems.Caches;
 
 import java.io.File;
@@ -97,11 +97,11 @@ public class LivingMechanics {
 
                                         int number = Integer.parseInt(get_short.substring(3)) - 1;
 
-                                        if (FileConfig.deciduous_leaves_list.contains(get) == true) {
+                                        if (Handcode.Config.deciduous_leaves_list.contains(get) == true) {
 
                                             leaves_type[number] = 1;
 
-                                        } else if (FileConfig.coniferous_leaves_list.contains(get) == true) {
+                                        } else if (Handcode.Config.coniferous_leaves_list.contains(get) == true) {
 
                                             leaves_type[number] = 2;
 
@@ -130,7 +130,7 @@ public class LivingMechanics {
 
         if (file.exists() == true && file.isDirectory() == false) {
 
-            if (FileConfig.developer_mode == true) {
+            if (Handcode.Config.developer_mode == true) {
 
                 GameUtils.Misc.spawnParticle(level_server, entity.position(), 0, 0, 0, 0, 1, "minecraft:flash");
                 GameUtils.Misc.spawnParticle(level_server, entity.position().add(0, 100, 0), 0, 25, 0, 0, 300, "minecraft:totem_of_undying");
@@ -145,13 +145,13 @@ public class LivingMechanics {
             // Biome Type Test
             {
 
-                Holder<Biome> biome = GameUtils.Space.getBiomeAt(level_accessor, level_server, center_pos);
+                Holder<Biome> biome = GameUtils.Environment.getAt(level_accessor, center_pos);
 
-                if (GameUtils.Space.isBiomeTaggedAs(biome, "tanshugetrees:snowy_biomes") == true) {
+                if (GameUtils.Environment.test(biome, "#tanshugetrees:snowy_biomes") == true) {
 
                     biome_type = 1;
 
-                } else if (GameUtils.Space.isBiomeTaggedAs(biome, "tanshugetrees:tropical_biomes") == true) {
+                } else if (GameUtils.Environment.test(biome, "#tanshugetrees:tropical_biomes") == true) {
 
                     biome_type = 2;
 
@@ -222,9 +222,9 @@ public class LivingMechanics {
                         // Out of Process Limit
                         {
 
-                            if (FileConfig.living_mechanics_process_limit > 0) {
+                            if (Handcode.Config.living_mechanics_process_limit > 0) {
 
-                                if (GameUtils.Data.getEntityNumber(entity, "process_save") + FileConfig.living_mechanics_process_limit <= process) {
+                                if (GameUtils.Data.getEntityNumber(entity, "process_save") + Handcode.Config.living_mechanics_process_limit <= process) {
 
                                     GameUtils.Data.setEntityNumber(entity, "process_save", process);
                                     return;
@@ -291,7 +291,7 @@ public class LivingMechanics {
 
                                         if (level_accessor.getBlockState(pos).getBlock() == block.getBlock()) {
 
-                                            if (GameUtils.Tile.isTaggedAs(block, "minecraft:leaves") == true) {
+                                            if (GameUtils.Tile.test(block, "#minecraft:leaves") == true) {
 
                                                 block = GameUtils.Tile.setPropertyLogic(block, "persistent", false);
                                                 GameUtils.Tile.set(level_accessor, pos, block, false);
@@ -394,7 +394,7 @@ public class LivingMechanics {
         // Light Level Detection
         {
 
-            if (FileConfig.leaf_light_level_detection <= level_accessor.getBrightness(LightLayer.SKY, pos) + 1) {
+            if (Handcode.Config.leaf_light_level_detection <= level_accessor.getBrightness(LightLayer.SKY, pos) + 1) {
 
                 can_pos_photosynthesis = true;
 
@@ -428,7 +428,7 @@ public class LivingMechanics {
 
                     } else if (can_pos_photosynthesis == false || have_center_block == false) {
 
-                        chance = FileConfig.leaf_dead_drop_chance;
+                        chance = Handcode.Config.leaf_dead_drop_chance;
 
                     } else {
 
@@ -443,10 +443,10 @@ public class LivingMechanics {
                                     {
 
                                         chance = switch (current_season) {
-                                            case "Spring" -> FileConfig.leaf_drop_chance_spring;
-                                            case "Summer" -> FileConfig.leaf_drop_chance_summer;
-                                            case "Autumn" -> FileConfig.leaf_drop_chance_autumn;
-                                            case "Winter" -> FileConfig.leaf_drop_chance_winter;
+                                            case "Spring" -> Handcode.Config.leaf_drop_chance_spring;
+                                            case "Summer" -> Handcode.Config.leaf_drop_chance_summer;
+                                            case "Autumn" -> Handcode.Config.leaf_drop_chance_autumn;
+                                            case "Winter" -> Handcode.Config.leaf_drop_chance_winter;
                                             default -> chance;
                                         };
 
@@ -454,11 +454,11 @@ public class LivingMechanics {
 
                                 } else if (biome_type == 1) {
 
-                                    chance = FileConfig.leaf_drop_chance_winter;
+                                    chance = Handcode.Config.leaf_drop_chance_winter;
 
                                 } else if (biome_type == 2) {
 
-                                    chance = FileConfig.leaf_drop_chance_summer;
+                                    chance = Handcode.Config.leaf_drop_chance_summer;
 
                                 }
 
@@ -469,7 +469,7 @@ public class LivingMechanics {
 
                                     if (current_season.equals("Summer")) {
 
-                                        chance = FileConfig.leaf_drop_chance_coniferous;
+                                        chance = Handcode.Config.leaf_drop_chance_coniferous;
 
                                     }
 
@@ -477,7 +477,7 @@ public class LivingMechanics {
 
                             } else {
 
-                                chance = FileConfig.leaf_drop_chance_summer;
+                                chance = Handcode.Config.leaf_drop_chance_summer;
 
                             }
 
@@ -491,17 +491,17 @@ public class LivingMechanics {
 
                             GameUtils.Tile.remove(level_accessor, level_server, pos, false);
 
-                            if (FileConfig.leaf_litter == true) {
+                            if (Handcode.Config.leaf_litter == true) {
 
-                                if (Math.random() < FileConfig.leaf_drop_animation_chance) {
+                                if (Math.random() < Handcode.Config.leaf_drop_animation_chance) {
 
                                     // Animation
                                     {
 
-                                        if (GameUtils.Score.get(level_server, "TANSHUGETREES", "leaf_drop") < FileConfig.leaf_drop_animation_count_limit) {
+                                        if (GameUtils.Score.get(level_server, "TANSHUGETREES", "leaf_drop") < Handcode.Config.leaf_drop_animation_count_limit) {
 
                                             // Don't create animation, if there's a block below.
-                                            if (GameUtils.Tile.isTaggedAs(level_accessor.getBlockState(pos.below()), "tanshugetrees:passable_blocks") == true) {
+                                            if (GameUtils.Tile.test(level_accessor.getBlockState(pos.below()), "#tanshugetrees:passable_blocks") == true) {
 
                                                 Entity entity_summon = GameUtils.Misc.summonBlock(level_server, pos.getCenter(), "Falling Leaf", "TANSHUGETREES-leaf_drop", 0, 0, 0, 1, 1, 1, 0, 0, GameUtils.Tile.toText(block)[0]);
                                                 GameUtils.Data.setEntityText(entity_summon, "block", GameUtils.Tile.toText(block)[0]);
@@ -581,10 +581,10 @@ public class LivingMechanics {
                                     {
 
                                         chance = switch (current_season) {
-                                            case "Spring" -> FileConfig.leaf_regrowth_chance_spring;
-                                            case "Summer" -> FileConfig.leaf_regrowth_chance_summer;
-                                            case "Autumn" -> FileConfig.leaf_regrowth_chance_autumn;
-                                            case "Winter" -> FileConfig.leaf_regrowth_chance_winter;
+                                            case "Spring" -> Handcode.Config.leaf_regrowth_chance_spring;
+                                            case "Summer" -> Handcode.Config.leaf_regrowth_chance_summer;
+                                            case "Autumn" -> Handcode.Config.leaf_regrowth_chance_autumn;
+                                            case "Winter" -> Handcode.Config.leaf_regrowth_chance_winter;
                                             default -> chance;
                                         };
 
@@ -592,21 +592,21 @@ public class LivingMechanics {
 
                                 } else if (biome_type == 1) {
 
-                                    chance = FileConfig.leaf_regrowth_chance_winter;
+                                    chance = Handcode.Config.leaf_regrowth_chance_winter;
 
                                 } else if (biome_type == 2) {
 
-                                    chance = FileConfig.leaf_regrowth_chance_summer;
+                                    chance = Handcode.Config.leaf_regrowth_chance_summer;
 
                                 }
 
                             } else if (leaves_type == 2) {
 
-                                chance = FileConfig.leaf_regrowth_chance_coniferous;
+                                chance = Handcode.Config.leaf_regrowth_chance_coniferous;
 
                             } else {
 
-                                chance = FileConfig.leaf_regrowth_chance_summer;
+                                chance = Handcode.Config.leaf_regrowth_chance_summer;
 
                             }
 
@@ -634,13 +634,13 @@ public class LivingMechanics {
         // Leaf Litter Remover
         {
 
-            if (FileConfig.leaf_litter == true) {
+            if (Handcode.Config.leaf_litter == true) {
 
-                if (Math.random() < FileConfig.leaf_litter_remover_chance) {
+                if (Math.random() < Handcode.Config.leaf_litter_remover_chance) {
 
-                    if (GameUtils.Score.get(level_server, "TANSHUGETREES", "leaf_litter_remover") < FileConfig.leaf_litter_remover_count_limit) {
+                    if (GameUtils.Score.get(level_server, "TANSHUGETREES", "leaf_litter_remover") < Handcode.Config.leaf_litter_remover_count_limit) {
 
-                        GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Leaf Litter Remover", "TANSHUGETREES-leaf_litter_remover", "{NeoForgeData:{tanshugetrees:{block:\"" + GameUtils.Tile.toText(block)[0] + "\"}}}");
+                        GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Leaf Litter Remover", "TANSHUGETREES-leaf_litter_remover", "{ForgeData:{tanshugetrees:{block:\"" + GameUtils.Tile.toText(block)[0] + "\"}}}");
                         GameUtils.Score.add(level_server, "TANSHUGETREES", "leaf_litter_remover", 1);
 
                     }

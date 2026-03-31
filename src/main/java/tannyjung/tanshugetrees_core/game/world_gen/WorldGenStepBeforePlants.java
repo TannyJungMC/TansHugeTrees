@@ -7,7 +7,6 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGen;
 
@@ -21,8 +20,6 @@ public class WorldGenStepBeforePlants extends Feature <NoneFeatureConfiguration>
 
     @Override
     public boolean place (FeaturePlaceContext <NoneFeatureConfiguration> context) {
-
-        Core.Restart.testLock();
 
         LevelAccessor level_accessor = context.level();
         ServerLevel level_server = context.level().getLevel();

@@ -18,7 +18,7 @@ public class TreeSummonerStaff {
 
     public static void restore (Entity entity) {
 
-        Core.DelayedWorks.create(false, 5, () -> {
+        Core.DelayedWork.create(false, 5, () -> {
 
             GameUtils.GUI.setTextBox(entity, "path", GameUtils.Data.getItemText(entity, EquipmentSlot.MAINHAND, "path"));
 

@@ -527,7 +527,7 @@ public class ShapeFileConverter {
         GameUtils.Misc.sendChatMessage(level_server, "Completed! / green");
         export_data.clear();
 
-        Core.DelayedWorks.create(false, 1, () -> {
+        Core.DelayedWork.create(false, 1, () -> {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 

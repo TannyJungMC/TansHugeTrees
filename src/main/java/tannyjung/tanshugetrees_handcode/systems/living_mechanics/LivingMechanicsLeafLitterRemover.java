@@ -18,7 +18,7 @@ public class LivingMechanicsLeafLitterRemover {
 
         }
 
-        if (GameUtils.Tile.isTaggedAs(level_accessor.getBlockState(entity.blockPosition()), "tanshugetrees:passable_blocks") == true && level_accessor.isWaterAt(entity.blockPosition()) == false) {
+        if (GameUtils.Tile.test(level_accessor.getBlockState(entity.blockPosition()), "#tanshugetrees:passable_blocks") == true && level_accessor.isWaterAt(entity.blockPosition()) == false) {
 
             entity.setPos(entity.getX(), entity.getY() - 1,  entity.getZ());
 

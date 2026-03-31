@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_core.outside;
 
+import net.minecraft.world.level.ChunkPos;
 import tannyjung.tanshugetrees_core.Core;
 
 import java.io.BufferedInputStream;
@@ -9,6 +10,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -320,31 +322,39 @@ public class OutsideUtils {
 
     }
 
-    public static String getQuardtree (int level, int chunkX, int chunkZ) {
+    public static String convertRegionQuadtree (ChunkPos chunk_pos, int level) {
 
-        StringBuilder return_text = new StringBuilder();
+        StringBuilder write = new StringBuilder();
+        int localX = chunk_pos.x & 31;
+        int localZ = chunk_pos.z & 31;
 
-        {
+        for (int step = 1; step <= level; step++) {
 
-            int localX = chunkX & 31;
-            int localZ = chunkZ & 31;
+            int size = 32 >> step;
+            int posX = (localX / size) % 2;
+            int posZ = (localZ / size) % 2;
 
-            for (int step = 1; step <= level; step++) {
+            if (posX == 0 && posZ == 0) {
 
-                int size = 32 >> step;
-                int posX = (localX / size) % 2;
-                int posZ = (localZ / size) % 2;
+                write.append("/NW");
 
-                if (posX == 0 && posZ == 0) return_text.append("-NW");
-                else if (posX == 1 && posZ == 0) return_text.append("-NE");
-                else if (posX == 0) return_text.append("-SW");
-                else return_text.append("-SE");
+            } else if (posX == 1 && posZ == 0) {
+
+                write.append("/NE");
+
+            } else if (posX == 0) {
+
+                write.append("/SW");
+
+            } else {
+
+                write.append("/SE");
 
             }
 
         }
 
-        return return_text.substring(1);
+        return write.substring(1);
 
     }
 
@@ -376,6 +386,28 @@ public class OutsideUtils {
         }
 
         return data;
+
+    }
+
+    public static class ByteConverter {
+
+        public static byte[] fromShort (short value) {
+
+            return ByteBuffer.allocate(Short.BYTES).putShort(value).array();
+
+        }
+
+        public static byte[] fromInt (int value) {
+
+            return ByteBuffer.allocate(Integer.BYTES).putInt(value).array();
+
+        }
+
+        public static byte[] fromDouble (double value) {
+
+            return ByteBuffer.allocate(Double.BYTES).putDouble(value).array();
+
+        }
 
     }
 

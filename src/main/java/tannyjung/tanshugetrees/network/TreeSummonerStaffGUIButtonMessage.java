@@ -4,43 +4,35 @@ import tannyjung.tanshugetrees.procedures.TreeSummonerStaffGUIWhenOpenProcedure;
 import tannyjung.tanshugetrees.procedures.TreeSummonerStaffGUIApplyProcedure;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.bus.api.SubscribeEvent;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
 
-@EventBusSubscriber
-public record TreeSummonerStaffGUIButtonMessage(int buttonID, int x, int y, int z) implements CustomPacketPayload {
+import java.util.function.Supplier;
 
-	public static final Type<TreeSummonerStaffGUIButtonMessage> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(TanshugetreesMod.MODID, "tree_summoner_staff_gui_buttons"));
-	public static final StreamCodec<RegistryFriendlyByteBuf, TreeSummonerStaffGUIButtonMessage> STREAM_CODEC = StreamCodec.of((RegistryFriendlyByteBuf buffer, TreeSummonerStaffGUIButtonMessage message) -> {
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+public record TreeSummonerStaffGUIButtonMessage(int buttonID, int x, int y, int z) {
+	public TreeSummonerStaffGUIButtonMessage(FriendlyByteBuf buffer) {
+		this(buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt());
+	}
+
+	public static void buffer(TreeSummonerStaffGUIButtonMessage message, FriendlyByteBuf buffer) {
 		buffer.writeInt(message.buttonID);
 		buffer.writeInt(message.x);
 		buffer.writeInt(message.y);
 		buffer.writeInt(message.z);
-	}, (RegistryFriendlyByteBuf buffer) -> new TreeSummonerStaffGUIButtonMessage(buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt()));
-	@Override
-	public Type<TreeSummonerStaffGUIButtonMessage> type() {
-		return TYPE;
 	}
 
-	public static void handleData(final TreeSummonerStaffGUIButtonMessage message, final IPayloadContext context) {
-		if (context.flow() == PacketFlow.SERVERBOUND) {
-			context.enqueueWork(() -> handleButtonAction(context.player(), message.buttonID, message.x, message.y, message.z)).exceptionally(e -> {
-				context.connection().disconnect(Component.literal(e.getMessage()));
-				return null;
-			});
-		}
+	public static void handler(TreeSummonerStaffGUIButtonMessage message, Supplier<NetworkEvent.Context> contextSupplier) {
+		NetworkEvent.Context context = contextSupplier.get();
+		context.enqueueWork(() -> handleButtonAction(context.getSender(), message.buttonID, message.x, message.y, message.z));
+		context.setPacketHandled(true);
 	}
 
 	public static void handleButtonAction(Player entity, int buttonID, int x, int y, int z) {
@@ -60,6 +52,6 @@ public record TreeSummonerStaffGUIButtonMessage(int buttonID, int x, int y, int 
 
 	@SubscribeEvent
 	public static void registerMessage(FMLCommonSetupEvent event) {
-		TanshugetreesMod.addNetworkMessage(TreeSummonerStaffGUIButtonMessage.TYPE, TreeSummonerStaffGUIButtonMessage.STREAM_CODEC, TreeSummonerStaffGUIButtonMessage::handleData);
+		TanshugetreesMod.addNetworkMessage(TreeSummonerStaffGUIButtonMessage.class, TreeSummonerStaffGUIButtonMessage::buffer, TreeSummonerStaffGUIButtonMessage::new, TreeSummonerStaffGUIButtonMessage::handler);
 	}
 }

@@ -95,7 +95,7 @@ public class BlockPlacer {
 
                 if (function.isEmpty() == false) {
 
-                    Core.DelayedWorks.create(false, 20, () -> {
+                    Core.DelayedWork.create(false, 20, () -> {
 
                         TXTFunction.run(level_accessor, level_server, pos, "functions/" + function, true);
 

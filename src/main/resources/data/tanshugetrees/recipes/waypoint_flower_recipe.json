@@ -6,7 +6,5 @@
   "ingredient": {
     "item": "minecraft:flowering_azalea_leaves"
   },
-  "result": {
-    "id": "tanshugetrees:waypoint_flower"
-  }
+  "result": "tanshugetrees:waypoint_flower"
 }

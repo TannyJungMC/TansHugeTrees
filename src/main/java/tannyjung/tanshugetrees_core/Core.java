@@ -10,13 +10,10 @@ import tannyjung.tanshugetrees_core.game.world_gen.FeatureAreaDirt;
 import tannyjung.tanshugetrees_core.game.world_gen.FeatureAreaGrass;
 import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepBeforePlants;
 import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepLast;
-import tannyjung.tanshugetrees_core.outside.CacheManager;
-import tannyjung.tanshugetrees_core.outside.CustomPackOrganizing;
-import tannyjung.tanshugetrees_core.outside.OutsideUtils;
+import tannyjung.tanshugetrees_core.outside.*;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.data.DataMigration;
-import tannyjung.tanshugetrees_handcode.data.DataRepair;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
@@ -33,9 +30,10 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.registries.DeferredRegister;
 */
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.registries.DeferredRegister;
+import tannyjung.tanshugetrees_handcode.systems.Loops;
 
 public class Core {
 
@@ -82,97 +80,150 @@ public class Core {
         path_config = path_game + "/config/" + mod_id;
 
         Registry.start(bus);
-        DataMigration.run(true, false);
-        Restart.run(null, true);
+        DataMigration.run(false);
+        restart(null, true);
 
     }
 
-    public static class Restart {
+    public static void restart (ServerLevel level_server, boolean config) {
 
-        private static final Object lock = new Object();
+        Runnable runnable = () -> {
 
-        public static void run (ServerLevel level_server, boolean config) {
+            if (config == true) {
 
-            Runnable runnable = () -> {
+                Handcode.repairData();
+                Handcode.Config.repair();
+                Handcode.Config.apply();
+
+                if (Handcode.Config.wip_version == true) {
+
+                    Core.tanny_pack_type = "WIP";
+
+                } else {
+
+                    Core.tanny_pack_type = Core.tanny_pack_type_original;
+
+                }
+
+                CustomPackOrganizing.sendErrorMessage(level_server);
+
+            }
+
+            if (level_server != null) {
+
+                GameUtils.Score.create(level_server, mod_id_big);
+
+            }
+
+        };
+
+        if (level_server == null) {
+
+            CacheManager.clear();
+            runnable.run();
+
+        } else {
+
+            thread_main.submit(() -> {
+
+                GlobalLocking.test();
+                GlobalLocking.lock();
 
                 if (config == true) {
 
-                    DataRepair.start();
-                    CustomPackOrganizing.sendErrorMessage(level_server);
+                    GameUtils.Misc.sendChatMessage(level_server, "Restarting the mod... / gray");
 
                 }
 
-                if (level_server != null) {
+                DelayedWork.create(true, 20, () -> {
 
-                    GameUtils.Score.create(level_server, mod_id_big);
-
-                }
-
-            };
-
-            if (level_server == null) {
-
-                CacheManager.clear();
-                runnable.run();
-
-            } else {
-
-                thread_main.submit(() -> {
-
-                    Restart.runLock();
+                    String cache_size = "";
 
                     if (config == true) {
 
-                        GameUtils.Misc.sendChatMessage(level_server, "Restarting the mod... / gray");
+                        cache_size = CacheManager.clear();
 
                     }
 
-                    DelayedWorks.create(true, 20, () -> {
+                    runnable.run();
 
-                        if (config == true) {
+                    if (config == true) {
 
-                            String cache_size = CacheManager.clear();
-                            GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches about " + cache_size + " / gray");
+                        GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches about " + cache_size + " / gray");
 
-                        }
+                    }
 
-                        runnable.run();
-                        Restart.runUnlock();
-
-                    });
+                    GlobalLocking.unlock();
 
                 });
+
+            });
+
+        }
+
+    }
+
+    public static class Registry {
+
+        public static Map<String, Supplier<Feature<?>>> features = new HashMap<>();
+
+        public static void start (IEventBus bus) {
+
+            features.put("world_gen_before_plants", WorldGenStepBeforePlants::new);
+            features.put("world_gen_last", WorldGenStepLast::new);
+            features.put("area_grass", FeatureAreaGrass::new);
+            features.put("area_dirt", FeatureAreaDirt::new);
+
+            // Feature
+            {
+
+                DeferredRegister<Feature<?>> deferred = DeferredRegister.create(Registries.FEATURE, mod_id);
+
+                for (Map.Entry<String, Supplier<Feature<?>>> entry : features.entrySet()) {
+
+                    deferred.register(entry.getKey(), entry.getValue());
+
+                }
+
+                deferred.register(bus);
+                features.clear();
 
             }
 
         }
 
-        private static void runLock () {
+    }
+    
+    public static class GlobalLocking {
+
+        private static final Object global_locking = new Object();
+
+        public static void lock () {
 
             in_restarting = true;
 
         }
 
-        private static void runUnlock () {
+        public static void unlock () {
 
-            synchronized (lock) {
+            synchronized (global_locking) {
 
                 in_restarting = false;
-                lock.notifyAll();
+                global_locking.notifyAll();
 
             }
 
         }
 
-        public static void testLock () {
+        public static void test () {
 
-            synchronized (lock) {
+            synchronized (global_locking) {
 
                 while (in_restarting == true) {
 
                     try {
 
-                        lock.wait();
+                        global_locking.wait();
 
                     } catch (Exception exception) {
 
@@ -188,7 +239,7 @@ public class Core {
 
     }
 
-    public static class DelayedWorks {
+    public static class DelayedWork {
 
         private static final Collection<AbstractMap.SimpleEntry<Runnable, Integer>> delayed_works = new ConcurrentLinkedQueue<>();
         private static final ScheduledExecutorService thread_delay = Executors.newScheduledThreadPool(1);
@@ -226,14 +277,14 @@ public class Core {
 
     }
 
-    public static class Loops {
+    public static class Loop {
 
         private static int second = 0;
         private static int minute = 0;
 
         public static void loopTick (LevelAccessor level_accessor, ServerLevel level_server) {
 
-            tannyjung.tanshugetrees_handcode.systems.Loops.tick(level_accessor, level_server);
+            Loops.tick(level_accessor, level_server);
             second = second + 1;
 
             if (second > 20) {
@@ -247,7 +298,7 @@ public class Core {
 
         private static void loopSecond (LevelAccessor level_accessor, ServerLevel level_server) {
 
-            tannyjung.tanshugetrees_handcode.systems.Loops.second(level_accessor, level_server);
+            Loops.second(level_accessor, level_server);
             minute = minute + 1;
 
             if (minute > 60) {
@@ -261,36 +312,81 @@ public class Core {
 
         private static void loopMinute (LevelAccessor level_accessor, ServerLevel level_server) {
 
-            tannyjung.tanshugetrees_handcode.systems.Loops.minute(level_accessor, level_server);
+            Loops.minute(level_accessor, level_server);
 
         }
 
     }
 
-    public static class Registry {
+    public static class DataMigration {
 
-        public static Map<String, Supplier<Feature<?>>> features = new HashMap<>();
+        public static void run(boolean is_world) {
 
-        public static void start (IEventBus bus) {
+            if (is_world == false) {
 
-            features.put("world_gen_before_plants", WorldGenStepBeforePlants::new);
-            features.put("world_gen_last", WorldGenStepLast::new);
-            features.put("area_grass", FeatureAreaGrass::new);
-            features.put("area_dirt", FeatureAreaDirt::new);
+                String path = Core.path_config + "/dev/version.txt";
+                File test_exist = new File(Core.path_config).getParentFile();
+                String version = "";
 
-            // Feature
-            {
+                // Get Version
+                {
 
-                DeferredRegister<Feature<?>> deferred = DeferredRegister.create(Registries.FEATURE, mod_id);
+                    if (test_exist.exists() == true) {
 
-                for (Map.Entry<String, Supplier<Feature<?>>> entry : features.entrySet()) {
+                        for (String read_all : FileManager.readTXT(path)) {
 
-                    deferred.register(entry.getKey(), entry.getValue());
+                            version = read_all;
+
+                        }
+
+                    } else {
+
+                        version = "not found";
+
+                    }
 
                 }
 
-                deferred.register(bus);
-                features.clear();
+                if (version.equals("not found") == false) {
+
+                    Handcode.DataMigration.runConfig(version);
+
+                }
+
+                FileManager.writeTXT(path, Core.data_structure_version_mod, false);
+
+            } else {
+
+                String path = Core.path_world_mod + "/version.txt";
+                File test_exist = new File(Core.path_world_mod).getParentFile();
+                String version = "";
+
+                // Get Version
+                {
+
+                    if (test_exist.exists() == true) {
+
+                        for (String read_all : FileManager.readTXT(path)) {
+
+                            version = read_all;
+
+                        }
+
+                    } else {
+
+                        version = "not found";
+
+                    }
+
+                }
+
+                if (version.equals("not found") == false) {
+
+                    Handcode.DataMigration.runWorld(version);
+
+                }
+
+                FileManager.writeTXT(path, Core.data_structure_version_mod, false);
 
             }
 

@@ -13,35 +13,35 @@ public class CompatibilitySereneSeasons {
         BlockPos pos = GameUtils.Space.getWorldSpawnPos(level_accessor).atY(GameUtils.Space.getBuildHeight(level_accessor, false)).above();
         runClear(level_server, pos);
 
-        Core.DelayedWorks.create(false, 20, () -> {
+        Core.DelayedWork.create(false, 20, () -> {
 
             runTest(level_server, pos, "spring", 0);
 
-            Core.DelayedWorks.create(false, 20, () -> {
+            Core.DelayedWork.create(false, 20, () -> {
 
                 runClear(level_server, pos);
 
-                Core.DelayedWorks.create(false, 20, () -> {
+                Core.DelayedWork.create(false, 20, () -> {
 
                     runTest(level_server, pos, "summer", 1);
 
-                    Core.DelayedWorks.create(false, 20, () -> {
+                    Core.DelayedWork.create(false, 20, () -> {
 
                         runClear(level_server, pos);
 
-                        Core.DelayedWorks.create(false, 20, () -> {
+                        Core.DelayedWork.create(false, 20, () -> {
 
                             runTest(level_server, pos, "autumn", 2);
 
-                            Core.DelayedWorks.create(false, 20, () -> {
+                            Core.DelayedWork.create(false, 20, () -> {
 
                                 runClear(level_server, pos);
 
-                                Core.DelayedWorks.create(false, 20, () -> {
+                                Core.DelayedWork.create(false, 20, () -> {
 
                                     runTest(level_server, pos, "winter", 3);
 
-                                    Core.DelayedWorks.create(false, 20, () -> {
+                                    Core.DelayedWork.create(false, 20, () -> {
 
                                         runClear(level_server, pos);
 

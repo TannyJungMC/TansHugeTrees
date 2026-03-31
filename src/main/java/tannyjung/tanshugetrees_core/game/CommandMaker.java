@@ -23,7 +23,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 (1.21.1)
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 */
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 
 public class CommandMaker {
 
@@ -274,7 +274,7 @@ public class CommandMaker {
             private static void restart (CommandContext<CommandSourceStack> data) {
 
                 ServerLevel level_server = data.getSource().getLevel();
-                Core.Restart.run(level_server, true);
+                Core.restart(level_server, true);
 
             }
 

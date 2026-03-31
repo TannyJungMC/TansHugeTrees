@@ -42,6 +42,32 @@ public class FileManager {
 
 	}
 
+    public static List<File> getAllFiles (String path) {
+
+        List<File> files = new ArrayList<>();
+
+        try {
+
+            Files.walk(Path.of(path)).forEach(source -> {
+
+                if (source.toFile().isDirectory() == false) {
+
+                    files.add(source.toFile());
+
+                }
+
+            });
+
+        } catch (Exception exception) {
+
+            OutsideUtils.exception(new Exception(), exception, "");
+
+        }
+
+        return files;
+
+    }
+
     public static void rename (String path, String new_name) {
 
         File file = new File(path);

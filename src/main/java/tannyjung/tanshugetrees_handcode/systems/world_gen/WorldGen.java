@@ -12,7 +12,7 @@ public class WorldGen {
 
     public static void stepBeforePlants (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, String dimension, ChunkPos chunk_pos) {
 
-        TreeLocation.start(level_accessor, level_server, dimension, chunk_pos);
+        TreeLocation.start(level_accessor, dimension, chunk_pos);
         TreePlacer.start(level_accessor, level_server, chunk_generator, dimension, chunk_pos);
 
     }

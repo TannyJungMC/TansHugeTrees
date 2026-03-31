@@ -5,16 +5,20 @@ package tannyjung.tanshugetrees.init;
 
 import tannyjung.tanshugetrees.client.gui.TreeSummonerStaffGUIScreen;
 
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.api.distmarker.Dist;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.api.distmarker.Dist;
 
-@EventBusSubscriber(Dist.CLIENT)
+import net.minecraft.client.gui.screens.MenuScreens;
+
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class TanshugetreesModScreens {
 	@SubscribeEvent
-	public static void clientLoad(RegisterMenuScreensEvent event) {
-		event.register(TanshugetreesModMenus.TREE_SUMMONER_STAFF_GUI.get(), TreeSummonerStaffGUIScreen::new);
+	public static void clientLoad(FMLClientSetupEvent event) {
+		event.enqueueWork(() -> {
+			MenuScreens.register(TanshugetreesModMenus.TREE_SUMMONER_STAFF_GUI.get(), TreeSummonerStaffGUIScreen::new);
+		});
 	}
 
 	public interface ScreenAccessor {

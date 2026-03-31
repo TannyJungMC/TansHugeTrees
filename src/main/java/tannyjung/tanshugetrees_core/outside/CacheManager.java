@@ -2,7 +2,6 @@ package tannyjung.tanshugetrees_core.outside;
 
 import tannyjung.tanshugetrees_core.Core;
 
-import java.nio.ByteBuffer;
 import java.util.*;
 
 public class CacheManager {
@@ -174,7 +173,15 @@ public class CacheManager {
 
             synchronized (lock) {
 
-                cache_map_text_list_text.computeIfAbsent(name, test -> new HashMap<>()).put(key, value);
+                if (key.isEmpty() == true) {
+
+                    cache_map_text_list_text.put(name, new HashMap<>());
+
+                } else {
+
+                    cache_map_text_list_text.computeIfAbsent(name, create -> new HashMap<>()).put(key, value);
+
+                }
 
             }
 
@@ -204,7 +211,15 @@ public class CacheManager {
 
             synchronized (lock) {
 
-                cache_map_text_text.computeIfAbsent(name, test -> new HashMap<>()).put(key, value);
+                if (key.isEmpty() == true) {
+
+                    cache_map_text_text.put(name, new HashMap<>());
+
+                } else {
+
+                    cache_map_text_text.computeIfAbsent(name, create -> new HashMap<>()).put(key, value);
+
+                }
 
             }
 
@@ -234,7 +249,15 @@ public class CacheManager {
 
             synchronized (lock) {
 
-                cache_map_text_map_text_text.computeIfAbsent(name, test -> new HashMap<>()).put(key, value);
+                if (key.isEmpty() == true) {
+
+                    cache_map_text_map_text_text.put(name, new HashMap<>());
+
+                } else {
+
+                    cache_map_text_map_text_text.computeIfAbsent(name, create -> new HashMap<>()).put(key, value);
+
+                }
 
             }
 
@@ -264,7 +287,15 @@ public class CacheManager {
 
             synchronized (lock) {
 
-                cache_map_text_array_number_short.computeIfAbsent(name, test -> new HashMap<>()).put(key, value);
+                if (key.isEmpty() == true) {
+
+                    cache_map_text_array_number_short.put(name, new HashMap<>());
+
+                } else {
+
+                    cache_map_text_array_number_short.computeIfAbsent(name, create -> new HashMap<>()).put(key, value);
+
+                }
 
             }
 
@@ -294,7 +325,15 @@ public class CacheManager {
 
             synchronized (lock) {
 
-                cache_map_text_array_number_int.computeIfAbsent(name, test -> new HashMap<>()).put(key, value);
+                if (key.isEmpty() == true) {
+
+                    cache_map_text_array_number_int.put(name, new HashMap<>());
+
+                } else {
+
+                    cache_map_text_array_number_int.computeIfAbsent(name, create -> new HashMap<>()).put(key, value);
+
+                }
 
             }
 
@@ -324,7 +363,15 @@ public class CacheManager {
 
             synchronized (lock) {
 
-                cache_map_text_logic.computeIfAbsent(name, test -> new HashMap<>()).put(key, value);
+                if (key.isEmpty() == true) {
+
+                    cache_map_text_logic.put(name, new HashMap<>());
+
+                } else {
+
+                    cache_map_text_logic.computeIfAbsent(name, create -> new HashMap<>()).put(key, value);
+
+                }
 
             }
 

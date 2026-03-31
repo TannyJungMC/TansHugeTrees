@@ -15,7 +15,6 @@ public class TXTFunction {
 
 	public static void run (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String path, boolean randomly) {
 
-        boolean chunk_loaded = level_server.isPositionEntityTicking(pos);
         RandomSource random = null;
 
         if (randomly == true) {
@@ -28,11 +27,12 @@ public class TXTFunction {
 
         }
 
+        boolean chunk_loaded = level_server.isPositionEntityTicking(pos) == true;
+        StringBuilder export_command = new StringBuilder();
         boolean run_test = false;
         boolean run_test_result = true;
         boolean run_skip = false;
         boolean run_break = false;
-        BlockPos pos_convert = null;
 
         String[] get = new String[0];
         double chance = 0.0;
@@ -47,11 +47,9 @@ public class TXTFunction {
         int maxX = 0;
         int maxY = 0;
         int maxZ = 0;
-
+        BlockPos pos_convert = null;
         String variable_text = "";
-        boolean variable_logic = false;
         BlockState variable_block = Blocks.AIR.defaultBlockState();
-        StringBuilder export_command = new StringBuilder();
 
         for (String read_all : CacheManager.getFunction(path)) {
 
@@ -230,7 +228,7 @@ public class TXTFunction {
 
                                                                 pos_convert = pos.offset(offset_posX, offset_posY, offset_posZ);
 
-                                                                if (GameUtils.Misc.testBiome(GameUtils.Space.getBiomeAt(level_accessor, level_server, pos_convert), variable_text) == true) {
+                                                                if (GameUtils.Environment.test(GameUtils.Environment.getAt(level_accessor, pos_convert), variable_text) == true) {
 
                                                                     continue;
 
@@ -261,7 +259,7 @@ public class TXTFunction {
 
                                                                 if (GameUtils.Space.testChunkStatus(level_accessor, new ChunkPos(pos_convert), "surface") == true) {
 
-                                                                    if (GameUtils.Misc.testBlock(level_accessor.getBlockState(pos_convert), variable_text) == true) {
+                                                                    if (GameUtils.Tile.test(level_accessor.getBlockState(pos_convert), variable_text) == true) {
 
                                                                         continue;
 
@@ -339,7 +337,7 @@ public class TXTFunction {
 
                                                                                     if (level_accessor.hasChunk(pos_convert.getX() >> 4, pos_convert.getZ() >> 4) == true) {
 
-                                                                                        if (GameUtils.Misc.testBlock(level_accessor.getBlockState(pos_convert), variable_text) == false) {
+                                                                                        if (GameUtils.Tile.test(level_accessor.getBlockState(pos_convert), variable_text) == false) {
 
                                                                                             continue;
 
@@ -506,7 +504,7 @@ public class TXTFunction {
                 }
 
                 String command_final = command.replace("'", "*").replace("\"", "$");
-                GameUtils.Mob.summonWorldGen(level_server, pos.getCenter(), "marker", "Delayed Command", "TANSHUGETREES-delayed_command", "{NeoForgeData:{" + Core.mod_id + ":{command:\"" + command_final + "\"}}}");
+                GameUtils.Mob.summonWorldGen(level_server, pos.getCenter(), "marker", "Delayed Command", "tanshugetrees-delayed_command", "{ForgeData:{" + Core.mod_id + ":{command:\"" + command_final + "\"}}}");
                 
             }
 

@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
@@ -45,10 +46,7 @@ import tannyjung.tanshugetrees_core.outside.CacheManager;
 import tannyjung.tanshugetrees_core.outside.FileManager;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /*
 (1.20.1)
@@ -65,13 +63,10 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.scores.ScoreHolder;
 */
-import net.neoforged.fml.ModList;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.scores.ScoreHolder;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.data.worldgen.features.FeatureUtils;
 
 public class GameUtils {
 
@@ -80,217 +75,6 @@ public class GameUtils {
         public static boolean isModLoaded (String id) {
 
             return ModList.get().isLoaded(id);
-
-        }
-
-        public static boolean testBiome (Holder<Biome> biome, String test) {
-
-			if (test.equals("none") == true) {
-
-				return false;
-
-			} else if (test.equals("all") == true) {
-
-                return true;
-
-            } else {
-
-                String biome_centerID = Space.getBiomeID(biome);
-
-				if (CacheManager.Data.existMapTextLogic("biome_test", biome + " | " + test) == false) {
-
-					boolean result = false;
-
-					{
-
-						for (String split : test.split(" / ")) {
-
-							result = true;
-
-							for (String split2 : split.split(", ")) {
-
-								String split_get = split2.replaceAll("[#!]", "");
-
-								{
-
-									if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
-
-										if (Space.isBiomeTaggedAs(biome, split_get) == false) {
-
-											result = false;
-
-										}
-
-									} else {
-
-										if (biome_centerID.equals(split_get) == false) {
-
-											result = false;
-
-										}
-
-									}
-
-									if (split2.startsWith("!") == true) {
-
-										result = !result;
-
-									}
-
-								}
-
-								if (result == false) {
-
-									break;
-
-								}
-
-							}
-
-							if (result == true) {
-
-								break;
-
-							}
-
-						}
-
-					}
-
-					CacheManager.Data.setMapTextLogic("biome_test", biome + " | " + test, result);
-
-				}
-
-				return CacheManager.Data.getMapTextLogic("biome_test").get(biome + " | " + test);
-
-            }
-
-        }
-
-        public static boolean testBlock (BlockState block, String test) {
-
-			if (test.equals("none") == true) {
-
-				return false;
-
-			} else if (test.equals("all") == true) {
-
-				return true;
-
-			} else {
-
-				if (CacheManager.Data.existMapTextLogic("block_test", block + " | " + test) == false) {
-
-					boolean result = false;
-
-					{
-
-						String[] data = Tile.toText(block);
-						String block_id = data[0];
-						List<String> properties = new ArrayList<>();
-
-						if (data.length > 1) {
-
-							properties = Arrays.stream(data[1].substring(1, data[1].length() - 1).split(",")).toList();
-
-						}
-
-						String value = "";
-						int index = 0;
-						String block_test = "";
-
-						for (String split : test.split(" / ")) {
-
-							result = true;
-
-							for (String split2 : split.split(", ")) {
-
-								value = split2.replaceAll("[#!]", "");
-
-								{
-
-									if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
-
-										if (Tile.isTaggedAs(block, value) == false) {
-
-											result = false;
-
-										}
-
-									} else {
-
-										index = value.indexOf("[");
-
-										if (index == -1) {
-
-											block_test = value;
-
-											if (block_id.equals(block_test) == false) {
-
-												result = false;
-
-											}
-
-										} else {
-
-											block_test = value.substring(0, index);
-
-											if (block_id.equals(block_test) == false) {
-
-												result = false;
-
-											} else {
-
-												for (String property : value.substring(index + 1, value.length() - 1).split(",")) {
-
-													if (properties.contains(property) == false) {
-
-														result = false;
-														break;
-
-													}
-
-												}
-
-											}
-
-										}
-
-									}
-
-									if (split2.startsWith("!") == true) {
-
-										result = !result;
-
-									}
-
-								}
-
-								if (result == false) {
-
-									break;
-
-								}
-
-							}
-
-							if (result == true) {
-
-								break;
-
-							}
-
-						}
-
-					}
-
-					CacheManager.Data.setMapTextLogic("block_test", block + " | " + test, result);
-
-				}
-
-				return CacheManager.Data.getMapTextLogic("block_test").get(block + " | " + test);
-
-			}
 
         }
 
@@ -366,7 +150,7 @@ public class GameUtils {
 			(1.21.1)
 			ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE.get(ResourceLocation.parse(id));
 			*/
-			ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE.get(ResourceLocation.parse(id));
+			ParticleType<?> particle = ForgeRegistries.PARTICLE_TYPES.getValue(ResourceLocation.parse(id));
 
 			if (particle != null) {
 
@@ -388,7 +172,7 @@ public class GameUtils {
 			(1.21.1)
 			SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse(id));
 			*/
-			SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse(id));
+			SoundEvent sound = ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation.parse(id));
 
 			if (sound != null) {
 
@@ -404,7 +188,7 @@ public class GameUtils {
 
 			if (temporary == true) {
 
-				Core.DelayedWorks.create(false, 200, () -> {
+				Core.DelayedWork.create(false, 200, () -> {
 
 					for (Entity scan : Mob.getAtArea(level_server, vec3, 1, true, 0, "minecraft:text_display", Core.mod_id_big + "-display_text")) {
 
@@ -543,6 +327,141 @@ public class GameUtils {
 
 	public static class Tile {
 
+		public static boolean test (BlockState block, String test) {
+
+			if (test.equals("none") == true) {
+
+				return false;
+
+			} else if (test.equals("all") == true) {
+
+				return true;
+
+			} else {
+
+				if (CacheManager.Data.existMapTextLogic("block_test", block + " | " + test) == false) {
+
+					boolean result = false;
+
+					{
+
+						String[] data = Tile.toText(block);
+						String block_id = data[0];
+						List<String> properties = new ArrayList<>();
+
+						if (data.length > 1) {
+
+							properties = Arrays.stream(data[1].substring(1, data[1].length() - 1).split(",")).toList();
+
+						}
+
+						String value = "";
+						int index = 0;
+						String block_test = "";
+
+						for (String split : test.split(" / ")) {
+
+							result = true;
+
+							for (String split2 : split.split(", ")) {
+
+								value = split2.replaceAll("[#!]", "");
+
+								{
+
+									if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
+
+										try {
+
+											if (block.is(BlockTags.create(ResourceLocation.parse(value))) == false) {
+
+												result = false;
+
+											}
+
+										} catch (Exception ignored) {
+
+											result = false;
+
+										}
+
+									} else {
+
+										index = value.indexOf("[");
+
+										if (index == -1) {
+
+											block_test = value;
+
+											if (block_id.equals(block_test) == false) {
+
+												result = false;
+
+											}
+
+										} else {
+
+											block_test = value.substring(0, index);
+
+											if (block_id.equals(block_test) == false) {
+
+												result = false;
+
+											} else {
+
+												for (String property : value.substring(index + 1, value.length() - 1).split(",")) {
+
+													if (properties.contains(property) == false) {
+
+														result = false;
+														break;
+
+													}
+
+												}
+
+											}
+
+										}
+
+									}
+
+									if (split2.startsWith("!") == true) {
+
+										result = !result;
+
+									}
+
+								}
+
+								if (result == false) {
+
+									break;
+
+								}
+
+							}
+
+							if (result == true) {
+
+								break;
+
+							}
+
+						}
+
+					}
+
+					CacheManager.Data.setMapTextLogic("block_test", block + " | " + test, result);
+
+				}
+
+				return CacheManager.Data.getMapTextLogic("block_test").get(block + " | " + test);
+
+			}
+
+		}
+
 		public static void set (LevelAccessor level_accessor, BlockPos pos, BlockState block, boolean is_world_gen) {
 
 			// World Height Limit
@@ -625,22 +544,6 @@ public class GameUtils {
 
 		}
 
-		public static boolean isTaggedAs (BlockState block, String tag) {
-
-			try {
-
-				return block.is(BlockTags.create(ResourceLocation.parse(tag)));
-
-			} catch (Exception exception) {
-
-				OutsideUtils.exception(new Exception(), exception, "");
-
-			}
-
-			return false;
-
-		}
-
 		public static BlockState fromText (String data) {
 
 			BlockState block = Blocks.AIR.defaultBlockState();
@@ -672,7 +575,7 @@ public class GameUtils {
 				(1.21.1)
 				Block block_test = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
 				*/
-				Block block_test = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
+				Block block_test = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(id));
 
 				if (block_test != null) {
 
@@ -948,7 +851,7 @@ public class GameUtils {
 
 			if (entities.isEmpty() == false) {
 
-				return entities.getFirst();
+				return entities.get(0);
 
 			} else {
 
@@ -982,7 +885,7 @@ public class GameUtils {
 			(1.21.1)
 			Entity entity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(id)).create(level_server);
 			*/
-			Entity entity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(id)).create(level_server);
+			Entity entity = ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.parse(id)).create(level_server);
 
 			if (entity != null) {
 
@@ -1154,7 +1057,7 @@ public class GameUtils {
 			(1.21.1)
 			return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)).getDefaultInstance();
 			*/
-			return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)).getDefaultInstance();
+			return ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(id)).getDefaultInstance();
 
 		}
 
@@ -1176,7 +1079,13 @@ public class GameUtils {
 
 		public static BlockPos getWorldSpawnPos (LevelAccessor level_accessor) {
 
+			/*
+			(1.20.1)
+			return new BlockPos(level_accessor.getLevelData().getXSpawn(), level_accessor.getLevelData().getYSpawn(), level_accessor.getLevelData().getZSpawn());
+			(1.21.1)
 			return level_accessor.getLevelData().getSpawnPos();
+			*/
+			return new BlockPos(level_accessor.getLevelData().getXSpawn(), level_accessor.getLevelData().getYSpawn(), level_accessor.getLevelData().getZSpawn());
 
 		}
 
@@ -1224,56 +1133,7 @@ public class GameUtils {
 			(1.21.8)
 			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getValueOrThrow(FeatureUtils.createKey(id)).place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
 			*/
-			level_world_gen.holderOrThrow(ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(id))).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
-
-		}
-
-		public static String getBiomeID (Holder<Biome> biome) {
-
-			String return_text = biome.toString().replace("Reference{ResourceKey[minecraft:worldgen/biome / ", "");
-			return return_text.substring(0, return_text.indexOf("]"));
-
-		}
-
-		public static boolean isBiomeTaggedAs (Holder<Biome> biome, String tag) {
-
-			try {
-
-				return biome.is(TagKey.create(Registries.BIOME, ResourceLocation.parse(tag)));
-
-			} catch (Exception exception) {
-
-				OutsideUtils.exception(new Exception(), exception, "");
-
-			}
-
-			return false;
-
-		}
-
-		public static Holder<Biome> getBiomeAt (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos) {
-
-			if (testChunkStatus(level_accessor, new ChunkPos(pos), "full") == true) {
-
-				return level_server.getBiome(pos);
-
-			} else {
-
-				int quartX = pos.getX() >> 2;
-				int quartY = pos.getY() >> 2;
-				int quartZ = pos.getZ() >> 2;
-
-				if (testChunkStatus(level_accessor, new ChunkPos(pos), "biomes") == true) {
-
-					return level_server.getUncachedNoiseBiome(quartX, quartY, quartZ);
-
-				} else {
-
-					return level_server.getChunkSource().getGenerator().getBiomeSource().getNoiseBiome(quartX, quartY, quartZ, level_server.getChunkSource().randomState().sampler());
-
-				}
-
-			}
+			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
 
 		}
 
@@ -1311,13 +1171,274 @@ public class GameUtils {
 
 		public static int getHeightWorldGen (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, int posX, int posZ, String type_normal, String type_world_gen) {
 
-			if (chunk_generator == null || testChunkStatus(level_accessor, new ChunkPos(posX >> 4, posZ >> 4), "carvers") == true) {
+			BlockPos pos = new BlockPos(posX, 0, posZ);
+			ChunkPos chunk_pos = new ChunkPos(pos);
+			Heightmap.Types type = Heightmap.Types.valueOf(type_world_gen);
 
-				return getHeight(level_accessor, posX, posZ, type_normal);
+			if (level_accessor.hasChunk(chunk_pos.x, chunk_pos.z) == true) {
+
+				if (level_accessor.getChunk(pos) instanceof ProtoChunk == true) {
+
+					if (Space.testChunkStatus(level_accessor, chunk_pos, "carvers") == true) {
+
+						return level_accessor.getChunk(chunk_pos.x, chunk_pos.z).getHeight(type, pos.getX(), pos.getZ());
+
+					}
+
+				} else {
+
+					return getHeight(level_accessor, posX, posZ, type_normal);
+
+				}
+
+			}
+
+			return chunk_generator.getBaseHeight(posX, posZ, type, level_accessor, level_server.getChunkSource().randomState());
+
+		}
+
+	}
+
+	public static class Environment {
+
+		public static boolean test (Holder<Biome> biome, String test) {
+
+			if (test.equals("none") == true) {
+
+				return false;
+
+			} else if (test.equals("all") == true) {
+
+				return true;
 
 			} else {
 
-				return chunk_generator.getBaseHeight(posX, posZ, Heightmap.Types.valueOf(type_world_gen), level_accessor, level_server.getChunkSource().randomState());
+				String biome_centerID = toID(biome);
+
+				if (CacheManager.Data.existMapTextLogic("biome_test", biome + " | " + test) == false) {
+
+					boolean result = false;
+
+					{
+
+						for (String split : test.split(" / ")) {
+
+							result = true;
+
+							for (String split2 : split.split(", ")) {
+
+								String split_get = split2.replaceAll("[#!]", "");
+
+								{
+
+									if (split2.startsWith("#") == true || split2.startsWith("!#") == true) {
+
+										try {
+
+											if (biome.is(TagKey.create(Registries.BIOME, ResourceLocation.parse(split_get))) == false) {
+
+												result = false;
+
+											}
+
+										} catch (Exception ignored) {
+
+											result = false;
+
+										}
+
+									} else {
+
+										if (biome_centerID.equals(split_get) == false) {
+
+											result = false;
+
+										}
+
+									}
+
+									if (split2.startsWith("!") == true) {
+
+										result = !result;
+
+									}
+
+								}
+
+								if (result == false) {
+
+									break;
+
+								}
+
+							}
+
+							if (result == true) {
+
+								break;
+
+							}
+
+						}
+
+					}
+
+					CacheManager.Data.setMapTextLogic("biome_test", biome + " | " + test, result);
+
+				}
+
+				return CacheManager.Data.getMapTextLogic("biome_test").get(biome + " | " + test);
+
+			}
+
+		}
+
+		public static String toID (Holder<Biome> biome) {
+
+			String return_text = biome.toString().replace("Reference{ResourceKey[minecraft:worldgen/biome / ", "");
+			return return_text.substring(0, return_text.indexOf("]"));
+
+		}
+
+		public static Holder<Biome> getAt (LevelAccessor level_accessor, BlockPos pos) {
+
+			ChunkPos chunk_pos = new ChunkPos(pos);
+
+			if (level_accessor.hasChunk(chunk_pos.x, chunk_pos.z) == true) {
+
+				if (level_accessor.getChunk(pos) instanceof ProtoChunk == true) {
+
+					if (Space.testChunkStatus(level_accessor, chunk_pos, "biomes") == true) {
+
+						return level_accessor.getChunk(chunk_pos.x, chunk_pos.z).getNoiseBiome(pos.getX() >> 2, pos.getY() >> 2, pos.getZ() >> 2);
+
+					}
+
+				} else {
+
+					return level_accessor.getBiome(pos);
+
+				}
+
+			}
+
+			return level_accessor.getUncachedNoiseBiome(pos.getX() >> 2, pos.getY() >> 2, pos.getZ() >> 2);
+
+		}
+
+	}
+
+	public static class GUI {
+
+		public static String getTextBox (Entity entity, String name) {
+
+			if (entity instanceof Player player) {
+
+				if (player.containerMenu instanceof MenuAccessor menu) {
+
+					return menu.getMenuState(0, name, "");
+
+				}
+
+			}
+
+			return "";
+
+		}
+
+		public static void setTextBox (Entity entity, String name, String value) {
+
+			if (entity instanceof Player player) {
+
+				if (player.containerMenu instanceof MenuAccessor menu) {
+
+					menu.sendMenuStateUpdate(player, 0, name, value, true);
+
+				}
+
+			}
+
+		}
+
+	}
+
+	public static class Score {
+
+		public static void create (ServerLevel level_server, String name) {
+
+			Scoreboard scoreboard = level_server.getServer().getScoreboard();
+			Objective objective = scoreboard.getObjective(name);
+
+			if (objective == null) {
+
+				/*
+				(1.20.1)
+				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER);
+				(1.21.1)
+				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER, true, null);
+				*/
+				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER);
+
+			}
+
+		}
+
+		public static int get (ServerLevel level_server, String objective, String player) {
+
+			ServerScoreboard score = level_server.getServer().getScoreboard();
+			Objective objective_test = score.getObjective(objective);
+
+			if (objective_test != null) {
+
+				/*
+				(1.20.1)
+				return score.getOrCreatePlayerScore(player, objective_test).getScore();
+				(1.21.1)
+				return score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).get();
+				*/
+				return score.getOrCreatePlayerScore(player, objective_test).getScore();
+
+			}
+
+			return 0;
+
+		}
+
+		public static void set (ServerLevel level_server, String objective, String player, int value) {
+
+			ServerScoreboard score = level_server.getServer().getScoreboard();
+			Objective objective_test = score.getObjective(objective);
+
+			if (objective_test != null) {
+
+				/*
+				(1.20.1)
+				score.getOrCreatePlayerScore(player, objective_test).setScore(value);
+				(1.21.1)
+				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(value);
+				*/
+				score.getOrCreatePlayerScore(player, objective_test).setScore(value);
+
+			}
+
+		}
+
+		public static void add (ServerLevel level_server, String objective, String player, int value) {
+
+			ServerScoreboard score = level_server.getServer().getScoreboard();
+			Objective objective_test = score.getObjective(objective);
+
+			if (objective_test != null) {
+
+				int old_value = get(level_server, objective, player);
+
+				/*
+				(1.20.1)
+				score.getOrCreatePlayerScore(player, objective_test).setScore(old_value + value);
+				(1.21.1)
+				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(old_value + value);
+				*/
+				score.getOrCreatePlayerScore(player, objective_test).setScore(old_value + value);
 
 			}
 
@@ -1357,7 +1478,7 @@ public class GameUtils {
 				(1.21.1)
 				component = Component.Serializer.fromJson(data, RegistryAccess.EMPTY);
 				*/
-				component = Component.Serializer.fromJson(data, RegistryAccess.EMPTY);
+				component = Component.Serializer.fromJson(data);
 
 			} catch (Exception ignored) {
 
@@ -1384,7 +1505,7 @@ public class GameUtils {
 
 			}
 
-			return "{NeoForgeData:{" + Core.mod_id + ":{" + data + "}}}";
+			return "{ForgeData:{" + Core.mod_id + ":{" + data + "}}}";
 
 		}
 
@@ -1467,17 +1588,17 @@ public class GameUtils {
 			String part_name = "display:{Name:\"" + createTextDoubleBackslash(name) + "\"},";
 			String part_lore = "Lore:[\"" + createTextDoubleBackslash(lore) + "\"],";
 			String part_custom_data = "tag:{" + Core.mod_id + ":{" + custom_data + "}},";
-			String part_forge_data = "BlockEntityData:{NeoForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
+			String part_forge_data = "BlockEntityData:{ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
 			(1.21.1)
 			String part_name = "custom_name:\"" + createTextDoubleBackslash(name) + "\",";
 			String part_lore = "lore:[\"" + createTextDoubleBackslash(lore) + "\"],";
 			String part_custom_data = "custom_data:{" + custom_data + "},";
-			String part_forge_data = "block_entity_data:{id:\"\",NeoForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
+			String part_forge_data = "block_entity_data:{id:\"\",ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
 			*/
-			String part_name = "custom_name:\"" + createTextDoubleBackslash(name) + "\",";
-			String part_lore = "lore:[\"" + createTextDoubleBackslash(lore) + "\"],";
-			String part_custom_data = "custom_data:{" + custom_data + "},";
-			String part_forge_data = "block_entity_data:{id:\"\",NeoForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
+			String part_name = "display:{Name:\"" + createTextDoubleBackslash(name) + "\"},";
+			String part_lore = "Lore:[\"" + createTextDoubleBackslash(lore) + "\"],";
+			String part_custom_data = "tag:{" + Core.mod_id + ":{" + custom_data + "}},";
+			String part_forge_data = "BlockEntityData:{ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
 
 			StringBuilder write = new StringBuilder();
 			if (name.isEmpty() == false) write.append(part_name);
@@ -1789,7 +1910,7 @@ public class GameUtils {
 			(1.21.1)
 			return Item.getSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
 			*/
-			return Item.getSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
+			return Item.getSlot(entity, slot).getOrCreateTag().getCompound(Core.mod_id).getString(name);
 
 		}
 
@@ -1804,127 +1925,9 @@ public class GameUtils {
 			(1.20.1)
 			Item.getSlot(entity, slot).getOrCreateTag().merge(tag);
 			(1.21.1)
-			CustomData.update(DataComponents.CUSTOM_DATA, Item.getSlot(entity, slot), test -> test.merge(tag));
+			CustomData.update(DataComponents.CUSTOM_DATA, Item.getSlot(entity, slot), create -> test.merge(tag));
 			*/
-			CustomData.update(DataComponents.CUSTOM_DATA, Item.getSlot(entity, slot), test -> test.merge(tag));
-
-		}
-
-	}
-
-	public static class Score {
-
-		public static void create (ServerLevel level_server, String name) {
-
-			Scoreboard scoreboard = level_server.getServer().getScoreboard();
-			Objective objective = scoreboard.getObjective(name);
-
-			if (objective == null) {
-
-				/*
-				(1.20.1)
-				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER);
-				(1.21.1)
-				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER, true, null);
-				*/
-				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER, true, null);
-
-			}
-
-		}
-
-		public static int get (ServerLevel level_server, String objective, String player) {
-
-			ServerScoreboard score = level_server.getServer().getScoreboard();
-			Objective objective_test = score.getObjective(objective);
-
-			if (objective_test != null) {
-
-				/*
-				(1.20.1)
-				return score.getOrCreatePlayerScore(player, objective_test).getScore();
-				(1.21.1)
-				return score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).get();
-				*/
-				return score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).get();
-
-			}
-
-			return 0;
-
-		}
-
-		public static void set (ServerLevel level_server, String objective, String player, int value) {
-
-			ServerScoreboard score = level_server.getServer().getScoreboard();
-			Objective objective_test = score.getObjective(objective);
-
-			if (objective_test != null) {
-
-				/*
-				(1.20.1)
-				score.getOrCreatePlayerScore(player, objective_test).setScore(value);
-				(1.21.1)
-				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(value);
-				*/
-				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(value);
-
-			}
-
-		}
-
-		public static void add (ServerLevel level_server, String objective, String player, int value) {
-
-			ServerScoreboard score = level_server.getServer().getScoreboard();
-			Objective objective_test = score.getObjective(objective);
-
-			if (objective_test != null) {
-
-				int old_value = get(level_server, objective, player);
-
-				/*
-				(1.20.1)
-				score.getOrCreatePlayerScore(player, objective_test).setScore(old_value + value);
-				(1.21.1)
-				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(old_value + value);
-				*/
-				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(old_value + value);
-
-			}
-
-		}
-
-	}
-
-	public static class GUI {
-
-		public static String getTextBox (Entity entity, String name) {
-
-			if (entity instanceof Player player) {
-
-				if (player.containerMenu instanceof MenuAccessor menu) {
-
-					return menu.getMenuState(0, name, "");
-
-				}
-
-			}
-
-			return "";
-
-		}
-
-		public static void setTextBox (Entity entity, String name, String value) {
-
-			if (entity instanceof Player player) {
-
-				if (player.containerMenu instanceof MenuAccessor menu) {
-
-					menu.sendMenuStateUpdate(player, 0, name, value, true);
-
-				}
-
-			}
+			Item.getSlot(entity, slot).getOrCreateTag().merge(tag);
 
 		}
 
