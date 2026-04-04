@@ -44,7 +44,7 @@ public class LivingMechanics {
 
             List<String> tree_settings = Caches.getTreeSettings(GameUtils.Data.getEntityText(entity, "tree_settings"));
 
-            if (tree_settings.isEmpty() == true) {
+            if (tree_settings == null || tree_settings.isEmpty() == true) {
 
                 return;
 

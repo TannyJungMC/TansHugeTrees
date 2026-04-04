@@ -20,32 +20,13 @@ import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 
-/*
-(1.20.1)
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.registries.DeferredRegister;
-(1.21.1)
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.registries.DeferredRegister;
-*/
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.registries.DeferredRegister;
 import tannyjung.tanshugetrees_handcode.systems.Loops;
 
 public class Core {
 
-    /*
-    (1.20.1)
-    ___ForgeData___
-    ___@Mod.EventBusSubscriber___
-    (1.21.1) (1.21.8)
-    ___NeoForgeData___
-    ___@EventBusSubscriber___
-    */
-    
     public static String mod_name = "";
     public static String mod_id = "";
     public static String mod_id_big = "";

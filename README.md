@@ -22,4 +22,4 @@ There's also terms of use. By using my mods, you must agree with my these decisi
 
 <p style="text-align: left;"><a href="https://www.patreon.com/tannyjung" rel="nofollow"><img src="https://media.forgecdn.net/attachments/884/734/atlas.png" alt="screenshot image" width="200" height="200"></a></p>
 
-Mod By TannyJung | Started on Around April 2021
+Mod By TannyJung + Tereegor (I just changed the source, don't bother me) | Started on Around April 2021

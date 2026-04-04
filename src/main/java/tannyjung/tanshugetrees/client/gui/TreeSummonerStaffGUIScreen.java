@@ -1,9 +1,10 @@
 package tannyjung.tanshugetrees.client.gui;
 
 import tannyjung.tanshugetrees.world.inventory.TreeSummonerStaffGUIMenu;
-import tannyjung.tanshugetrees.network.TreeSummonerStaffGUIButtonMessage;
+import tannyjung.tanshugetrees.network.TreeSummonerStaffButtonPayload;
 import tannyjung.tanshugetrees.init.TanshugetreesModScreens;
-import tannyjung.tanshugetrees.TanshugetreesMod;
+
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
@@ -52,7 +53,7 @@ public class TreeSummonerStaffGUIScreen extends AbstractContainerScreen<TreeSumm
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-		this.renderBackground(guiGraphics);
+		this.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 		path.render(guiGraphics, mouseX, mouseY, partialTicks);
 		boolean customTooltipShown = false;
@@ -110,8 +111,8 @@ public class TreeSummonerStaffGUIScreen extends AbstractContainerScreen<TreeSumm
 			int x = TreeSummonerStaffGUIScreen.this.x;
 			int y = TreeSummonerStaffGUIScreen.this.y;
 			if (true) {
-				TanshugetreesMod.PACKET_HANDLER.sendToServer(new TreeSummonerStaffGUIButtonMessage(0, x, y, z));
-				TreeSummonerStaffGUIButtonMessage.handleButtonAction(entity, 0, x, y, z);
+				PacketDistributor.sendToServer(new TreeSummonerStaffButtonPayload(0, x, y, z));
+				TreeSummonerStaffButtonPayload.handleButtonAction(entity, 0, x, y, z);
 			}
 		}).bounds(this.leftPos + 128, this.topPos + 16, 48, 20).build();
 		this.addRenderableWidget(button_apply);
@@ -119,8 +120,8 @@ public class TreeSummonerStaffGUIScreen extends AbstractContainerScreen<TreeSumm
 			int x = TreeSummonerStaffGUIScreen.this.x;
 			int y = TreeSummonerStaffGUIScreen.this.y;
 			if (true) {
-				TanshugetreesMod.PACKET_HANDLER.sendToServer(new TreeSummonerStaffGUIButtonMessage(1, x, y, z));
-				TreeSummonerStaffGUIButtonMessage.handleButtonAction(entity, 1, x, y, z);
+				PacketDistributor.sendToServer(new TreeSummonerStaffButtonPayload(1, x, y, z));
+				TreeSummonerStaffButtonPayload.handleButtonAction(entity, 1, x, y, z);
 			}
 		}).bounds(this.leftPos + 72, this.topPos + 16, 48, 20).build();
 		this.addRenderableWidget(button_restore);
@@ -129,6 +130,5 @@ public class TreeSummonerStaffGUIScreen extends AbstractContainerScreen<TreeSumm
 	@Override
 	protected void containerTick() {
 		super.containerTick();
-		path.tick();
 	}
 }

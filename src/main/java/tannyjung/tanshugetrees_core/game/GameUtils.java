@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ServerScoreboard;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -24,8 +25,11 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.*;
+import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -38,6 +42,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.ScoreHolder;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 import tannyjung.tanshugetrees.init.TanshugetreesModMenus.MenuAccessor;
@@ -48,25 +53,10 @@ import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 
 import java.util.*;
 
-/*
-(1.20.1)
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraft.world.level.chunk.ChunkStatus;
-import net.minecraft.data.worldgen.features.FeatureUtils;
-(1.21.1)
-import net.neoforged.fml.ModList;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.scores.ScoreHolder;
-*/
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraft.world.level.chunk.ChunkStatus;
-import net.minecraft.data.worldgen.features.FeatureUtils;
+import net.neoforged.fml.ModList;
 
 public class GameUtils {
 
@@ -144,13 +134,7 @@ public class GameUtils {
 
 		public static void spawnParticle (ServerLevel level_server, Vec3 vec3, double spreadX, double spreadY, double spreadZ, double speed, int count, String id) {
 
-			/*
-			(1.20.1)
-			ParticleType<?> particle = ForgeRegistries.PARTICLE_TYPES.getValue(ResourceLocation.parse(id));
-			(1.21.1)
 			ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE.get(ResourceLocation.parse(id));
-			*/
-			ParticleType<?> particle = ForgeRegistries.PARTICLE_TYPES.getValue(ResourceLocation.parse(id));
 
 			if (particle != null) {
 
@@ -166,13 +150,7 @@ public class GameUtils {
 
 		public static void playSound (ServerLevel level_server, BlockPos pos, double volume, double pitch, String id) {
 
-			/*
-			(1.20.1)
-			SoundEvent sound = ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation.parse(id));
-			(1.21.1)
 			SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse(id));
-			*/
-			SoundEvent sound = ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation.parse(id));
 
 			if (sound != null) {
 
@@ -569,13 +547,7 @@ public class GameUtils {
 
 				}
 
-				/*
-				(1.20.1)
-				Block block_test = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(id));
-				(1.21.1)
 				Block block_test = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
-				*/
-				Block block_test = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(id));
 
 				if (block_test != null) {
 
@@ -881,11 +853,11 @@ public class GameUtils {
 
 			/*
 			(1.20.1)
-			Entity entity = ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.parse(id)).create(level_server);
+			Entity entity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(id)).create(level_server);
 			(1.21.1)
 			Entity entity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(id)).create(level_server);
 			*/
-			Entity entity = ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.parse(id)).create(level_server);
+			Entity entity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(id)).create(level_server);
 
 			if (entity != null) {
 
@@ -1051,13 +1023,7 @@ public class GameUtils {
 
 		public static ItemStack fromID (String id) {
 
-			/*
-			(1.20.1)
-			return ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(id)).getDefaultInstance();
-			(1.21.1)
 			return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)).getDefaultInstance();
-			*/
-			return ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(id)).getDefaultInstance();
 
 		}
 
@@ -1079,37 +1045,20 @@ public class GameUtils {
 
 		public static BlockPos getWorldSpawnPos (LevelAccessor level_accessor) {
 
-			/*
-			(1.20.1)
-			return new BlockPos(level_accessor.getLevelData().getXSpawn(), level_accessor.getLevelData().getYSpawn(), level_accessor.getLevelData().getZSpawn());
-			(1.21.1)
 			return level_accessor.getLevelData().getSpawnPos();
-			*/
-			return new BlockPos(level_accessor.getLevelData().getXSpawn(), level_accessor.getLevelData().getYSpawn(), level_accessor.getLevelData().getZSpawn());
 
 		}
 
 		public static int getBuildHeight (LevelAccessor level_accessor, boolean highest) {
 
+			LevelHeightAccessor heights = (LevelHeightAccessor) level_accessor;
 			if (highest == true) {
 
-				/*
-				(1.20.1) (1.21.1)
-				return level_accessor.getMaxBuildHeight() - 1;
-				(1.21.8)
-				return level_accessor.getMaxY() - 1;
-				*/
-				return level_accessor.getMaxBuildHeight() - 1;
+				return heights.getMaxBuildHeight() - 1;
 
 			} else {
 
-				/*
-				(1.20.1) (1.21.1)
-				return level_accessor.getMinBuildHeight() + 1;
-				(1.21.8)
-				return level_accessor.getMinY() + 1;
-				*/
-				return level_accessor.getMinBuildHeight() + 1;
+				return heights.getMinBuildHeight() + 1;
 
 			}
 
@@ -1117,7 +1066,12 @@ public class GameUtils {
 
 		public static boolean testChunkStatus (LevelAccessor level_accessor, ChunkPos chunk_pos, String status) {
 
-			return level_accessor.hasChunk(chunk_pos.x, chunk_pos.z) == true && level_accessor.getChunk(chunk_pos.x, chunk_pos.z).getHighestGeneratedStatus().isOrAfter(ChunkStatus.byName(status)) == true;
+			ResourceLocation statusId = ResourceLocation.parse(status.contains(":") ? status : "minecraft:" + status);
+			ChunkStatus chunkStatus = BuiltInRegistries.CHUNK_STATUS.getOptional(statusId).orElse(null);
+			if (chunkStatus == null) {
+				return false;
+			}
+			return level_accessor.hasChunk(chunk_pos.x, chunk_pos.z) == true && level_accessor.getChunk(chunk_pos.x, chunk_pos.z).getHighestGeneratedStatus().isOrAfter(chunkStatus) == true;
 
 		}
 
@@ -1125,15 +1079,7 @@ public class GameUtils {
 
 			WorldGenLevel level_world_gen = (WorldGenLevel) level_accessor;
 
-			/*
-			(1.20.1)
-			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
-			(1.21.1)
 			level_world_gen.holderOrThrow(ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(id))).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
-			(1.21.8)
-			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getValueOrThrow(FeatureUtils.createKey(id)).place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
-			*/
-			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
 
 		}
 
@@ -1371,13 +1317,7 @@ public class GameUtils {
 
 			if (objective == null) {
 
-				/*
-				(1.20.1)
-				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER);
-				(1.21.1)
 				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER, true, null);
-				*/
-				scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER);
 
 			}
 
@@ -1390,13 +1330,7 @@ public class GameUtils {
 
 			if (objective_test != null) {
 
-				/*
-				(1.20.1)
-				return score.getOrCreatePlayerScore(player, objective_test).getScore();
-				(1.21.1)
 				return score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).get();
-				*/
-				return score.getOrCreatePlayerScore(player, objective_test).getScore();
 
 			}
 
@@ -1411,13 +1345,7 @@ public class GameUtils {
 
 			if (objective_test != null) {
 
-				/*
-				(1.20.1)
-				score.getOrCreatePlayerScore(player, objective_test).setScore(value);
-				(1.21.1)
 				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(value);
-				*/
-				score.getOrCreatePlayerScore(player, objective_test).setScore(value);
 
 			}
 
@@ -1432,13 +1360,7 @@ public class GameUtils {
 
 				int old_value = get(level_server, objective, player);
 
-				/*
-				(1.20.1)
-				score.getOrCreatePlayerScore(player, objective_test).setScore(old_value + value);
-				(1.21.1)
 				score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(old_value + value);
-				*/
-				score.getOrCreatePlayerScore(player, objective_test).setScore(old_value + value);
 
 			}
 
@@ -1472,13 +1394,7 @@ public class GameUtils {
 
 			try {
 
-				/*
-				(1.20.1)
-				component = Component.Serializer.fromJson(data);
-				(1.21.1)
 				component = Component.Serializer.fromJson(data, RegistryAccess.EMPTY);
-				*/
-				component = Component.Serializer.fromJson(data);
 
 			} catch (Exception ignored) {
 
@@ -1583,22 +1499,10 @@ public class GameUtils {
 
 		public static String createItem (String name, String lore, String custom_data, String forge_data) {
 
-			/*
-			(1.20.1)
-			String part_name = "display:{Name:\"" + createTextDoubleBackslash(name) + "\"},";
-			String part_lore = "Lore:[\"" + createTextDoubleBackslash(lore) + "\"],";
-			String part_custom_data = "tag:{" + Core.mod_id + ":{" + custom_data + "}},";
-			String part_forge_data = "BlockEntityData:{ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
-			(1.21.1)
 			String part_name = "custom_name:\"" + createTextDoubleBackslash(name) + "\",";
 			String part_lore = "lore:[\"" + createTextDoubleBackslash(lore) + "\"],";
 			String part_custom_data = "custom_data:{" + custom_data + "},";
 			String part_forge_data = "block_entity_data:{id:\"\",ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
-			*/
-			String part_name = "display:{Name:\"" + createTextDoubleBackslash(name) + "\"},";
-			String part_lore = "Lore:[\"" + createTextDoubleBackslash(lore) + "\"],";
-			String part_custom_data = "tag:{" + Core.mod_id + ":{" + custom_data + "}},";
-			String part_forge_data = "BlockEntityData:{ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
 
 			StringBuilder write = new StringBuilder();
 			if (name.isEmpty() == false) write.append(part_name);
@@ -1904,13 +1808,7 @@ public class GameUtils {
 
 		public static String getItemText (Entity entity, EquipmentSlot slot, String name) {
 
-			/*
-			(1.20.1)
-			return Item.getSlot(entity, slot).getOrCreateTag().getCompound(Core.mod_id).getString(name);
-			(1.21.1)
 			return Item.getSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
-			*/
-			return Item.getSlot(entity, slot).getOrCreateTag().getCompound(Core.mod_id).getString(name);
 
 		}
 
@@ -1921,13 +1819,7 @@ public class GameUtils {
 			tag_add.putString(name, value);
 			tag.put(Core.mod_id, tag_add);
 
-			/*
-			(1.20.1)
-			Item.getSlot(entity, slot).getOrCreateTag().merge(tag);
-			(1.21.1)
-			CustomData.update(DataComponents.CUSTOM_DATA, Item.getSlot(entity, slot), create -> test.merge(tag));
-			*/
-			Item.getSlot(entity, slot).getOrCreateTag().merge(tag);
+			CustomData.update(DataComponents.CUSTOM_DATA, Item.getSlot(entity, slot), compound -> compound.merge(tag));
 
 		}
 

@@ -2,8 +2,8 @@ package tannyjung.tanshugetrees.world.inventory;
 
 import tannyjung.tanshugetrees.init.TanshugetreesModMenus;
 
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.Level;
@@ -14,7 +14,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.core.BlockPos;
 
 import java.util.function.Supplier;
@@ -42,19 +42,21 @@ public class TreeSummonerStaffGUIMenu extends AbstractContainerMenu implements T
 	private Entity boundEntity = null;
 	private BlockEntity boundBlockEntity = null;
 
-	public TreeSummonerStaffGUIMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
+	public TreeSummonerStaffGUIMenu(int id, Inventory inv, BlockPos pos) {
 		super(TanshugetreesModMenus.TREE_SUMMONER_STAFF_GUI.get(), id);
 		this.entity = inv.player;
 		this.world = inv.player.level();
 		this.internal = new ItemStackHandler(0);
-		BlockPos pos = null;
-		if (extraData != null) {
-			pos = extraData.readBlockPos();
+		if (pos != null) {
 			this.x = pos.getX();
 			this.y = pos.getY();
 			this.z = pos.getZ();
 			access = ContainerLevelAccess.create(world, pos);
 		}
+	}
+
+	public TreeSummonerStaffGUIMenu(int id, Inventory inv, RegistryFriendlyByteBuf extraData) {
+		this(id, inv, extraData != null ? extraData.readBlockPos() : null);
 	}
 
 	@Override

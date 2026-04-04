@@ -17,13 +17,7 @@ import tannyjung.tanshugetrees_core.outside.TXTFunction;
 
 import java.util.function.Consumer;
 
-/*
-(1.20.1)
-import net.minecraftforge.event.RegisterCommandsEvent;
-(1.21.1)
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-*/
-import net.minecraftforge.event.RegisterCommandsEvent;
 
 public class CommandMaker {
 

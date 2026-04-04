@@ -20,18 +20,8 @@ public class TreeSummonerStaffItem extends Item {
 	}
 
 	@Override
-	public UseAnim getUseAnimation(ItemStack itemstack) {
-		return UseAnim.BOW;
-	}
-
-	@Override
-	public int getUseDuration(ItemStack itemstack) {
-		return 20;
-	}
-
-	@Override
-	public void appendHoverText(ItemStack itemstack, Level level, List<Component> list, TooltipFlag flag) {
-		super.appendHoverText(itemstack, level, list, flag);
+	public void appendHoverText(ItemStack itemstack, Item.TooltipContext context, List<Component> list, TooltipFlag flag) {
+		super.appendHoverText(itemstack, context, list, flag);
 		list.add(Component.translatable("item.tanshugetrees.tree_summoner_staff.description_0"));
 		list.add(Component.translatable("item.tanshugetrees.tree_summoner_staff.description_1"));
 		list.add(Component.translatable("item.tanshugetrees.tree_summoner_staff.description_2"));

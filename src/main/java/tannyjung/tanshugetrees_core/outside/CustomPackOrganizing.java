@@ -495,10 +495,6 @@ public class CustomPackOrganizing {
 
                         }
 
-                    } else {
-
-                        // TODO
-
                     }
 
                 }

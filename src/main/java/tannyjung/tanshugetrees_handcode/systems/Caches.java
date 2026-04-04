@@ -113,14 +113,33 @@ public class Caches {
 
     public static List<String> getTreeSettings (String id) {
 
+        if (id == null || id.isEmpty()) {
+
+            return Collections.emptyList();
+
+        }
+
         if (CacheManager.Data.existMapTextListText("tree_settings", id) == false) {
 
             List<String> data = FileManager.readTXT(Core.path_config + "/dev/temporary/presets/" + id + ".txt");
+            if (data == null) {
+
+                data = new ArrayList<>();
+
+            }
             CacheManager.Data.setMapTextListText("tree_settings", id, data);
 
         }
 
-        return CacheManager.Data.getMapTextListText("tree_settings").get(id);
+        Map<String, List<String>> map = CacheManager.Data.getMapTextListText("tree_settings");
+        if (map == null) {
+
+            return Collections.emptyList();
+
+        }
+
+        List<String> out = map.get(id);
+        return out != null ? out : Collections.emptyList();
 
     }
 
