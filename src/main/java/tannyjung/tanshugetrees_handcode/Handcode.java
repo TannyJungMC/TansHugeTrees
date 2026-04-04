@@ -17,7 +17,7 @@ public class Handcode {
 
         Core.data_structure_version_core = 1;
         Core.data_structure_version_mod = "1.8.0";
-        Core.data_structure_version_pack = "1.8.0";
+        Core.data_structure_version_pack = "20251216";
         Core.tanny_pack_type = "Beta";
 
         Core.mod_name = "Tan's Huge Trees";
