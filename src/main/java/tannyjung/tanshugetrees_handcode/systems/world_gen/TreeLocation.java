@@ -331,7 +331,7 @@ public class TreeLocation {
 
     }
 
-    private static Holder<Biome> getBiome (LevelAccessor level_accessor, ChunkPos chunk_pos) {
+    public static Holder<Biome> getBiome (LevelAccessor level_accessor, ChunkPos chunk_pos) {
 
         if (cache_biome.containsKey(chunk_pos) == false) {
 

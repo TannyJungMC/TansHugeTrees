@@ -1062,7 +1062,7 @@ public class TreePlacer {
 
             }
 
-            boolean in_snowy_biome = GameUtils.Environment.test(GameUtils.Environment.getAt(level_accessor, pos_center), "#tanshugetrees:snowy_biomes");
+            boolean in_snowy_biome = GameUtils.Environment.test(TreeLocation.getBiome(level_accessor, chunk_pos), "#tanshugetrees:snowy_biomes");
             boolean no_roots = Handcode.Config.world_gen_roots == false && can_disable_roots == true;
             boolean coarse_woody_debris = false;
             boolean hollowed = false;
