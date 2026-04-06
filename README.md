@@ -1,19 +1,25 @@
-This is source code of Tan's Huge Trees mod. It's maybe different from other mods, as there's no branch separated for different Minecraft versions, instead it's all in one but one at a time. To use this, you may need to install 2 programs, IntelliJ and MCreator. I'm using both programs. One for handcode systems, other one for general and hard things I don't like to touch such as blocks, items, entities, and GUIs. Read below for how to use it.
+This is source code of Tan's Huge Trees, a mod for Minecraft. Generate trees and some nature stuffs around the world. With some detailed systems. You can check it out on [CurseForge](https://legacy.curseforge.com/minecraft/mc-mods/tans-huge-trees) and [Modrinth](https://modrinth.com/mod/tans-huge-trees).
 
-# Current Supported Versions
+My source code maybe different from others and a bit difficult to use. There're no branch separated for different Minecraft versions, instead it's all in one place, but one at a time. The reason is that I don't like managing multiple versions by separate branches, it's just difficult to handle for me, even if I'm a person who likes to organize things. What I did is write what changes by game versions in one place, then switch them manually when change game version.
 
-Here is current supported Minecraft versions you can switch. "Active" means currently in development on that version. "Need To Check" means there's new changes and I haven't tested on that version yet. "Ready" means I have already tested new changes on that version and ready to be switched.
+## Current Supported Versions
+
+Here is current supported Minecraft versions you can switch. "Active" means currently in development on that version. "Need Test" means there's new changes and I haven't tested on that version yet. "Ready" means I have already tested new changes on that version and ready to be switched.
 - 1.20.1 (Active)
-- 1.21.1 (Need To Check)
+- 1.21.1 (Need Test)
 
-# How To Use
+## Required Programs
 
-- To open this. Use IntelliJ (Recommended) or MCreator with the same version as branch name. If you use MCreator, then you will need to install plugins as well. I have already put all required plugins in the folder ".mcreator_plugins".
+- IntelliJ or any of coding programs
+- MCreator 2025.3 version. For game version switching and for handling hard things such as blocks, items, entities, and GUIs. You will need to install required plugins as well, for game version generators. I have already put them in the folder ".mcreator_plugins".
+
+## How To Use
+
 - To switch between supported versions. Open MCreator, then open workspace settings, switch version of generator there. After finish MCreator part, then go to IntelliJ to fix errors in handcode part. Use find tool to find all text like this "(1.21.1)" or version you switched. It will show you all change mark comments, switch the changes by copy-paste them to the code below.
 - To run client or server.  In IntelliJ, go to "Gradle" tab at right side, select `Tasks > forgegradle runs > runClient or runServer`. In MCreator, click the green buttons at top-right.
 - To export the mod to JAR format. In IntelliJ, go to "Gradle" tab at right side, select `Tasks > build > build`. The exported file will be in `Project Folder > build > libs`. In MCreator, click the orange button then choose path for exported file.
 
-# From Creator
+## From Creator
 
 Thank you for playing my mods! I'm very happy to see people enjoy my hobby. You can also support me by donate on Patreon and buying my artworks if you want. Your support can keep me motivated to continue developing my mods. Anyway, you can easily support me by playing them, sharing screenshots or videos with them, and following my artworks on Twitter.
 
