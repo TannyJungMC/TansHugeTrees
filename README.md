@@ -1,9 +1,17 @@
-This is the backup of this mod. To open this, use IntelliJ (Recommended) or MCreator. I'm using both programs, one for hand code systems, other one for general and hard things such as blocks, items, entities, and GUIs.
+This is source code of Tan's Huge Trees mod. It's maybe different from other mods, as there's no branch separated for different Minecraft versions, instead it's all in one but one at a time. To use this, you may need to install 2 programs, IntelliJ and MCreator. I'm using both programs. One for handcode systems, other one for general and hard things I don't like to touch such as blocks, items, entities, and GUIs. Read below for how to use it.
+
+# Current Supported Versions
+
+Here is current supported Minecraft versions you can switch. "Active" means currently in development on that version. "Need To Check" means there's new changes and I haven't tested on that version yet. "Ready" means I have already tested new changes on that version and ready to be switched.
+- 1.20.1 (Active)
+- 1.21.1 (Need To Check)
 
 # How To Use
 
-- To run client or server.  Go to "Gradle" tab at right side, select `Tasks > forgegradle runs > runClient or runServer`.
-- To export the mod to JAR format. Go to "Gradle" tab at right side, select `Tasks > build > build`. The exported file will be in `Project Folder > build > libs`.
+- To open this. Use IntelliJ (Recommended) or MCreator with the same version as branch name. If you use MCreator, then you will need to install plugins as well. I have already put all required plugins in the folder ".mcreator_plugins".
+- To switch between supported versions. Open MCreator, then open workspace settings, switch version of generator there. After finish MCreator part, then go to IntelliJ to fix errors in handcode part. Use find tool to find all text like this "(1.21.1)" or version you switched. It will show you all change mark comments, switch the changes by copy-paste them to the code below.
+- To run client or server.  In IntelliJ, go to "Gradle" tab at right side, select `Tasks > forgegradle runs > runClient or runServer`. In MCreator, click the green buttons at top-right.
+- To export the mod to JAR format. In IntelliJ, go to "Gradle" tab at right side, select `Tasks > build > build`. The exported file will be in `Project Folder > build > libs`. In MCreator, click the orange button then choose path for exported file.
 
 # From Creator
 
@@ -11,7 +19,7 @@ Thank you for playing my mods! I'm very happy to see people enjoy my hobby. You 
 
 Hope you understand and respect in what I am. I maybe not a great modder who open to all requests and suggestions. I made mods for my feeling first just like doing artworks. I do what I want to do, with my ideas, for my imaginary world, using the way I like.
 
-Will I do Fabric port of my mods? Unfortunately, no. I'm not fan of it. Also please understand that I have more than one mod, each one also complicated and detailed. Fabric port will be too much hard work for me. There maybe someone in the future who interested in helping to port it, but that I have to consider that first and they must agree with my decision of only porting not adding new things.
+Will I do Fabric port of my mods? Unfortunately, no. I'm not fan of it. Also please understand that I have more than one mod, each one also complicated and detailed. Fabric port will be too much hard work for me. There maybe someone in the future who interested in helping to port it, but that I have to consider that first, and they must agree with my decision of only porting not adding new things.
 
 There's also terms of use. By using my mods, you must agree with my these decisions.
 
