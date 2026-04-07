@@ -21,31 +21,26 @@ public class ConfigClassic {
             // Get
             {
 
-                String[] split = new String[0];
+                String[] split = null;
 
-                for (String read_all : FileManager.readTXT(path)) {
+                for (String scan : FileManager.readTXT(path)) {
 
-                    if (read_all.contains(" = ") == true) {
+                    if (scan.contains(" = ") == true) {
 
-                        split = read_all.split(" = ");
+                        split = scan.split(" = ");
                         options.add(split[0]);
                         values.add(split[1]);
                         old_values.put(split[0], split[1]);
 
-                    } else if (read_all.startsWith("| Default is ") == true) {
+                    } else if (scan.startsWith("| Default is ") == true) {
 
-                        read_all = read_all.substring("| Default is ".length());
-                        read_all = read_all.substring(2, read_all.length() - 2);
-                        defaults.addAll(Arrays.asList(read_all.split(" ] \\[ ")));
+                        scan = scan.substring("| Default is ".length());
+                        scan = scan.substring(2, scan.length() - 2);
+                        defaults.addAll(Arrays.asList(scan.split(" ] \\[ ")));
 
-                        while (values.size() > defaults.size()) {
+                        while (defaults.size() > values.size()) {
 
-                            defaults.add("");
-
-                        }
-
-                        while (values.size() < defaults.size()) {
-
+                            options.add("");
                             values.add("");
 
                         }
@@ -95,17 +90,17 @@ public class ConfigClassic {
 
             String option = "";
             String value = "";
-            String[] split = new String[0];
+            String[] split = null;
             List<String> written_values = new ArrayList<>();
 
-            for (String read_all : original.split("\\n")) {
+            for (String scan : original.split("\\n")) {
 
-                if (read_all.startsWith("|") == false && read_all.contains(" = ") == true) {
+                if (scan.startsWith("|") == false && scan.contains(" = ") == true) {
 
                     // Write Option
                     {
 
-                        split = read_all.split(" = ");
+                        split = scan.split(" = ");
                         option = split[0];
                         value = split[1];
 
@@ -117,13 +112,13 @@ public class ConfigClassic {
 
                             } else {
 
-                                write.append(read_all);
+                                write.append(scan);
 
                             }
 
                         } else {
 
-                            write.append(read_all);
+                            write.append(scan);
 
                         }
 
@@ -131,12 +126,12 @@ public class ConfigClassic {
 
                     }
 
-                } else if (read_all.isEmpty() == true && written_values.size() > 0) {
+                } else if (scan.isEmpty() == true && written_values.size() > 0) {
 
                     // Write Default
                     {
 
-                        write.append(read_all).append("| Default is");
+                        write.append(scan).append("| Default is");
 
                         for (String get : written_values) {
 
@@ -151,7 +146,7 @@ public class ConfigClassic {
 
                 } else {
 
-                    write.append(read_all);
+                    write.append(scan);
 
                 }
 
@@ -174,16 +169,16 @@ public class ConfigClassic {
 
             int index = 0;
 
-            for (String read_all : FileManager.readTXT(path)) {
+            for (String scan : FileManager.readTXT(path)) {
 
                 {
 
-                    if (read_all.isEmpty() == false) {
+                    if (scan.isEmpty() == false) {
 
-                        if (read_all.contains(" = ") == true) {
+                        if (scan.contains(" = ") == true) {
 
-                            index = read_all.indexOf(" = ");
-                            data.put(read_all.substring(0, index), read_all.substring(index + 3));
+                            index = scan.indexOf(" = ");
+                            data.put(scan.substring(0, index), scan.substring(index + 3));
 
                         }
 
