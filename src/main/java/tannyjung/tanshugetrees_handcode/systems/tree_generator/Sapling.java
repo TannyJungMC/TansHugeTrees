@@ -9,8 +9,10 @@ import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.init.TanshugetreesModBlocks;
+import tannyjung.tanshugetrees_core.outside.FileManager;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public class Sapling {
 
@@ -57,16 +59,34 @@ public class Sapling {
                             // General
                             {
 
-                                String name = GameUtils.Tile.toText(level_accessor.getBlockState(pos))[0].substring("tanshugetrees:sapling_".length());
-                                File file = new File(Core.path_config + "/dev/temporary/presets/#TannyJung-Main-Pack/" + name + "/" + name + ".txt");
+                                String path = "";
 
-                                if (file.exists() == true && file.isDirectory() == false) {
+                                // Get Path
+                                {
 
-                                    GameUtils.Data.setBlockText(level_accessor, level_server, pos, "path", "#TannyJung-Main-Pack/" + name);
+                                    String name = GameUtils.Tile.toText(level_accessor.getBlockState(pos))[0].substring("tanshugetrees:sapling_".length());
+
+                                    for (File scan : FileManager.getAllFiles(Core.path_config + "/dev/temporary/presets/#TannyJung-Main-Pack")) {
+
+                                        if (scan.getName().equals(name + ".txt") == true) {
+
+                                            path = Path.of(Core.path_config + "/dev/temporary").relativize(scan.toPath()).toString();
+                                            path = path.replace("\\", "/");
+                                            path = path.substring(0, path.length() - ".txt".length());
+
+                                        }
+
+                                    }
+
+                                }
+
+                                if (path.isEmpty() == true) {
+
+                                    error = "Sapling Not Available Yet";
 
                                 } else {
 
-                                    error = "Sapling Not Available Yet";
+                                    GameUtils.Data.setBlockText(level_accessor, level_server, pos, "path", path);
 
                                 }
 
@@ -172,13 +192,26 @@ public class Sapling {
                     // End
                     {
 
+                        for (Entity entity_import : GameUtils.Mob.getAtArea(level_server, pos.getCenter(), 1, true, 0, "minecraft:text_display", "TANSHUGETREES-sapling_countdown")) {
+
+                            entity_import.discard();
+
+                        }
+
                         if (GameUtils.Data.getBlockText(level_accessor, pos, "path").isEmpty() == false) {
 
-                            TreeGenerator.create(level_server, null, pos, GameUtils.Data.getBlockText(level_accessor, pos, "path"));
+                            TreeGenerator.create(level_accessor, level_server, null, pos, GameUtils.Data.getBlockText(level_accessor, pos, "path"));
 
                         } else {
 
                             Entity entity_summon = GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", "");
+
+                            if (entity_summon == null) {
+
+                                return;
+
+                            }
+
                             GameUtils.Command.runEntity(entity_summon, "data modify entity @s ForgeData.tanshugetrees set from block ~ ~ ~ ForgeData.tanshugetrees");
 
                         }
