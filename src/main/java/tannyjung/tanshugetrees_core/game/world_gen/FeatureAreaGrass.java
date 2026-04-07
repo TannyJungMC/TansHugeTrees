@@ -31,9 +31,9 @@ public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
         int endZ = 16;
         double area_sphere = 16 * 16;
         double area_test = 0;
-        BlockState previous_block = Blocks.AIR.defaultBlockState();
+        BlockState previous_block = null;
         BlockPos pos = null;
-        BlockState block = Blocks.AIR.defaultBlockState();
+        BlockState block = null;
         RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((center_pos.getX() * 341873128712L) + (center_pos.getZ() * 132897987541L)));
 
         for (int scanX = startX; scanX <= endX; scanX++) {
@@ -53,9 +53,17 @@ public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
 
                             if (GameUtils.Tile.test(previous_block, "#minecraft:sand / #minecraft:base_stone_overworld") == true) {
 
-                                if (Math.random() < 0.5 && level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ())).isAir() == true) {
+                                if (Math.random() < 0.5) {
 
-                                    block = Blocks.GRASS_BLOCK.defaultBlockState();
+                                    if (level_accessor.getBlockState(pos.above()).isAir() == true) {
+
+                                        block = Blocks.GRASS_BLOCK.defaultBlockState();
+
+                                    } else {
+
+                                        block = Blocks.DIRT.defaultBlockState();
+
+                                    }
 
                                 } else {
 

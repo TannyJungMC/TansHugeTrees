@@ -4,6 +4,7 @@ import tannyjung.tanshugetrees_handcode.systems.tree_generator.TreeSummonerStaff
 
 import tannyjung.tanshugetrees.TanshugetreesMod;
 
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.Entity;
 
 public class TreeSummonerStaffGUIApplyProcedure {
@@ -13,6 +14,7 @@ public class TreeSummonerStaffGUIApplyProcedure {
 		if (false) {
 			TanshugetreesMod.LOGGER.info(entity);
 		}
-		TreeSummonerStaff.apply(entity);
+		Player player = (Player) entity;
+		TreeSummonerStaff.apply(player);
 	}
 }

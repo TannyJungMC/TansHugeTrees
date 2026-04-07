@@ -83,7 +83,7 @@
   "item.tanshugetrees.tree_summoner_staff": "Tree Summoner Staff",
   "item.tanshugetrees.tree_summoner_staff.description_2": "",
   "item.tanshugetrees.tree_summoner_staff.description_0": "§8--------------------------------------------------",
-  "item.tanshugetrees.tree_summoner_staff.description_1": "§8Summon a tree by just one click. Can be useful for tree preset developers and map builders. The path will be test from extracted packs first, then from unextracted packs if failed.",
+  "item.tanshugetrees.tree_summoner_staff.description_1": "§8Summon a tree by just one click. Can be useful for tree preset developers and map builders.",
   "gui.tanshugetrees.tree_summoner_staff_gui.button_apply": "Apply",
   "gui.tanshugetrees.tree_summoner_staff_gui.path": "",
   "block.tanshugetrees.sapling_christmas_tree.description_1": "§8This is a tree generator sapling. It may take long time to generate!",
@@ -151,6 +151,8 @@
   "block.tanshugetrees.sapling_catalyst.description_1": "§8This is a tree generator sapling. It may take long time to generate!",
   "block.tanshugetrees.sapling_catalyst.description_0": "§8--------------------------------------------------",
   "gui.tanshugetrees.tree_summoner_staff_gui.label_currently_not_working": "Currently not working",
-  "gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr": "Example : #TannyJung-Main-Pack/redwood",
-  "gui.tanshugetrees.tree_summoner_staff_gui.tooltip_theres_a_bug_on_1201_that_you": "There\u0027s a bug on 1.20.1 that your preset part not load when reopen the GUI, click this to manually restore that."
+  "gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr": "Example : presets/#TannyJung-Main-Pack/redwood",
+  "gui.tanshugetrees.tree_summoner_staff_gui.tooltip_theres_a_bug_on_1201_that_you": "There\u0027s a bug on 1.20.1 that your preset path here not load when reopen the GUI, click this to manually restore that.",
+  "gui.tanshugetrees.tree_summoner_staff_gui.label_the_path_will_be_test_from_extra": "This path will go to extracted packs first. then",
+  "gui.tanshugetrees.tree_summoner_staff_gui.label_from_unextracted_packs_if_failed": "go to unextracted packs if failed."
 }

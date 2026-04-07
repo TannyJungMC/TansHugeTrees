@@ -15,6 +15,7 @@ public class TXTFunction {
 
 	public static void run (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String path, boolean randomly) {
 
+        boolean chunk_loaded = level_server.isPositionEntityTicking(pos) == true;
         RandomSource random = null;
 
         if (randomly == true) {
@@ -23,24 +24,23 @@ public class TXTFunction {
 
         } else {
 
-            random = RandomSource.create(level_server.getSeed() ^ ((pos.getX() * 341873128712L) + pos.getY() + (pos.getZ() * 132897987541L)));
+            random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((pos.getX() * 341873128712L) + pos.getY() + (pos.getZ() * 132897987541L)));
 
         }
-
-        boolean chunk_loaded = level_server.isPositionEntityTicking(pos) == true;
+        
         StringBuilder export_command = new StringBuilder();
         boolean run_test = false;
         boolean run_test_result = true;
         boolean run_skip = false;
         boolean run_break = false;
 
-        String[] get = new String[0];
+        String[] split = null;
         double chance = 0.0;
-        String[] offset_pos = new String[0];
+        String[] offset_pos = null;
         int offset_posX = 0;
         int offset_posY = 0;
         int offset_posZ = 0;
-        String[] min_max = new String[0];
+        String[] min_max = null;
         int minX = 0;
         int minY = 0;
         int minZ = 0;
@@ -49,24 +49,24 @@ public class TXTFunction {
         int maxZ = 0;
         BlockPos pos_convert = null;
         String variable_text = "";
-        BlockState variable_block = Blocks.AIR.defaultBlockState();
+        BlockState variable_block = null;
 
-        for (String read_all : CacheManager.getFunction(path)) {
+        for (String scan : CacheManager.getFunction(path)) {
 
             {
 
-                if (read_all.isEmpty() == false) {
+                if (scan.isEmpty() == false) {
 
-                    if (read_all.startsWith("# ") == false) {
+                    if (scan.startsWith("# ") == false) {
 
-                        if (read_all.equals("[") == true || read_all.equals("]") == true) {
+                        if (scan.equals("[") == true || scan.equals("]") == true) {
 
                             run_test = false;
                             run_test_result = true;
                             run_skip = false;
                             run_break = false;
 
-                        } else if (read_all.startsWith("-") == true) {
+                        } else if (scan.startsWith("-") == true) {
 
                             run_test = false;
                             run_test_result = true;
@@ -78,15 +78,15 @@ public class TXTFunction {
 
                                 {
 
-                                    if (read_all.startsWith("debug = ") == true) {
+                                    if (scan.startsWith("debug = ") == true) {
 
                                         {
 
                                             try {
 
-                                                get = read_all.substring("debug = ".length()).split(" \\| ");
-                                                chance = Double.parseDouble(get[0]);
-                                                variable_text = get[1];
+                                                split = scan.substring("debug = ".length()).split(" \\| ");
+                                                chance = Double.parseDouble(split[0]);
+                                                variable_text = split[1];
 
                                             } catch (Exception ignored) {
 
@@ -104,7 +104,7 @@ public class TXTFunction {
 
                                     } else {
 
-                                        if (read_all.equals("if") == true) {
+                                        if (scan.equals("if") == true) {
 
                                             {
 
@@ -134,7 +134,7 @@ public class TXTFunction {
 
                                             }
 
-                                        } else if (read_all.equals("else") == true) {
+                                        } else if (scan.equals("else") == true) {
 
                                             {
 
@@ -142,7 +142,7 @@ public class TXTFunction {
 
                                             }
 
-                                        } else if (read_all.equals("run") == true) {
+                                        } else if (scan.equals("run") == true) {
 
                                             {
 
@@ -151,7 +151,7 @@ public class TXTFunction {
 
                                             }
 
-                                        } else if (read_all.equals("break") == true) {
+                                        } else if (scan.equals("break") == true) {
 
                                             {
 
@@ -163,7 +163,7 @@ public class TXTFunction {
 
                                             }
 
-                                        } else if (read_all.equals("return") == true) {
+                                        } else if (scan.equals("return") == true) {
 
                                             {
 
@@ -184,14 +184,14 @@ public class TXTFunction {
                                                     // Tests
                                                     {
 
-                                                        if (read_all.startsWith("chance = ") == true) {
+                                                        if (scan.startsWith("chance = ") == true) {
 
                                                             {
 
                                                                 try {
 
-                                                                    get = read_all.substring("chance = ".length()).split(" \\| ");
-                                                                    chance = Double.parseDouble(get[0]);
+                                                                    split = scan.substring("chance = ".length()).split(" \\| ");
+                                                                    chance = Double.parseDouble(split[0]);
 
                                                                 } catch (Exception ignored) {
 
@@ -207,18 +207,18 @@ public class TXTFunction {
 
                                                             }
 
-                                                        } else if (read_all.startsWith("biome = ") == true) {
+                                                        } else if (scan.startsWith("biome = ") == true) {
 
                                                             {
 
                                                                 try {
 
-                                                                    get = read_all.substring("biome = ".length()).split(" \\| ");
-                                                                    offset_pos = get[0].split("/");
+                                                                    split = scan.substring("biome = ".length()).split(" \\| ");
+                                                                    offset_pos = split[0].split("/");
                                                                     offset_posX = Integer.parseInt(offset_pos[0]);
                                                                     offset_posY = Integer.parseInt(offset_pos[1]);
                                                                     offset_posZ = Integer.parseInt(offset_pos[2]);
-                                                                    variable_text = get[1];
+                                                                    variable_text = split[1];
 
                                                                 } catch (Exception ignored) {
 
@@ -236,18 +236,18 @@ public class TXTFunction {
 
                                                             }
 
-                                                        } else if (read_all.startsWith("block = ") == true) {
+                                                        } else if (scan.startsWith("block = ") == true) {
 
                                                             {
 
                                                                 try {
 
-                                                                    get = read_all.substring("block = ".length()).split(" \\| ");
-                                                                    offset_pos = get[0].split("/");
+                                                                    split = scan.substring("block = ".length()).split(" \\| ");
+                                                                    offset_pos = split[0].split("/");
                                                                     offset_posX = Integer.parseInt(offset_pos[0]);
                                                                     offset_posY = Integer.parseInt(offset_pos[1]);
                                                                     offset_posZ = Integer.parseInt(offset_pos[2]);
-                                                                    variable_text = get[1];
+                                                                    variable_text = split[1];
 
                                                                 } catch (Exception ignored) {
 
@@ -280,16 +280,16 @@ public class TXTFunction {
                                                     // Run
                                                     {
 
-                                                        if (read_all.startsWith("block = ") == true) {
+                                                        if (scan.startsWith("block = ") == true) {
 
                                                             {
 
                                                                 try {
 
-                                                                    get = read_all.substring("block = ".length()).split(" \\| ");
-                                                                    chance = Double.parseDouble(get[0]);
-                                                                    variable_block = GameUtils.Tile.fromText(get[3]);
-                                                                    variable_text = get[4];
+                                                                    split = scan.substring("block = ".length()).split(" \\| ");
+                                                                    chance = Double.parseDouble(split[0]);
+                                                                    variable_block = GameUtils.Tile.fromText(split[3]);
+                                                                    variable_text = split[4];
 
                                                                 } catch (Exception ignored) {
 
@@ -306,12 +306,12 @@ public class TXTFunction {
 
                                                                             try {
 
-                                                                                offset_pos = get[1].split("/");
+                                                                                offset_pos = split[1].split("/");
                                                                                 offset_posX = Integer.parseInt(offset_pos[0]);
                                                                                 offset_posY = Integer.parseInt(offset_pos[1]);
                                                                                 offset_posZ = Integer.parseInt(offset_pos[2]);
 
-                                                                                min_max = get[2].split("/");
+                                                                                min_max = split[2].split("/");
                                                                                 minX = Integer.parseInt(min_max[0]);
                                                                                 minY = Integer.parseInt(min_max[1]);
                                                                                 minZ = Integer.parseInt(min_max[2]);
@@ -359,19 +359,19 @@ public class TXTFunction {
 
                                                             }
 
-                                                        } else if (read_all.startsWith("feature = ") == true) {
+                                                        } else if (scan.startsWith("feature = ") == true) {
 
                                                             {
 
                                                                 try {
 
-                                                                    get = read_all.substring("feature = ".length()).split(" \\| ");
-                                                                    chance = Double.parseDouble(get[0]);
-                                                                    offset_pos = get[1].split("/");
+                                                                    split = scan.substring("feature = ".length()).split(" \\| ");
+                                                                    chance = Double.parseDouble(split[0]);
+                                                                    offset_pos = split[1].split("/");
                                                                     offset_posX = Integer.parseInt(offset_pos[0]);
                                                                     offset_posY = Integer.parseInt(offset_pos[1]);
                                                                     offset_posZ = Integer.parseInt(offset_pos[2]);
-                                                                    variable_text = get[2];
+                                                                    variable_text = split[2];
 
                                                                 } catch (Exception ignored) {
 
@@ -382,34 +382,25 @@ public class TXTFunction {
                                                                 if (random.nextDouble() < chance) {
 
                                                                     pos_convert = pos.offset(offset_posX, offset_posY, offset_posZ);
-
-                                                                    try {
-
-                                                                        GameUtils.Space.placeFeature(level_accessor, pos_convert, variable_text);
-
-                                                                    } catch (Exception ignored) {
-
-                                                                        return;
-
-                                                                    }
+                                                                    GameUtils.Space.placeFeature(level_accessor, pos_convert, variable_text);
 
                                                                 }
 
                                                             }
 
-                                                        } else if (read_all.startsWith("function = ") == true) {
+                                                        } else if (scan.startsWith("function = ") == true) {
 
                                                             {
 
                                                                 try {
 
-                                                                    get = read_all.substring("function = ".length()).split(" \\| ");
-                                                                    chance = Double.parseDouble(get[0]);
-                                                                    offset_pos = get[1].split("/");
+                                                                    split = scan.substring("function = ".length()).split(" \\| ");
+                                                                    chance = Double.parseDouble(split[0]);
+                                                                    offset_pos = split[1].split("/");
                                                                     offset_posX = Integer.parseInt(offset_pos[0]);
                                                                     offset_posY = Integer.parseInt(offset_pos[1]);
                                                                     offset_posZ = Integer.parseInt(offset_pos[2]);
-                                                                    variable_text = get[2];
+                                                                    variable_text = split[2];
 
                                                                 } catch (Exception ignored) {
 
@@ -426,15 +417,15 @@ public class TXTFunction {
 
                                                             }
 
-                                                        } else if (read_all.startsWith("command = ") == true) {
+                                                        } else if (scan.startsWith("command = ") == true) {
 
                                                             {
 
                                                                 try {
 
-                                                                    get = read_all.substring("command = ".length()).split(" \\| ");
-                                                                    chance = Double.parseDouble(get[0]);
-                                                                    variable_text = get[1];
+                                                                    split = scan.substring("command = ".length()).split(" \\| ");
+                                                                    chance = Double.parseDouble(split[0]);
+                                                                    variable_text = split[1];
 
                                                                 } catch (Exception ignored) {
 
@@ -504,7 +495,7 @@ public class TXTFunction {
                 }
 
                 String command_final = command.replace("'", "*").replace("\"", "$");
-                GameUtils.Mob.summonWorldGen(level_server, pos.getCenter(), "marker", "Delayed Command", "tanshugetrees-delayed_command", "{ForgeData:{" + Core.mod_id + ":{command:\"" + command_final + "\"}}}");
+                GameUtils.Mob.summonWorldGen(level_server, pos.getCenter(), "marker", "Delayed Command", "TANSHUGETREES-delayed_command", "{ForgeData:{" + Core.mod_id + ":{command:\"" + command_final + "\"}}}");
                 
             }
 

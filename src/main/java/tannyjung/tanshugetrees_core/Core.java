@@ -12,6 +12,7 @@ import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepBeforePlants;
 import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepLast;
 import tannyjung.tanshugetrees_core.outside.*;
 import tannyjung.tanshugetrees_handcode.Handcode;
+import tannyjung.tanshugetrees_handcode.systems.Loops;
 
 import java.io.File;
 import java.util.*;
@@ -33,17 +34,18 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.DeferredRegister;
-import tannyjung.tanshugetrees_handcode.systems.Loops;
 
 public class Core {
 
     /*
+
+    Use replace-all tool to replace these words, without "___" by the way. Note that you need to enable match cases and match words as well.
+
     (1.20.1)
     ___ForgeData___
-    ___@Mod.EventBusSubscriber___
     (1.21.1) (1.21.8)
     ___NeoForgeData___
-    ___@EventBusSubscriber___
+
     */
     
     public static String mod_name = "";
@@ -69,7 +71,7 @@ public class Core {
     public static String path_world_mod = path_game + "/" + mod_id + "_error";
     public static final ExecutorService thread_main = Executors.newFixedThreadPool(1, name -> { Thread thread = new Thread(name); thread.setName(Core.mod_name); return thread; });
 
-    public static boolean in_restarting = false;
+    public static boolean global_locking = false;
 
     public static void start (IEventBus bus) {
 
@@ -81,17 +83,42 @@ public class Core {
 
         Registry.start(bus);
         DataMigration.run(false);
-        restart(null, true);
+        restart(null, true, true);
 
     }
 
-    public static void restart (ServerLevel level_server, boolean config) {
+    public static void restart (ServerLevel level_server, boolean message, boolean config) {
 
         Runnable runnable = () -> {
 
+            // Start Message
+            {
+
+                if (message == true) {
+
+                    if (config == true) {
+
+                        if (level_server == null) {
+
+                            logger.info("Restarting the mod...");
+
+                        } else {
+
+                            GameUtils.Misc.sendChatMessage(level_server, "Restarting the mod... / gray");
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            String cache_size = "";
+
             if (config == true) {
 
-                Handcode.repairData();
+                cache_size = CacheManager.clear();
                 Handcode.Config.repair();
                 Handcode.Config.apply();
 
@@ -105,13 +132,32 @@ public class Core {
 
                 }
 
-                CustomPackOrganizing.sendErrorMessage(level_server);
+                Handcode.repairData();
 
             }
 
-            if (level_server != null) {
+            // End Message
+            {
 
-                GameUtils.Score.create(level_server, mod_id_big);
+                if (message == true) {
+
+                    CustomPackOrganizing.Error.sendMessage(level_server);
+
+                    if (config == true) {
+
+                        if (level_server == null) {
+
+                            logger.info("Restarted and cleared main caches about {}", cache_size);
+
+                        } else {
+
+                            GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches about " + cache_size + " / gray");
+
+                        }
+
+                    }
+
+                }
 
             }
 
@@ -119,7 +165,6 @@ public class Core {
 
         if (level_server == null) {
 
-            CacheManager.clear();
             runnable.run();
 
         } else {
@@ -129,29 +174,10 @@ public class Core {
                 GlobalLocking.test();
                 GlobalLocking.lock();
 
-                if (config == true) {
-
-                    GameUtils.Misc.sendChatMessage(level_server, "Restarting the mod... / gray");
-
-                }
-
                 DelayedWork.create(true, 20, () -> {
 
-                    String cache_size = "";
-
-                    if (config == true) {
-
-                        cache_size = CacheManager.clear();
-
-                    }
-
                     runnable.run();
-
-                    if (config == true) {
-
-                        GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches about " + cache_size + " / gray");
-
-                    }
+                    GameUtils.Score.create(level_server, mod_id_big);
 
                     GlobalLocking.unlock();
 
@@ -196,20 +222,24 @@ public class Core {
     
     public static class GlobalLocking {
 
-        private static final Object global_locking = new Object();
+        private static final Object lock = new Object();
 
         public static void lock () {
 
-            in_restarting = true;
+            synchronized (lock) {
+
+                global_locking = true;
+
+            }
 
         }
 
         public static void unlock () {
 
-            synchronized (global_locking) {
+            synchronized (lock) {
 
-                in_restarting = false;
-                global_locking.notifyAll();
+                global_locking = false;
+                lock.notifyAll();
 
             }
 
@@ -217,17 +247,18 @@ public class Core {
 
         public static void test () {
 
-            synchronized (global_locking) {
+            synchronized (lock) {
 
-                while (in_restarting == true) {
+                while (global_locking == true) {
 
                     try {
 
-                        global_locking.wait();
+                        lock.wait();
 
                     } catch (Exception exception) {
 
                         OutsideUtils.exception(new Exception(), exception, "");
+                        return;
 
                     }
 
@@ -246,13 +277,13 @@ public class Core {
 
         public static void create (boolean async, int tick, Runnable work) {
 
-            if (async == false) {
+            if (async == true) {
 
-                delayed_works.add(new AbstractMap.SimpleEntry<>(work, tick));
+                thread_delay.schedule(work, tick * 50L, TimeUnit.MILLISECONDS);
 
             } else {
 
-                thread_delay.schedule(work, tick * 50L, TimeUnit.MILLISECONDS);
+                delayed_works.add(new AbstractMap.SimpleEntry<>(work, tick));
 
             }
 
@@ -325,7 +356,7 @@ public class Core {
             if (is_world == false) {
 
                 String path = Core.path_config + "/dev/version.txt";
-                File test_exist = new File(Core.path_config).getParentFile();
+                File test_exist = new File(Core.path_config);
                 String version = "";
 
                 // Get Version
@@ -333,9 +364,9 @@ public class Core {
 
                     if (test_exist.exists() == true) {
 
-                        for (String read_all : FileManager.readTXT(path)) {
+                        for (String scan : FileManager.readTXT(path)) {
 
-                            version = read_all;
+                            version = scan;
 
                         }
 
@@ -358,7 +389,7 @@ public class Core {
             } else {
 
                 String path = Core.path_world_mod + "/version.txt";
-                File test_exist = new File(Core.path_world_mod).getParentFile();
+                File test_exist = new File(Core.path_world_mod);
                 String version = "";
 
                 // Get Version
@@ -366,9 +397,9 @@ public class Core {
 
                     if (test_exist.exists() == true) {
 
-                        for (String read_all : FileManager.readTXT(path)) {
+                        for (String scan : FileManager.readTXT(path)) {
 
-                            version = read_all;
+                            version = scan;
 
                         }
 

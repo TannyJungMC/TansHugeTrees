@@ -39,55 +39,57 @@
         }
       },
       {
-        "type": "button",
+        "type": "label",
         "data": {
-          "name": "button_restore",
-          "text": "Restore",
-          "isUndecorated": false,
-          "onClick": {
-            "name": "TreeSummonerStaffGUIWhenOpen"
+          "name": "label_example_tannyjungmainpackr",
+          "text": {
+            "fixedValue": "Example preset path [ presets/#TannyJung-Main-Pack/redwood/redwood ]."
           },
-          "width": 48,
-          "height": 20,
-          "x": 286,
-          "y": 136,
+          "color": {
+            "value": -6710887,
+            "falpha": 0.0
+          },
+          "x": 38,
+          "y": 168,
           "locked": false
         }
       },
       {
         "type": "label",
         "data": {
-          "name": "label_example_tannyjungmainpackr",
+          "name": "label_the_path_will_be_test_from_extra",
           "text": {
-            "fixedValue": "Example : #TannyJung-Main-Pack/redwood"
+            "fixedValue": "This path will go to extracted packs first. then"
           },
           "color": {
-            "value": -10066330,
+            "value": -6710887,
             "falpha": 0.0
           },
           "x": 38,
-          "y": 136,
+          "y": 180,
           "locked": false
         }
       },
       {
-        "type": "tooltip",
+        "type": "label",
         "data": {
-          "name": "tooltip_theres_a_bug_on_1201_that_you",
+          "name": "label_from_unextracted_packs_if_failed",
           "text": {
-            "fixedValue": "There's a bug on 1.20.1 that your preset part not load when reopen the GUI, click this to manually restore that."
+            "fixedValue": "go to unextracted packs if failed."
           },
-          "width": 48,
-          "height": 24,
-          "x": 286,
-          "y": 136,
+          "color": {
+            "value": -6710887,
+            "falpha": 0.0
+          },
+          "x": 38,
+          "y": 192,
           "locked": false
         }
       }
     ],
     "gridSettings": {
-      "sx": 16,
-      "sy": 16,
+      "sx": 8,
+      "sy": 8,
       "ox": 11,
       "oy": 15,
       "snapOnGrid": true

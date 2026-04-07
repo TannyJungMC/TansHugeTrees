@@ -1,7 +1,6 @@
 package tannyjung.tanshugetrees_core.outside;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.Blocks;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_handcode.Handcode;
@@ -13,26 +12,51 @@ import java.util.*;
 public class CustomPackOrganizing {
 
     private static final Map<String, String> cache_pack_ids = new HashMap<>();
-    private static final Map<String, Map<String, List<String>>> cache_errors = new HashMap<>();
+    private static final Set<String> cache_error_files = new HashSet<>();
+    private static final Map<String, Map<String, List<String>>> errors = new HashMap<>();
 
     public static void start (String pack_separate_multiple, String folder_settings, String folder_functions) {
 
-        cache_errors.clear();
+        errors.clear();
 
         FileManager.delete(Core.path_config + "/dev/temporary");
         FileManager.createEmptyFile(Core.path_config + "/dev/temporary", true);
         FileManager.createEmptyFile(Core.path_config + "/custom_packs", true);
+        File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
+
+        if (packs == null) {
+
+            return;
+
+        }
 
         // Rename All Back
         {
 
-            File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
+            for (File pack : packs) {
 
-            if (packs != null) {
+                FileManager.rename(pack.getPath(), pack.getName().replace("[INCOMPATIBLE] ", ""));
 
-                for (File pack : packs) {
+            }
 
-                    FileManager.rename(pack.getPath(), pack.getName().replace("[INCOMPATIBLE] ", ""));
+        }
+
+        packs = new File(Core.path_config + "/custom_packs").listFiles();
+
+        if (packs == null) {
+
+            return;
+
+        }
+
+        // Extract ZIP
+        {
+
+            for (File pack : packs) {
+
+                if (pack.getName().endsWith(".zip") == true) {
+
+                    FileManager.extractZIP(pack.getPath(), Core.path_config + "/dev/temporary/pack_zip/" + pack.getName(), false, "");
 
                 }
 
@@ -40,107 +64,117 @@ public class CustomPackOrganizing {
 
         }
 
-        File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
+        // Organize Info
+        {
 
-        if (packs != null) {
+            File file = null;
 
-            // Extract ZIP
-            {
+            for (File pack : packs) {
 
-                for (File pack : packs) {
+                if (pack.getName().endsWith(".zip") == true) {
 
-                    if (pack.getName().endsWith(".zip") == true) {
+                    file = new File(Core.path_config + "/dev/temporary/pack_zip/" + pack.getName() + "/info.txt");
 
-                        FileManager.extractZIP(pack.getPath(), Core.path_config + "/dev/temporary/pack_zip/" + pack.getName(), false, "");
+                } else {
 
-                    }
-
-                }
-
-            }
-
-            // Organize Info
-            {
-
-                File file = null;
-
-                for (File pack : packs) {
-
-                    if (pack.getName().endsWith(".zip") == true) {
-
-                        file = new File(Core.path_config + "/dev/temporary/pack_zip/" + pack.getName() + "/info.txt");
-
-                    } else {
-
-                        file = new File(pack.getPath() + "/info.txt");
-
-                    }
-
-                    if (file.exists() == true) {
-
-                        FileManager.copy(file.getPath(), Core.path_config + "/dev/temporary/info/" + pack.getName() + ".txt", false);
-
-                    }
+                    file = new File(pack.getPath() + "/info.txt");
 
                 }
-
-            }
-
-            getPackID();
-            testInfo();
-            pack_separate_multiple = " / " + pack_separate_multiple + " / ";
-
-            // Organizing Data
-            {
-
-                File tanny_pack = TannyPackManager.getCurrentFile();
-
-                if (tanny_pack.exists() == true) {
-
-                    organize(tanny_pack, pack_separate_multiple);
-
-                }
-
-                for (File pack : packs) {
-
-                    if (pack.getName().equals(tanny_pack.getName()) == false) {
-
-                        organize(pack, pack_separate_multiple);
-
-                    }
-
-                }
-
-            }
-
-            // Edit
-            {
-
-                File file = new File(Core.path_config + "/dev/temporary/edit");
 
                 if (file.exists() == true) {
 
-                    for (File scan : FileManager.getAllFiles(file.getPath())) {
+                    FileManager.copy(file.getPath(), Core.path_config + "/dev/temporary/info/" + pack.getName() + ".txt", false);
 
-                        {
+                }
 
-                            Path path_to = file.toPath().relativize(scan.toPath());
-                            path_to = Path.of(Core.path_config + "/dev/temporary").resolve(path_to);
+            }
 
-                            if (path_to.toFile().exists() == true) {
+        }
 
-                                // Edit
-                                {
+        // Get Pack ID
+        {
 
-                                    if (scan.getName().endsWith(".txt") == true) {
+            File[] files = new File(Core.path_config + "/dev/temporary/info").listFiles();
 
-                                        FileManager.mergeTXT(scan, path_to.toFile());
+            if (files == null) {
 
-                                    } else {
+                return;
 
-                                        FileManager.copy(scan.getPath(), path_to.toString(), false);
+            }
 
-                                    }
+            for (File file : files) {
+
+                if (file.exists() == true) {
+
+                    for (String scan : FileManager.readTXT(file.getPath())) {
+
+                        if (scan.startsWith("pack_id = ") == true) {
+
+                            cache_pack_ids.put(file.getName().substring(0, file.getName().length() - ".txt".length()), scan.substring("pack_id = ".length()));
+                            break;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        testInfo();
+        pack_separate_multiple = " / " + pack_separate_multiple + " / ";
+
+        // Organizing Data
+        {
+
+            File tanny_pack = TannyPackManager.getCurrentFile();
+
+            if (tanny_pack.exists() == true) {
+
+                organize(tanny_pack, pack_separate_multiple);
+
+            }
+
+            for (File pack : packs) {
+
+                if (pack.getName().equals(tanny_pack.getName()) == false) {
+
+                    organize(pack, pack_separate_multiple);
+
+                }
+
+            }
+
+        }
+
+        // Edit
+        {
+
+            File file = new File(Core.path_config + "/dev/temporary/edit");
+
+            if (file.exists() == true) {
+
+                for (File scan : FileManager.getAllFiles(file.getPath())) {
+
+                    {
+
+                        Path path_to = file.toPath().relativize(scan.toPath());
+                        path_to = Path.of(Core.path_config + "/dev/temporary").resolve(path_to);
+
+                        if (path_to.toFile().exists() == true) {
+
+                            // Edit
+                            {
+
+                                if (scan.getName().endsWith(".txt") == true) {
+
+                                    FileManager.mergeTXT(scan, path_to.toFile());
+
+                                } else {
+
+                                    FileManager.copy(scan.getPath(), path_to.toString(), false);
 
                                 }
 
@@ -159,186 +193,20 @@ public class CustomPackOrganizing {
         test(folder_settings, false);
         test(folder_functions, true);
         FileManager.delete(Core.path_config + "/dev/temporary/pack_zip");
+
+        // Rename Incompatible Files
+        {
+
+            for (String scan : cache_error_files) {
+
+                FileManager.rename(scan, "[INCOMPATIBLE] " + new File(scan).getName());
+
+            }
+
+        }
+
         cache_pack_ids.clear();
-
-    }
-
-    private static void getPackID () {
-
-        File[] files = new File(Core.path_config + "/dev/temporary/info").listFiles();
-
-        if (files != null) {
-
-            for (File file : files) {
-
-                if (file.exists() == true) {
-
-                    for (String read_all : FileManager.readTXT(file.getPath())) {
-
-                        if (read_all.startsWith("pack_id = ") == true) {
-
-                            cache_pack_ids.put(file.getName().substring(0, file.getName().length() - ".txt".length()), read_all.substring("pack_id = ".length()));
-                            break;
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
-
-    public static void testInfo () {
-
-        File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
-
-        if (packs != null) {
-
-            File file = null;
-            String data_structure_version = "";
-            String required_packs = "";
-            String required_mods = "";
-            List<String> pack_id_scan = new ArrayList<>();
-
-            for (File pack : packs) {
-
-                file = new File(Core.path_config + "/dev/temporary/info/" + pack.getName() + ".txt");
-
-                if (file.exists() == true) {
-
-                    // Get Data
-                    {
-
-                        for (String read_all : FileManager.readTXT(file.getPath())) {
-
-                            if (read_all.startsWith("data_structure_version = ") == true) {
-
-                                data_structure_version = read_all.substring("data_structure_version = ".length());
-
-                            } else if (read_all.startsWith("required_packs = ")) {
-
-                                required_packs = read_all.substring("required_packs = ".length());
-
-                            } else if (read_all.startsWith("required_mods = ")) {
-
-                                required_mods = read_all.substring("required_mods = ".length());
-
-                            }
-
-                        }
-
-                    }
-
-                    test:
-                    {
-
-                        // Pack ID
-                        {
-
-                            if (cache_pack_ids.containsKey(pack.getName()) == false) {
-
-                                FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                                addError("pack", "packs / pack ID not found. This will results skipping these packs. Make sure you're using the version that includes pack ID.", pack.getPath(), pack.getName());
-                                break test;
-
-                            }
-
-                        }
-
-                        // Data Structure Version
-                        {
-
-                            if (Core.data_structure_version_pack.equals(data_structure_version) == false) {
-
-                                FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                                addError("pack", "packs / unsupported data structure version. This will results skipping these packs. Your version is " + Core.data_structure_version_pack + " but these packs require a different version.", pack.getPath(), pack.getName() + " > " + data_structure_version);
-                                break test;
-
-                            }
-
-                        }
-
-                        // Duplicated Pack ID
-                        {
-
-                            pack_id_scan.clear();
-
-                            for (String id : cache_pack_ids.values()) {
-
-                                if (pack_id_scan.contains(id) == false) {
-
-                                    pack_id_scan.add(id);
-
-                                } else {
-
-                                    FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                                    addError("pack", "packs / duplicated pack IDs. This will results skipping these packs. You can report this to the pack authors to help them fix it.", pack.getPath(), pack.getName() + " > " + id);
-                                    break test;
-
-                                }
-
-                            }
-
-                        }
-
-                        // Required Packs
-                        {
-
-                            if (required_packs.equals("none") == false) {
-
-                                for (String value : required_packs.split(" / ")) {
-
-                                    if (cache_pack_ids.containsValue(value) == false) {
-
-                                        FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                                        addError("pack", "packs / required packs not found. This will results skipping these packs. Make sure you're using required packs to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
-                                        break test;
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-
-                        // Required Mods
-                        {
-
-                            if (required_mods.equals("none") == false) {
-
-                                for (String value : required_mods.split(" / ")) {
-
-                                    if (GameUtils.Misc.isModLoaded(value) == false) {
-
-                                        FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                                        addError("pack", "packs / required mods not found. This will results skipping these packs. Make sure you're using required mods to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
-                                        break test;
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                } else {
-
-                    FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                    addError("pack", "packs / info file not found. This will results skipping these packs. Make sure you're using the version that includes info file.", pack.getPath(), pack.getName());
-
-                }
-
-            }
-
-        }
+        cache_error_files.clear();
 
     }
 
@@ -348,9 +216,9 @@ public class CustomPackOrganizing {
 
             String suffix = "";
 
-            if (folder.contains(" + ") == true) {
+            if (folder.contains(" < ") == true) {
 
-                String[] split = folder.split(" + ");
+                String[] split = folder.split(" < ");
                 folder = split[0];
                 suffix = split[1];
 
@@ -364,13 +232,9 @@ public class CustomPackOrganizing {
 
                     {
 
-                        if (scan.getName().endsWith(".txt") == true) {
+                        if (scan.getName().startsWith("[INCOMPATIBLE] ") == false && scan.getName().endsWith(suffix + ".txt") == true) {
 
-                            if (scan.getName().startsWith("[INCOMPATIBLE] ") == false && scan.getName().endsWith(suffix) == true) {
-
-                                testFile(scan.getPath(), is_function);
-
-                            }
+                            Option.testParse(scan, is_function);
 
                         }
 
@@ -384,110 +248,115 @@ public class CustomPackOrganizing {
 
     }
 
-    private static boolean testFile (String path, boolean is_function) {
+    private static void testInfo () {
 
-        File file = new File(path);
-        String id = Path.of(Core.path_config + "/dev/temporary/").relativize(file.toPath()).toString().replace("\\", "/");
-        String[] split = new String[0];
-        File file_test = null;
+        File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 
-        for (String read_all : FileManager.readTXT(file.getPath())) {
+        if (packs == null) {
 
-            if (read_all.contains(" = ") == true) {
+            return;
 
-                split = read_all.split(" = ");
+        }
 
-                if (split.length == 2 && split[1].isEmpty() == false) {
+        File file = null;
+        String data_structure_version = "";
+        String required_packs = "";
+        String required_mods = "";
+        List<String> pack_id_scan = new ArrayList<>();
 
-                    if (is_function == false) {
+        for (File pack : packs) {
 
-                        {
+            file = new File(Core.path_config + "/dev/temporary/info/" + pack.getName() + ".txt");
 
-                            if (split[0].equals("path_storage = ") == true) {
+            if (file.exists() == true) {
 
-                                {
+                // Get Data
+                {
 
-                                    file_test = new File(Core.path_config + "/dev/temporary/presets/" + read_all.substring("path_storage = ".length()) + "/storage");
+                    for (String scan : FileManager.readTXT(file.getPath())) {
 
-                                    if (file_test.exists() == true) {
+                        if (scan.startsWith("data_structure_version = ") == true) {
 
-                                        if (file_test.listFiles() == null) {
+                            data_structure_version = scan.substring("data_structure_version = ".length());
 
-                                            addError("file", "world gen files / empty storage. This will results skipping them in mod systems.", file.getPath(), id);
-                                            return false;
+                        } else if (scan.startsWith("required_packs = ")) {
 
-                                        }
+                            required_packs = scan.substring("required_packs = ".length());
 
-                                    } else {
+                        } else if (scan.startsWith("required_mods = ")) {
 
-                                        addError("file", "world gen files / storage not found. This will results skipping them in mod systems.", file.getPath(), id);
-                                        return false;
+                            required_mods = scan.substring("required_mods = ".length());
 
-                                    }
+                        }
 
-                                }
+                    }
 
-                            } else if (split[0].equals("path_settings = ") == true) {
+                }
 
-                                {
+                test:
+                {
 
-                                    file_test = new File(Core.path_config + "/dev/temporary/presets/" + read_all.substring("path_settings = ".length()) + ".txt");
+                    // Pack ID
+                    {
 
-                                    if (file_test.exists() == false) {
+                        if (cache_pack_ids.containsKey(pack.getName()) == false) {
 
-                                        addError("file", "world gen files / settings not found. This will results skipping them in mod systems.", file.getPath(), id);
-                                        return false;
+                            FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                            Error.add("pack", "packs / pack ID not found. This will results skipping these packs. Make sure you're using the version that includes pack ID.", pack.getPath(), pack.getName());
+                            break test;
 
-                                    } else {
+                        }
 
-                                        if (testFile(file_test.getPath(), false) == false) {
+                    }
 
-                                            addError("file", "world gen files / settings is mark as incompatible. This will results skipping them in mod systems.", file.getPath(), id);
-                                            return false;
+                    // Data Structure Version
+                    {
 
-                                        }
+                        if (Core.data_structure_version_pack.equals(data_structure_version) == false) {
 
-                                    }
+                            FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                            Error.add("pack", "packs / unsupported data structure version. This will results skipping these packs. Your version is " + Core.data_structure_version_pack + " but these packs require a different version.", pack.getPath(), pack.getName() + " > " + data_structure_version);
+                            break test;
 
-                                }
+                        }
 
-                            } else if (split[0].startsWith("Block ") == true) {
+                    }
 
-                                {
+                    // Duplicated Pack ID
+                    {
 
-                                    split[1] = split[1].replace(" keep", "");
+                        pack_id_scan.clear();
 
-                                    if (GameUtils.Tile.fromText(split[1]).getBlock() == Blocks.AIR) {
+                        for (String id : cache_pack_ids.values()) {
 
-                                        addError("file", "settings file / unknown block IDs. This will results skipping them in mod systems.", file.getPath(), id + " > " + split[1]);
-                                        return false;
+                            if (pack_id_scan.contains(id) == false) {
 
-                                    }
+                                pack_id_scan.add(id);
 
-                                }
+                            } else {
 
-                            } else if (split[0].startsWith("Function ") == true) {
+                                FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                                Error.add("pack", "packs / duplicated pack IDs. This will results skipping these packs. You can report this to the pack authors to help them fix it.", pack.getPath(), pack.getName() + " > " + id);
+                                break test;
 
-                                {
+                            }
 
-                                    file_test = new File(Core.path_config + "/dev/temporary/functions/" + split[1] + ".txt");
+                        }
 
+                    }
 
-                                    if (file_test.exists() == false) {
+                    // Required Packs
+                    {
 
-                                        addError("file", "settings file / unknown functions. This will results skipping them in mod systems.", file.getPath(), id + " > " + split[1]);
-                                        return false;
+                        if (required_packs.equals("none") == false) {
 
-                                    } else {
+                            for (String value : required_packs.split(" / ")) {
 
-                                        if (testFile(file_test.getPath(), true) == false) {
+                                if (cache_pack_ids.containsValue(value) == false) {
 
-                                            addError("file", "settings files / functions is mark as incompatible. This will results skipping them in mod systems.", file.getPath(), id);
-                                            return false;
-
-                                        }
-
-                                    }
+                                    FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                                    Error.add("pack", "packs / required packs not found. This will results skipping these packs. Make sure you're using required packs to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
+                                    break test;
 
                                 }
 
@@ -495,19 +364,39 @@ public class CustomPackOrganizing {
 
                         }
 
-                    } else {
+                    }
 
-                        // TODO
+                    // Required Mods
+                    {
+
+                        if (required_mods.equals("none") == false) {
+
+                            for (String value : required_mods.split(" / ")) {
+
+                                if (GameUtils.Misc.isModLoaded(value) == false) {
+
+                                    FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                                    Error.add("pack", "packs / required mods not found. This will results skipping these packs. Make sure you're using required mods to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
+                                    break test;
+
+                                }
+
+                            }
+
+                        }
 
                     }
 
                 }
 
+            } else {
+
+                FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                Error.add("pack", "packs / info file not found. This will results skipping these packs. Make sure you're using the version that includes info file.", pack.getPath(), pack.getName());
+
             }
 
         }
-
-        return true;
 
     }
 
@@ -528,44 +417,178 @@ public class CustomPackOrganizing {
 
         File[] files = pack.listFiles();
 
-        if (files != null) {
+        if (files == null) {
 
-            boolean is_separate_multiple = false;
+            return;
 
-            for (File file : files) {
+        }
 
-                if (file.isDirectory() == true) {
+        boolean is_separate_multiple = false;
 
-                    is_separate_multiple = pack_separate_multiple.contains(" / " + file.getName() + " / ") == true;
-                    boolean is_separate_multiple_final = is_separate_multiple;
+        for (File file : files) {
 
-                    for (File scan : FileManager.getAllFiles(file.getPath())) {
+            if (file.isDirectory() == true) {
+
+                is_separate_multiple = pack_separate_multiple.contains(" / " + file.getName() + " / ") == true;
+                boolean is_separate_multiple_final = is_separate_multiple;
+
+                for (File scan : FileManager.getAllFiles(file.getPath())) {
+
+                    {
+
+                        Path path_copy_to = Path.of(Core.path_config + "/dev/temporary/" + file.getName());
+
+                        // Convert Path
+                        {
+
+                            if (is_separate_multiple_final == true) {
+
+                                path_copy_to = path_copy_to.resolve(cache_pack_ids.get(pack.getName()));
+
+                            }
+
+                            path_copy_to = path_copy_to.resolve(pack.toPath().resolve(file.getName()).relativize(scan.toPath()));
+
+                            if (incompatible == true) {
+
+                                path_copy_to = path_copy_to.getParent().resolve("[INCOMPATIBLE] " + path_copy_to.toFile().getName());
+
+                            }
+
+                        }
+
+                        FileManager.copy(scan.getPath(), path_copy_to.toString(), false);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    public static class Option {
+
+        private static boolean testParse (File file, boolean is_function) {
+
+            boolean pass = true;
+            String id = Path.of(Core.path_config + "/dev/temporary/").relativize(file.toPath()).toString().replace("\\", "/");
+            String[] split = null;
+            String option = "";
+            String value = "";
+            File file_test = null;
+
+            for (String scan : FileManager.readTXT(file.getPath())) {
+
+                if (scan.contains(" = ") == true) {
+
+                    split = scan.split(" = ");
+
+                    // Parsing
+                    {
+
+                        try {
+
+                            option = split[0];
+                            value = split[1];
+
+                        } catch (Exception exception) {
+
+                            OutsideUtils.exception(new Exception(), exception, "");
+                            Error.add("file", "setting files / option parsing error. This will results skipping them in mod systems.", file.getPath(), id + " > " + Arrays.toString(split));
+                            pass = false;
+
+                        }
+
+                    }
+
+                    if (is_function == true) {
+
+                        // TODO
+
+                    } else {
 
                         {
 
-                            Path path_copy_to = Path.of(Core.path_config + "/dev/temporary/" + file.getName());
+                            if (value.equals("none") == false) {
 
-                            // Convert Path
-                            {
+                                if (option.startsWith("path_") == true) {
 
-                                if (is_separate_multiple_final == true) {
+                                    {
 
-                                    path_copy_to = path_copy_to.resolve(cache_pack_ids.get(pack.getName()));
+                                        option = option.substring("path_".length()).replace("_", " ");
+                                        file_test = new File(Core.path_config + "/dev/temporary/" + value);
 
-                                }
+                                        if (file_test.exists() == true) {
 
-                                path_copy_to = path_copy_to.resolve(pack.toPath().resolve(file.getName()).relativize(scan.toPath()));
+                                            if (file_test.listFiles() == null) {
 
-                                if (incompatible == true) {
+                                                Error.add("file", "settings files / empty " + option + " folder. This will results skipping them in mod systems.", file.getPath(), id);
+                                                pass = false;
 
-                                    path_copy_to = path_copy_to.getParent().resolve("[INCOMPATIBLE] " + path_copy_to.toFile().getName());
+                                            }
+
+                                        } else {
+
+                                            file_test = new File(file_test.getPath() + ".txt");
+
+                                            if (file_test.exists() == false) {
+
+                                                Error.add("file", "world gen files / " + option + " path not found. This will results skipping them in mod systems.", file.getPath(), id + " > " + value);
+                                                pass = false;
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                } else if (option.startsWith("Block ") == true) {
+
+                                    {
+
+                                        value = value.replace(" keep", "");
+
+                                        if (GameUtils.Tile.fromText(value).isAir() == true) {
+
+                                            Error.add("file", "settings file / unknown block IDs. This will results skipping them in mod systems.", file.getPath(), id + " > " + value);
+                                            pass = false;
+
+                                        }
+
+                                    }
+
+                                } else if (option.startsWith("Function ") == true) {
+
+                                    {
+
+                                        file_test = new File(Core.path_config + "/dev/temporary/" + value + ".txt");
+
+
+                                        if (file_test.exists() == false) {
+
+                                            Error.add("file", "settings file / unknown functions. This will results skipping them in mod systems.", file.getPath(), id + " > " + value);
+                                            pass = false;
+
+                                        } else {
+
+                                            if (testParse(file_test, true) == false) {
+
+                                                Error.add("file", "settings files / functions is mark as incompatible. This will results skipping them in mod systems.", file.getPath(), id);
+                                                pass = false;
+
+                                            }
+
+                                        }
+
+                                    }
 
                                 }
 
                             }
 
-                            FileManager.copy(scan.getPath(), path_copy_to.toString(), false);
-
                         }
 
                     }
@@ -574,59 +597,83 @@ public class CustomPackOrganizing {
 
             }
 
-        }
-
-    }
-
-    private static void addError (String type, String error, String path, String troublemaker) {
-
-        cache_errors.computeIfAbsent(type, create -> new HashMap<>()).computeIfAbsent(error, create -> new ArrayList<>()).add(troublemaker);
-        File file = new File(path);
-
-        if (file.getName().startsWith("[INCOMPATIBLE] ") == false) {
-
-            FileManager.rename(path, "[INCOMPATIBLE] " + file.getName());
+            return pass;
 
         }
 
     }
 
-    public static void sendErrorMessage (ServerLevel level_server) {
+    public static class Error {
 
-        boolean to_chat = false;
-        String message = "";
-        String[] split = new String[0];
+        private static void add (String type, String error, String path, String troublemaker) {
 
-        for (Map.Entry<String, Map<String, List<String>>> entry1 : cache_errors.entrySet()) {
+            errors.computeIfAbsent(type, create -> new HashMap<>()).computeIfAbsent(error, create -> new ArrayList<>()).add(troublemaker);
+            cache_error_files.add(path);
 
-            to_chat = entry1.getKey().equals("pack") == true || Handcode.Config.developer_mode == true;
+        }
 
-            for (Map.Entry<String, List<String>> entry2 : entry1.getValue().entrySet()) {
+        public static void sendMessage (ServerLevel level_server) {
 
+            boolean to_chat = false;
+            String message = "";
+            String[] split = null;
+            boolean first = true;
+
+            for (Map.Entry<String, Map<String, List<String>>> entry1 : errors.entrySet()) {
+
+                to_chat = level_server != null && (entry1.getKey().equals("pack") == true || Handcode.Config.developer_mode == true);
+
+                // First Line
                 {
 
-                    split = entry2.getKey().split(" / ");
-                    message = "Detected incompatible " + split[0] + ", caused by " + split[1];
+                    if (first == true) {
 
-                    if (level_server != null && to_chat == true) {
+                        first = false;
 
-                        GameUtils.Misc.sendChatMessage(level_server, message + " / red");
+                        if (to_chat == true) {
 
-                    } else {
+                            Core.logger.error("----------------------------------------------------------------------------------------------------");
 
-                        Core.logger.error(message);
+                        }
 
                     }
 
-                    for (String get : entry2.getValue()) {
+                }
 
-                        if (level_server != null && to_chat == true) {
+                for (Map.Entry<String, List<String>> entry2 : entry1.getValue().entrySet()) {
 
-                            GameUtils.Misc.sendChatMessage(level_server, get + " / dark_gray");
+                    {
+
+                        split = entry2.getKey().split(" / ");
+                        message = "Detected incompatible " + split[0] + ", caused by " + split[1];
+
+                        if (to_chat == true) {
+
+                            GameUtils.Misc.sendChatMessage(level_server, message + " / red");
 
                         } else {
 
-                            Core.logger.error("- {}", get);
+                            Core.logger.error(message);
+
+                        }
+
+                        for (String get : entry2.getValue()) {
+
+                            if (to_chat == true) {
+
+                                GameUtils.Misc.sendChatMessage(level_server, get + " / dark_gray");
+
+                            } else {
+
+                                Core.logger.error("- {}", get);
+
+                            }
+
+                        }
+
+                        if (to_chat == true) {
+
+                            Core.logger.error("----------------------------------------------------------------------------------------------------");
 
                         }
 
@@ -637,8 +684,6 @@ public class CustomPackOrganizing {
             }
 
         }
-
-
 
     }
 

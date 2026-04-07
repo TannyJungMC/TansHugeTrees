@@ -25,7 +25,6 @@ public class TreeSummonerStaffGUIScreen extends AbstractContainerScreen<TreeSumm
 	private boolean menuStateUpdateActive = false;
 	private EditBox path;
 	private Button button_apply;
-	private Button button_restore;
 
 	public TreeSummonerStaffGUIScreen(TreeSummonerStaffGUIMenu container, Inventory inventory, Component text) {
 		super(container, inventory, text);
@@ -55,13 +54,7 @@ public class TreeSummonerStaffGUIScreen extends AbstractContainerScreen<TreeSumm
 		this.renderBackground(guiGraphics);
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 		path.render(guiGraphics, mouseX, mouseY, partialTicks);
-		boolean customTooltipShown = false;
-		if (mouseX > leftPos + 72 && mouseX < leftPos + 120 && mouseY > topPos + 16 && mouseY < topPos + 40) {
-			guiGraphics.renderTooltip(font, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.tooltip_theres_a_bug_on_1201_that_you"), mouseX, mouseY);
-			customTooltipShown = true;
-		}
-		if (!customTooltipShown)
-			this.renderTooltip(guiGraphics, mouseX, mouseY);
+		this.renderTooltip(guiGraphics, mouseX, mouseY);
 	}
 
 	@Override
@@ -93,7 +86,9 @@ public class TreeSummonerStaffGUIScreen extends AbstractContainerScreen<TreeSumm
 
 	@Override
 	protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		guiGraphics.drawString(this.font, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr"), -176, 16, -10066330, false);
+		guiGraphics.drawString(this.font, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr"), -176, 48, -6710887, false);
+		guiGraphics.drawString(this.font, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.label_the_path_will_be_test_from_extra"), -176, 60, -6710887, false);
+		guiGraphics.drawString(this.font, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.label_from_unextracted_packs_if_failed"), -176, 72, -6710887, false);
 	}
 
 	@Override
@@ -115,15 +110,6 @@ public class TreeSummonerStaffGUIScreen extends AbstractContainerScreen<TreeSumm
 			}
 		}).bounds(this.leftPos + 128, this.topPos + 16, 48, 20).build();
 		this.addRenderableWidget(button_apply);
-		button_restore = Button.builder(Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.button_restore"), e -> {
-			int x = TreeSummonerStaffGUIScreen.this.x;
-			int y = TreeSummonerStaffGUIScreen.this.y;
-			if (true) {
-				TanshugetreesMod.PACKET_HANDLER.sendToServer(new TreeSummonerStaffGUIButtonMessage(1, x, y, z));
-				TreeSummonerStaffGUIButtonMessage.handleButtonAction(entity, 1, x, y, z);
-			}
-		}).bounds(this.leftPos + 72, this.topPos + 16, 48, 20).build();
-		this.addRenderableWidget(button_restore);
 	}
 
 	@Override

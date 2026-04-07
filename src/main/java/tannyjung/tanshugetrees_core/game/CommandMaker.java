@@ -210,10 +210,9 @@ public class CommandMaker {
                     } catch (Exception exception) {
 
                         OutsideUtils.exception(new Exception(), exception, "");
+                        return "";
 
                     }
-
-                    return "";
 
                 }
 
@@ -227,13 +226,11 @@ public class CommandMaker {
 
     public static boolean testPermission (CommandContext<CommandSourceStack> data, int permission) {
 
-        Entity entity = data.getSource().getEntity();
-
-        if (entity instanceof Player player) {
+        if (data.getSource().getEntity() instanceof Player player) {
 
             if (player.hasPermissions(permission) == false) {
 
-                GameUtils.Misc.sendChatMessagePrivate(entity, "You must have server permission minimum level " + permission + " to use this command. If you're in singleplayer, try enable cheat mode or temporary open LAN. If you're in multiplayer, try give yourself OP or contact server admin. / red");
+                GameUtils.Misc.sendChatMessagePrivate(player, "You must have server permission minimum level " + permission + " to use this command. If you're in singleplayer, try enable cheat mode or temporary open LAN. If you're in multiplayer, try give yourself OP or contact server admin. / red");
                 return false;
 
             }
@@ -274,7 +271,7 @@ public class CommandMaker {
             private static void restart (CommandContext<CommandSourceStack> data) {
 
                 ServerLevel level_server = data.getSource().getLevel();
-                Core.restart(level_server, true);
+                Core.restart(level_server, true, true);
 
             }
 

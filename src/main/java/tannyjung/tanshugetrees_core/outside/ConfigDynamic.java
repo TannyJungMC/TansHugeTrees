@@ -18,20 +18,20 @@ public class ConfigDynamic {
         // Get Default and Description
         {
 
-            String[] split = new String[0];
+            String[] split = null;
             String option_name = "";
 
-            for (String read_all : options.split("\n")) {
+            for (String scan : options.split("\n")) {
 
-                if (read_all.startsWith("# ") == false) {
+                if (scan.startsWith("# ") == false) {
 
-                    split = read_all.split(" = ");
+                    split = scan.split(" = ");
                     default_values.put(split[0], split[1]);
                     option_name = split[0];
 
                 } else {
 
-                    description.put(option_name, read_all.substring("# ".length()));
+                    description.put(option_name, scan.substring("# ".length()));
 
                 }
 
@@ -118,17 +118,9 @@ public class ConfigDynamic {
 
             Map<String, Map<String, String>> data = read(default_values, name);
 
-            if (data.isEmpty() == true) {
+            for (Map.Entry<String, Map<String, String>> entry : data.entrySet()) {
 
-                CacheManager.Data.setMapTextMapTextText("config_" + name, "", null);
-
-            } else {
-
-                for (Map.Entry<String, Map<String, String>> entry : data.entrySet()) {
-
-                    CacheManager.Data.setMapTextMapTextText("config_" + name, entry.getKey(), entry.getValue());
-
-                }
+                CacheManager.DataText.setMap("config_" + name, entry.getKey(), entry.getValue());
 
             }
 
@@ -187,7 +179,7 @@ public class ConfigDynamic {
 
         }
 
-        Map<String, String> options = FileManager.convertFileToDataMap(source.toString());
+        Map<String, String> options = OutsideUtils.convertFileToDataMap(source.toString());
 
         for (Map.Entry<String, String> entry : default_values.entrySet()) {
 
@@ -228,25 +220,25 @@ public class ConfigDynamic {
     private static Map<String, Map<String, String>> read (Map<String, String> default_values, String name) {
 
         Map<String, Map<String, String>> data = new HashMap<>();
-        String[] value = new String[0];
+        String[] value = null;
         String id = "";
         boolean skip = true;
 
-        for (String read_all : FileManager.readTXT(Core.path_config + "/config_" + name + ".txt")) {
+        for (String scan : FileManager.readTXT(Core.path_config + "/config_" + name + ".txt")) {
 
             {
 
-                if (read_all.isEmpty() == false) {
+                if (scan.isEmpty() == false) {
 
-                    if (read_all.startsWith("[") == true) {
+                    if (scan.startsWith("[") == true) {
 
                         // First Data
                         {
 
-                            if (read_all.startsWith("[INCOMPATIBLE] ") == true) {
+                            if (scan.startsWith("[INCOMPATIBLE] ") == true) {
 
                                 skip = true;
-                                read_all = read_all.substring("[INCOMPATIBLE] ".length());
+                                scan = scan.substring("[INCOMPATIBLE] ".length());
 
                             } else {
 
@@ -254,21 +246,21 @@ public class ConfigDynamic {
 
                             }
 
-                            id = read_all.substring(read_all.indexOf("]") + 2).replace(" > ", "/");
-                            data.computeIfAbsent(id, create -> new HashMap<>()).put("lock", String.valueOf(read_all.startsWith("[LOCK] ") == true));
+                            id = scan.substring(scan.indexOf("]") + 2).replace(" > ", "/");
+                            data.computeIfAbsent(id, create -> new HashMap<>()).put("lock", String.valueOf(scan.startsWith("[LOCK] ") == true));
 
                         }
 
-                    } else if (read_all.contains(" = ") == true) {
+                    } else if (scan.contains(" = ") == true) {
 
                         if (skip == false) {
 
-                            value = read_all.split(" = ");
+                            value = scan.split(" = ");
                             data.computeIfAbsent(id, create -> new HashMap<>()).put(value[0], value[1]);
 
                         } else {
 
-                            value = read_all.split(" = ");
+                            value = scan.split(" = ");
 
                             if (default_values.containsKey(value[0]) == true) {
 
@@ -293,7 +285,7 @@ public class ConfigDynamic {
 
     public static Map<String, Map<String, String>> getData (String name) {
 
-        return CacheManager.Data.getMapTextMapTextText("config_" + name);
+        return CacheManager.DataText.getMap("config_" + name);
 
     }
 

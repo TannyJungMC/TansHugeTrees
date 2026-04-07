@@ -48,6 +48,12 @@ public class TanshugetreesMod {
 		TanshugetreesModTabs.REGISTRY.register(bus);
 		TanshugetreesModMenus.REGISTRY.register(bus);
 		// Start of user code block mod init
+		/*
+		(1.20.1)
+		tannyjung.tanshugetrees_core.Core.start(bus);
+		(1.21.1)
+		I forgot -_-) will write here later
+		*/
 		tannyjung.tanshugetrees_core.Core.start(bus);
 		// End of user code block mod init
 	}

@@ -21,33 +21,36 @@ public class PresetFixer {
 
         if (template.exists() == true && template.isDirectory() == false) {
 
-            GameUtils.Misc.sendChatMessage(level_server, "Start fixing all tree presets from all extracted packs / gray");
-            boolean fix_at_least_one = false;
             File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 
-            if (packs != null) {
+            if (packs == null) {
 
-                File[] presets = new File[0];
+                GameUtils.Misc.sendChatMessage(level_server, "Error not found any pack installed / red");
+                return;
 
-                for (File pack : packs) {
+            }
 
-                    if (pack.getName().endsWith(".zip") == false) {
+            GameUtils.Misc.sendChatMessage(level_server, "Start fixing all tree presets from all extracted packs / gray");
+            boolean fix_at_least_one = false;
+            File[] presets = null;
 
-                        presets = new File(pack.getPath() + "/presets").listFiles();
+            for (File pack : packs) {
 
-                        if (presets != null) {
+                if (pack.getName().endsWith(".zip") == false) {
 
-                            for (File preset : presets) {
+                    presets = new File(pack.getPath() + "/presets").listFiles();
 
-                                preset = new File(preset.getPath() + "/" + preset.getName() + ".txt");
+                    if (presets != null) {
 
-                                if (preset.exists() == true && preset.isDirectory() == false) {
+                        for (File preset : presets) {
 
-                                    if (fix(level_server, template, preset) == true) {
+                            preset = new File(preset.getPath() + "/" + preset.getName() + ".txt");
 
-                                        fix_at_least_one = true;
+                            if (preset.exists() == true && preset.isDirectory() == false) {
 
-                                    }
+                                if (fix(level_server, template, preset) == true) {
+
+                                    fix_at_least_one = true;
 
                                 }
 
@@ -91,23 +94,23 @@ public class PresetFixer {
         // Read Old File
         {
 
-            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String scan = ""; while ((scan = buffered_reader.readLine()) != null) {
 
                 {
 
-                    if (read_all.isEmpty() == false && read_all.startsWith("-") == false) {
+                    if (scan.isEmpty() == false && scan.startsWith("-") == false) {
 
-                        index = read_all.indexOf(" = ");
+                        index = scan.indexOf(" = ");
 
                         if (index > 0) {
 
-                            if (read_all.startsWith("    ") == true) {
+                            if (scan.startsWith("    ") == true) {
 
-                                data_lock.put(read_all.substring("    ".length(), index), read_all);
+                                data_lock.put(scan.substring("    ".length(), index), scan);
 
                             } else {
 
-                                data_unlock.put(read_all.substring(0, index), read_all);
+                                data_unlock.put(scan.substring(0, index), scan);
 
                             }
 
@@ -129,17 +132,17 @@ public class PresetFixer {
         // Update
         {
 
-            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(template), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
+            try { BufferedReader buffered_reader = new BufferedReader(new FileReader(template), 65536); String scan = ""; while ((scan = buffered_reader.readLine()) != null) {
 
                 {
 
-                    if (read_all.isEmpty() == false && read_all.startsWith("-") == false) {
+                    if (scan.isEmpty() == false && scan.startsWith("-") == false) {
 
-                        index = read_all.indexOf(" = ");
+                        index = scan.indexOf(" = ");
 
                         if (index > 0) {
 
-                            name = read_all.substring(0, index);
+                            name = scan.substring(0, index);
 
                             if (data_lock.containsKey(name) == true) {
 
@@ -155,16 +158,16 @@ public class PresetFixer {
                                 // Update
                                 {
 
-                                    if (data_unlock.get(name).equals(read_all) == false) {
+                                    if (data_unlock.get(name).equals(scan) == false) {
 
                                         fix_at_least_one = true;
                                         value_old = data_unlock.get(name).substring(index + " = ".length()).replace("\"", "\\\"");
-                                        value_new = read_all.substring(index + " = ".length()).replace("\"", "\\\"");
+                                        value_new = scan.substring(index + " = ".length()).replace("\"", "\\\"");
                                         GameUtils.Misc.sendChatMessage(level_server, "Updated " + id + " > " + name + " > " + value_old + " > " + value_new + " / dark_gray");
 
                                     }
 
-                                    write.append(read_all).append("\n");
+                                    write.append(scan).append("\n");
 
                                 }
 
@@ -174,7 +177,7 @@ public class PresetFixer {
                                 {
 
                                     fix_at_least_one = true;
-                                    write.append(read_all).append("\n");
+                                    write.append(scan).append("\n");
                                     GameUtils.Misc.sendChatMessage(level_server, "Added " + id + " > " + name + " / dark_gray");
 
                                 }
@@ -185,7 +188,7 @@ public class PresetFixer {
 
                     } else {
 
-                        write.append(read_all).append("\n");
+                        write.append(scan).append("\n");
 
                     }
 

@@ -15,92 +15,39 @@ public class SaplingTrader {
     public static void summonTrader (ServerLevel level_server, BlockPos pos) {
 
         File[] files = new File(Core.path_config + "/dev/temporary/sapling_trader").listFiles();
+
+        if (files == null) {
+
+            return;
+
+        }
+
+        List<String> data = new ArrayList<>();
         StringBuilder write = new StringBuilder();
+        write.append("{ArmorItems:[{},{},{},{id:\"tanshugetrees:sapling_yokai\",Count:1b}],DeathLootTable:\"minecraft:empty\",ArmorDropChances:[0.0f,0.0f,0.0f,0.0f],VillagerData:{level:99},Offers:{Recipes:[");
 
-        // Generate Data
-        {
+        for (File file : files) {
 
-            write.append("{ArmorItems:[{},{},{},{id:\"tanshugetrees:sapling_yokai\",Count:1b}],DeathLootTable:\"minecraft:empty\",ArmorDropChances:[0.0f,0.0f,0.0f,0.0f],VillagerData:{level:99},Offers:{Recipes:[");
+            if (file.isDirectory() == false) {
 
-            if (files != null) {
+                data.clear();
 
                 // Get Data
                 {
 
-                    List<String> data = new ArrayList<>();
+                    for (String scan : FileManager.readTXT(file.getPath())) {
 
-                    for (File file : files) {
+                        if (scan.isEmpty() == false) {
 
-                        if (file.isDirectory() == false) {
+                            if (scan.equals("-") == true) {
 
-                            data.clear();
+                                data.add("");
 
-                            // Get Data
-                            {
+                            } else {
 
-                                for (String read_all : FileManager.readTXT(file.getPath())) {
-
-                                    if (read_all.isEmpty() == false) {
-
-                                        if (read_all.equals("-") == true) {
-
-                                            data.add("");
-
-                                        } else {
-
-                                            data.add(read_all);
-
-                                        }
-
-                                    }
-
-                                }
+                                data.add(scan);
 
                             }
-
-                            // Edit
-                            {
-
-                                if (data.get(4).isEmpty() == false) {
-
-                                    data.set(4, "path:\"" + data.get(4) + "\"");
-
-                                }
-
-                                if (data.get(10).isEmpty() == false) {
-
-                                    data.set(10, "path:\"" + data.get(10) + "\"");
-
-                                }
-
-                                if (data.get(16).isEmpty() == false) {
-
-                                    data.set(16, "path:\"" + data.get(16) + "\"");
-
-                                }
-
-                            }
-
-                            // Write
-                            {
-
-                                /*
-                                (1.20.1)
-                                write.append("{buy:{id:\"").append(data.get(0)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(1), data.get(2), data.get(3), data.get(4))).append("},Count:").append(data.get(5));
-                                write.append("},buyB:{id:\"").append(data.get(6)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(7), data.get(8), data.get(9), data.get(10))).append("},Count:").append(data.get(11));
-                                write.append("},sell:{id:\"").append(data.get(12)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(13), data.get(14), data.get(15), data.get(16))).append("},Count:").append(data.get(17));
-                                (1.21.1)
-                                write.append("{buy:{id:\"").append(data.get(0)).append("\",components:{").append(GameUtils.Data.createItem(data.get(1), data.get(2), data.get(3), data.get(4))).append("},count:").append(data.get(5));
-                                write.append("},buyB:{id:\"").append(data.get(6)).append("\",components:{").append(GameUtils.Data.createItem(data.get(7), data.get(8), data.get(9), data.get(10))).append("},count:").append(data.get(11));
-                                write.append("},sell:{id:\"").append(data.get(12)).append("\",components:{").append(GameUtils.Data.createItem(data.get(13), data.get(14), data.get(15), data.get(16))).append("},count:").append(data.get(17));
-                                */
-                                write.append("{buy:{id:\"").append(data.get(0)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(1), data.get(2), data.get(3), data.get(4))).append("},Count:").append(data.get(5));
-                                write.append("},buyB:{id:\"").append(data.get(6)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(7), data.get(8), data.get(9), data.get(10))).append("},Count:").append(data.get(11));
-                                write.append("},sell:{id:\"").append(data.get(12)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(13), data.get(14), data.get(15), data.get(16))).append("},Count:").append(data.get(17));
-
-                            }
-
-                            write.append("},rewardExp:0b,maxUses:9999999},");
 
                         }
 
@@ -108,12 +55,55 @@ public class SaplingTrader {
 
                 }
 
-            }
+                // Edit
+                {
 
-            write.append("]}}");
+                    if (data.get(4).isEmpty() == false) {
+
+                        data.set(4, "path:\"" + data.get(4) + "\"");
+
+                    }
+
+                    if (data.get(10).isEmpty() == false) {
+
+                        data.set(10, "path:\"" + data.get(10) + "\"");
+
+                    }
+
+                    if (data.get(16).isEmpty() == false) {
+
+                        data.set(16, "path:\"" + data.get(16) + "\"");
+
+                    }
+
+                }
+
+                // Write
+                {
+
+                        /*
+                        (1.20.1)
+                        write.append("{buy:{id:\"").append(data.get(0)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(1), data.get(2), data.get(3), data.get(4))).append("},Count:").append(data.get(5));
+                        write.append("},buyB:{id:\"").append(data.get(6)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(7), data.get(8), data.get(9), data.get(10))).append("},Count:").append(data.get(11));
+                        write.append("},sell:{id:\"").append(data.get(12)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(13), data.get(14), data.get(15), data.get(16))).append("},Count:").append(data.get(17));
+                        (1.21.1)
+                        write.append("{buy:{id:\"").append(data.get(0)).append("\",components:{").append(GameUtils.Data.createItem(data.get(1), data.get(2), data.get(3), data.get(4))).append("},count:").append(data.get(5));
+                        write.append("},buyB:{id:\"").append(data.get(6)).append("\",components:{").append(GameUtils.Data.createItem(data.get(7), data.get(8), data.get(9), data.get(10))).append("},count:").append(data.get(11));
+                        write.append("},sell:{id:\"").append(data.get(12)).append("\",components:{").append(GameUtils.Data.createItem(data.get(13), data.get(14), data.get(15), data.get(16))).append("},count:").append(data.get(17));
+                        */
+                    write.append("{buy:{id:\"").append(data.get(0)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(1), data.get(2), data.get(3), data.get(4))).append("},Count:").append(data.get(5));
+                    write.append("},buyB:{id:\"").append(data.get(6)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(7), data.get(8), data.get(9), data.get(10))).append("},Count:").append(data.get(11));
+                    write.append("},sell:{id:\"").append(data.get(12)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(13), data.get(14), data.get(15), data.get(16))).append("},Count:").append(data.get(17));
+
+                }
+
+                write.append("},rewardExp:0b,maxUses:9999999},");
+
+            }
 
         }
 
+        write.append("]}}");
         GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:wandering_trader", "Sapling Trader / dark_green", "TANSHUGETREES-sapling_trader", write.toString());
         GameUtils.Misc.spawnParticle(level_server, pos.getCenter(), 0, 0, 0, 0, 1, "minecraft:flash");
         GameUtils.Misc.spawnParticle(level_server, pos.getCenter(), 0.5, 0.5, 0.5, 0.01, 20, "minecraft:campfire_signal_smoke");

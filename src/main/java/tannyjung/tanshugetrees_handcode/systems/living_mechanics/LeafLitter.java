@@ -14,8 +14,9 @@ public class LeafLitter {
     public static void create (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, BlockState block, boolean remove) {
 
         String function_id = "leaf_litter/" + GameUtils.Tile.toText(block)[0].replace(":", "-");
+        String[] data = CacheManager.getFunction(function_id);
 
-        if (Handcode.Config.leaf_litter_classic_only == false && CacheManager.getFunction(function_id).isEmpty() == false) {
+        if (data.length != 0 && Handcode.Config.leaf_litter_classic_only == false) {
 
             TXTFunction.run(level_accessor, level_server, pos, function_id, true);
 
@@ -50,7 +51,7 @@ public class LeafLitter {
                         // Remove
                         {
 
-                            if (level_accessor.getBlockState(pos).getBlock().equals(block.getBlock()) == true) {
+                            if (level_accessor.getBlockState(pos).getBlock() == block.getBlock()) {
 
                                 GameUtils.Tile.remove(level_accessor, level_server, pos, false);
 

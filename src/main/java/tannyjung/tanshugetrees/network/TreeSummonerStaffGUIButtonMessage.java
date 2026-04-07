@@ -1,6 +1,5 @@
 package tannyjung.tanshugetrees.network;
 
-import tannyjung.tanshugetrees.procedures.TreeSummonerStaffGUIWhenOpenProcedure;
 import tannyjung.tanshugetrees.procedures.TreeSummonerStaffGUIApplyProcedure;
 import tannyjung.tanshugetrees.TanshugetreesMod;
 
@@ -43,10 +42,6 @@ public record TreeSummonerStaffGUIButtonMessage(int buttonID, int x, int y, int 
 		if (buttonID == 0) {
 
 			TreeSummonerStaffGUIApplyProcedure.execute(entity);
-		}
-		if (buttonID == 1) {
-
-			TreeSummonerStaffGUIWhenOpenProcedure.execute(entity);
 		}
 	}
 

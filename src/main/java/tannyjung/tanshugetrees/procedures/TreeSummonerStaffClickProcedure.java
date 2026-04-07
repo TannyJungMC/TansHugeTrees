@@ -36,7 +36,8 @@ public class TreeSummonerStaffClickProcedure {
 			}
 		}
 		if (entity.isShiftKeyDown() == false) {
-			TreeSummonerStaff.click(entity);
+			Player player = (Player) entity;
+			TreeSummonerStaff.click(player);
 		} else {
 			if (entity instanceof ServerPlayer _ent) {
 				BlockPos _bpos = BlockPos.containing(x, y, z);

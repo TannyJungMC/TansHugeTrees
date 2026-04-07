@@ -176,16 +176,15 @@ public class FileManager {
 
 	}
 
-	public static List<String> readTXT (String path) {
+	public static String[] readTXT (String path) {
 
-        List<String> return_array = new ArrayList<>();
 		File file = new File(path);
 
 		if (file.exists() == true) {
 
 			try {
 
-				return_array = Files.readAllLines(file.toPath());
+				return Files.readAllLines(file.toPath()).toArray(new String[0]);
 
 			} catch (Exception exception) {
 
@@ -195,7 +194,7 @@ public class FileManager {
 
 		}
 
-		return return_array;
+		return new String[0];
 
 	}
 
@@ -214,10 +213,10 @@ public class FileManager {
                     String type = "";
                     String value = "";
 
-                    for (String read_all : write) {
+                    for (String scan : write) {
 
-                        type = read_all.substring(0, 1);
-                        value = read_all.substring(1);
+                        type = scan.substring(0, 1);
+                        value = scan.substring(1);
 
                         if (type.equals("b") == true) {
 
@@ -255,14 +254,13 @@ public class FileManager {
 
     public static ByteBuffer readBIN (String path) {
 
-        byte[] data = new byte[0];
         File file = new File(path);
 
         if (file.exists() == true) {
 
             try {
 
-                data = Files.readAllBytes(Path.of(path));
+                return ByteBuffer.wrap(Files.readAllBytes(file.toPath())).order(ByteOrder.BIG_ENDIAN);
 
             } catch (Exception exception) {
 
@@ -272,7 +270,7 @@ public class FileManager {
 
         }
 
-        return ByteBuffer.wrap(data).order(ByteOrder.BIG_ENDIAN);
+        return ByteBuffer.allocate(0);
 
     }
 
@@ -415,15 +413,23 @@ public class FileManager {
 
         } else {
 
-            List<String> data_new = FileManager.readTXT(file_from.getPath());
+            String[] data_new = FileManager.readTXT(file_from.getPath());
 
-            if (data_new.get(0).equals("# REPLACE") == true) {
+            if (data_new[0].equals("# REPLACE") == true) {
 
                 StringBuilder write = new StringBuilder();
+                boolean skip = true;
 
-                for (String read_all : data_new.subList(1, data_new.size())) {
+                for (String scan : data_new) {
 
-                    write.append(read_all).append("\n");
+                    if (skip == true) {
+
+                        skip = false;
+                        continue;
+
+                    }
+
+                    write.append(scan).append("\n");
 
                 }
 
@@ -431,23 +437,23 @@ public class FileManager {
 
             } else {
 
-                List<String> data_old = FileManager.readTXT(file_to.getPath());
+                String[] data_old = FileManager.readTXT(file_to.getPath());
                 Map<String, String> data = new HashMap<>();
-                String[] split = new String[0];
-                String[] split2 = new String[0];
+                String[] split = null;
+                String[] split2 = null;
 
                 // Get Old Data
                 {
 
-                    for (String read_all : data_old) {
+                    for (String scan : data_old) {
 
-                        if (read_all.isEmpty() == false) {
+                        if (scan.isEmpty() == false) {
 
-                            if (read_all.startsWith("#") == false) {
+                            if (scan.startsWith("#") == false) {
 
-                                if (read_all.contains(" = ") == true) {
+                                if (scan.contains(" = ") == true) {
 
-                                    split = read_all.split(" = ");
+                                    split = scan.split(" = ");
                                     data.put(split[0], split[1]);
 
                                 }
@@ -467,17 +473,17 @@ public class FileManager {
 
                     StringBuilder merge = new StringBuilder();
 
-                    for (String read_all : data_new) {
+                    for (String scan : data_new) {
 
-                        if (read_all.isEmpty() == false) {
+                        if (scan.isEmpty() == false) {
 
-                            if (read_all.contains(" = ") == true) {
+                            if (scan.contains(" = ") == true) {
 
-                                if (read_all.startsWith("# MERGE") == true) {
+                                if (scan.startsWith("# MERGE") == true) {
 
                                     {
 
-                                        split = read_all.substring(read_all.indexOf(" -> ") + 4).split(" = ");
+                                        split = scan.substring(scan.indexOf(" -> ") + 4).split(" = ");
 
                                         if (data.containsKey(split[0]) == false) {
 
@@ -488,11 +494,11 @@ public class FileManager {
                                             merge.setLength(0);
                                             merge.append("|").append(data.get(split[0]).replace(" / ", "| / |")).append("|");
 
-                                            for (String scan : split[1].split(" / ")) {
+                                            for (String scan_list : split[1].split(" / ")) {
 
-                                                if (merge.toString().contains("|" + scan + "|") == false) {
+                                                if (merge.toString().contains("|" + scan_list + "|") == false) {
 
-                                                    merge.append(" / ").append(scan);
+                                                    merge.append(" / ").append(scan_list);
 
                                                 }
 
@@ -504,11 +510,11 @@ public class FileManager {
 
                                     }
 
-                                } else if (read_all.startsWith("# REPLACE") == true) {
+                                } else if (scan.startsWith("# REPLACE") == true) {
 
                                     {
 
-                                        split = read_all.substring(read_all.indexOf(" -> ") + 4).split(" = ");
+                                        split = scan.substring(scan.indexOf(" -> ") + 4).split(" = ");
 
                                         if (data.containsKey(split[0]) == true) {
 
@@ -522,7 +528,7 @@ public class FileManager {
 
                                 } else {
 
-                                    split = read_all.split(" = ");
+                                    split = scan.split(" = ");
 
                                     if (data.containsKey(split[0]) == true) {
 
@@ -530,7 +536,7 @@ public class FileManager {
 
                                     } else {
 
-                                        write_add.add(read_all);
+                                        write_add.add(scan);
 
                                     }
 
@@ -549,21 +555,21 @@ public class FileManager {
 
                     List<String> write = new ArrayList<>();
 
-                    for (String read_all : data_old) {
+                    for (String scan : data_old) {
 
-                        if (read_all.contains(" = ") == false) {
+                        if (scan.contains(" = ") == false) {
 
-                            write.add(read_all);
+                            write.add(scan);
 
                         } else {
 
-                            if (read_all.startsWith("# MERGE") == true) {
+                            if (scan.startsWith("# MERGE") == true) {
 
-                                read_all = read_all.substring(read_all.indexOf(" -> ") + 4);
+                                scan = scan.substring(scan.indexOf(" -> ") + 4);
 
                             }
 
-                            split = read_all.split(" = ");
+                            split = scan.split(" = ");
                             write.add(split[0] + " = " + data.get(split[0]));
 
                         }
@@ -578,34 +584,6 @@ public class FileManager {
             }
 
         }
-
-    }
-
-    public static Map<String, String> convertFileToDataMap (String path) {
-
-        Map<String, String> data = new HashMap<>();
-        String[] split = new String[0];
-
-        for (String read_all : FileManager.readTXT(path)) {
-
-            {
-
-                if (read_all.isEmpty() == false) {
-
-                    if (read_all.contains(" = ") == true) {
-
-                        split = read_all.split(" = ");
-                        data.put(split[0], split[1]);
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        return data;
 
     }
 

@@ -30,7 +30,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.api.distmarker.Dist;
 (1.21.1)
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -58,12 +58,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.api.distmarker.Dist;
 
 public class EventCenter {
     
-    @Mod.EventBusSubscriber({Dist.CLIENT})
+    @EventBusSubscriber({Dist.CLIENT})
     public static class Client {
 
         @SubscribeEvent(priority = EventPriority.NORMAL)
@@ -89,7 +89,7 @@ public class EventCenter {
 
     }
     
-    @Mod.EventBusSubscriber
+    @EventBusSubscriber
     public static class Server {
 
         private static boolean first_player_joined = false;
@@ -102,7 +102,7 @@ public class EventCenter {
             Core.path_world_mod = path_world + "/data/" + Core.mod_id;
 
             Core.DataMigration.run(true);
-            Core.restart(null, true);
+            Core.restart(null, false, true);
 
         }
 
@@ -110,7 +110,7 @@ public class EventCenter {
         public static void eventWorldStarted (ServerStartedEvent event) {
 
             ServerLevel level_server = event.getServer().overworld();
-            Core.restart(level_server, false);
+            Core.restart(level_server, true, false);
 
         }
 
@@ -151,7 +151,7 @@ public class EventCenter {
 
                     Core.thread_main.submit(() -> {
 
-                        CustomPackOrganizing.sendErrorMessage(level_server);
+                        CustomPackOrganizing.Error.sendMessage(level_server);
 
                         if (Handcode.Config.auto_check_update == true) {
 
@@ -187,16 +187,18 @@ public class EventCenter {
         */
         public static void eventTickServer (TickEvent.ServerTickEvent event) {
 
-            /*
-            (1.20.1)
-            if (event.phase == TickEvent.Phase.END) return;
-            */
-            if (event.phase == TickEvent.Phase.END) return;
+            if (Core.global_locking == false) {
 
-            LevelAccessor level_accessor = event.getServer().overworld();
-            ServerLevel level_server = event.getServer().overworld();
+                /*
+                (1.20.1)
+                if (event.phase == TickEvent.Phase.START) return;
+                (1.21.1)
+                ### Nothing ###
+                */
+                if (event.phase == TickEvent.Phase.START) return;
 
-            if (Core.in_restarting == false) {
+                LevelAccessor level_accessor = event.getServer().overworld();
+                ServerLevel level_server = event.getServer().overworld();
 
                 Core.DelayedWork.runTick();
                 Core.Loop.loopTick(level_accessor, level_server);

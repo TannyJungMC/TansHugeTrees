@@ -5,10 +5,17 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
+import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class CompatibilitySereneSeasons {
 
     public static void loop (LevelAccessor level_accessor, ServerLevel level_server) {
+
+        if (Handcode.compatibility_serene_seasons == false) {
+
+            return;
+
+        }
 
         BlockPos pos = GameUtils.Space.getWorldSpawnPos(level_accessor).atY(GameUtils.Space.getBuildHeight(level_accessor, false)).above();
         runClear(level_server, pos);
