@@ -2,11 +2,10 @@ package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.phys.Vec3;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.FileManager;
-import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 
@@ -62,30 +61,28 @@ public class ShapeFileConverter {
 
     private static void summon (LevelAccessor level_accessor, ServerLevel level_server) {
 
-        String[] file_location = new String[0];
+        TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count - 1;
+        Player player = level_server.getRandomPlayer();
+
+        if (player == null) {
+
+            return;
+
+        }
+
+        String path = "";
 
         // Get data
         {
 
             File file = new File(Core.path_config + "/dev/shape_file_converter/settings.txt");
 
-            if (file.exists() == true && file.isDirectory() == false) {
+            for (String scan : FileManager.readTXT(file.getPath())) {
 
-                {
+                if (scan.startsWith("path_preset = ") == true) {
 
-                    try { BufferedReader buffered_reader = new BufferedReader(new FileReader(file), 65536); String read_all = ""; while ((read_all = buffered_reader.readLine()) != null) {
-
-                        {
-
-                            if (read_all.startsWith("file_location = ") == true) {
-
-                                file_location = read_all.substring("file_location = ".length()).split("/");
-
-                            }
-
-                        }
-
-                    } buffered_reader.close(); } catch (Exception exception) { OutsideUtils.exception(new Exception(), exception, ""); }
+                    path = scan.substring("path_preset = ".length());
+                    break;
 
                 }
 
@@ -93,45 +90,9 @@ public class ShapeFileConverter {
 
         }
 
-        boolean is_extracted = true;
-        File file = new File(Core.path_config + "/custom_packs/" + file_location[0] + "/presets/" + file_location[1] + "/" + file_location[1] + ".txt");
+        Entity entity_summon = TreeGenerator.create(level_accessor, level_server, null, player.blockPosition().atY(1000), path);
 
-        if (file.exists() == false) {
-
-            is_extracted = false;
-            file = new File(Core.path_config + "/dev/temporary/presets/" + file_location[0] + "/" + file_location[1] + "/" + file_location[1] + ".txt");
-
-        }
-
-        if (file.exists() == true && file.isDirectory() == false) {
-
-            export_data.clear();
-            GameUtils.Misc.sendChatMessage(level_server, "Loop Left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count + " / gray");
-            TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count - 1;
-
-            // Summon
-            {
-
-                Entity entity = level_server.getRandomPlayer();
-
-                if (entity == null) {
-
-                    return;
-
-                }
-
-                Vec3 vec3 = entity.position().add(0, 1000, 0);
-                Entity entity_summon = GameUtils.Mob.summon(level_server, vec3, "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", GameUtils.Data.convertFileToForgeData(file.getPath()));
-                GameUtils.Data.setEntityLogic(entity_summon, "debug_mode", false);
-                GameUtils.Data.setEntityLogic(entity_summon, "tree_generator_speed_global", false);
-                GameUtils.Data.setEntityNumber(entity_summon, "tree_generator_speed_tick", 1);
-                GameUtils.Data.setEntityNumber(entity_summon, "tree_generator_speed_repeat", 0);
-                GameUtils.Data.setEntityText(entity_summon, "name", file_location[1]);
-                GameUtils.Data.setEntityLogic(entity_summon, "is_extracted", is_extracted);
-
-            }
-
-        } else {
+        if (entity_summon == null) {
 
             GameUtils.Misc.sendChatMessage(level_server, "Can't start shape file converter because the file location you wrote cannot be found / red");
             TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = 0;
@@ -143,19 +104,16 @@ public class ShapeFileConverter {
 
     public static void whenTreeStart (ServerLevel level_server, Entity entity) {
 
+        GameUtils.Data.setEntityLogic(entity, "tree_generator_speed_global", false);
+        GameUtils.Data.setEntityNumber(entity, "tree_generator_speed_tick", 1);
+        GameUtils.Data.setEntityNumber(entity, "tree_generator_speed_repeat", 0);
+
         String name = GameUtils.Data.getEntityText(entity, "name");
         String time = new java.text.SimpleDateFormat("yyyyMMdd-HHmm-ss-SSS").format(Calendar.getInstance().getTime());
-        GameUtils.Data.setEntityText(entity, "export_file_name", name + "_" + time + ".bin");
+        String export_file_name = name + "_" + time + ".bin";
+        GameUtils.Data.setEntityText(entity, "export_file_name", export_file_name);
 
-        if (GameUtils.Data.getEntityLogic(entity, "is_extracted") == true) {
-
-            GameUtils.Misc.sendChatMessage(level_server, "Generating  / aqua | " + GameUtils.Data.getEntityText(entity, "export_file_name").replace(" (generating)", "") + "  | [?] / dark_gray / From Extracted");
-
-        } else {
-
-            GameUtils.Misc.sendChatMessage(level_server, "Generating  / aqua | " + GameUtils.Data.getEntityText(entity, "export_file_name").replace(" (generating)", "") + "  | [?] / dark_gray / From Unextracted");
-
-        }
+        GameUtils.Misc.sendChatMessage(level_server, "Generating  / aqua | " + export_file_name + "  | [?] / dark_gray / From " + GameUtils.Data.getEntityText(entity, "path_type"));
 
         // Write Settings
         {
@@ -225,21 +183,21 @@ public class ShapeFileConverter {
                 String inner = GameUtils.Data.getEntityText(entity, type + "_inner") + keep;
                 String core = GameUtils.Data.getEntityText(entity, type + "_core") + keep;
 
-                if (outer.equals(keep) == true) {
+                if (outer.equals("none" + keep) == true) {
 
-                    outer = "";
-
-                }
-
-                if (inner.equals(keep) == true) {
-
-                    inner = "";
+                    outer = "none";
 
                 }
 
-                if (core.equals(keep) == true) {
+                if (inner.equals("none" + keep) == true) {
 
-                    core = "";
+                    inner = "none";
+
+                }
+
+                if (core.equals("none" + keep) == true) {
+
+                    core = "none";
 
                 }
 
@@ -258,15 +216,15 @@ public class ShapeFileConverter {
                 String leaves1 = GameUtils.Data.getEntityText(entity, "leaves1") + keep;
                 String leaves2 = GameUtils.Data.getEntityText(entity, "leaves2") + keep;
 
-                if (leaves1.equals(keep) == true) {
+                if (leaves1.equals("none" + keep) == true) {
 
-                    leaves1 = "";
+                    leaves1 = "none";
 
                 }
 
-                if (leaves2.equals(keep) == true) {
+                if (leaves2.equals("none" + keep) == true) {
 
-                    leaves2 = "";
+                    leaves2 = "none";
 
                 }
 
@@ -310,7 +268,7 @@ public class ShapeFileConverter {
             // Blocks and Way Functions
             {
 
-                String[] pos = new String[0];
+                String[] pos = null;
                 int posX = 0;
                 int posY = 0;
                 int posZ = 0;
@@ -409,37 +367,37 @@ public class ShapeFileConverter {
                         // Get Size
                         {
 
-                            if (min_sizeX > posX) {
+                            if (min_sizeX >= posX) {
 
                                 min_sizeX = posX;
 
                             }
 
-                            if (min_sizeY > posY) {
+                            if (min_sizeY >= posY) {
 
                                 min_sizeY = posY;
 
                             }
 
-                            if (min_sizeZ > posZ) {
+                            if (min_sizeZ >= posZ) {
 
                                 min_sizeZ = posZ;
 
                             }
 
-                            if (max_sizeX < posX) {
+                            if (max_sizeX <= posX) {
 
                                 max_sizeX = posX;
 
                             }
 
-                            if (max_sizeY < posY) {
+                            if (max_sizeY <= posY) {
 
                                 max_sizeY = posY;
 
                             }
 
-                            if (max_sizeZ < posZ) {
+                            if (max_sizeZ <= posZ) {
 
                                 max_sizeZ = posZ;
 
@@ -531,6 +489,7 @@ public class ShapeFileConverter {
 
             if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count > 0) {
 
+                GameUtils.Misc.sendChatMessage(level_server, "Loop Left " + (int) TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count + " / gray");
                 summon(level_accessor, level_server);
 
             } else {

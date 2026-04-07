@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -19,46 +20,100 @@ import java.io.File;
 
 public class TreeGenerator {
 
-    public static void create (ServerLevel level_server, Entity entity, BlockPos pos, String path) {
+    public static Entity create (LevelAccessor level_accessor, ServerLevel level_server, Player player, BlockPos pos, String path) {
 
-        String name_pack = "";
-        String name_tree = "";
+        File file = null;
+        String path_type = "";
 
-        try {
+        // Get File
+        {
 
-            String[] split = path.split("/");
-            name_pack = split[0];
-            name_tree = split[1];
+            StringBuilder path_extracted = new StringBuilder();
 
-        } catch (Exception ignored) {
+            // Get Extracted Path
+            {
 
+                boolean first = false;
+                boolean second = false;
 
+                for (String scan : path.split("/")) {
 
-        }
+                    if (first == false) {
 
-        File file = new File(Core.path_config + "/custom_packs/" + name_pack + "/presets/" + name_tree + "/" + name_tree + ".txt");
+                        first = true;
+                        path_extracted.append(scan);
 
-        if (file.exists() == true) {
+                    } else {
 
-            GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", GameUtils.Data.convertFileToForgeData(file.getPath()));
-            GameUtils.Misc.sendChatMessage(level_server, "Summoned a tree generator at " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + "  / gray | [?] / dark_gray / " + path + " (Extracted)");
+                        if (second == false) {
 
-        } else {
+                            second = true;
+                            path_extracted.insert(0, scan + "/");
 
-            file = new File(Core.path_config + "/dev/temporary/presets/" + name_pack + "/" + name_tree + "/" + name_tree + ".txt");
+                        } else {
+
+                            path_extracted.append("/").append(scan);
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            file = new File(Core.path_config + "/custom_packs/" + path_extracted + ".txt");
 
             if (file.exists() == true) {
 
-                GameUtils.Misc.sendChatMessage(level_server, "Summoned a tree generator at " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + "  / gray | [?] / dark_gray / " + path + " (Unextracted)");
-                GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", GameUtils.Data.convertFileToForgeData(file.getPath()));
+                path_type = "Extracted";
 
             } else {
 
-                GameUtils.Misc.sendChatMessagePrivate(entity, "Path Not Found / red");
+                file = new File(Core.path_config + "/dev/temporary/" + path + ".txt");
+
+                if (file.exists() == true) {
+
+                    path_type = "Unextracted";
+
+                } else {
+
+                    if (player != null) {
+
+                        GameUtils.Misc.sendChatMessagePrivate(player, "Path Not Found / red");
+
+                    }
+
+                }
 
             }
 
         }
+
+        if (path_type.isEmpty() == false) {
+
+            Entity entity_summon = GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", GameUtils.Data.convertFileToForgeData(file.getPath()));
+
+            if (entity_summon != null) {
+
+                if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == true) {
+
+                    GameUtils.Data.setEntityText(entity_summon, "path_type", path_type);
+
+                } else {
+
+                    GameUtils.Misc.sendChatMessage(level_server, "Summoned a tree generator at " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + "  / gray | [?] / dark_gray / " + path + " (" + path_type + ")");
+
+                }
+
+                GameUtils.Data.setEntityText(entity_summon, "name", file.getName().substring(0, file.getName().length() - ".txt".length()));
+                return entity_summon;
+
+            }
+
+        }
+
+        return null;
 
     }
 
@@ -102,7 +157,11 @@ public class TreeGenerator {
 
         }
 
-        if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
+        if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == true) {
+
+            ShapeFileConverter.whenTreeStart(level_server, entity);
+
+        } else {
 
             // Debug Mode
             {
@@ -158,11 +217,7 @@ public class TreeGenerator {
 
             entity.setPos(entity.getX(), entity.getY() + GameUtils.Data.getEntityNumber(entity, "start_height"), entity.getZ());
             GameUtils.Mob.summon(level_server, entity.position().add(0, 1, 0), "text_display", "Tree Generator Status", "TANSHUGETREES-" + GameUtils.Data.getEntityText(entity, "id") + " / TANSHUGETREES-tree_generator_status", "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"In Progress\",\"color\":\"white\"}'}");
-            TXTFunction.run(level_accessor, level_server, entity.blockPosition(), "functions/" + GameUtils.Data.getEntityText(entity, "function_start"), true);
-
-        } else {
-
-            ShapeFileConverter.whenTreeStart(level_server, entity);
+            TXTFunction.run(level_accessor, level_server, entity.blockPosition(), GameUtils.Data.getEntityText(entity, "function_start"), true);
 
         }
 
@@ -173,7 +228,7 @@ public class TreeGenerator {
         String id = GameUtils.Data.getEntityText(entity, "id");
         String gen_type = GameUtils.Data.getEntityText(entity, "gen_type");
         String gen_step = GameUtils.Data.getEntityText(entity, "gen_step");
-        String[] type_pre_next = new String[0];
+        String[] type_pre_next = null;
 
         // Status Display
         {
@@ -458,22 +513,28 @@ public class TreeGenerator {
             // Summoning
             {
 
-                String at_part = "tree_generator";
+                String at_part = "";
                 double vertical = 0.0;
                 double horizontal = 0.0;
                 double forward = 0.0;
                 double height = 0.0;
 
-                // Position
-                {
+                if (is_taproot_trunk == true) {
 
-                    if (is_taproot_trunk == false) {
+                    at_part = "tree_generator";
+
+                } else {
+
+                    // Position
+                    {
 
                         at_part = "generator_" + type_pre_next[0];
 
                         if (gen_type.equals("leaves") == false) {
 
-                            if (GameUtils.Data.getEntityText(entity, gen_type + "_center_direction_from").isEmpty() == true) {
+                            String center_direction_from = GameUtils.Data.getEntityText(entity, gen_type + "_center_direction_from");
+
+                            if (center_direction_from.isEmpty() == true || center_direction_from.equals("none") == true) {
 
                                 // Non-Center Direction
                                 {
@@ -550,6 +611,12 @@ public class TreeGenerator {
                 Vec3 vec3 = GameUtils.Space.getPosLook(entity_at, horizontal, vertical, forward);
                 Entity entity_summon = GameUtils.Mob.summon(level_server, vec3.add(0, height, 0), "minecraft:marker", "Tree Generator (" + gen_type + ")", "TANSHUGETREES-" + id + " / TANSHUGETREES-generator_" + gen_type, "");
 
+                if (entity_summon == null) {
+
+                    return false;
+
+                }
+
                 if (is_taproot_trunk == true) {
 
                     entity_summon.setXRot(Mth.nextInt(RandomSource.create(), (int) GameUtils.Data.getEntityNumber(entity, gen_type + "_start_gravity_max"), (int) GameUtils.Data.getEntityNumber(entity, gen_type + "_start_gravity_min")));
@@ -595,41 +662,41 @@ public class TreeGenerator {
 
         private static double summonReduction (Entity entity, String gen_type, String gen_step) {
 
-            double return_number = 1.0;
             String from = GameUtils.Data.getEntityText(entity, gen_type + "_" + gen_step + "_from");
 
-            if (from.isEmpty() == false) {
+            if (from.equals("none") == true) {
 
-                double length = GameUtils.Data.getEntityNumber(entity, from + "_length");
-                double length_save = GameUtils.Data.getEntityNumber(entity, from + "_length_save");
-                double center = GameUtils.Data.getEntityNumber(entity, gen_type + "_" + gen_step + "_center") * 0.01;
-                double length_below = length_save * center;
-                double length_above = length_save - length_below;
-
-                String above_below = "";
-                double percent = 0.0;
-
-                if ((1.0 - center) >= (length / length_save)) {
-
-                    above_below = "above";
-                    percent = length / length_above;
-
-                } else {
-
-                    above_below = "below";
-                    percent = 1.0 - ((length - length_above) / length_below);
-
-                }
-
-                double start = GameUtils.Data.getEntityNumber(entity, gen_type + "_" + gen_step + "_" + above_below + "_start");
-                double end = GameUtils.Data.getEntityNumber(entity, gen_type + "_" + gen_step + "_" + above_below + "_end");
-                return_number = (start - end) * percent;
-                return_number = end + return_number;
-                return_number = return_number * 0.01;
+                return 1.0;
 
             }
 
-            return return_number;
+            double length = GameUtils.Data.getEntityNumber(entity, from + "_length");
+            double length_save = GameUtils.Data.getEntityNumber(entity, from + "_length_save");
+            double center = GameUtils.Data.getEntityNumber(entity, gen_type + "_" + gen_step + "_center") * 0.01;
+            double length_below = length_save * center;
+            double length_above = length_save - length_below;
+
+            String above_below = "";
+            double percent = 0.0;
+
+            if ((1.0 - center) >= (length / length_save)) {
+
+                above_below = "above";
+                percent = length / length_above;
+
+            } else {
+
+                above_below = "below";
+                percent = 1.0 - ((length - length_above) / length_below);
+
+            }
+
+            double start = GameUtils.Data.getEntityNumber(entity, gen_type + "_" + gen_step + "_" + above_below + "_start");
+            double end = GameUtils.Data.getEntityNumber(entity, gen_type + "_" + gen_step + "_" + above_below + "_end");
+            double reduce = (start - end) * percent;
+            reduce = (end + reduce) * 0.01;
+            return reduce;
+
         }
 
         private static boolean calculation (ServerLevel level_server, Entity entity, String id, String gen_type, String[] type_pre_next) {
@@ -1000,7 +1067,7 @@ public class TreeGenerator {
                 }
 
                 double sphere_zone_area = 0.0;
-                double[] sphere_zone_pos = new double[0];
+                double[] sphere_zone_pos = null;
 
                 if (generator_type.equals("sphere_zone") == true) {
 
@@ -1348,89 +1415,9 @@ public class TreeGenerator {
 
                         String type_short = gen_type.substring(0, 2);
                         String previous_block_short = previous_block.substring(0, 2);
-                        boolean is_blacklist = false;
-
-                        // Test Blacklist
-                        {
-
-                            if (type_short.equals("se") == true) {
-
-                                if ("ta".contains(previous_block_short) == true) {
-
-                                    is_blacklist = true;
-
-                                }
-
-                            } else if (type_short.equals("te") == true) {
-
-                                if ("ta/se".contains(previous_block_short) == true) {
-
-                                    is_blacklist = true;
-
-                                }
-
-                            } else if (type_short.equals("fi") == true) {
-
-                                if ("ta/se/te".contains(previous_block_short) == true) {
-
-                                    is_blacklist = true;
-
-                                }
-
-                            } else if (type_short.equals("tr") == true) {
-
-                                if ("ta/se/te/fi".contains(previous_block_short) == true) {
-
-                                    is_blacklist = true;
-
-                                }
-
-                            } else if (type_short.equals("bo") == true) {
-
-                                if ("ta/se/te/fi/tr".contains(previous_block_short) == true) {
-
-                                    is_blacklist = true;
-
-                                }
-
-                            } else if (type_short.equals("br") == true) {
-
-                                if ("ta/se/te/fi/tr/bo".contains(previous_block_short) == true) {
-
-                                    is_blacklist = true;
-
-                                }
-
-                            } else if (type_short.equals("li") == true) {
-
-                                if ("ta/se/te/fi/tr/bo/br".contains(previous_block_short) == true) {
-
-                                    is_blacklist = true;
-
-                                }
-
-                            } else if (type_short.equals("tw") == true) {
-
-                                if ("ta/se/te/fi/tr/bo/br/li".contains(previous_block_short) == true) {
-
-                                    is_blacklist = true;
-
-                                }
-
-                            } else if (type_short.equals("sp") == true) {
-
-                                if ("ta/se/te/fi/tr/bo/br/li/tw".contains(previous_block_short) == true) {
-
-                                    is_blacklist = true;
-
-                                }
-
-                            }
-
-                        }
-
                         boolean is_same_type = type_short.equals(previous_block_short);
                         boolean is_core = previous_block.endsWith("c");
+                        boolean is_blacklist = isBlacklist(type_short, previous_block_short);
 
                         if (block.equals("core") == true) {
 
@@ -1534,57 +1521,97 @@ public class TreeGenerator {
 
         }
 
+        private static boolean isBlacklist (String type_short, String previous_block_short) {
+
+            if (type_short.equals("se") == true) {
+
+                return "ta".contains(previous_block_short) == true;
+
+            } else if (type_short.equals("te") == true) {
+
+                return "ta/se".contains(previous_block_short) == true;
+
+            } else if (type_short.equals("fi") == true) {
+
+                return "ta/se/te".contains(previous_block_short) == true;
+
+            } else if (type_short.equals("tr") == true) {
+
+                return "ta/se/te/fi".contains(previous_block_short) == true;
+
+            } else if (type_short.equals("bo") == true) {
+
+                return "ta/se/te/fi/tr".contains(previous_block_short) == true;
+
+            } else if (type_short.equals("br") == true) {
+
+                return "ta/se/te/fi/tr/bo".contains(previous_block_short) == true;
+
+            } else if (type_short.equals("li") == true) {
+
+                return "ta/se/te/fi/tr/bo/br".contains(previous_block_short) == true;
+
+            } else if (type_short.equals("tw") == true) {
+
+                return "ta/se/te/fi/tr/bo/br/li".contains(previous_block_short) == true;
+
+            } else if (type_short.equals("sp") == true) {
+
+                return "ta/se/te/fi/tr/bo/br/li/tw".contains(previous_block_short) == true;
+
+            }
+
+            return false;
+
+        }
+
         private static String buildGetPreviousBlock (LevelAccessor level_accessor, BlockPos pos) {
 
             String previous_block = "";
 
-            {
+            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == true) {
 
-                if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
+                String key = "B" + pos.getX() + "/" + pos.getY() + "/" + pos.getZ();
+                previous_block = ShapeFileConverter.export_data.getOrDefault(key, "");
 
-                    {
+            } else {
 
-                        BlockState block = level_accessor.getBlockState(pos);
+                {
 
-                        if (block.canBeReplaced() == false) {
+                    BlockState block = level_accessor.getBlockState(pos);
 
-                            previous_block = GameUtils.Tile.toText(block)[0];
+                    if (block.canBeReplaced() == false) {
 
-                            if (previous_block.startsWith("tanshugetrees:block_placer_") == true) {
+                        previous_block = GameUtils.Tile.toText(block)[0];
 
-                                {
+                        if (previous_block.startsWith("tanshugetrees:block_placer_") == true) {
 
-                                    previous_block = previous_block.substring("tanshugetrees:block_placer_".length());
-                                    String gen_type = previous_block.substring(0, 2);
+                            {
 
-                                    if (previous_block.endsWith("outer") == true) {
+                                previous_block = previous_block.substring("tanshugetrees:block_placer_".length());
+                                String gen_type = previous_block.substring(0, 2);
 
-                                        previous_block = "o";
+                                if (previous_block.endsWith("outer") == true) {
 
-                                    } else if (previous_block.endsWith("inner") == true) {
+                                    previous_block = "o";
 
-                                        previous_block = "i";
+                                } else if (previous_block.endsWith("inner") == true) {
 
-                                    } else if (previous_block.endsWith("core") == true) {
+                                    previous_block = "i";
 
-                                        previous_block = "c";
+                                } else if (previous_block.endsWith("core") == true) {
 
-                                    }
-
-                                    previous_block = gen_type + previous_block;
+                                    previous_block = "c";
 
                                 }
+
+                                previous_block = gen_type + previous_block;
 
                             }
 
                         }
 
                     }
-
-                } else {
-
-                    String key = "B" + pos.getX() + "/" + pos.getY() + "/" + pos.getZ();
-                    previous_block = ShapeFileConverter.export_data.getOrDefault(key, "");
 
                 }
 
@@ -1619,6 +1646,7 @@ public class TreeGenerator {
                     // Place
                     {
 
+                        GameUtils.Misc.spawnParticle(level_server, pos.getCenter(), 0, 0, 0, 0, 1, "minecraft:flash");
                         String[] function = buildGetWayFunction(entity, gen_type);
 
                         if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
@@ -1626,7 +1654,6 @@ public class TreeGenerator {
                             // On World
                             {
 
-                                GameUtils.Misc.spawnParticle(level_server, pos.getCenter(), 0, 0, 0, 0, 1, "minecraft:flash");
                                 GameUtils.Tile.set(level_accessor, pos, GameUtils.Tile.fromText("tanshugetrees:block_placer_" + block_placer), false);
                                 GameUtils.Data.setBlockText(level_accessor, level_server, pos, "block", GameUtils.Data.getEntityText(entity, block));
                                 GameUtils.Data.setBlockText(level_accessor, level_server, pos, "function", function[1]);
@@ -1749,16 +1776,13 @@ public class TreeGenerator {
 
         private static void end (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, String id) {
 
-            String firework_position = "";
+            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == true) {
 
-            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == false) {
-
-                TXTFunction.run(level_accessor, level_server, entity.blockPosition(), "functions/" + GameUtils.Data.getEntityText(entity, "function_end"), true);
+                ShapeFileConverter.whenTreeEnd(level_accessor, level_server, entity);
 
             } else {
 
-                ShapeFileConverter.whenTreeEnd(level_accessor, level_server, entity);
-                firework_position = "execute at @p run ";
+                TXTFunction.run(level_accessor, level_server, entity.blockPosition(), GameUtils.Data.getEntityText(entity, "function_end"), true);
 
             }
 
