@@ -1305,25 +1305,15 @@ public class GameUtils {
 
 			ChunkPos chunk_pos = new ChunkPos(pos);
 
-			if (level_accessor.hasChunk(chunk_pos.x, chunk_pos.z) == true) {
+			if (Space.testChunkStatus(level_accessor, chunk_pos, "biomes") == true) {
 
-				if (level_accessor.getChunk(pos) instanceof ProtoChunk == true) {
+				return level_accessor.getChunk(chunk_pos.x, chunk_pos.z).getNoiseBiome(pos.getX() >> 2, pos.getY() >> 2, pos.getZ() >> 2);
 
-					if (Space.testChunkStatus(level_accessor, chunk_pos, "biomes") == true) {
+			} else {
 
-						return level_accessor.getChunk(chunk_pos.x, chunk_pos.z).getNoiseBiome(pos.getX() >> 2, pos.getY() >> 2, pos.getZ() >> 2);
-
-					}
-
-				} else {
-
-					return level_accessor.getBiome(pos);
-
-				}
+				return level_accessor.getUncachedNoiseBiome(pos.getX() >> 2, pos.getY() >> 2, pos.getZ() >> 2);
 
 			}
-
-			return level_accessor.getUncachedNoiseBiome(pos.getX() >> 2, pos.getY() >> 2, pos.getZ() >> 2);
 
 		}
 
