@@ -4,8 +4,6 @@ import tannyjung.tanshugetrees_handcode.systems.tree_generator.TreeSummonerStaff
 
 import tannyjung.tanshugetrees.world.inventory.TreeSummonerStaffGUIMenu;
 
-import net.minecraftforge.network.NetworkHooks;
-
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.entity.player.Player;
@@ -41,10 +39,15 @@ public class TreeSummonerStaffClickProcedure {
 		} else {
 			if (entity instanceof ServerPlayer _ent) {
 				BlockPos _bpos = BlockPos.containing(x, y, z);
-				NetworkHooks.openScreen((ServerPlayer) _ent, new MenuProvider() {
+				_ent.openMenu(new MenuProvider() {
 					@Override
 					public Component getDisplayName() {
 						return Component.literal("TreeSummonerStaffGUI");
+					}
+
+					@Override
+					public boolean shouldTriggerClientSideContainerClosingOnOpen() {
+						return false;
 					}
 
 					@Override

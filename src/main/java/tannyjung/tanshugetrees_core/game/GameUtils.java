@@ -64,10 +64,13 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.scores.ScoreHolder;
 */
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraft.world.level.chunk.ChunkStatus;
-import net.minecraft.data.worldgen.features.FeatureUtils;
+import net.neoforged.fml.ModList;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.scores.ScoreHolder;
 
 public class GameUtils {
 
@@ -81,7 +84,7 @@ public class GameUtils {
 
 		public static String testVariant (String test) {
 
-			if (test.equals("none") == false) {
+			if (test.isEmpty() == false) {
 
 				String[] split = null;
 
@@ -141,7 +144,7 @@ public class GameUtils {
 			(1.21.1)
 			ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE.get(ResourceLocation.parse(id));
 			*/
-			ParticleType<?> particle = ForgeRegistries.PARTICLE_TYPES.getValue(ResourceLocation.parse(id));
+			ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE.get(ResourceLocation.parse(id));
 
 			if (particle == null) {
 
@@ -165,7 +168,7 @@ public class GameUtils {
 			(1.21.1)
 			SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse(id));
 			*/
-			SoundEvent sound = ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation.parse(id));
+			SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse(id));
 
 			if (sound == null) {
 
@@ -324,7 +327,7 @@ public class GameUtils {
 
 		public static boolean test (BlockState block, String test) {
 
-			if (test.equals("none") == true) {
+			if (test.isEmpty() == true) {
 
 				return false;
 
@@ -334,7 +337,9 @@ public class GameUtils {
 
 			} else {
 
-				if (CacheManager.DataLogic.existNormal("test_block", block + " -> " + test) == false) {
+				String key = block + " -> " + test;
+
+				if (CacheManager.DataLogic.existNormal("test_block", key) == false) {
 
 					boolean result = false;
 
@@ -447,11 +452,11 @@ public class GameUtils {
 
 					}
 
-					CacheManager.DataLogic.setNormal("test_block", block + " -> " + test, result);
+					CacheManager.DataLogic.setNormal("test_block", key, result);
 
 				}
 
-				return CacheManager.DataLogic.getNormal("test_block").get(block + " -> " + test);
+				return CacheManager.DataLogic.getNormal("test_block").get(key);
 
 			}
 
@@ -571,7 +576,7 @@ public class GameUtils {
 				(1.21.1)
 				get = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
 				*/
-				get = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(id));
+				get = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
 
 				if (get == null) {
 
@@ -886,11 +891,11 @@ public class GameUtils {
 
 			/*
 			(1.20.1)
-			Entity entity = ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.parse(id)).create(level_server);
-			(1.21.1)
-			Entity entity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(id)).create(level_server);
-			*/
 			EntityType<?> type = ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.parse(id));
+			(1.21.1)
+			EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(id));
+			*/
+			EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(id));
 
 			if (type == null) {
 
@@ -912,7 +917,15 @@ public class GameUtils {
 
 			}
 
-			entity.setCustomName(Data.convertJSONToComponent("[" + Data.createText(name) + "]"));
+			MutableComponent component = Data.convertJSONToComponent("[" + Data.createText(name) + "]");
+
+			if (component == null) {
+
+				return null;
+
+			}
+
+			entity.setCustomName(component);
 
 			if (name.contains(" / ") == true) {
 
@@ -1058,7 +1071,7 @@ public class GameUtils {
 			(1.21.1)
 			return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)).getDefaultInstance();
 			*/
-			return ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(id)).getDefaultInstance();
+			return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)).getDefaultInstance();
 
 		}
 
@@ -1086,7 +1099,7 @@ public class GameUtils {
 			(1.21.1)
 			return level_accessor.getLevelData().getSpawnPos();
 			*/
-			return new BlockPos(level_accessor.getLevelData().getXSpawn(), level_accessor.getLevelData().getYSpawn(), level_accessor.getLevelData().getZSpawn());
+			return level_accessor.getLevelData().getSpawnPos();
 
 		}
 
@@ -1134,7 +1147,7 @@ public class GameUtils {
 			(1.21.8)
 			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getValueOrThrow(FeatureUtils.createKey(id)).place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
 			*/
-			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+			level_world_gen.holderOrThrow(ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(id))).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
 
 		}
 
@@ -1170,11 +1183,10 @@ public class GameUtils {
 
 		}
 
-		public static int getHeightWorldGen (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, int posX, int posZ, String type_normal, String type_world_gen) {
+		public static int getHeightWorldGen (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, int posX, int posZ, String type_normal, String type_outside) {
 
 			BlockPos pos = new BlockPos(posX, 0, posZ);
 			ChunkPos chunk_pos = new ChunkPos(pos);
-			Heightmap.Types type = Heightmap.Types.valueOf(type_world_gen);
 
 			if (level_accessor.hasChunk(chunk_pos.x, chunk_pos.z) == true) {
 
@@ -1182,7 +1194,7 @@ public class GameUtils {
 
 					if (Space.testChunkStatus(level_accessor, chunk_pos, "carvers") == true) {
 
-						return level_accessor.getChunk(chunk_pos.x, chunk_pos.z).getHeight(type, pos.getX(), pos.getZ()) + 1;
+						return level_accessor.getChunk(chunk_pos.x, chunk_pos.z).getHeight(Heightmap.Types.valueOf(type_normal), pos.getX(), pos.getZ()) + 1;
 
 					}
 
@@ -1194,7 +1206,7 @@ public class GameUtils {
 
 			}
 
-			return chunk_generator.getBaseHeight(posX, posZ, type, level_accessor, level_server.getChunkSource().randomState());
+			return chunk_generator.getBaseHeight(posX, posZ, Heightmap.Types.valueOf(type_outside), level_accessor, level_server.getChunkSource().randomState());
 
 		}
 
@@ -1204,7 +1216,7 @@ public class GameUtils {
 
 		public static boolean test (Holder<Biome> biome, String test) {
 
-			if (test.equals("none") == true) {
+			if (test.isEmpty() == true) {
 
 				return false;
 
@@ -1214,13 +1226,15 @@ public class GameUtils {
 
 			} else {
 
-				String biome_centerID = toID(biome);
+				String key = biome + " -> " + test;
 
-				if (CacheManager.DataLogic.existNormal("biome_test", biome + " -> " + test) == false) {
+				if (CacheManager.DataLogic.existNormal("test_biome", key) == false) {
 
 					boolean result = false;
 
 					{
+
+						String biome_centerID = toID(biome);
 
 						for (String split : test.split(" / ")) {
 
@@ -1284,11 +1298,27 @@ public class GameUtils {
 
 					}
 
-					CacheManager.DataLogic.setNormal("biome_test", biome + " -> " + test, result);
+					CacheManager.DataLogic.setNormal("test_biome", key, result);
 
 				}
 
-				return CacheManager.DataLogic.getNormal("biome_test").get(biome + " -> " + test);
+				// TODO -> Remove this debug
+
+				Map<String, Boolean> test_biome = CacheManager.DataLogic.getNormal("test_biome");
+
+				if (test_biome == null) {
+
+					Core.logger.error("No Main -----> " + key);
+
+				}
+
+				if (test_biome.get(key) == null) {
+
+					Core.logger.error("No Key -----> " + key);
+
+				}
+
+				return test_biome.get(key);
 
 			}
 
@@ -1364,7 +1394,7 @@ public class GameUtils {
             (1.21.1)
             scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER, true, null);
             */
-			scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER);
+			scoreboard.addObjective(name, ObjectiveCriteria.DUMMY, Component.literal(name), ObjectiveCriteria.RenderType.INTEGER, true, null);
 
 		}
 
@@ -1385,7 +1415,7 @@ public class GameUtils {
             (1.21.1)
             return score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).get();
             */
-			return score.getOrCreatePlayerScore(player, objective_test).getScore();
+			return score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).get();
 
 		}
 
@@ -1406,7 +1436,7 @@ public class GameUtils {
             (1.21.1)
             score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(value);
             */
-			score.getOrCreatePlayerScore(player, objective_test).setScore(value);
+			score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(value);
 
 		}
 
@@ -1429,7 +1459,7 @@ public class GameUtils {
             (1.21.1)
             score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(old_value + value);
             */
-			score.getOrCreatePlayerScore(player, objective_test).setScore(old_value + value);
+			score.getOrCreatePlayerScore(ScoreHolder.forNameOnly(player), objective_test, false).set(old_value + value);
 
 		}
 
@@ -1461,14 +1491,15 @@ public class GameUtils {
 				(1.21.1)
 				return Component.Serializer.fromJson(data, RegistryAccess.EMPTY);
 				*/
-				return Component.Serializer.fromJson(data);
+				return Component.Serializer.fromJson(data, RegistryAccess.EMPTY);
 
 			} catch (Exception exception) {
 
 				OutsideUtils.exception(new Exception(), exception, "");
-				return MutableComponent.create(ComponentContents.EMPTY);
 
 			}
+
+			return null;
 
 		}
 
@@ -1501,7 +1532,7 @@ public class GameUtils {
 
 					split = scan.split(" = ");
 
-					if (split[1].equals("none") == true) {
+					if (split[1].isEmpty() == true || split[1].equals("none") == true) {
 
 						continue;
 
@@ -1525,7 +1556,7 @@ public class GameUtils {
 
 			}
 
-			return "{ForgeData:{" + Core.mod_id + ":{" + data + "}}}";
+			return "{NeoForgeData:{" + Core.mod_id + ":{" + data + "}}}";
 
 		}
 
@@ -1608,17 +1639,17 @@ public class GameUtils {
 			String part_name = "display:{Name:\"" + createTextDoubleBackslash(name) + "\"},";
 			String part_lore = "Lore:[\"" + createTextDoubleBackslash(lore) + "\"],";
 			String part_custom_data = "tag:{" + Core.mod_id + ":{" + custom_data + "}},";
-			String part_forge_data = "BlockEntityData:{ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
+			String part_forge_data = "BlockEntityData:{NeoForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
 			(1.21.1)
 			String part_name = "custom_name:\"" + createTextDoubleBackslash(name) + "\",";
 			String part_lore = "lore:[\"" + createTextDoubleBackslash(lore) + "\"],";
 			String part_custom_data = "custom_data:{" + custom_data + "},";
-			String part_forge_data = "block_entity_data:{id:\"\",ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
+			String part_forge_data = "block_entity_data:{id:\"\",NeoForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
 			*/
-			String part_name = "display:{Name:\"" + createTextDoubleBackslash(name) + "\"},";
-			String part_lore = "Lore:[\"" + createTextDoubleBackslash(lore) + "\"],";
-			String part_custom_data = "tag:{" + Core.mod_id + ":{" + custom_data + "}},";
-			String part_forge_data = "BlockEntityData:{ForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
+			String part_name = "custom_name:\"" + createTextDoubleBackslash(name) + "\",";
+			String part_lore = "lore:[\"" + createTextDoubleBackslash(lore) + "\"],";
+			String part_custom_data = "custom_data:{" + custom_data + "},";
+			String part_forge_data = "block_entity_data:{id:\"\",NeoForgeData:{" + Core.mod_id + ":{" + forge_data + "}}},";
 
 			StringBuilder write = new StringBuilder();
 			if (name.isEmpty() == false) write.append(part_name);
@@ -1633,19 +1664,11 @@ public class GameUtils {
 
 			/*
 			(1.20.1) (1.21.1)
-			String data = entity.getPersistentData().getCompound(Core.mod_id).getString(name);
+			return entity.getPersistentData().getCompound(Core.mod_id).getString(name);
 			(1.21.8)
-			String data = entity.getPersistentData().getCompound(Core.mod_id).getString(name).get();
+			return entity.getPersistentData().getCompound(Core.mod_id).getString(name).get();
 			*/
-			String data = entity.getPersistentData().getCompound(Core.mod_id).getString(name);
-
-			if (data.isEmpty() == true) {
-
-				return "none";
-
-			}
-
-			return data;
+			return entity.getPersistentData().getCompound(Core.mod_id).getString(name);
 
 		}
 
@@ -1938,7 +1961,7 @@ public class GameUtils {
 			(1.21.1)
 			return Item.getSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
 			*/
-			return Item.getSlot(entity, slot).getOrCreateTag().getCompound(Core.mod_id).getString(name);
+			return Item.getSlot(entity, slot).getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(Core.mod_id).getString(name);
 
 		}
 
@@ -1953,9 +1976,9 @@ public class GameUtils {
 			(1.20.1)
 			Item.getSlot(entity, slot).getOrCreateTag().merge(tag);
 			(1.21.1)
-			CustomData.update(DataComponents.CUSTOM_DATA, Item.getSlot(entity, slot), create -> test.merge(tag));
+			CustomData.update(DataComponents.CUSTOM_DATA, Item.getSlot(entity, slot), create -> create.merge(tag));
 			*/
-			Item.getSlot(entity, slot).getOrCreateTag().merge(tag);
+			CustomData.update(DataComponents.CUSTOM_DATA, Item.getSlot(entity, slot), create -> create.merge(tag));
 
 		}
 

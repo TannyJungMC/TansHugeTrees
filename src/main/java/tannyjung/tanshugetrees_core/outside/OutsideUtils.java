@@ -405,6 +405,13 @@ public class OutsideUtils {
                     if (scan.contains(" = ") == true) {
 
                         split = scan.split(" = ");
+
+                        if (split[1].equals("none") == true) {
+
+                            split[1] = "";
+
+                        }
+
                         data.put(split[0], split[1]);
 
                     }

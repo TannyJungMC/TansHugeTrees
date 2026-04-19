@@ -133,7 +133,7 @@ public class CacheManager {
 
             synchronized (lock_normal) {
 
-                return normal.getOrDefault(name, new HashMap<>()).containsKey(key);
+                return normal.getOrDefault(name, new HashMap<>()).containsKey(key) == true;
 
             }
 
@@ -399,7 +399,7 @@ public class CacheManager {
 
             synchronized (lock_normal) {
 
-                return normal.getOrDefault(name, new HashMap<>()).containsKey(key);
+                return normal.getOrDefault(name, new HashMap<>()).containsKey(key) == true;
 
             }
 

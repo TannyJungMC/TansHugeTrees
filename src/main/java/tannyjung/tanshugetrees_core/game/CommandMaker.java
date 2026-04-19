@@ -23,7 +23,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 (1.21.1)
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 */
-import net.minecraftforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 public class CommandMaker {
 

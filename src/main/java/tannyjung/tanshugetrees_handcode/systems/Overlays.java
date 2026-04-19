@@ -4,7 +4,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.DatapackLoadFailureScreen;
 import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import net.minecraft.client.gui.screens.Screen;
+import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_core.game.OverlayMaker;
+import tannyjung.tanshugetrees_core.outside.TXTFunction;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.systems.living_mechanics.LivingMechanics;
 import tannyjung.tanshugetrees_handcode.systems.world_gen.TreeLocation;
@@ -55,9 +57,9 @@ public class Overlays {
 
             if (Handcode.Config.developer_mode == true) {
 
-                OverlayMaker.createText(graphic, screen_width, screen_height, "top-right", 200, 50, 0.75, false, "§cTree Location = " + LivingMechanics.list_tree_location.size());
-                OverlayMaker.createText(graphic, screen_width, screen_height, "top-right", 200, 60, 0.75, false, "§cFalling Leaf = " + LivingMechanics.list_falling_leaf.size());
-                OverlayMaker.createText(graphic, screen_width, screen_height, "top-right", 200, 70, 0.75, false, "§cLeaf litter Remover = " + LivingMechanics.list_leaf_litter_remover.size());
+                OverlayMaker.createText(graphic, screen_width, screen_height, "top-right", 150, 60, 0.75, false, "§cTree Location = " + LivingMechanics.list_tree_location.size());
+                OverlayMaker.createText(graphic, screen_width, screen_height, "top-right", 150, 70, 0.75, false, "§cFalling Leaf = " + LivingMechanics.list_falling_leaf.size());
+                OverlayMaker.createText(graphic, screen_width, screen_height, "top-right", 150, 80, 0.75, false, "§cLeaf litter Remover = " + LivingMechanics.list_leaf_litter_remover.size());
 
             }
 

@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_core.game;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.server.level.ServerLevel;
@@ -11,6 +12,7 @@ import net.minecraft.world.level.storage.LevelResource;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepEnd;
 import tannyjung.tanshugetrees_core.outside.CustomPackOrganizing;
+import tannyjung.tanshugetrees_core.outside.TXTFunction;
 import tannyjung.tanshugetrees_core.outside.TannyPackManager;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.systems.Commands;
@@ -47,19 +49,19 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.api.distmarker.Dist;
 */
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.client.event.RenderGuiEvent;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.api.distmarker.Dist;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.client.event.RenderGuiEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.api.distmarker.Dist;
 
 public class EventCenter {
     
@@ -80,10 +82,22 @@ public class EventCenter {
         @SubscribeEvent(priority = EventPriority.NORMAL)
         public static void eventInGame (RenderGuiEvent.Post event) {
 
+            if (Minecraft.getInstance().options.hideGui == true) {
+
+                return;
+
+            }
+
             GuiGraphics graphic = event.getGuiGraphics();
             int screen_width = event.getGuiGraphics().guiWidth();
             int screen_height = event.getGuiGraphics().guiHeight();
             Overlays.eventInGame(graphic, screen_width, screen_height);
+
+            if (Handcode.Config.developer_mode == true) {
+
+                OverlayMaker.createText(graphic, screen_width, screen_height, "top-right", 150, 50, 0.75, false, "§9Delayed Command = " + TXTFunction.list_delayed_command.size());
+
+            }
 
         }
 
@@ -185,7 +199,7 @@ public class EventCenter {
         (1.21.1)
         public static void eventTickServer (ServerTickEvent.Post event) {
         */
-        public static void eventTickServer (TickEvent.ServerTickEvent event) {
+        public static void eventTickServer (ServerTickEvent.Post event) {
 
             if (Core.global_locking == false) {
 
@@ -195,7 +209,7 @@ public class EventCenter {
                 (1.21.1)
                 ### Nothing ###
                 */
-                if (event.phase == TickEvent.Phase.START) return;
+
 
                 LevelAccessor level_accessor = event.getServer().overworld();
                 ServerLevel level_server = event.getServer().overworld();

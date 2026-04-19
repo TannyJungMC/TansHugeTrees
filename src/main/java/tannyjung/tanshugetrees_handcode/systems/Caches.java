@@ -89,6 +89,10 @@ public class Caches {
 
             }
 
+            if (data_size == null) data_size = new short[0];
+            if (data_block_count == null) data_block_count = new int[0];
+            if (data_shape == null) data_shape = new short[0];
+
             CacheManager.DataShort.setArray("tree_shape_size", id, data_size);
             CacheManager.DataInt.setArray("tree_shape_block_count", id, data_block_count);
             CacheManager.DataShort.setArray("tree_shape_data", id, data_shape);

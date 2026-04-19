@@ -43,14 +43,14 @@
         "data": {
           "name": "label_example_tannyjungmainpackr",
           "text": {
-            "fixedValue": "Example preset path [ presets/#TannyJung-Main-Pack/redwood/redwood ]."
+            "fixedValue": "Example : presets/#TannyJung-Main-Pack/redwood/redwood"
           },
           "color": {
             "value": -6710887,
             "falpha": 0.0
           },
           "x": 38,
-          "y": 168,
+          "y": 96,
           "locked": false
         }
       },
@@ -59,30 +59,46 @@
         "data": {
           "name": "label_the_path_will_be_test_from_extra",
           "text": {
-            "fixedValue": "This path will go to extracted packs first. then"
+            "fixedValue": "temporary folder, found in dev folder inside the config. If the pack is"
           },
           "color": {
             "value": -6710887,
             "falpha": 0.0
           },
-          "x": 38,
-          "y": 180,
+          "x": 6,
+          "y": 212,
           "locked": false
         }
       },
       {
         "type": "label",
         "data": {
-          "name": "label_from_unextracted_packs_if_failed",
+          "name": "label_path_of_preset_inside_the_tempor",
           "text": {
-            "fixedValue": "go to unextracted packs if failed."
+            "fixedValue": "To spawn a tree, write down correct preset path. This path is same as in"
           },
           "color": {
             "value": -6710887,
             "falpha": 0.0
           },
-          "x": 38,
-          "y": 192,
+          "x": 6,
+          "y": 200,
+          "locked": false
+        }
+      },
+      {
+        "type": "label",
+        "data": {
+          "name": "label_is_extracted_then_it_will_go_ge",
+          "text": {
+            "fixedValue": "extracted, then it will go get preset in extracted folder first."
+          },
+          "color": {
+            "value": -6710887,
+            "falpha": 0.0
+          },
+          "x": 6,
+          "y": 224,
           "locked": false
         }
       }

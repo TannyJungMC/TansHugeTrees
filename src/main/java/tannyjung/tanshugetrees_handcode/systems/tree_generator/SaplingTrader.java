@@ -81,19 +81,19 @@ public class SaplingTrader {
                 // Write
                 {
 
-                        /*
-                        (1.20.1)
-                        write.append("{buy:{id:\"").append(data.get(0)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(1), data.get(2), data.get(3), data.get(4))).append("},Count:").append(data.get(5));
-                        write.append("},buyB:{id:\"").append(data.get(6)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(7), data.get(8), data.get(9), data.get(10))).append("},Count:").append(data.get(11));
-                        write.append("},sell:{id:\"").append(data.get(12)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(13), data.get(14), data.get(15), data.get(16))).append("},Count:").append(data.get(17));
-                        (1.21.1)
-                        write.append("{buy:{id:\"").append(data.get(0)).append("\",components:{").append(GameUtils.Data.createItem(data.get(1), data.get(2), data.get(3), data.get(4))).append("},count:").append(data.get(5));
-                        write.append("},buyB:{id:\"").append(data.get(6)).append("\",components:{").append(GameUtils.Data.createItem(data.get(7), data.get(8), data.get(9), data.get(10))).append("},count:").append(data.get(11));
-                        write.append("},sell:{id:\"").append(data.get(12)).append("\",components:{").append(GameUtils.Data.createItem(data.get(13), data.get(14), data.get(15), data.get(16))).append("},count:").append(data.get(17));
-                        */
+                    /*
+                    (1.20.1)
                     write.append("{buy:{id:\"").append(data.get(0)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(1), data.get(2), data.get(3), data.get(4))).append("},Count:").append(data.get(5));
                     write.append("},buyB:{id:\"").append(data.get(6)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(7), data.get(8), data.get(9), data.get(10))).append("},Count:").append(data.get(11));
                     write.append("},sell:{id:\"").append(data.get(12)).append("\",tag:{").append(GameUtils.Data.createItem(data.get(13), data.get(14), data.get(15), data.get(16))).append("},Count:").append(data.get(17));
+                    (1.21.1)
+                    write.append("{buy:{id:\"").append(data.get(0)).append("\",components:{").append(GameUtils.Data.createItem(data.get(1), data.get(2), data.get(3), data.get(4))).append("},count:").append(data.get(5));
+                    write.append("},buyB:{id:\"").append(data.get(6)).append("\",components:{").append(GameUtils.Data.createItem(data.get(7), data.get(8), data.get(9), data.get(10))).append("},count:").append(data.get(11));
+                    write.append("},sell:{id:\"").append(data.get(12)).append("\",components:{").append(GameUtils.Data.createItem(data.get(13), data.get(14), data.get(15), data.get(16))).append("},count:").append(data.get(17));
+                    */
+                    write.append("{buy:{id:\"").append(data.get(0)).append("\",components:{").append(GameUtils.Data.createItem(data.get(1), data.get(2), data.get(3), data.get(4))).append("},count:").append(data.get(5));
+                    write.append("},buyB:{id:\"").append(data.get(6)).append("\",components:{").append(GameUtils.Data.createItem(data.get(7), data.get(8), data.get(9), data.get(10))).append("},count:").append(data.get(11));
+                    write.append("},sell:{id:\"").append(data.get(12)).append("\",components:{").append(GameUtils.Data.createItem(data.get(13), data.get(14), data.get(15), data.get(16))).append("},count:").append(data.get(17));
 
                 }
 

@@ -11,7 +11,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TXTFunction {
+
+    public static List<Entity> list_delayed_command = new ArrayList<>();
 
 	public static void run (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String path, boolean randomly) {
 
@@ -24,7 +29,7 @@ public class TXTFunction {
 
         } else {
 
-            random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((pos.getX() * 341873128712L) + pos.getY() + (pos.getZ() * 132897987541L)));
+            random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((pos.getX() * 341873128712L) + (pos.getZ() * 132897987541L) + pos.getY()));
 
         }
         
@@ -48,8 +53,8 @@ public class TXTFunction {
         int maxY = 0;
         int maxZ = 0;
         BlockPos pos_convert = null;
+        BlockState block = null;
         String variable_text = "";
-        BlockState variable_block = null;
 
         for (String scan : CacheManager.getFunction(path)) {
 
@@ -214,10 +219,12 @@ public class TXTFunction {
                                                                 try {
 
                                                                     split = scan.substring("biome = ".length()).split(" \\| ");
+
                                                                     offset_pos = split[0].split("/");
                                                                     offset_posX = Integer.parseInt(offset_pos[0]);
                                                                     offset_posY = Integer.parseInt(offset_pos[1]);
                                                                     offset_posZ = Integer.parseInt(offset_pos[2]);
+
                                                                     variable_text = split[1];
 
                                                                 } catch (Exception ignored) {
@@ -243,10 +250,12 @@ public class TXTFunction {
                                                                 try {
 
                                                                     split = scan.substring("block = ".length()).split(" \\| ");
+
                                                                     offset_pos = split[0].split("/");
                                                                     offset_posX = Integer.parseInt(offset_pos[0]);
                                                                     offset_posY = Integer.parseInt(offset_pos[1]);
                                                                     offset_posZ = Integer.parseInt(offset_pos[2]);
+
                                                                     variable_text = split[1];
 
                                                                 } catch (Exception ignored) {
@@ -288,7 +297,21 @@ public class TXTFunction {
 
                                                                     split = scan.substring("block = ".length()).split(" \\| ");
                                                                     chance = Double.parseDouble(split[0]);
-                                                                    variable_block = GameUtils.Tile.fromText(split[3]);
+
+                                                                    offset_pos = split[1].split("/");
+                                                                    offset_posX = Integer.parseInt(offset_pos[0]);
+                                                                    offset_posY = Integer.parseInt(offset_pos[1]);
+                                                                    offset_posZ = Integer.parseInt(offset_pos[2]);
+
+                                                                    min_max = split[2].split("/");
+                                                                    minX = Integer.parseInt(min_max[0]);
+                                                                    minY = Integer.parseInt(min_max[1]);
+                                                                    minZ = Integer.parseInt(min_max[2]);
+                                                                    maxX = Integer.parseInt(min_max[3]);
+                                                                    maxY = Integer.parseInt(min_max[4]);
+                                                                    maxZ = Integer.parseInt(min_max[5]);
+
+                                                                    block = GameUtils.Tile.fromText(split[3]);
                                                                     variable_text = split[4];
 
                                                                 } catch (Exception ignored) {
@@ -299,33 +322,7 @@ public class TXTFunction {
 
                                                                 if (random.nextDouble() < chance) {
 
-                                                                    if (variable_block != Blocks.AIR.defaultBlockState()) {
-
-                                                                        // Get Pos
-                                                                        {
-
-                                                                            try {
-
-                                                                                offset_pos = split[1].split("/");
-                                                                                offset_posX = Integer.parseInt(offset_pos[0]);
-                                                                                offset_posY = Integer.parseInt(offset_pos[1]);
-                                                                                offset_posZ = Integer.parseInt(offset_pos[2]);
-
-                                                                                min_max = split[2].split("/");
-                                                                                minX = Integer.parseInt(min_max[0]);
-                                                                                minY = Integer.parseInt(min_max[1]);
-                                                                                minZ = Integer.parseInt(min_max[2]);
-                                                                                maxX = Integer.parseInt(min_max[3]);
-                                                                                maxY = Integer.parseInt(min_max[4]);
-                                                                                maxZ = Integer.parseInt(min_max[5]);
-
-                                                                            } catch (Exception ignored) {
-
-                                                                                return;
-
-                                                                            }
-
-                                                                        }
+                                                                    if (block != Blocks.AIR.defaultBlockState()) {
 
                                                                         for (int testX = minX; testX <= maxX; testX++) {
 
@@ -335,17 +332,13 @@ public class TXTFunction {
 
                                                                                     pos_convert = pos.offset(offset_posX + testX, offset_posY + testY, offset_posZ + testZ);
 
-                                                                                    if (level_accessor.hasChunk(pos_convert.getX() >> 4, pos_convert.getZ() >> 4) == true) {
+                                                                                    if (GameUtils.Tile.test(level_accessor.getBlockState(pos_convert), variable_text) == false) {
 
-                                                                                        if (GameUtils.Tile.test(level_accessor.getBlockState(pos_convert), variable_text) == false) {
-
-                                                                                            continue;
-
-                                                                                        }
-
-                                                                                        GameUtils.Tile.set(level_accessor, pos_convert, variable_block, false);
+                                                                                        continue;
 
                                                                                     }
+
+                                                                                    GameUtils.Tile.set(level_accessor, pos_convert, block, false);
 
                                                                                 }
 
@@ -367,10 +360,12 @@ public class TXTFunction {
 
                                                                     split = scan.substring("feature = ".length()).split(" \\| ");
                                                                     chance = Double.parseDouble(split[0]);
+
                                                                     offset_pos = split[1].split("/");
                                                                     offset_posX = Integer.parseInt(offset_pos[0]);
                                                                     offset_posY = Integer.parseInt(offset_pos[1]);
                                                                     offset_posZ = Integer.parseInt(offset_pos[2]);
+
                                                                     variable_text = split[2];
 
                                                                 } catch (Exception ignored) {
@@ -396,10 +391,12 @@ public class TXTFunction {
 
                                                                     split = scan.substring("function = ".length()).split(" \\| ");
                                                                     chance = Double.parseDouble(split[0]);
+
                                                                     offset_pos = split[1].split("/");
                                                                     offset_posX = Integer.parseInt(offset_pos[0]);
                                                                     offset_posY = Integer.parseInt(offset_pos[1]);
                                                                     offset_posZ = Integer.parseInt(offset_pos[2]);
+
                                                                     variable_text = split[2];
 
                                                                 } catch (Exception ignored) {
@@ -495,7 +492,7 @@ public class TXTFunction {
                 }
 
                 String command_final = command.replace("'", "*").replace("\"", "$");
-                GameUtils.Mob.summonWorldGen(level_server, pos.getCenter(), "marker", "Delayed Command", "TANSHUGETREES-delayed_command", "{ForgeData:{" + Core.mod_id + ":{command:\"" + command_final + "\"}}}");
+                GameUtils.Mob.summonWorldGen(level_server, pos.getCenter(), "marker", "Delayed Command", "TANNYJUNG-delayed_command", "{NeoForgeData:{" + Core.mod_id + ":{command:\"" + command_final + "\"}}}");
                 
             }
 
@@ -518,6 +515,18 @@ public class TXTFunction {
             }
 
             entity.discard();
+
+        }
+
+    }
+
+    public static void loop (ServerLevel level_server) {
+
+        list_delayed_command = GameUtils.Mob.getAtEverywhere(level_server, "minecraft:marker", "TANNYJUNG-delayed_command");
+
+        for (Entity entity : list_delayed_command) {
+
+            TXTFunction.runDelayedCommand(level_server, entity);
 
         }
 

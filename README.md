@@ -26,8 +26,6 @@ Here is current supported Minecraft versions you can switch. "Active" means curr
 - To run client or server.  In IntelliJ, go to "Gradle" tab at right side, select `Tasks > forgegradle runs > runClient or runServer`. In MCreator, click the green buttons at top-right.
 - To export the mod to JAR format. In IntelliJ, go to "Gradle" tab at right side, select `Tasks > build > build`. The exported file will be in `Project Folder > build > libs`. In MCreator, click the orange button then choose path for exported file.
 
-
-
 ## From Creator
 
 Thank you for playing my mods! I'm very happy to see people enjoy my hobby. You can also support me by donate on Patreon and buying my artworks if you want. Your support can keep me motivated to continue developing my mods. Anyway, you can easily support me by playing them, sharing screenshots or videos with them, and following my artworks on Twitter.

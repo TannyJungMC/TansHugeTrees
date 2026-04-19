@@ -260,8 +260,8 @@ public class CustomPackOrganizing {
 
         File file = null;
         String data_structure_version = "";
-        String required_packs = "";
-        String required_mods = "";
+        String required_packs = "none";
+        String required_mods = "none";
         List<String> pack_id_scan = new ArrayList<>();
 
         for (File pack : packs) {

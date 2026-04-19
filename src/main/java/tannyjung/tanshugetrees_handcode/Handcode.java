@@ -49,7 +49,7 @@ public class Handcode {
                 rarity = 0
                 # Change how common of that tree. Lower means rarer. Only supported number between 0 and 100 (can be non-integer number).
                 min_distance = 0
-                # Change distance of trees in the same species. This is distance in block with Y position ignored. Only supported number between 0 to 500.
+                # Change distance of trees in the same species. This is distance in block with Y position ignored. Can be any number, but higher number may slow down region pre-location time.
                 group_size = 1 <> 1
                 # Spawn addition trees of the same species of it around the area. To use this, set min and max count of trees per group that upper than 1. For example, min 1 and max 5, will be [ 1 <> 5 ]. Be careful to use this, as it can affect scan time. This config also change the way other config options work. Rarity will be how common of the group. Min distance is between trees, not between groups. Waterside config will only detect once at spawn location of that group.
                 dead_tree_chance = 0.0
@@ -75,7 +75,7 @@ public class Handcode {
                 ----------------------------------------------------------------------------------------------------
                 
                 path_preset = none
-                | Path of the preset you will convert. The part will be something like [ presets/#TannyJung-Main-Pack/redwood/redwood ]. This path will go to extracted packs first, then go to unextracted packs if failed.
+                | Path of the preset you will convert. The part will be something like [ presets/#TannyJung-Main-Pack/redwood/redwood ]. This path is same as in temporary folder, found in dev folder inside the config. If the pack is extracted, then it will go get preset in extracted folder first.
                 
                 ----------------------------------------------------------------------------------------------------
                 """);
@@ -144,6 +144,7 @@ public class Handcode {
         public static int tree_generator_speed_tick = 0;
         public static int tree_generator_speed_repeat = 0;
         public static int tree_generator_count_limit = 0;
+        public static int tree_generator_tp_limit = 0;
 
         public static boolean developer_mode = false;
         public static boolean world_gen_icon = false;
@@ -298,7 +299,7 @@ public class Handcode {
                     ----------------------------------------------------------------------------------------------------
                     
                     tree_generator_speed_global = true
-                    | When true, it will use same speed for all generators.
+                    | If set this to true, it will use same speed for all generators.
                     
                     tree_generator_speed_tick = 1
                     | How fast of generators in tick. Increase this will make them slower. Set to 0 for temporary pause all generators.
@@ -306,8 +307,11 @@ public class Handcode {
                     tree_generator_speed_repeat = 100
                     | How many processes the generators run in a time. Increase this will make them generate faster but also can cause lag. Set to 0 for one time generation that can freeze the game.
                     
-                    tree_generator_count_limit = 1
-                    | How many generators will generate in the same time. Set to 0 for no limit.
+                    tree_generator_count_limit = 3
+                    | How many generators will be generating in the same time. Set to 0 for no limit.
+                    
+                    tree_generator_tp_limit = 16
+                    | How many blocks the generators can move per time. Lower this can reduce lag spikes caused by placing blocks in many chunks at once. Set to 0 for no limit.
                     
                     ----------------------------------------------------------------------------------------------------
                     Miscellaneous
@@ -390,6 +394,7 @@ public class Handcode {
             tree_generator_speed_tick = Integer.parseInt(data.get("tree_generator_speed_tick"));
             tree_generator_speed_repeat = Integer.parseInt(data.get("tree_generator_speed_repeat"));
             tree_generator_count_limit = Integer.parseInt(data.get("tree_generator_count_limit"));
+            tree_generator_tp_limit = Integer.parseInt(data.get("tree_generator_tp_limit"));
 
             developer_mode = Boolean.parseBoolean(data.get("developer_mode"));
             world_gen_icon = Boolean.parseBoolean(data.get("world_gen_icon"));

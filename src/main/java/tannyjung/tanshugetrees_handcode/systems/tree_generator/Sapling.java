@@ -212,7 +212,7 @@ public class Sapling {
 
                             }
 
-                            GameUtils.Command.runEntity(entity_summon, "data modify entity @s ForgeData.tanshugetrees set from block ~ ~ ~ ForgeData.tanshugetrees");
+                            GameUtils.Command.runEntity(entity_summon, "data modify entity @s NeoForgeData.tanshugetrees set from block ~ ~ ~ NeoForgeData.tanshugetrees");
 
                         }
 

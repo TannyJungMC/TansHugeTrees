@@ -2,6 +2,7 @@ package tannyjung.tanshugetrees_core;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import org.apache.logging.log4j.Logger;
@@ -31,9 +32,9 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.registries.DeferredRegister;
 */
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class Core {
 
@@ -226,11 +227,7 @@ public class Core {
 
         public static void lock () {
 
-            synchronized (lock) {
-
-                global_locking = true;
-
-            }
+            global_locking = true;
 
         }
 
@@ -329,6 +326,18 @@ public class Core {
 
         private static void loopSecond (LevelAccessor level_accessor, ServerLevel level_server) {
 
+            // Developer Mode
+            {
+
+                for (Entity entity : GameUtils.Mob.getAtEverywhere(level_server, "", Core.mod_id_big)) {
+
+                    GameUtils.Misc.spawnParticle(level_server, entity.position(), 0, 0, 0, 0, 1, "minecraft:end_rod");
+
+                }
+
+            }
+
+            TXTFunction.loop(level_server);
             Loops.second(level_accessor, level_server);
             minute = minute + 1;
 

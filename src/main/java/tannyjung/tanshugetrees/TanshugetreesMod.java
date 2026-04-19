@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees;
 
+import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees.init.TanshugetreesModTabs;
 import tannyjung.tanshugetrees.init.TanshugetreesModMenus;
 import tannyjung.tanshugetrees.init.TanshugetreesModItems;
@@ -9,84 +10,92 @@ import tannyjung.tanshugetrees.init.TanshugetreesModBlockEntities;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import net.minecraftforge.network.simple.SimpleChannel;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.fml.util.thread.SidedThreadGroups;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.neoforged.neoforge.network.handling.IPayloadHandler;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.fml.util.thread.SidedThreadGroups;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.bus.api.IEventBus;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Tuple;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.FriendlyByteBuf;
 
-import java.util.function.Supplier;
-import java.util.function.Function;
-import java.util.function.BiConsumer;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Map;
 import java.util.List;
+import java.util.HashMap;
 import java.util.Collection;
 import java.util.ArrayList;
-import java.util.AbstractMap;
 
 @Mod("tanshugetrees")
 public class TanshugetreesMod {
 	public static final Logger LOGGER = LogManager.getLogger(TanshugetreesMod.class);
 	public static final String MODID = "tanshugetrees";
 
-	public TanshugetreesMod(FMLJavaModLoadingContext context) {
+	public TanshugetreesMod(IEventBus modEventBus) {
 		// Start of user code block mod constructor
 		// End of user code block mod constructor
-		MinecraftForge.EVENT_BUS.register(this);
-		IEventBus bus = context.getModEventBus();
-		TanshugetreesModBlocks.REGISTRY.register(bus);
-		TanshugetreesModBlockEntities.REGISTRY.register(bus);
-		TanshugetreesModItems.REGISTRY.register(bus);
-		TanshugetreesModTabs.REGISTRY.register(bus);
-		TanshugetreesModMenus.REGISTRY.register(bus);
+		NeoForge.EVENT_BUS.register(this);
+		modEventBus.addListener(this::registerNetworking);
+		TanshugetreesModBlocks.REGISTRY.register(modEventBus);
+		TanshugetreesModBlockEntities.REGISTRY.register(modEventBus);
+		TanshugetreesModItems.REGISTRY.register(modEventBus);
+		TanshugetreesModTabs.REGISTRY.register(modEventBus);
+		TanshugetreesModVariables.ATTACHMENT_TYPES.register(modEventBus);
+		TanshugetreesModMenus.REGISTRY.register(modEventBus);
 		// Start of user code block mod init
 		/*
 		(1.20.1)
 		tannyjung.tanshugetrees_core.Core.start(bus);
 		(1.21.1)
-		I forgot -_-) will write here later
+		tannyjung.tanshugetrees_core.Core.start(modEventBus);
 		*/
-		tannyjung.tanshugetrees_core.Core.start(bus);
+		tannyjung.tanshugetrees_core.Core.start(modEventBus);
 		// End of user code block mod init
 	}
 
 	// Start of user code block mod methods
 	// End of user code block mod methods
-	private static final String PROTOCOL_VERSION = "1";
-	public static final SimpleChannel PACKET_HANDLER = NetworkRegistry.newSimpleChannel(ResourceLocation.fromNamespaceAndPath(MODID, MODID), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
-	private static int messageID = 0;
+	private static boolean networkingRegistered = false;
+	private static final Map<CustomPacketPayload.Type<?>, NetworkMessage<?>> MESSAGES = new HashMap<>();
 
-	public static <T> void addNetworkMessage(Class<T> messageType, BiConsumer<T, FriendlyByteBuf> encoder, Function<FriendlyByteBuf, T> decoder, BiConsumer<T, Supplier<NetworkEvent.Context>> messageConsumer) {
-		PACKET_HANDLER.registerMessage(messageID, messageType, encoder, decoder, messageConsumer);
-		messageID++;
+	private record NetworkMessage<T extends CustomPacketPayload>(StreamCodec<? extends FriendlyByteBuf, T> reader, IPayloadHandler<T> handler) {
 	}
 
-	private static final Collection<AbstractMap.SimpleEntry<Runnable, Integer>> workQueue = new ConcurrentLinkedQueue<>();
+	public static <T extends CustomPacketPayload> void addNetworkMessage(CustomPacketPayload.Type<T> id, StreamCodec<? extends FriendlyByteBuf, T> reader, IPayloadHandler<T> handler) {
+		if (networkingRegistered)
+			throw new IllegalStateException("Cannot register new network messages after networking has been registered");
+		MESSAGES.put(id, new NetworkMessage<>(reader, handler));
+	}
+
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	private void registerNetworking(final RegisterPayloadHandlersEvent event) {
+		final PayloadRegistrar registrar = event.registrar(MODID);
+		MESSAGES.forEach((id, networkMessage) -> registrar.playBidirectional(id, ((NetworkMessage) networkMessage).reader(), ((NetworkMessage) networkMessage).handler()));
+		networkingRegistered = true;
+	}
+
+	private static final Collection<Tuple<Runnable, Integer>> workQueue = new ConcurrentLinkedQueue<>();
 
 	public static void queueServerWork(int tick, Runnable action) {
 		if (Thread.currentThread().getThreadGroup() == SidedThreadGroups.SERVER)
-			workQueue.add(new AbstractMap.SimpleEntry<>(action, tick));
+			workQueue.add(new Tuple<>(action, tick));
 	}
 
 	@SubscribeEvent
-	public void tick(TickEvent.ServerTickEvent event) {
-		if (event.phase == TickEvent.Phase.END) {
-			List<AbstractMap.SimpleEntry<Runnable, Integer>> actions = new ArrayList<>();
-			workQueue.forEach(work -> {
-				work.setValue(work.getValue() - 1);
-				if (work.getValue() == 0)
-					actions.add(work);
-			});
-			actions.forEach(e -> e.getKey().run());
-			workQueue.removeAll(actions);
-		}
+	public void tick(ServerTickEvent.Post event) {
+		List<Tuple<Runnable, Integer>> actions = new ArrayList<>();
+		workQueue.forEach(work -> {
+			work.setB(work.getB() - 1);
+			if (work.getB() == 0)
+				actions.add(work);
+		});
+		actions.forEach(e -> e.getA().run());
+		workQueue.removeAll(actions);
 	}
 }
