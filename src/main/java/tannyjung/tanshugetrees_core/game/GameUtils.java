@@ -11,7 +11,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ServerScoreboard;
@@ -52,20 +51,17 @@ import java.util.*;
 /*
 (1.20.1)
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 (1.21.1)
 import net.neoforged.fml.ModList;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.scores.ScoreHolder;
 */
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 
@@ -81,7 +77,7 @@ public class GameUtils {
 
 		public static String testVariant (String test) {
 
-			if (test.equals("none") == false) {
+			if (test.isEmpty() == false) {
 
 				String[] split = null;
 
@@ -135,13 +131,7 @@ public class GameUtils {
 
 		public static void spawnParticle (ServerLevel level_server, Vec3 vec3, double spreadX, double spreadY, double spreadZ, double speed, int count, String id) {
 
-			/*
-			(1.20.1)
-			ParticleType<?> particle = ForgeRegistries.PARTICLE_TYPES.getValue(ResourceLocation.parse(id));
-			(1.21.1)
-			ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE.get(ResourceLocation.parse(id));
-			*/
-			ParticleType<?> particle = ForgeRegistries.PARTICLE_TYPES.getValue(ResourceLocation.parse(id));
+			ParticleType<?> particle = level_server.registryAccess().registryOrThrow(Registries.PARTICLE_TYPE).get(ResourceLocation.parse(id));
 
 			if (particle == null) {
 
@@ -159,13 +149,7 @@ public class GameUtils {
 
 		public static void playSound (ServerLevel level_server, BlockPos pos, double volume, double pitch, String id) {
 
-			/*
-			(1.20.1)
-			SoundEvent sound = ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation.parse(id));
-			(1.21.1)
-			SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse(id));
-			*/
-			SoundEvent sound = ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation.parse(id));
+			SoundEvent sound = level_server.registryAccess().registryOrThrow(Registries.SOUND_EVENT).get(ResourceLocation.parse(id));
 
 			if (sound == null) {
 
@@ -324,7 +308,7 @@ public class GameUtils {
 
 		public static boolean test (BlockState block, String test) {
 
-			if (test.equals("none") == true) {
+			if (test.isEmpty() == true) {
 
 				return false;
 
@@ -334,7 +318,9 @@ public class GameUtils {
 
 			} else {
 
-				if (CacheManager.DataLogic.existNormal("test_block", block + " -> " + test) == false) {
+				String key = block + " -> " + test;
+
+				if (CacheManager.DataLogic.existNormal("test_block", key) == false) {
 
 					boolean result = false;
 
@@ -447,11 +433,11 @@ public class GameUtils {
 
 					}
 
-					CacheManager.DataLogic.setNormal("test_block", block + " -> " + test, result);
+					CacheManager.DataLogic.setNormal("test_block", key, result);
 
 				}
 
-				return CacheManager.DataLogic.getNormal("test_block").get(block + " -> " + test);
+				return CacheManager.DataLogic.getNormal("test_block").get(key);
 
 			}
 
@@ -543,7 +529,7 @@ public class GameUtils {
 
 		}
 
-		public static BlockState fromText (String data) {
+		public static BlockState fromText (ServerLevel level_server, String data) {
 
 			BlockState block = null;
 
@@ -565,13 +551,7 @@ public class GameUtils {
 
 				}
 
-				/*
-				(1.20.1)
-				get = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(id));
-				(1.21.1)
-				get = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
-				*/
-				get = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(id));
+				get = level_server.registryAccess().registryOrThrow(Registries.BLOCK).get(ResourceLocation.parse(id));
 
 				if (get == null) {
 
@@ -884,13 +864,7 @@ public class GameUtils {
 
 		public static Entity summon (ServerLevel level_server, Vec3 vec3, String id, String name, String tag, String custom) {
 
-			/*
-			(1.20.1)
-			Entity entity = ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.parse(id)).create(level_server);
-			(1.21.1)
-			Entity entity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(id)).create(level_server);
-			*/
-			EntityType<?> type = ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.parse(id));
+			EntityType<?> type = level_server.registryAccess().registryOrThrow(Registries.ENTITY_TYPE).get(ResourceLocation.parse(id));
 
 			if (type == null) {
 
@@ -912,7 +886,15 @@ public class GameUtils {
 
 			}
 
-			entity.setCustomName(Data.convertJSONToComponent("[" + Data.createText(name) + "]"));
+			MutableComponent component = Data.convertJSONToComponent("[" + Data.createText(name) + "]");
+
+			if (component == null) {
+
+				return null;
+
+			}
+
+			entity.setCustomName(component);
 
 			if (name.contains(" / ") == true) {
 
@@ -1050,15 +1032,9 @@ public class GameUtils {
 
 		}
 
-		public static ItemStack fromID (String id) {
+		public static ItemStack fromID (ServerLevel level_server, String id) {
 
-			/*
-			(1.20.1)
-			return ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(id)).getDefaultInstance();
-			(1.21.1)
-			return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)).getDefaultInstance();
-			*/
-			return ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(id)).getDefaultInstance();
+			return level_server.registryAccess().registryOrThrow(Registries.ITEM).get(ResourceLocation.parse(id)).getDefaultInstance();
 
 		}
 
@@ -1170,11 +1146,10 @@ public class GameUtils {
 
 		}
 
-		public static int getHeightWorldGen (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, int posX, int posZ, String type_normal, String type_world_gen) {
+		public static int getHeightWorldGen (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, int posX, int posZ, String type_normal, String type_outside) {
 
 			BlockPos pos = new BlockPos(posX, 0, posZ);
 			ChunkPos chunk_pos = new ChunkPos(pos);
-			Heightmap.Types type = Heightmap.Types.valueOf(type_world_gen);
 
 			if (level_accessor.hasChunk(chunk_pos.x, chunk_pos.z) == true) {
 
@@ -1182,7 +1157,7 @@ public class GameUtils {
 
 					if (Space.testChunkStatus(level_accessor, chunk_pos, "carvers") == true) {
 
-						return level_accessor.getChunk(chunk_pos.x, chunk_pos.z).getHeight(type, pos.getX(), pos.getZ()) + 1;
+						return level_accessor.getChunk(chunk_pos.x, chunk_pos.z).getHeight(Heightmap.Types.valueOf(type_normal), pos.getX(), pos.getZ()) + 1;
 
 					}
 
@@ -1194,7 +1169,7 @@ public class GameUtils {
 
 			}
 
-			return chunk_generator.getBaseHeight(posX, posZ, type, level_accessor, level_server.getChunkSource().randomState());
+			return chunk_generator.getBaseHeight(posX, posZ, Heightmap.Types.valueOf(type_outside), level_accessor, level_server.getChunkSource().randomState());
 
 		}
 
@@ -1204,7 +1179,7 @@ public class GameUtils {
 
 		public static boolean test (Holder<Biome> biome, String test) {
 
-			if (test.equals("none") == true) {
+			if (test.isEmpty() == true) {
 
 				return false;
 
@@ -1214,13 +1189,15 @@ public class GameUtils {
 
 			} else {
 
-				String biome_centerID = toID(biome);
+				String key = biome + " -> " + test;
 
-				if (CacheManager.DataLogic.existNormal("biome_test", biome + " -> " + test) == false) {
+				if (CacheManager.DataLogic.existNormal("test_biome", key) == false) {
 
 					boolean result = false;
 
 					{
+
+						String biome_centerID = toID(biome);
 
 						for (String split : test.split(" / ")) {
 
@@ -1284,11 +1261,27 @@ public class GameUtils {
 
 					}
 
-					CacheManager.DataLogic.setNormal("biome_test", biome + " -> " + test, result);
+					CacheManager.DataLogic.setNormal("test_biome", key, result);
 
 				}
 
-				return CacheManager.DataLogic.getNormal("biome_test").get(biome + " -> " + test);
+				// TODO -> Remove this debug
+
+				Map<String, Boolean> test_biome = CacheManager.DataLogic.getNormal("test_biome");
+
+				if (test_biome == null) {
+
+					Core.logger.error("No Main -----> " + key);
+
+				}
+
+				if (test_biome.get(key) == null) {
+
+					Core.logger.error("No Key -----> " + key);
+
+				}
+
+				return test_biome.get(key);
 
 			}
 
@@ -1466,9 +1459,10 @@ public class GameUtils {
 			} catch (Exception exception) {
 
 				OutsideUtils.exception(new Exception(), exception, "");
-				return MutableComponent.create(ComponentContents.EMPTY);
 
 			}
+
+			return null;
 
 		}
 
@@ -1501,7 +1495,7 @@ public class GameUtils {
 
 					split = scan.split(" = ");
 
-					if (split[1].equals("none") == true) {
+					if (split[1].isEmpty() == true || split[1].equals("none") == true) {
 
 						continue;
 
@@ -1633,19 +1627,11 @@ public class GameUtils {
 
 			/*
 			(1.20.1) (1.21.1)
-			String data = entity.getPersistentData().getCompound(Core.mod_id).getString(name);
+			return entity.getPersistentData().getCompound(Core.mod_id).getString(name);
 			(1.21.8)
-			String data = entity.getPersistentData().getCompound(Core.mod_id).getString(name).get();
+			return entity.getPersistentData().getCompound(Core.mod_id).getString(name).get();
 			*/
-			String data = entity.getPersistentData().getCompound(Core.mod_id).getString(name);
-
-			if (data.isEmpty() == true) {
-
-				return "none";
-
-			}
-
-			return data;
+			return entity.getPersistentData().getCompound(Core.mod_id).getString(name);
 
 		}
 
@@ -1953,7 +1939,7 @@ public class GameUtils {
 			(1.20.1)
 			Item.getSlot(entity, slot).getOrCreateTag().merge(tag);
 			(1.21.1)
-			CustomData.update(DataComponents.CUSTOM_DATA, Item.getSlot(entity, slot), create -> test.merge(tag));
+			CustomData.update(DataComponents.CUSTOM_DATA, Item.getSlot(entity, slot), create -> create.merge(tag));
 			*/
 			Item.getSlot(entity, slot).getOrCreateTag().merge(tag);
 
