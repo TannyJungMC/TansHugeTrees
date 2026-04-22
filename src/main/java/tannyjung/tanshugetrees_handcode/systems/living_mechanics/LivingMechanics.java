@@ -44,9 +44,11 @@ public class LivingMechanics {
 
         }
 
+        int[] rotation_mirrored = new int[]{(int) GameUtils.Data.getEntityNumber(entity, "rotation"), (int) GameUtils.Data.getEntityNumber(entity, "mirrored")};
+        boolean have_center_block = level_accessor.getBlockState(center_pos).isAir() == false;
         String path_settings = GameUtils.Data.getEntityText(entity, "tree_settings");
         short[] leaves_types = Caches.TreeSettings.getLeavesType(path_settings);
-        Map<Short, BlockState> blocks = Caches.TreeSettings.getBlock(path_settings);
+        Map<Short, BlockState> blocks = Caches.TreeSettings.getBlock(level_server, path_settings);
         Set<Block> leaves = new HashSet<>();
 
         // Get Leaves
@@ -85,8 +87,6 @@ public class LivingMechanics {
 
         }
 
-        boolean have_center_block = level_accessor.getBlockState(center_pos).isAir() == false;
-        int[] rotation_mirrored = new int[]{(int) GameUtils.Data.getEntityNumber(entity, "rotation"), (int) GameUtils.Data.getEntityNumber(entity, "mirrored")};
         int biome_type = 0;
 
         // Biome Type Test
@@ -105,13 +105,6 @@ public class LivingMechanics {
             }
 
         }
-
-        BlockPos pre_pos = null;
-        BlockState pre_block = null;
-        BlockPos pos = null;
-        BlockState block = null;
-        String[] pre_block_data = null;
-        int leaves_type = 0;
 
         String path_storage = "";
         String chosen = "";
@@ -135,90 +128,152 @@ public class LivingMechanics {
 
         }
 
-        int process = 0;
-        int process_save_min = (int) GameUtils.Data.getEntityNumber(entity, "process_save");
-        int process_save_max = process_save_min + Handcode.Config.living_mechanics_process_limit;
+        short[] pre_block_data = new short[]{0, 0, 0, 0};
 
-        int loop = 0;
-        short type = 0;
-        short posX = 0;
-        short posY = 0;
-        short posZ = 0;
+        // Get Pre Block Data
+        {
 
-        for (short scan : Caches.TreeShape.getTreeShapeData(path_storage + "|" + chosen)) {
+            String[] split = GameUtils.Data.getEntityText(entity, "pre_block").split("/");
 
-            // Loop Skip
-            {
+            if (split.length > 1) {
 
-                loop = loop + 1;
+                try {
 
-                if (loop == 1) {
+                    pre_block_data[0] = Short.parseShort(split[0]);
+                    pre_block_data[1] = Short.parseShort(split[1]);
+                    pre_block_data[2] = Short.parseShort(split[2]);
+                    pre_block_data[3] = Short.parseShort(split[3]);
 
-                    type = scan;
+                } catch (Exception exception) {
 
-                } else if (loop == 2) {
-
-                    posX = scan;
-
-                } else if (loop == 3) {
-
-                    posY = scan;
-
-                } else {
-
-                    posZ = scan;
-                    loop = 0;
-
-                }
-
-                if (loop > 0) {
-
-                    continue;
+                    OutsideUtils.exception(new Exception(), exception, "");
 
                 }
 
             }
 
-            // Process Limit
-            {
+        }
 
-                if (Handcode.Config.living_mechanics_process_limit > 0) {
+        // Scan
+        {
 
-                    process = process + 1;
+            int process = 0;
+            int process_save_min = (int) GameUtils.Data.getEntityNumber(entity, "process_save");
+            int process_save_max = process_save_min + Handcode.Config.living_mechanics_process_limit;
+            BlockPos pre_pos = null;
+            BlockState pre_block = null;
+            BlockPos pos = null;
+            BlockState block = null;
+            int leaves_type = 0;
+            boolean break_by_process = false;
 
-                    if (process < process_save_min) {
+            int loop = 0;
+            short type = 0;
+            short posX = 0;
+            short posY = 0;
+            short posZ = 0;
+
+            for (short scan : Caches.TreeShape.getTreeShapeData(path_storage + "|" + chosen)) {
+
+                // Loop Skip
+                {
+
+                    loop = loop + 1;
+
+                    if (loop == 1) {
+
+                        type = scan;
+
+                    } else if (loop == 2) {
+
+                        posX = scan;
+
+                    } else if (loop == 3) {
+
+                        posY = scan;
+
+                    } else {
+
+                        posZ = scan;
+                        loop = 0;
+
+                    }
+
+                    if (loop > 0) {
 
                         continue;
-
-                    } else if (process_save_max <= process) {
-
-                        GameUtils.Data.setEntityNumber(entity, "process_save", process);
-                        return;
 
                     }
 
                 }
 
-            }
+                // Process Limit
+                {
 
-            if (OutsideUtils.Math.isNumberStartWith(type, 1) == true) {
+                    if (Handcode.Config.living_mechanics_process_limit > 0) {
 
-                if (OutsideUtils.Math.isNumberStartWith(type, 120) == false) {
+                        process = process + 1;
 
-                    GameUtils.Data.setEntityText(entity, "pre_block", type + "/" + posX + "/" + posY + "/" + posZ);
+                        if (process < process_save_min) {
 
-                } else {
+                            continue;
 
-                    // Get Previous Block Data
-                    {
+                        } else if (process_save_max <= process) {
 
-                        pre_block_data = GameUtils.Data.getEntityText(entity, "pre_block").split("/");
-                        pre_pos = new BlockPos(Integer.parseInt(pre_block_data[1]), Integer.parseInt(pre_block_data[2]), Integer.parseInt(pre_block_data[3]));
-                        pre_pos = OutsideUtils.convertPosRotationMirrored(pre_pos, rotation_mirrored);
-                        pre_pos = pre_pos.offset(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
-                        pre_block = blocks.get(Short.parseShort(pre_block_data[0]));
+                            GameUtils.Data.setEntityNumber(entity, "process_save", process);
+                            break_by_process = true;
+                            break;
 
-                        if (pre_block == null) {
+                        }
+
+                    }
+
+                }
+
+                if (OutsideUtils.Math.isNumberStartWith(type, 1) == true) {
+
+                    if (OutsideUtils.Math.isNumberStartWith(type, 120) == false) {
+
+                        pre_block_data[0] = type;
+                        pre_block_data[1] = posX;
+                        pre_block_data[2] = posY;
+                        pre_block_data[3] = posZ;
+
+                    } else {
+
+                        // Get Previous Block Data
+                        {
+
+                            pre_pos = new BlockPos(pre_block_data[1], pre_block_data[2], pre_block_data[3]);
+                            pre_pos = OutsideUtils.convertPosRotationMirrored(pre_pos, rotation_mirrored);
+                            pre_pos = pre_pos.offset(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
+                            pre_block = blocks.get(pre_block_data[0]);
+
+                            if (pre_block == null) {
+
+                                return;
+
+                            }
+
+                            // Only Loaded Chunks
+                            {
+
+                                if (level_server.isLoaded(pre_pos) == false) {
+
+                                    return;
+
+                                }
+
+                            }
+
+                        }
+
+                        pos = new BlockPos(posX, posY, posZ);
+                        pos = OutsideUtils.convertPosRotationMirrored(pos, rotation_mirrored);
+                        pos = pos.offset(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
+                        block = blocks.get(type);
+
+                        if (block == null) {
 
                             return;
 
@@ -227,7 +282,7 @@ public class LivingMechanics {
                         // Only Loaded Chunks
                         {
 
-                            if (level_server.isLoaded(pre_pos) == false) {
+                            if (level_server.isLoaded(pos) == false) {
 
                                 return;
 
@@ -235,47 +290,25 @@ public class LivingMechanics {
 
                         }
 
-                    }
+                        if (level_accessor.getBlockState(pre_pos).getBlock() != pre_block.getBlock()) {
 
-                    pos = new BlockPos(posX, posY, posZ);
-                    pos = OutsideUtils.convertPosRotationMirrored(pos, rotation_mirrored);
-                    pos = pos.offset(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
-                    block = blocks.get(type);
+                            // Missing Twig
+                            {
 
-                    if (block == null) {
+                                if (can_leaves_decay == true) {
 
-                        return;
+                                    if (level_accessor.getBlockState(pos).getBlock() == block.getBlock()) {
 
-                    }
+                                        if (GameUtils.Tile.test(block, "#minecraft:leaves") == true) {
 
-                    // Only Loaded Chunks
-                    {
+                                            block = GameUtils.Tile.setPropertyLogic(block, "persistent", false);
+                                            GameUtils.Tile.set(level_accessor, pos, block, false);
 
-                        if (level_server.isLoaded(pos) == false) {
+                                        } else {
 
-                            return;
+                                            level_accessor.destroyBlock(pos, false);
 
-                        }
-
-                    }
-
-                    if (level_accessor.getBlockState(pre_pos).getBlock() != pre_block.getBlock()) {
-
-                        // Missing Twig
-                        {
-
-                            if (can_leaves_decay == true) {
-
-                                if (level_accessor.getBlockState(pos).getBlock() == block.getBlock()) {
-
-                                    if (GameUtils.Tile.test(block, "#minecraft:leaves") == true) {
-
-                                        block = GameUtils.Tile.setPropertyLogic(block, "persistent", false);
-                                        GameUtils.Tile.set(level_accessor, pos, block, false);
-
-                                    } else {
-
-                                        level_accessor.destroyBlock(pos, false);
+                                        }
 
                                     }
 
@@ -283,23 +316,23 @@ public class LivingMechanics {
 
                             }
 
-                        }
+                        } else {
 
-                    } else {
+                            if (can_leaves_drop == true || can_leaves_regrow == true) {
 
-                        if (can_leaves_drop == true || can_leaves_regrow == true) {
+                                if (type == 1201) {
 
-                            if (type == 1201) {
+                                    leaves_type = 1;
 
-                                leaves_type = 1;
+                                } else {
 
-                            } else {
+                                    leaves_type = 2;
 
-                                leaves_type = 2;
+                                }
+
+                                update(level_accessor, level_server, entity, leaves, pos, block, leaves_type, biome_type, have_center_block, can_leaves_drop, can_leaves_regrow);
 
                             }
-
-                            update(level_accessor, level_server, entity, leaves, pos, block, leaves_type, biome_type, have_center_block, can_leaves_drop, can_leaves_regrow);
 
                         }
 
@@ -309,38 +342,46 @@ public class LivingMechanics {
 
             }
 
-        }
+            if (break_by_process == true) {
 
-        // At the end of the file
-        {
-
-            GameUtils.Data.setEntityNumber(entity, "process_save", 0);
-
-            if (GameUtils.Data.getEntityLogic(entity, "test_alive") == true) {
-
-                GameUtils.Data.setEntityLogic(entity, "test_alive", false);
+                GameUtils.Data.setEntityText(entity, "pre_block", pre_block_data[0] + "/" + pre_block_data[1] + "/" + pre_block_data[2] + "/" + pre_block_data[3]);
 
             } else {
 
-                if (have_center_block == true) {
+                // At the end of the file
+                {
 
-                    if (leaves_types[0] == 1 && leaves_types[1] == 1) {
+                    GameUtils.Data.setEntityNumber(entity, "process_save", 0);
 
-                        if (TanshugetreesModVariables.MapVariables.get(level_accessor).season.equals("Summer") == true) {
+                    if (GameUtils.Data.getEntityLogic(entity, "test_alive") == true) {
+
+                        GameUtils.Data.setEntityLogic(entity, "test_alive", false);
+
+                    } else {
+
+                        if (have_center_block == true) {
+
+                            if (leaves_types[0] == 1 && leaves_types[1] == 1) {
+
+                                if (TanshugetreesModVariables.MapVariables.get(level_accessor).season.equals("Summer") == true) {
+
+                                    entity.discard();
+
+                                }
+
+                            } else if (Math.random() < 0.1) {
+
+                                entity.discard();
+
+                            }
+
+                        } else {
 
                             entity.discard();
 
                         }
 
-                    } else if (Math.random() < 0.1) {
-
-                        entity.discard();
-
                     }
-
-                } else {
-
-                    entity.discard();
 
                 }
 
@@ -649,7 +690,7 @@ public class LivingMechanics {
 
             } else {
 
-                LeafLitter.create(level_server, level_server, pos.above(), GameUtils.Tile.fromText(GameUtils.Data.getEntityText(entity, "block")), false);
+                LeafLitter.create(level_server, level_server, pos.above(), GameUtils.Tile.fromText(level_server, GameUtils.Data.getEntityText(entity, "block")), false);
                 entity.discard();
 
             }
@@ -676,7 +717,7 @@ public class LivingMechanics {
 
             } else {
 
-                LeafLitter.create(level_server, level_server, pos.above(), GameUtils.Tile.fromText(GameUtils.Data.getEntityText(entity, "block")), true);
+                LeafLitter.create(level_server, level_server, pos.above(), GameUtils.Tile.fromText(level_server, GameUtils.Data.getEntityText(entity, "block")), true);
                 entity.discard();
 
             }
