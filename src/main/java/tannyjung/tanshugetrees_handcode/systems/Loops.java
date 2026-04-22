@@ -50,50 +50,7 @@ public class Loops {
 
     public static void second (LevelAccessor level_accessor, ServerLevel level_server) {
 
-        boolean loop_delayed_command = GameUtils.Mob.getAtEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-delayed_command").isEmpty() == false;
         have_tree_generator = GameUtils.Mob.getAtEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-tree_generator").isEmpty() == false;
-
-        // Developer Mode
-        {
-
-            if (Handcode.Config.developer_mode == true) {
-
-                for (Entity entity : GameUtils.Mob.getAtEverywhere(level_server, "", "TANSHUGETREES")) {
-
-                    GameUtils.Misc.spawnParticle(level_server, entity.position(), 0, 0, 0, 0, 1, "minecraft:end_rod");
-
-                }
-
-                // Delayed Command
-                {
-
-                    if (loop_delayed_command == true) {
-
-                        GameUtils.Score.set(level_server, "TANSHUGETREES", "delayed_command", GameUtils.Mob.getAtEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-delayed_command").size());
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        // Delayed Command
-        {
-
-            if (loop_delayed_command == true) {
-
-                for (Entity entity : GameUtils.Mob.getAtEverywhere(level_server, "", "TANSHUGETREES-delayed_command")) {
-
-                    TXTFunction.runDelayedCommand(level_server, entity);
-
-                }
-
-            }
-
-        }
-
         LivingMechanics.Loop.runSecond(level_server);
 
     }

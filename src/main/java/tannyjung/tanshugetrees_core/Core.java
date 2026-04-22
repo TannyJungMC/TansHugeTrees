@@ -2,6 +2,7 @@ package tannyjung.tanshugetrees_core;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import org.apache.logging.log4j.Logger;
@@ -94,19 +95,15 @@ public class Core {
             // Start Message
             {
 
-                if (message == true) {
+                if (message == true && config == true) {
 
-                    if (config == true) {
+                    if (level_server == null) {
 
-                        if (level_server == null) {
+                        logger.info("Restarting the mod...");
 
-                            logger.info("Restarting the mod...");
+                    } else {
 
-                        } else {
-
-                            GameUtils.Misc.sendChatMessage(level_server, "Restarting the mod... / gray");
-
-                        }
+                        GameUtils.Misc.sendChatMessage(level_server, "Restarting the mod... / gray");
 
                     }
 
@@ -132,28 +129,24 @@ public class Core {
 
                 }
 
-                Handcode.repairData();
+                Handcode.repairData(level_server);
 
             }
 
             // End Message
             {
 
-                if (message == true) {
+                if (message == true && config == true) {
 
                     CustomPackOrganizing.Error.sendMessage(level_server);
 
-                    if (config == true) {
+                    if (level_server == null) {
 
-                        if (level_server == null) {
+                        logger.info("Restarted and cleared main caches about {}", cache_size);
 
-                            logger.info("Restarted and cleared main caches about {}", cache_size);
+                    } else {
 
-                        } else {
-
-                            GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches about " + cache_size + " / gray");
-
-                        }
+                        GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches about " + cache_size + " / gray");
 
                     }
 
@@ -226,11 +219,7 @@ public class Core {
 
         public static void lock () {
 
-            synchronized (lock) {
-
-                global_locking = true;
-
-            }
+            global_locking = true;
 
         }
 
@@ -329,6 +318,22 @@ public class Core {
 
         private static void loopSecond (LevelAccessor level_accessor, ServerLevel level_server) {
 
+            // Developer Mode
+            {
+
+                if (Handcode.Config.developer_mode == true) {
+
+                    for (Entity entity : GameUtils.Mob.getAtEverywhere(level_server, "", Core.mod_id_big)) {
+
+                        GameUtils.Misc.spawnParticle(level_server, entity.position(), 0, 0, 0, 0, 1, "minecraft:end_rod");
+
+                    }
+
+                }
+
+            }
+
+            TXTFunction.loop(level_server);
             Loops.second(level_accessor, level_server);
             minute = minute + 1;
 

@@ -52,10 +52,6 @@
   "block.tanshugetrees.sapling_yokai": "Sapling : Yokai",
   "block.tanshugetrees.sapling_yokai.description_1": "§8This is a tree generator sapling. It may take long time to generate!",
   "block.tanshugetrees.sapling_yokai.description_0": "§8--------------------------------------------------",
-  "block.tanshugetrees.tree_generator": "Tree Generator (Unset)",
-  "block.tanshugetrees.tree_generator.description_1": "§8This is a tree generator sapling. It may take long time to generate!",
-  "block.tanshugetrees.tree_generator.description_0": "§8--------------------------------------------------",
-  "block.tanshugetrees.tree_generator.description_2": "§8--------------------------------------------------",
   "block.tanshugetrees.sapling_redwood.description_2": "§8--------------------------------------------------",
   "block.tanshugetrees.sapling_redwood.description_1": "§8This is a tree generator sapling. It may take long time to generate!",
   "block.tanshugetrees.sapling_redwood": "Sapling : Redwood",
@@ -151,8 +147,14 @@
   "block.tanshugetrees.sapling_catalyst.description_1": "§8This is a tree generator sapling. It may take long time to generate!",
   "block.tanshugetrees.sapling_catalyst.description_0": "§8--------------------------------------------------",
   "gui.tanshugetrees.tree_summoner_staff_gui.label_currently_not_working": "Currently not working",
-  "gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr": "Example : presets/#TannyJung-Main-Pack/redwood",
+  "gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr": "Example : presets/#TannyJung-Main-Pack/redwood/redwood",
   "gui.tanshugetrees.tree_summoner_staff_gui.tooltip_theres_a_bug_on_1201_that_you": "There\u0027s a bug on 1.20.1 that your preset path here not load when reopen the GUI, click this to manually restore that.",
-  "gui.tanshugetrees.tree_summoner_staff_gui.label_the_path_will_be_test_from_extra": "This path will go to extracted packs first. then",
-  "gui.tanshugetrees.tree_summoner_staff_gui.label_from_unextracted_packs_if_failed": "go to unextracted packs if failed."
+  "gui.tanshugetrees.tree_summoner_staff_gui.label_the_path_will_be_test_from_extra": "temporary folder, found in dev folder inside the config. If the pack is",
+  "gui.tanshugetrees.tree_summoner_staff_gui.label_from_unextracted_packs_if_failed": "go to unextracted packs if failed.",
+  "gui.tanshugetrees.tree_summoner_staff_gui.label_path_of_preset_inside_the_tempor": "To spawn a tree, write down correct preset path. This path is same as in",
+  "gui.tanshugetrees.tree_summoner_staff_gui.label_is_extracted_then_it_will_go_ge": "extracted, then it will go get preset in extracted folder first.",
+  "block.tanshugetrees.custom_sapling": "Tree Generator (Unset)",
+  "block.tanshugetrees.custom_sapling.description_2": "§8--------------------------------------------------",
+  "block.tanshugetrees.custom_sapling.description_1": "§8This is a tree generator sapling. It may take long time to generate!",
+  "block.tanshugetrees.custom_sapling.description_0": "§8--------------------------------------------------"
 }

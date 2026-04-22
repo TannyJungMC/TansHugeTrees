@@ -37,7 +37,7 @@ public class Sapling {
 
                     if (creative_mode == true || Math.random() < 0.05) {
 
-                        if (level_accessor.getBlockState(pos).getBlock() == TanshugetreesModBlocks.TREE_GENERATOR.get()) {
+                        if (level_accessor.getBlockState(pos).getBlock() == TanshugetreesModBlocks.CUSTOM_SAPLING.get()) {
 
                             // Custom Sapling
                             {

@@ -51,7 +51,6 @@ public class TanshugetreesModItems {
 	public static final RegistryObject<Item> BLOCK_PLACER_LIMB_OUTER;
 	public static final RegistryObject<Item> SAPLING_HALCYON;
 	public static final RegistryObject<Item> SAPLING_YOKAI;
-	public static final RegistryObject<Item> TREE_GENERATOR;
 	public static final RegistryObject<Item> SAPLING_REDWOOD;
 	public static final RegistryObject<Item> SAPLING_MALUS_DOMESTICA;
 	public static final RegistryObject<Item> SAPLING_WENDY;
@@ -74,6 +73,7 @@ public class TanshugetreesModItems {
 	public static final RegistryObject<Item> SAPLING_BEE_KEEPER;
 	public static final RegistryObject<Item> SAPLING_WALKING_TREE;
 	public static final RegistryObject<Item> SAPLING_CATALYST;
+	public static final RegistryObject<Item> CUSTOM_SAPLING;
 	static {
 		WAYPOINT_FLOWER = block(TanshugetreesModBlocks.WAYPOINT_FLOWER);
 		BLOCK_PLACER_TAPROOT_OUTER = block(TanshugetreesModBlocks.BLOCK_PLACER_TAPROOT_OUTER);
@@ -110,7 +110,6 @@ public class TanshugetreesModItems {
 		BLOCK_PLACER_LIMB_OUTER = block(TanshugetreesModBlocks.BLOCK_PLACER_LIMB_OUTER);
 		SAPLING_HALCYON = block(TanshugetreesModBlocks.SAPLING_HALCYON);
 		SAPLING_YOKAI = block(TanshugetreesModBlocks.SAPLING_YOKAI);
-		TREE_GENERATOR = block(TanshugetreesModBlocks.TREE_GENERATOR);
 		SAPLING_REDWOOD = block(TanshugetreesModBlocks.SAPLING_REDWOOD);
 		SAPLING_MALUS_DOMESTICA = block(TanshugetreesModBlocks.SAPLING_MALUS_DOMESTICA);
 		SAPLING_WENDY = block(TanshugetreesModBlocks.SAPLING_WENDY);
@@ -133,6 +132,7 @@ public class TanshugetreesModItems {
 		SAPLING_BEE_KEEPER = block(TanshugetreesModBlocks.SAPLING_BEE_KEEPER);
 		SAPLING_WALKING_TREE = block(TanshugetreesModBlocks.SAPLING_WALKING_TREE);
 		SAPLING_CATALYST = block(TanshugetreesModBlocks.SAPLING_CATALYST);
+		CUSTOM_SAPLING = block(TanshugetreesModBlocks.CUSTOM_SAPLING);
 	}
 
 	// Start of user code block custom items

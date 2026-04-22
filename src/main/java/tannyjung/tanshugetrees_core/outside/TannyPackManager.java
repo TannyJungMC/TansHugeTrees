@@ -538,11 +538,11 @@ public class TannyPackManager {
 
                         if (level_server != null) {
 
-                            GameUtils.Misc.sendChatMessage(level_server, "Changed to built-in version instead, which maybe outdated. / gray");
+                            GameUtils.Misc.sendChatMessage(level_server, "Switch to built-in version instead, which maybe outdated. / gray");
 
                         } else {
 
-                            Core.logger.info("Changed to built-in version instead, which maybe outdated.");
+                            Core.logger.info("Switch to built-in version instead, which maybe outdated.");
 
                         }
 

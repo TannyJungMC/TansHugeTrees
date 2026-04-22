@@ -49,7 +49,6 @@ public class TanshugetreesModBlocks {
 	public static final RegistryObject<Block> BLOCK_PLACER_LIMB_OUTER;
 	public static final RegistryObject<Block> SAPLING_HALCYON;
 	public static final RegistryObject<Block> SAPLING_YOKAI;
-	public static final RegistryObject<Block> TREE_GENERATOR;
 	public static final RegistryObject<Block> SAPLING_REDWOOD;
 	public static final RegistryObject<Block> SAPLING_MALUS_DOMESTICA;
 	public static final RegistryObject<Block> SAPLING_WENDY;
@@ -71,6 +70,7 @@ public class TanshugetreesModBlocks {
 	public static final RegistryObject<Block> SAPLING_BEE_KEEPER;
 	public static final RegistryObject<Block> SAPLING_WALKING_TREE;
 	public static final RegistryObject<Block> SAPLING_CATALYST;
+	public static final RegistryObject<Block> CUSTOM_SAPLING;
 	static {
 		WAYPOINT_FLOWER = REGISTRY.register("waypoint_flower", WaypointFlowerBlock::new);
 		BLOCK_PLACER_TAPROOT_OUTER = REGISTRY.register("block_placer_taproot_outer", BlockPlacerTaprootOuterBlock::new);
@@ -107,7 +107,6 @@ public class TanshugetreesModBlocks {
 		BLOCK_PLACER_LIMB_OUTER = REGISTRY.register("block_placer_limb_outer", BlockPlacerLimbOuterBlock::new);
 		SAPLING_HALCYON = REGISTRY.register("sapling_halcyon", SaplingHalcyonBlock::new);
 		SAPLING_YOKAI = REGISTRY.register("sapling_yokai", SaplingYokaiBlock::new);
-		TREE_GENERATOR = REGISTRY.register("tree_generator", TreeGeneratorBlock::new);
 		SAPLING_REDWOOD = REGISTRY.register("sapling_redwood", SaplingRedwoodBlock::new);
 		SAPLING_MALUS_DOMESTICA = REGISTRY.register("sapling_malus_domestica", SaplingMalusDomesticaBlock::new);
 		SAPLING_WENDY = REGISTRY.register("sapling_wendy", SaplingWendyBlock::new);
@@ -129,6 +128,7 @@ public class TanshugetreesModBlocks {
 		SAPLING_BEE_KEEPER = REGISTRY.register("sapling_bee_keeper", SaplingBeeKeeperBlock::new);
 		SAPLING_WALKING_TREE = REGISTRY.register("sapling_walking_tree", SaplingWalkingTreeBlock::new);
 		SAPLING_CATALYST = REGISTRY.register("sapling_catalyst", SaplingCatalystBlock::new);
+		CUSTOM_SAPLING = REGISTRY.register("custom_sapling", CustomSaplingBlock::new);
 	}
 	// Start of user code block custom blocks
 	// End of user code block custom blocks

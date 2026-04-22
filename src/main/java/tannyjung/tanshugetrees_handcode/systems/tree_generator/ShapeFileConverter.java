@@ -44,14 +44,22 @@ public class ShapeFileConverter {
 
         if (level_accessor instanceof ServerLevel level_server) {
 
-            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == true) {
+            if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count != 0) {
 
-                GameUtils.Misc.sendChatMessage(level_server, "Turned OFF / gray");
-                TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = false;
+                TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter_count = 0;
 
             } else {
 
-                GameUtils.Misc.sendChatMessage(level_server, "Already Turned OFF / gray");
+                if (TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter == true) {
+
+                    GameUtils.Misc.sendChatMessage(level_server, "Turned OFF / gray");
+                    TanshugetreesModVariables.MapVariables.get(level_accessor).shape_file_converter = false;
+
+                } else {
+
+                    GameUtils.Misc.sendChatMessage(level_server, "Already Turned OFF / gray");
+
+                }
 
             }
 
@@ -130,29 +138,29 @@ public class ShapeFileConverter {
                         .append("can_leaves_drop = ").append(GameUtils.Data.getEntityLogic(entity, "can_leaves_drop")).append("\n")
                         .append("can_leaves_regrow = ").append(GameUtils.Data.getEntityLogic(entity, "can_leaves_regrow")).append("\n")
                         .append("\n")
-                        .append(settingsWriteBlock(entity, 110, "taproot"))
-                        .append(settingsWriteBlock(entity, 111, "secondary_root"))
-                        .append(settingsWriteBlock(entity, 112, "tertiary_root"))
-                        .append(settingsWriteBlock(entity, 113, "fine_root"))
-                        .append(settingsWriteBlock(entity, 114, "trunk"))
-                        .append(settingsWriteBlock(entity, 115, "bough"))
-                        .append(settingsWriteBlock(entity, 116, "branch"))
-                        .append(settingsWriteBlock(entity, 117, "limb"))
-                        .append(settingsWriteBlock(entity, 118, "twig"))
-                        .append(settingsWriteBlock(entity, 119, "sprig"))
-                        .append(settingsWriteBlock(entity, 120, "leaves"))
+                        .append(settingsWriteBlock(entity, false, 110, "taproot"))
+                        .append(settingsWriteBlock(entity, false, 111, "secondary_root"))
+                        .append(settingsWriteBlock(entity, false, 112, "tertiary_root"))
+                        .append(settingsWriteBlock(entity, false, 113, "fine_root"))
+                        .append(settingsWriteBlock(entity, false, 114, "trunk"))
+                        .append(settingsWriteBlock(entity, false, 115, "bough"))
+                        .append(settingsWriteBlock(entity, false, 116, "branch"))
+                        .append(settingsWriteBlock(entity, false, 117, "limb"))
+                        .append(settingsWriteBlock(entity, false, 118, "twig"))
+                        .append(settingsWriteBlock(entity, false, 119, "sprig"))
+                        .append(settingsWriteBlock(entity, false, 120, "leaves"))
                         .append("\n")
-                        .append("Function fs 210 = ").append(GameUtils.Data.getEntityText(entity, "function_start")).append("\n")
-                        .append("Function fe 220 = ").append(GameUtils.Data.getEntityText(entity, "function_end")).append("\n")
-                        .append("Function f1 201 = ").append(GameUtils.Data.getEntityText(entity, "function_way1")).append("\n")
-                        .append("Function f2 202 = ").append(GameUtils.Data.getEntityText(entity, "function_way2")).append("\n")
-                        .append("Function f3 203 = ").append(GameUtils.Data.getEntityText(entity, "function_way3")).append("\n")
-                        .append("Function f4 204 = ").append(GameUtils.Data.getEntityText(entity, "function_way4")).append("\n")
-                        .append("Function f5 205 = ").append(GameUtils.Data.getEntityText(entity, "function_way5")).append("\n")
-                        .append("Function f5 206 = ").append(GameUtils.Data.getEntityText(entity, "function_way6")).append("\n")
-                        .append("Function f5 207 = ").append(GameUtils.Data.getEntityText(entity, "function_way7")).append("\n")
-                        .append("Function f5 208 = ").append(GameUtils.Data.getEntityText(entity, "function_way8")).append("\n")
-                        .append("Function f5 209 = ").append(GameUtils.Data.getEntityText(entity, "function_way9")).append("\n")
+                        .append(settingsWriteBlock(entity, true, 210, "start"))
+                        .append(settingsWriteBlock(entity, true, 220, "end"))
+                        .append(settingsWriteBlock(entity, true, 201, "way1"))
+                        .append(settingsWriteBlock(entity, true, 202, "way2"))
+                        .append(settingsWriteBlock(entity, true, 203, "way3"))
+                        .append(settingsWriteBlock(entity, true, 204, "way4"))
+                        .append(settingsWriteBlock(entity, true, 205, "way5"))
+                        .append(settingsWriteBlock(entity, true, 206, "way6"))
+                        .append(settingsWriteBlock(entity, true, 207, "way7"))
+                        .append(settingsWriteBlock(entity, true, 208, "way8"))
+                        .append(settingsWriteBlock(entity, true, 209, "way9"))
                 ;
 
             }
@@ -163,80 +171,98 @@ public class ShapeFileConverter {
 
     }
 
-    private static String settingsWriteBlock (Entity entity, int id, String type) {
+    private static String settingsWriteBlock (Entity entity, boolean is_function, int id, String type) {
 
-        String retuen_text = type.substring(0, 2);
-        String keep = "";
+        String write = "";
 
-        if (GameUtils.Data.getEntityLogic(entity, type + "_replace") == false) {
+        if (is_function == true) {
 
-            keep = " keep";
-
-        }
-
-        if (type.equals("leaves") == false) {
-
-            // General Blocks
+            // Function
             {
 
-                String outer = GameUtils.Data.getEntityText(entity, type + "_outer") + keep;
-                String inner = GameUtils.Data.getEntityText(entity, type + "_inner") + keep;
-                String core = GameUtils.Data.getEntityText(entity, type + "_core") + keep;
+                if (type.startsWith("way") == true) {
 
-                if (outer.equals("none" + keep) == true) {
+                    write = type.substring(3, 4);
 
-                    outer = "none";
+                } else {
 
-                }
-
-                if (inner.equals("none" + keep) == true) {
-
-                    inner = "none";
+                    write = type.substring(0, 1);
 
                 }
 
-                if (core.equals("none" + keep) == true) {
+                String function = GameUtils.Data.getEntityText(entity, "function_" + type);
 
-                    core = "none";
+                if (function.isEmpty() == true) {
+
+                    function = "none";
 
                 }
 
-                outer = "Block " + retuen_text + "o " + id + "1 = " + outer + "\n";
-                inner = "Block " + retuen_text + "i " + id + "2 = " + inner + "\n";
-                core = "Block " + retuen_text + "c " + id + "3 = " + core + "\n";
-                retuen_text = outer + inner + core;
+                write = "Function f" + write + " " + id + " = " + function + "\n";
 
             }
 
         } else {
 
-            // Leaves
+            // Block
             {
 
-                String leaves1 = GameUtils.Data.getEntityText(entity, "leaves1") + keep;
-                String leaves2 = GameUtils.Data.getEntityText(entity, "leaves2") + keep;
+                write = type.substring(0, 2);
+                String keep = "";
 
-                if (leaves1.equals("none" + keep) == true) {
+                if (GameUtils.Data.getEntityLogic(entity, type + "_replace") == false) {
 
-                    leaves1 = "none";
-
-                }
-
-                if (leaves2.equals("none" + keep) == true) {
-
-                    leaves2 = "none";
+                    keep = " keep";
 
                 }
 
-                leaves1 = "Block " + retuen_text + "1 " + id + "1 = " + leaves1 + "\n";
-                leaves2 = "Block " + retuen_text + "2 " + id + "2 = " + leaves2 + "\n";
-                retuen_text = leaves1 + leaves2;
+                if (type.equals("leaves") == false) {
+
+                    // General Blocks
+                    {
+
+                        String outer = GameUtils.Data.getEntityText(entity, type + "_outer");
+                        String inner = GameUtils.Data.getEntityText(entity, type + "_inner");
+                        String core = GameUtils.Data.getEntityText(entity, type + "_core");
+                        if (outer.isEmpty() == true) outer = "none";
+                        else outer = outer + keep;
+                        if (inner.isEmpty() == true) inner = "none";
+                        else inner = inner + keep;
+                        if (core.isEmpty() == true) core = "none";
+                        else core = core + keep;
+
+                        outer = "Block " + write + "o " + id + "1 = " + outer + "\n";
+                        inner = "Block " + write + "i " + id + "2 = " + inner + "\n";
+                        core = "Block " + write + "c " + id + "3 = " + core + "\n";
+                        write = outer + inner + core;
+
+                    }
+
+                } else {
+
+                    // Leaves
+                    {
+
+                        String leaves1 = GameUtils.Data.getEntityText(entity, "leaves1");
+                        String leaves2 = GameUtils.Data.getEntityText(entity, "leaves2");
+                        if (leaves1.isEmpty() == true) leaves1 = "none";
+                        else leaves1 = leaves1 + keep;
+                        if (leaves2.isEmpty() == true) leaves2 = "none";
+                        else leaves2 = leaves2 + keep;
+
+                        leaves1 = "Block " + write + "1 " + id + "1 = " + leaves1 + "\n";
+                        leaves2 = "Block " + write + "2 " + id + "2 = " + leaves2 + "\n";
+                        write = leaves1 + leaves2;
+
+                    }
+
+                }
 
             }
 
         }
 
-        return retuen_text;
+        return write;
 
     }
 

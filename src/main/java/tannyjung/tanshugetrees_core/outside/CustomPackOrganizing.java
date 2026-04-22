@@ -13,9 +13,9 @@ public class CustomPackOrganizing {
 
     private static final Map<String, String> cache_pack_ids = new HashMap<>();
     private static final Set<String> cache_error_files = new HashSet<>();
-    private static final Map<String, Map<String, List<String>>> errors = new HashMap<>();
+    private static final Map<String, Map<String, Set<String>>> errors = new HashMap<>();
 
-    public static void start (String pack_separate_multiple, String folder_settings, String folder_functions) {
+    public static void start (ServerLevel level_server, String pack_separate_multiple, String folder_settings, String folder_functions) {
 
         errors.clear();
 
@@ -190,8 +190,8 @@ public class CustomPackOrganizing {
 
         }
 
-        test(folder_settings, false);
-        test(folder_functions, true);
+        test(level_server, folder_settings, false);
+        test(level_server, folder_functions, true);
         FileManager.delete(Core.path_config + "/dev/temporary/pack_zip");
 
         // Rename Incompatible Files
@@ -210,7 +210,7 @@ public class CustomPackOrganizing {
 
     }
 
-    private static void test (String folders, boolean is_function) {
+    private static void test (ServerLevel level_server, String folders, boolean is_function) {
 
         for (String folder : folders.split(" / ")) {
 
@@ -234,7 +234,7 @@ public class CustomPackOrganizing {
 
                         if (scan.getName().startsWith("[INCOMPATIBLE] ") == false && scan.getName().endsWith(suffix + ".txt") == true) {
 
-                            Option.testParse(scan, is_function);
+                            Option.testParse(level_server, scan, is_function);
 
                         }
 
@@ -260,8 +260,8 @@ public class CustomPackOrganizing {
 
         File file = null;
         String data_structure_version = "";
-        String required_packs = "";
-        String required_mods = "";
+        String required_packs = "none";
+        String required_mods = "none";
         List<String> pack_id_scan = new ArrayList<>();
 
         for (File pack : packs) {
@@ -471,7 +471,7 @@ public class CustomPackOrganizing {
 
     public static class Option {
 
-        private static boolean testParse (File file, boolean is_function) {
+        private static boolean testParse (ServerLevel level_server, File file, boolean is_function) {
 
             boolean pass = true;
             String id = Path.of(Core.path_config + "/dev/temporary/").relativize(file.toPath()).toString().replace("\\", "/");
@@ -549,12 +549,16 @@ public class CustomPackOrganizing {
 
                                     {
 
-                                        value = value.replace(" keep", "");
+                                        if (level_server != null) {
 
-                                        if (GameUtils.Tile.fromText(value).isAir() == true) {
+                                            value = value.replace(" keep", "");
 
-                                            Error.add("file", "settings file / unknown block IDs. This will results skipping them in mod systems.", file.getPath(), id + " > " + value);
-                                            pass = false;
+                                            if (GameUtils.Tile.fromText(level_server, value).isAir() == true) {
+
+                                                Error.add("file", "settings file / unknown block IDs. This will results skipping them in mod systems.", file.getPath(), id + " > " + value);
+                                                pass = false;
+
+                                            }
 
                                         }
 
@@ -574,7 +578,7 @@ public class CustomPackOrganizing {
 
                                         } else {
 
-                                            if (testParse(file_test, true) == false) {
+                                            if (testParse(level_server, file_test, true) == false) {
 
                                                 Error.add("file", "settings files / functions is mark as incompatible. This will results skipping them in mod systems.", file.getPath(), id);
                                                 pass = false;
@@ -607,7 +611,7 @@ public class CustomPackOrganizing {
 
         private static void add (String type, String error, String path, String troublemaker) {
 
-            errors.computeIfAbsent(type, create -> new HashMap<>()).computeIfAbsent(error, create -> new ArrayList<>()).add(troublemaker);
+            errors.computeIfAbsent(type, create -> new HashMap<>()).computeIfAbsent(error, create -> new HashSet<>()).add(troublemaker);
             cache_error_files.add(path);
 
         }
@@ -619,7 +623,7 @@ public class CustomPackOrganizing {
             String[] split = null;
             boolean first = true;
 
-            for (Map.Entry<String, Map<String, List<String>>> entry1 : errors.entrySet()) {
+            for (Map.Entry<String, Map<String, Set<String>>> entry1 : errors.entrySet()) {
 
                 to_chat = level_server != null && (entry1.getKey().equals("pack") == true || Handcode.Config.developer_mode == true);
 
@@ -640,7 +644,7 @@ public class CustomPackOrganizing {
 
                 }
 
-                for (Map.Entry<String, List<String>> entry2 : entry1.getValue().entrySet()) {
+                for (Map.Entry<String, Set<String>> entry2 : entry1.getValue().entrySet()) {
 
                     {
 

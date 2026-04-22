@@ -61,7 +61,6 @@ public class TanshugetreesModBlockEntities {
 	public static final RegistryObject<BlockEntityType<BlockPlacerLimbOuterBlockEntity>> BLOCK_PLACER_LIMB_OUTER = register("block_placer_limb_outer", TanshugetreesModBlocks.BLOCK_PLACER_LIMB_OUTER, BlockPlacerLimbOuterBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<SaplingHalcyonBlockEntity>> SAPLING_HALCYON = register("sapling_halcyon", TanshugetreesModBlocks.SAPLING_HALCYON, SaplingHalcyonBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<SaplingYokaiBlockEntity>> SAPLING_YOKAI = register("sapling_yokai", TanshugetreesModBlocks.SAPLING_YOKAI, SaplingYokaiBlockEntity::new);
-	public static final RegistryObject<BlockEntityType<TreeGeneratorBlockEntity>> TREE_GENERATOR = register("tree_generator", TanshugetreesModBlocks.TREE_GENERATOR, TreeGeneratorBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<SaplingRedwoodBlockEntity>> SAPLING_REDWOOD = register("sapling_redwood", TanshugetreesModBlocks.SAPLING_REDWOOD, SaplingRedwoodBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<SaplingMalusDomesticaBlockEntity>> SAPLING_MALUS_DOMESTICA = register("sapling_malus_domestica", TanshugetreesModBlocks.SAPLING_MALUS_DOMESTICA, SaplingMalusDomesticaBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<SaplingWendyBlockEntity>> SAPLING_WENDY = register("sapling_wendy", TanshugetreesModBlocks.SAPLING_WENDY, SaplingWendyBlockEntity::new);
@@ -83,6 +82,7 @@ public class TanshugetreesModBlockEntities {
 	public static final RegistryObject<BlockEntityType<SaplingBeeKeeperBlockEntity>> SAPLING_BEE_KEEPER = register("sapling_bee_keeper", TanshugetreesModBlocks.SAPLING_BEE_KEEPER, SaplingBeeKeeperBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<SaplingWalkingTreeBlockEntity>> SAPLING_WALKING_TREE = register("sapling_walking_tree", TanshugetreesModBlocks.SAPLING_WALKING_TREE, SaplingWalkingTreeBlockEntity::new);
 	public static final RegistryObject<BlockEntityType<SaplingCatalystBlockEntity>> SAPLING_CATALYST = register("sapling_catalyst", TanshugetreesModBlocks.SAPLING_CATALYST, SaplingCatalystBlockEntity::new);
+	public static final RegistryObject<BlockEntityType<CustomSaplingBlockEntity>> CUSTOM_SAPLING = register("custom_sapling", TanshugetreesModBlocks.CUSTOM_SAPLING, CustomSaplingBlockEntity::new);
 
 	// Start of user code block custom block entities
 	// End of user code block custom block entities

@@ -86,9 +86,10 @@ public class TreeSummonerStaffGUIScreen extends AbstractContainerScreen<TreeSumm
 
 	@Override
 	protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		guiGraphics.drawString(this.font, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr"), -176, 48, -6710887, false);
-		guiGraphics.drawString(this.font, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.label_the_path_will_be_test_from_extra"), -176, 60, -6710887, false);
-		guiGraphics.drawString(this.font, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.label_from_unextracted_packs_if_failed"), -176, 72, -6710887, false);
+		guiGraphics.drawString(this.font, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr"), -176, -24, -6710887, false);
+		guiGraphics.drawString(this.font, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.label_the_path_will_be_test_from_extra"), -208, 92, -6710887, false);
+		guiGraphics.drawString(this.font, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.label_path_of_preset_inside_the_tempor"), -208, 80, -6710887, false);
+		guiGraphics.drawString(this.font, Component.translatable("gui.tanshugetrees.tree_summoner_staff_gui.label_is_extracted_then_it_will_go_ge"), -208, 104, -6710887, false);
 	}
 
 	@Override

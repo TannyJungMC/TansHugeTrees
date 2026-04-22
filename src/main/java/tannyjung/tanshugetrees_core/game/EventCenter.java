@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_core.game;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.server.level.ServerLevel;
@@ -11,6 +12,7 @@ import net.minecraft.world.level.storage.LevelResource;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepEnd;
 import tannyjung.tanshugetrees_core.outside.CustomPackOrganizing;
+import tannyjung.tanshugetrees_core.outside.TXTFunction;
 import tannyjung.tanshugetrees_core.outside.TannyPackManager;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.systems.Commands;
@@ -80,10 +82,22 @@ public class EventCenter {
         @SubscribeEvent(priority = EventPriority.NORMAL)
         public static void eventInGame (RenderGuiEvent.Post event) {
 
+            if (Minecraft.getInstance().options.hideGui == true) {
+
+                return;
+
+            }
+
             GuiGraphics graphic = event.getGuiGraphics();
             int screen_width = event.getGuiGraphics().guiWidth();
             int screen_height = event.getGuiGraphics().guiHeight();
             Overlays.eventInGame(graphic, screen_width, screen_height);
+
+            if (Handcode.Config.developer_mode == true) {
+
+                OverlayMaker.createText(graphic, screen_width, screen_height, "top-left", 8, 58, 0.75, false, "§9Delayed Command = " + TXTFunction.list_delayed_command.size());
+
+            }
 
         }
 
