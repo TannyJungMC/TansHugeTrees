@@ -37,15 +37,15 @@ public class TreeLocation {
         Core.GlobalLocking.test();
         Core.GlobalLocking.lock();
 
-        Map<String, Map<String, String>> config = ConfigDynamic.getData("world_gen");
+        Map<String, Map<String, String>> data = ConfigDynamic.getData("world_gen");
 
-        if (config.isEmpty() == false) {
+        if (data.isEmpty() == false) {
 
             // Separate +-4 to fix tree cut-off by chunk status not fully update
-            TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x + 4, chunk_pos.z + 4), config);
-            TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x + 4, chunk_pos.z - 4), config);
-            TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x - 4, chunk_pos.z + 4), config);
-            TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x - 4, chunk_pos.z - 4), config);
+            TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x + 4, chunk_pos.z + 4), data);
+            TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x + 4, chunk_pos.z - 4), data);
+            TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x - 4, chunk_pos.z + 4), data);
+            TreeLocation.run(level_accessor, dimension, new ChunkPos(chunk_pos.x - 4, chunk_pos.z - 4), data);
 
         }
 
@@ -53,7 +53,7 @@ public class TreeLocation {
 
     }
 
-    public static void run (LevelAccessor level_accessor, String dimension, ChunkPos chunk_pos, Map<String, Map<String, String>> config) {
+    public static void run (LevelAccessor level_accessor, String dimension, ChunkPos chunk_pos, Map<String, Map<String, String>> data) {
 
         int regionX = chunk_pos.x >> 5;
         int regionZ = chunk_pos.z >> 5;
@@ -75,7 +75,6 @@ public class TreeLocation {
             // Scanning
             {
 
-                RandomSource random = null;
                 int posX = regionX * 32;
                 int posZ = regionZ * 32;
                 ChunkPos chunk_pos_scan = null;
@@ -86,11 +85,11 @@ public class TreeLocation {
 
                         world_gen_overlay_bar = world_gen_overlay_bar + 1;
                         chunk_pos_scan = new ChunkPos(posX + scanX, posZ + scanZ);
-                        random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((chunk_pos_scan.x * 341873128712L) + (chunk_pos_scan.z * 132897987541L)));
+                        RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((chunk_pos_scan.x * 341873128712L) + (chunk_pos_scan.z * 132897987541L)));
 
                         if (random.nextDouble() < Handcode.Config.region_scan_percent * 0.01) {
 
-                            getData(level_accessor, dimension, chunk_pos_scan, config);
+                            getData(level_accessor, dimension, chunk_pos_scan, data);
 
                         }
 
@@ -103,33 +102,20 @@ public class TreeLocation {
             // Write Location
             {
 
-                Map<String, List<String>> convert = new HashMap<>();
+                List<String> write = new ArrayList<>();
 
-                // Convert
-                {
+                for (Map.Entry<ChunkPos, Map<BlockPos, String>> entry1 : cache_write_tree_location.entrySet()) {
 
-                    List<String> data = new ArrayList<>();
+                    for (Map.Entry<BlockPos, String> entry2 : entry1.getValue().entrySet()) {
 
-                    for (Map.Entry<ChunkPos, Map<BlockPos, String>> entry1 : cache_write_tree_location.entrySet()) {
-
-                        data.clear();
-
-                        for (Map.Entry<BlockPos, String> entry2 : entry1.getValue().entrySet()) {
-
-                            data.add("s" + entry2.getValue());
-                            data.add("i" + entry2.getKey().getX());
-                            data.add("i" + entry2.getKey().getZ());
-                            convert.computeIfAbsent((entry1.getKey().x >> 5) + "," + (entry1.getKey().z >> 5), create -> new ArrayList<>()).addAll(data);
-
-                        }
+                        write.add("s" + entry2.getValue());
+                        write.add("i" + entry2.getKey().getX());
+                        write.add("i" + entry2.getKey().getZ());
 
                     }
 
-                }
-
-                for (Map.Entry<String, List<String>> entry : convert.entrySet()) {
-
-                    FileManager.writeBIN(Core.path_world_mod + "/world_gen/tree_locations/" + dimension + "/" + entry.getKey() + ".bin", entry.getValue(), true);
+                    FileManager.writeBIN(Core.path_world_mod + "/world_gen/tree_locations/" + dimension + "/" + (entry1.getKey().x >> 5) + "," + (entry1.getKey().z >> 5) + ".bin", write, true);
+                    write.clear();
 
                 }
 
@@ -154,7 +140,7 @@ public class TreeLocation {
             cache_other_region.clear();
             cache_biome.clear();
 
-            TreePlacer.PlaceData.clear();
+            TreePlacer.Data.clear();
 
         }
 
@@ -180,53 +166,72 @@ public class TreeLocation {
 
     }
 
-    private static void getData (LevelAccessor level_accessor, String dimension, ChunkPos chunk_pos, Map<String, Map<String, String>> config) {
+    private static void getData (LevelAccessor level_accessor, String dimension, ChunkPos chunk_pos, Map<String, Map<String, String>> data) {
 
-        Holder<Biome> biome_center = null;
-        String biome = "";
-        int group_size = 0;
-        int center_posX = 0;
-        int center_posZ = 0;
-        int min_distance = 0;
-        String[] split = null;
-
+        Holder<Biome> biome_center = getBiome(level_accessor, chunk_pos);
+        String biome_id = GameUtils.Environment.toID(biome_center);
+        world_gen_overlay_details_biome = biome_id;
         world_gen_overlay_details_tree = "No Matching";
 
-        for (Map.Entry<String, Map<String, String>> entry : config.entrySet()) {
+        Set<String> set_tree = null;
 
-            if (entry.getValue().get("enable").equals("true") == true) {
+        // get Set
+        {
 
-                RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((chunk_pos.x * 341873128712L) + (chunk_pos.z * 132897987541L)) + entry.getKey().hashCode());
+            set_tree = CacheManager.DataText.getSet("set_tree").get(biome_id);
 
-                if (random.nextDouble() < (Double.parseDouble(entry.getValue().get("rarity")) * 0.01) * Handcode.Config.multiply_rarity) {
+            if (set_tree == null) {
 
-                    center_posX = (chunk_pos.x * 16) + random.nextInt(0, 16);
-                    center_posZ = (chunk_pos.z * 16) + random.nextInt(0, 16);
-                    min_distance = (int) Math.ceil(Integer.parseInt(entry.getValue().get("min_distance")) * Handcode.Config.multiply_min_distance);
+                set_tree = new HashSet<>();
 
-                    // Min Distance
-                    {
+                for (Map.Entry<String, Map<String, String>> entry : data.entrySet()) {
 
-                        if (min_distance > 0) {
+                    if (entry.getValue().get("enable").equals("true") == true) {
 
-                            if (testDistance(dimension, entry.getKey(), center_posX, center_posZ, min_distance) == false) {
+                        if (GameUtils.Environment.test(biome_center, entry.getValue().get("biome")) == true) {
 
-                                continue;
-
-                            }
+                            set_tree.add(entry.getKey());
 
                         }
 
                     }
 
-                    biome = entry.getValue().get("biome");
+                }
 
-                    // Biome
-                    {
+                CacheManager.DataText.setSet("set_tree", biome_id, set_tree);
 
-                        biome_center = getBiome(level_accessor, chunk_pos);
+            }
 
-                        if (GameUtils.Environment.test(biome_center, biome) == false) {
+        }
+
+        Map<String, String> config = null;
+        String config_spawn_type = "";
+        String config_biome = "";
+        double config_rarity = 0.0;
+        int config_min_distance = 0;
+        int config_group_size = 0;
+        int center_posX = 0;
+        int center_posZ = 0;
+        String[] split = null;
+
+        for (String scan : set_tree) {
+
+            config = data.get(scan);
+            config_rarity = (Double.parseDouble(config.get("rarity")) * 0.01) * Handcode.Config.multiply_rarity;
+            RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((chunk_pos.x * 341873128712L) + (chunk_pos.z * 132897987541L)) + scan.hashCode());
+
+            if (random.nextDouble() < config_rarity) {
+
+                center_posX = (chunk_pos.x * 16) + random.nextInt(0, 16);
+                center_posZ = (chunk_pos.z * 16) + random.nextInt(0, 16);
+                config_min_distance = (int) Math.ceil(Integer.parseInt(config.get("min_distance")) * Handcode.Config.multiply_min_distance);
+
+                // Min Distance
+                {
+
+                    if (config_min_distance > 0) {
+
+                        if (testDistance(dimension, scan, center_posX, center_posZ, config_min_distance) == false) {
 
                             continue;
 
@@ -234,74 +239,63 @@ public class TreeLocation {
 
                     }
 
-                    // Shoreline
-                    {
+                }
 
-                        if (entry.getValue().get("spawn_type").equals("normal") == false) {
+                // Shoreline
+                {
 
-                            if (Handcode.Config.shoreline_detection == false) {
+                    if (config.get("spawn_type").equals("normal") == false) {
 
-                                continue;
+                        if (Handcode.Config.shoreline_detection == false) {
 
-                            } else if (testShoreline(level_accessor, new ChunkPos(center_posX >> 4, center_posZ >> 4)) == false) {
+                            continue;
 
-                                continue;
+                        } else if (testShoreline(level_accessor, new ChunkPos(center_posX >> 4, center_posZ >> 4)) == false) {
 
-                            }
+                            continue;
 
                         }
 
                     }
 
-                    split = entry.getValue().get("group_size").split(" <> ");
-                    group_size = (int) ((double) Mth.nextInt(random, Integer.parseInt(split[0]), Integer.parseInt(split[1])) * Handcode.Config.multiply_group_size);
+                }
 
-                    world_gen_overlay_details_biome = GameUtils.Environment.toID(biome_center);
-                    world_gen_overlay_details_tree = entry.getKey();
-                    writeData(level_accessor, center_posX, center_posZ, entry.getKey(), entry.getValue());
+                world_gen_overlay_details_tree = scan;
+                writeData(level_accessor, center_posX, center_posZ, scan, config);
 
-                    if (group_size > 1) {
+                // Group Spawning
+                {
 
-                        // Group Spawning
-                        {
+                    split = config.get("group_size").split(" <> ");
+                    config_group_size = (int) ((double) Mth.nextInt(random, Integer.parseInt(split[0]), Integer.parseInt(split[1])) * Handcode.Config.multiply_group_size);
 
-                            if (entry.getValue().get("spawn_type").equals("landside") == true) {
+                    if (config_group_size > 1) {
 
-                                biome = "tanshugetrees:water_biomes";
+                        config_spawn_type = config.get("spawn_type");
+                        config_biome = config.get("biome");
 
-                            } else if (entry.getValue().get("spawn_type").equals("shoreline") == true) {
+                        if (config_spawn_type.equals("landside") == true) {
 
-                                biome = biome + " / tanshugetrees:water_biomes";
+                            config_biome = "tanshugetrees:water_biomes";
 
-                            }
+                        } else if (config_spawn_type.equals("shoreline") == true) {
 
-                            while (group_size > 0) {
+                            config_biome = config_biome + " / tanshugetrees:water_biomes";
 
-                                group_size = group_size - 1;
-                                center_posX = center_posX + random.nextInt(-(min_distance + 1), (min_distance + 1) + 1);
-                                center_posZ = center_posZ + random.nextInt(-(min_distance + 1), (min_distance + 1) + 1);
+                        }
 
-                                // Min Distance
-                                {
+                        while (config_group_size > 0) {
 
-                                    if (min_distance > 0) {
+                            config_group_size = config_group_size - 1;
+                            center_posX = center_posX + random.nextInt(-(config_min_distance + 1), (config_min_distance + 1) + 1);
+                            center_posZ = center_posZ + random.nextInt(-(config_min_distance + 1), (config_min_distance + 1) + 1);
 
-                                        if (testDistance(dimension, entry.getKey(), center_posX, center_posZ, min_distance) == false) {
+                            // Min Distance
+                            {
 
-                                            continue;
+                                if (config_min_distance > 0) {
 
-                                        }
-
-                                    }
-
-                                }
-
-                                // Biome
-                                {
-
-                                    biome_center = getBiome(level_accessor, new ChunkPos(center_posX >> 4, center_posZ >> 4));
-
-                                    if (GameUtils.Environment.test(biome_center, biome) == false) {
+                                    if (testDistance(dimension, scan, center_posX, center_posZ, config_min_distance) == false) {
 
                                         continue;
 
@@ -309,9 +303,22 @@ public class TreeLocation {
 
                                 }
 
-                                writeData(level_accessor, center_posX, center_posZ, entry.getKey(), entry.getValue());
+                            }
+
+                            // Biome
+                            {
+
+                                biome_center = getBiome(level_accessor, new ChunkPos(center_posX >> 4, center_posZ >> 4));
+
+                                if (GameUtils.Environment.test(biome_center, config_biome) == false) {
+
+                                    continue;
+
+                                }
 
                             }
+
+                            writeData(level_accessor, center_posX, center_posZ, scan, config);
 
                         }
 
@@ -620,20 +627,14 @@ public class TreeLocation {
 
                 if (dead_tree_level > 200) {
 
-                    RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((centerX * 341873128712L) + (centerZ * 132897987541L)));
-                    int fallen_direction = random.nextInt(4) + 1;
-
-                    if (fallen_direction > 0) {
-
-                        int[] convert = OutsideUtils.convertSizeFallen(fallen_direction, sizeX, sizeY, sizeZ, center_sizeX, center_sizeY, center_sizeZ);
-                        sizeX = convert[0];
-                        sizeY = convert[1];
-                        sizeZ = convert[2];
-                        center_sizeX = convert[3];
-                        center_sizeY = convert[4];
-                        center_sizeZ = convert[5];
-
-                    }
+                    int fallen_direction = getFallenDirection(level_accessor, centerX, centerZ);
+                    int[] convert = OutsideUtils.convertSizeFallen(fallen_direction, sizeX, sizeY, sizeZ, center_sizeX, center_sizeY, center_sizeZ);
+                    sizeX = convert[0];
+                    sizeY = convert[1];
+                    sizeZ = convert[2];
+                    center_sizeX = convert[3];
+                    center_sizeY = convert[4];
+                    center_sizeZ = convert[5];
 
                 }
 
@@ -912,11 +913,11 @@ public class TreeLocation {
 
                             if (Handcode.Config.dead_tree_auto_level.contains("18") == true) list.add((short) 180);
                             if (Handcode.Config.dead_tree_auto_level.contains("19") == true) list.add((short) 190);
-                            if (Handcode.Config.dead_tree_auto_level.contains("28") == true) list.add((short) 280);
-                            if (Handcode.Config.dead_tree_auto_level.contains("29") == true) list.add((short) 290);
 
                             if (unviable_ecology == false) {
 
+                                if (Handcode.Config.dead_tree_auto_level.contains("28") == true) list.add((short) 280);
+                                if (Handcode.Config.dead_tree_auto_level.contains("29") == true) list.add((short) 290);
                                 if (Handcode.Config.dead_tree_auto_level.contains("38") == true) list.add((short) 380);
                                 if (Handcode.Config.dead_tree_auto_level.contains("39") == true) list.add((short) 390);
 
@@ -928,13 +929,13 @@ public class TreeLocation {
 
                             if (Handcode.Config.dead_tree_auto_level.contains("16") == true) list.add((short) 160);
                             if (Handcode.Config.dead_tree_auto_level.contains("17") == true) list.add((short) 170);
-                            if (Handcode.Config.dead_tree_auto_level.contains("26") == true) list.add((short) 260);
-                            if (Handcode.Config.dead_tree_auto_level.contains("27") == true) list.add((short) 270);
                             if (Handcode.Config.dead_tree_auto_level.contains("15") == true) list.add((short) (150 + is_pine));
-                            if (Handcode.Config.dead_tree_auto_level.contains("25") == true) list.add((short) (250 + is_pine));
 
                             if (unviable_ecology == false) {
 
+                                if (Handcode.Config.dead_tree_auto_level.contains("26") == true) list.add((short) 260);
+                                if (Handcode.Config.dead_tree_auto_level.contains("27") == true) list.add((short) 270);
+                                if (Handcode.Config.dead_tree_auto_level.contains("25") == true) list.add((short) (250 + is_pine));
                                 if (Handcode.Config.dead_tree_auto_level.contains("36") == true) list.add((short) 360);
                                 if (Handcode.Config.dead_tree_auto_level.contains("37") == true) list.add((short) 370);
                                 if (Handcode.Config.dead_tree_auto_level.contains("35") == true) list.add((short) (350 + is_pine));
@@ -946,10 +947,10 @@ public class TreeLocation {
                         if (count_branch > 0) {
 
                             if (Handcode.Config.dead_tree_auto_level.contains("14") == true) list.add((short) (140 + is_pine));
-                            if (Handcode.Config.dead_tree_auto_level.contains("24") == true) list.add((short) (240 + is_pine));
 
                             if (unviable_ecology == false) {
 
+                                if (Handcode.Config.dead_tree_auto_level.contains("24") == true) list.add((short) (240 + is_pine));
                                 if (Handcode.Config.dead_tree_auto_level.contains("34") == true) list.add((short) (340 + is_pine));
 
                             }
@@ -959,10 +960,10 @@ public class TreeLocation {
                         if (count_limb > 0) {
 
                             if (Handcode.Config.dead_tree_auto_level.contains("13") == true) list.add((short) (130 + is_pine));
-                            if (Handcode.Config.dead_tree_auto_level.contains("23") == true) list.add((short) (230 + is_pine));
 
                             if (unviable_ecology == false) {
 
+                                if (Handcode.Config.dead_tree_auto_level.contains("23") == true) list.add((short) (230 + is_pine));
                                 if (Handcode.Config.dead_tree_auto_level.contains("33") == true) list.add((short) (330 + is_pine));
 
                             }
@@ -972,10 +973,10 @@ public class TreeLocation {
                         if (count_twig > 0) {
 
                             if (Handcode.Config.dead_tree_auto_level.contains("12") == true) list.add((short) (120 + is_pine));
-                            if (Handcode.Config.dead_tree_auto_level.contains("22") == true) list.add((short) (220 + is_pine));
 
                             if (unviable_ecology == false) {
 
+                                if (Handcode.Config.dead_tree_auto_level.contains("22") == true) list.add((short) (220 + is_pine));
                                 if (Handcode.Config.dead_tree_auto_level.contains("32") == true) list.add((short) (320 + is_pine));
 
                             }
@@ -985,10 +986,10 @@ public class TreeLocation {
                         if (count_sprig > 0) {
 
                             if (Handcode.Config.dead_tree_auto_level.contains("11") == true) list.add((short) (110 + is_pine));
-                            if (Handcode.Config.dead_tree_auto_level.contains("21") == true) list.add((short) (210 + is_pine));
 
                             if (unviable_ecology == false) {
 
+                                if (Handcode.Config.dead_tree_auto_level.contains("21") == true) list.add((short) (210 + is_pine));
                                 if (Handcode.Config.dead_tree_auto_level.contains("31") == true) list.add((short) (310 + is_pine));
 
                             }
@@ -1013,6 +1014,13 @@ public class TreeLocation {
         }
 
         return data[random.nextInt(data.length)];
+
+    }
+
+    public static int getFallenDirection (LevelAccessor level_accessor, int centerX, int centerZ) {
+
+        RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((centerX * 341873128712L) + (centerZ * 132897987541L)));
+        return random.nextInt(4) + 1;
 
     }
 
