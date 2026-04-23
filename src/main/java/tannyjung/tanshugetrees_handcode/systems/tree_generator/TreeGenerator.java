@@ -537,15 +537,7 @@ public class TreeGenerator {
 
                         if (gen_type.equals("leaves") == true) {
 
-                            if (GameUtils.Data.getEntityText(entity, "leaves_generator_type").equals("sphere_zone") == true) {
-
-                                vec3 = GameUtils.Space.getPosLook(entity_at, 0, 0, 1);
-
-                            } else {
-
-                                vec3 = entity_at.position();
-
-                            }
+                            vec3 = entity_at.position();
 
                         } else {
 
