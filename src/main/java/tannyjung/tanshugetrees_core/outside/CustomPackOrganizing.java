@@ -258,6 +258,7 @@ public class CustomPackOrganizing {
 
         }
 
+        boolean pass = false;
         File file = null;
         String data_structure_version = "";
         String required_packs = "none";
@@ -266,6 +267,7 @@ public class CustomPackOrganizing {
 
         for (File pack : packs) {
 
+            pass = true;
             file = new File(Core.path_config + "/dev/temporary/info/" + pack.getName() + ".txt");
 
             if (file.exists() == true) {
@@ -301,8 +303,8 @@ public class CustomPackOrganizing {
 
                         if (cache_pack_ids.containsKey(pack.getName()) == false) {
 
-                            FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                            Error.add("pack", "packs / pack ID not found. This will results skipping these packs. Make sure you're using the version that includes pack ID.", pack.getPath(), pack.getName());
+                            pass = false;
+                            Error.add("pack", "packs / pack ID not found. This will results skipping these packs. Make sure you use the version that includes pack ID.", pack.getPath(), pack.getName());
                             break test;
 
                         }
@@ -314,7 +316,7 @@ public class CustomPackOrganizing {
 
                         if (Core.data_structure_version_pack.equals(data_structure_version) == false) {
 
-                            FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                            pass = false;
                             Error.add("pack", "packs / unsupported data structure version. This will results skipping these packs. Your version is " + Core.data_structure_version_pack + " but these packs require a different version.", pack.getPath(), pack.getName() + " > " + data_structure_version);
                             break test;
 
@@ -335,7 +337,7 @@ public class CustomPackOrganizing {
 
                             } else {
 
-                                FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
+                                pass = false;
                                 Error.add("pack", "packs / duplicated pack IDs. This will results skipping these packs. You can report this to the pack authors to help them fix it.", pack.getPath(), pack.getName() + " > " + id);
                                 break test;
 
@@ -354,8 +356,8 @@ public class CustomPackOrganizing {
 
                                 if (cache_pack_ids.containsValue(value) == false) {
 
-                                    FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                                    Error.add("pack", "packs / required packs not found. This will results skipping these packs. Make sure you're using required packs to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
+                                    pass = false;
+                                    Error.add("pack", "packs / required packs not found. This will results skipping these packs. Make sure you use required packs to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
                                     break test;
 
                                 }
@@ -375,8 +377,8 @@ public class CustomPackOrganizing {
 
                                 if (GameUtils.Misc.isModLoaded(value) == false) {
 
-                                    FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                                    Error.add("pack", "packs / required mods not found. This will results skipping these packs. Make sure you're using required mods to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
+                                    pass = false;
+                                    Error.add("pack", "packs / required mods not found. This will results skipping these packs. Make sure you use required mods to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
                                     break test;
 
                                 }
@@ -391,8 +393,14 @@ public class CustomPackOrganizing {
 
             } else {
 
+                pass = false;
+                Error.add("pack", "packs / info file not found. This will results skipping these packs. Make sure you use the version that includes info file.", pack.getPath(), pack.getName());
+
+            }
+
+            if (pass == false) {
+
                 FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-                Error.add("pack", "packs / info file not found. This will results skipping these packs. Make sure you're using the version that includes info file.", pack.getPath(), pack.getName());
 
             }
 
@@ -402,7 +410,7 @@ public class CustomPackOrganizing {
 
     private static void organize (File pack, String pack_separate_multiple) {
 
-        boolean incompatible = pack.getName().startsWith("[INCOMPATIBLE] ") == true;
+        boolean incompatible = cache_error_files.contains(pack.getPath()) == true;
 
         // Get Real Pack Path
         {
