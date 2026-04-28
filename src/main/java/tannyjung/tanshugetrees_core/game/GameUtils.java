@@ -161,23 +161,25 @@ public class GameUtils {
 
 		}
 
-		public static Entity summonText (ServerLevel level_server, Vec3 vec3, double size, String data, boolean temporary) {
+		public static Entity summonText (ServerLevel level_server, Vec3 vec3, String tag, double size, String data) {
 
-			Entity entity = Mob.summon(level_server, vec3, "minecraft:text_display", "Display Text", Core.mod_id_big + "-display_text", "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[" + size + "f," + size + "f," + size + "f]},billboard:vertical,text:'" + Data.createText(data) + "'}");
+            return Mob.summon(level_server, vec3, "minecraft:text_display", "Display Text", Core.mod_id_big + "-display_text / " + tag, "{billboard:vertical,alignment:\"center\",see_through:true,brightness:{block:15, sky:15},text_opacity:0,line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[" + size + "f," + size + "f," + size + "f]},text:'" + Data.createText(data) + "'}");
 
-			if (temporary == true) {
+		}
 
-				Core.DelayedWork.create(false, 200, () -> {
+		public static Entity summonTextTemporary (ServerLevel level_server, Vec3 vec3, String tag, double size, String data) {
 
-					for (Entity scan : Mob.getAtArea(level_server, vec3, 1, true, 0, "minecraft:text_display", Core.mod_id_big + "-display_text")) {
+			Entity entity = summonText(level_server, vec3, tag, size, data);
 
-						scan.discard();
+			Core.DelayedWork.create(false, 200, () -> {
 
-					}
+				for (Entity scan : Mob.getAtArea(level_server, vec3, 1, true, 0, "minecraft:text_display", Core.mod_id_big + "-display_text")) {
 
-				});
+					scan.discard();
 
-			}
+				}
+
+			});
 
 			return entity;
 

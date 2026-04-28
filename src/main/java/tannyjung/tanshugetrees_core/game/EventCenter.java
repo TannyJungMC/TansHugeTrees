@@ -93,9 +93,9 @@ public class EventCenter {
             int screen_height = event.getGuiGraphics().guiHeight();
             Overlays.eventInGame(graphic, screen_width, screen_height);
 
-            if (Handcode.Config.developer_mode == true) {
+            if (Core.developer_mode == true) {
 
-                OverlayMaker.createText(graphic, screen_width, screen_height, "top-left", 8, 58, 0.75, false, "§9Delayed Command = " + TXTFunction.list_delayed_command.size());
+                OverlayMaker.createText(graphic, screen_width, screen_height, "top-left", 8, 58, 0.75, false, "§9Delayed Command = " + TXTFunction.count_delayed_command);
 
             }
 
@@ -167,7 +167,7 @@ public class EventCenter {
 
                         CustomPackOrganizing.Error.sendMessage(level_server);
 
-                        if (Handcode.Config.auto_check_update == true) {
+                        if (Core.auto_check_update == true) {
 
                             TannyPackManager.runCheckUpdate(level_server);
 

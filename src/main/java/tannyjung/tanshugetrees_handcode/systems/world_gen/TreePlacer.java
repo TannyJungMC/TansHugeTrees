@@ -390,8 +390,8 @@ public class TreePlacer {
 
             }
 
-            is_leaves = OutsideUtils.Math.isNumberStartWith(type, 120) == true;
-            is_function = OutsideUtils.Math.isNumberStartWith(type, 2) == true;
+            is_leaves = OutsideUtils.Mathematics.isNumberStartWith(type, 120) == true;
+            is_function = OutsideUtils.Mathematics.isNumberStartWith(type, 2) == true;
 
             if (is_function == false) {
 
@@ -411,7 +411,7 @@ public class TreePlacer {
                             // Basic Style
                             {
 
-                                if (OutsideUtils.Math.isNumberStartWith(type, 119) == true) {
+                                if (OutsideUtils.Mathematics.isNumberStartWith(type, 119) == true) {
 
                                     if (reduce_sprig > 0) {
 
@@ -423,7 +423,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 118) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 118) == true) {
 
                                     if (reduce_sprig == 0) {
 
@@ -439,7 +439,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 117) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 117) == true) {
 
                                     if (reduce_twig == 0) {
 
@@ -455,7 +455,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 116) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 116) == true) {
 
                                     if (reduce_limb == 0) {
 
@@ -471,7 +471,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 115) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 115) == true) {
 
                                     if (reduce_branch == 0) {
 
@@ -496,7 +496,7 @@ public class TreePlacer {
                                 // Only Trunk
                                 {
 
-                                    if (OutsideUtils.Math.isNumberStartWith(type, 114) == true) {
+                                    if (OutsideUtils.Mathematics.isNumberStartWith(type, 114) == true) {
 
                                         if (reduce_trunk > 0) {
 
@@ -571,7 +571,7 @@ public class TreePlacer {
 
                             if (no_roots == true) {
 
-                                if (OutsideUtils.Math.isNumberStartWith(type, 111) == true || OutsideUtils.Math.isNumberStartWith(type, 112) == true || OutsideUtils.Math.isNumberStartWith(type, 113) == true) {
+                                if (OutsideUtils.Mathematics.isNumberStartWith(type, 111) == true || OutsideUtils.Mathematics.isNumberStartWith(type, 112) == true || OutsideUtils.Mathematics.isNumberStartWith(type, 113) == true) {
 
                                     continue;
 
@@ -581,7 +581,7 @@ public class TreePlacer {
 
                         } else {
 
-                            if (OutsideUtils.Math.isNumberStartWith(type, 112) == true || OutsideUtils.Math.isNumberStartWith(type, 113) == true) {
+                            if (OutsideUtils.Mathematics.isNumberStartWith(type, 112) == true || OutsideUtils.Mathematics.isNumberStartWith(type, 113) == true) {
 
                                 continue;
 
@@ -589,7 +589,7 @@ public class TreePlacer {
 
                             if (no_roots == true) {
 
-                                if (OutsideUtils.Math.isNumberStartWith(type, 110) == true || OutsideUtils.Math.isNumberStartWith(type, 111) == true) {
+                                if (OutsideUtils.Mathematics.isNumberStartWith(type, 110) == true || OutsideUtils.Mathematics.isNumberStartWith(type, 111) == true) {
 
                                     continue;
 
@@ -612,7 +612,7 @@ public class TreePlacer {
 
                                 if (Handcode.Config.leaf_litter == true && Handcode.Config.leaf_litter_world_gen == true) {
 
-                                    if ((OutsideUtils.Math.isNumberEndWith(type, 1) == true && leaves_type[0] == 2) || (OutsideUtils.Math.isNumberEndWith(type, 2) == true && leaves_type[1] == 2)) {
+                                    if ((OutsideUtils.Mathematics.isNumberEndWith(type, 1) == true && leaves_type[0] == 2) || (OutsideUtils.Mathematics.isNumberEndWith(type, 2) == true && leaves_type[1] == 2)) {
 
                                         leaf_litter_chance = Handcode.Config.leaf_litter_world_gen_chance_coniferous;
 
@@ -1239,15 +1239,13 @@ public class TreePlacer {
 
                         if (sizeX != 0 || sizeZ != 0) {
 
-                            if (dead_tree_level < 200) {
+                            if (testSurfaceSmoothness(level_accessor, level_server, chunk_generator, pos_center, sizeX, sizeY, sizeZ, center_sizeX, center_sizeY, center_sizeZ, pos_original) == false) {
 
-                                if (testSurfaceSmoothness(level_accessor, level_server, chunk_generator, pos_center, sizeX, sizeY, sizeZ, center_sizeX, center_sizeY, center_sizeZ, pos_original) == false) {
+                                break test;
 
-                                    break test;
+                            }
 
-                                }
-
-                            } else {
+                            if (dead_tree_level > 200) {
 
                                 if (testFallenArea(level_accessor, level_server, chunk_generator, location, pos_center, rotation_mirrored, fallen_direction, dead_tree_level) == false) {
 
@@ -1415,12 +1413,12 @@ public class TreePlacer {
 
                 if (loop == 0) {
 
-                    if (OutsideUtils.Math.isNumberStartWith(type, 1) == true) {
+                    if (OutsideUtils.Mathematics.isNumberStartWith(type, 1) == true) {
 
                         // Skip Roots
                         {
 
-                            if (OutsideUtils.Math.isNumberStartWith(type, 110) == true || OutsideUtils.Math.isNumberStartWith(type, 111) == true || OutsideUtils.Math.isNumberStartWith(type, 112) == true || OutsideUtils.Math.isNumberStartWith(type, 113) == true) {
+                            if (OutsideUtils.Mathematics.isNumberStartWith(type, 110) == true || OutsideUtils.Mathematics.isNumberStartWith(type, 111) == true || OutsideUtils.Mathematics.isNumberStartWith(type, 112) == true || OutsideUtils.Mathematics.isNumberStartWith(type, 113) == true) {
 
                                 continue;
 
@@ -1434,11 +1432,11 @@ public class TreePlacer {
                             // Basic Style
                             {
 
-                                if (OutsideUtils.Math.isNumberStartWith(type, 120) == true) {
+                                if (OutsideUtils.Mathematics.isNumberStartWith(type, 120) == true) {
 
                                     continue;
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 119) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 119) == true) {
 
                                     if (reduce_sprig > 0) {
 
@@ -1450,7 +1448,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 118) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 118) == true) {
 
                                     if (reduce_sprig == 0) {
 
@@ -1466,7 +1464,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 117) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 117) == true) {
 
                                     if (reduce_twig == 0) {
 
@@ -1482,7 +1480,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 116) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 116) == true) {
 
                                     if (reduce_limb == 0) {
 
@@ -1498,7 +1496,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 115) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 115) == true) {
 
                                     if (reduce_branch == 0) {
 
@@ -1523,7 +1521,7 @@ public class TreePlacer {
                                 // Only Trunk
                                 {
 
-                                    if (OutsideUtils.Math.isNumberStartWith(type, 114) == true) {
+                                    if (OutsideUtils.Mathematics.isNumberStartWith(type, 114) == true) {
 
                                         if (reduce_trunk > 0) {
 

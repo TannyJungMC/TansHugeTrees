@@ -147,7 +147,7 @@
   "block.tanshugetrees.sapling_catalyst.description_1": "§8This is a tree generator sapling. It may take long time to generate!",
   "block.tanshugetrees.sapling_catalyst.description_0": "§8--------------------------------------------------",
   "gui.tanshugetrees.tree_summoner_staff_gui.label_currently_not_working": "Currently not working",
-  "gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr": "Example : presets/#TannyJung-Main-Pack/redwood/redwood",
+  "gui.tanshugetrees.tree_summoner_staff_gui.label_example_tannyjungmainpackr": "Example : presets/#main/redwood/redwood",
   "gui.tanshugetrees.tree_summoner_staff_gui.tooltip_theres_a_bug_on_1201_that_you": "There\u0027s a bug on 1.20.1 that your preset path here not load when reopen the GUI, click this to manually restore that.",
   "gui.tanshugetrees.tree_summoner_staff_gui.label_the_path_will_be_test_from_extra": "temporary folder, found in dev folder inside the config. If the pack is",
   "gui.tanshugetrees.tree_summoner_staff_gui.label_from_unextracted_packs_if_failed": "go to unextracted packs if failed.",

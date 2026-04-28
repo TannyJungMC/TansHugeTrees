@@ -129,17 +129,17 @@ public class CustomPackOrganizing {
         // Organizing Data
         {
 
-            File tanny_pack = TannyPackManager.getCurrentFile();
+            File main_pack = TannyPackManager.getCurrentFile();
 
-            if (tanny_pack.exists() == true) {
+            if (main_pack.exists() == true) {
 
-                organize(tanny_pack, pack_separate_multiple);
+                organize(main_pack, pack_separate_multiple);
 
             }
 
             for (File pack : packs) {
 
-                if (pack.getName().equals(tanny_pack.getName()) == false) {
+                if (pack.getName().equals(main_pack.getName()) == false) {
 
                     organize(pack, pack_separate_multiple);
 
@@ -357,7 +357,7 @@ public class CustomPackOrganizing {
                                 if (cache_pack_ids.containsValue(value) == false) {
 
                                     pass = false;
-                                    Error.add("pack", "packs / required packs not found. This will results skipping these packs. Make sure you use required packs to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
+                                    Error.add("pack", "packs / required packs not found. This will results skipping these packs. Make sure you install required packs to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
                                     break test;
 
                                 }
@@ -378,7 +378,7 @@ public class CustomPackOrganizing {
                                 if (GameUtils.Misc.isModLoaded(value) == false) {
 
                                     pass = false;
-                                    Error.add("pack", "packs / required mods not found. This will results skipping these packs. Make sure you use required mods to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
+                                    Error.add("pack", "packs / required mods not found. This will results skipping these packs. Make sure you install required mods to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
                                     break test;
 
                                 }
@@ -633,7 +633,7 @@ public class CustomPackOrganizing {
 
             for (Map.Entry<String, Map<String, Set<String>>> entry1 : errors.entrySet()) {
 
-                to_chat = level_server != null && (entry1.getKey().equals("pack") == true || Handcode.Config.developer_mode == true);
+                to_chat = level_server != null && (entry1.getKey().equals("pack") == true || Core.developer_mode == true);
 
                 // First Line
                 {

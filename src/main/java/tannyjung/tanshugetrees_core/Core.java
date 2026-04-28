@@ -53,32 +53,33 @@ public class Core {
     public static String mod_id = "";
     public static String mod_id_big = "";
     public static String mod_id_short = "";
-
+    
     public static int data_structure_version_core = 0;
     public static String data_structure_version_mod = "";
     public static String data_structure_version_pack = "";
-    public static String tanny_pack_type = "";
-    public static String tanny_pack_type_original = "";
-
+    public static String main_pack_type = "";
+    public static String main_pack_type_original = "";
     public static String github_pack = "";
     public static String wiki = "";
-
     public static boolean have_world_data_cleaner = false;
-
+    
     public static Logger logger = null;
+    public static boolean global_locking = false;
     public static String path_game = FMLPaths.GAMEDIR.get().toString();
     public static String path_config = path_game + "/" + mod_id + "_error";
     public static String path_world_core = path_game + "/" + mod_id + "_error";
     public static String path_world_mod = path_game + "/" + mod_id + "_error";
     public static final ExecutorService thread_main = Executors.newFixedThreadPool(1, name -> { Thread thread = new Thread(name); thread.setName(Core.mod_name); return thread; });
 
-    public static boolean global_locking = false;
+    public static boolean auto_check_update = false;
+    public static boolean wip_version = false;
+    public static boolean developer_mode = false;
 
     public static void start (IEventBus bus) {
 
         Handcode.start();
         mod_id_big = mod_id.toUpperCase();
-        tanny_pack_type_original = tanny_pack_type;
+        main_pack_type_original = main_pack_type;
         logger = LogManager.getLogger(mod_id);
         path_config = path_game + "/config/" + mod_id;
 
@@ -116,19 +117,7 @@ public class Core {
             if (config == true) {
 
                 cache_size = CacheManager.clear();
-                Handcode.Config.repair();
-                Handcode.Config.apply();
-
-                if (Handcode.Config.wip_version == true) {
-
-                    Core.tanny_pack_type = "WIP";
-
-                } else {
-
-                    Core.tanny_pack_type = Core.tanny_pack_type_original;
-
-                }
-
+                ConfigClassic.runMainRepairApply();
                 Handcode.repairData(level_server);
 
             }
@@ -321,9 +310,9 @@ public class Core {
             // Developer Mode
             {
 
-                if (Handcode.Config.developer_mode == true) {
+                if (developer_mode == true) {
 
-                    for (Entity entity : GameUtils.Mob.getAtEverywhere(level_server, "", Core.mod_id_big)) {
+                    for (Entity entity : GameUtils.Mob.getAtEverywhere(level_server, "", mod_id_big)) {
 
                         GameUtils.Misc.spawnParticle(level_server, entity.position(), 0, 0, 0, 0, 1, "minecraft:end_rod");
 
@@ -360,8 +349,8 @@ public class Core {
 
             if (is_world == false) {
 
-                String path = Core.path_config + "/dev/version.txt";
-                File test_exist = new File(Core.path_config);
+                String path = path_config + "/dev/version.txt";
+                File test_exist = new File(path_config);
                 String version = "";
 
                 // Get Version
@@ -389,12 +378,12 @@ public class Core {
 
                 }
 
-                FileManager.writeTXT(path, Core.data_structure_version_mod, false);
+                FileManager.writeTXT(path, data_structure_version_mod, false);
 
             } else {
 
-                String path = Core.path_world_mod + "/version.txt";
-                File test_exist = new File(Core.path_world_mod);
+                String path = path_world_mod + "/version.txt";
+                File test_exist = new File(path_world_mod);
                 String version = "";
 
                 // Get Version
@@ -422,7 +411,7 @@ public class Core {
 
                 }
 
-                FileManager.writeTXT(path, Core.data_structure_version_mod, false);
+                FileManager.writeTXT(path, data_structure_version_mod, false);
 
             }
 

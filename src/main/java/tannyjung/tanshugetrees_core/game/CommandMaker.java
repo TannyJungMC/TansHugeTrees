@@ -245,9 +245,9 @@ public class CommandMaker {
         public static void registry (Object event_object) {
 
             CommandMaker.create(event_object, 2, Core.mod_id_big + " / command / txt_function / <text>", run.command::txt_function);
+            CommandMaker.create(event_object, 2, Core.mod_id_big + " / pack / check_update_main", run.pack::check_update_main);
+            CommandMaker.create(event_object, 2, Core.mod_id_big + " / pack / update_main", run.pack::update_main);
             CommandMaker.create(event_object, 2, Core.mod_id_big + " / restart", run::restart);
-            CommandMaker.create(event_object, 2, Core.mod_id_big + " / tanny_pack / check_update", run.tanny_pack::check_update);
-            CommandMaker.create(event_object, 2, Core.mod_id_big + " / tanny_pack / update", run.tanny_pack::update);
 
         }
 
@@ -267,16 +267,9 @@ public class CommandMaker {
 
             }
 
-            private static void restart (CommandContext<CommandSourceStack> data) {
+            private static class pack {
 
-                ServerLevel level_server = data.getSource().getLevel();
-                Core.restart(level_server, true, true);
-
-            }
-
-            private static class tanny_pack {
-
-                private static void check_update (CommandContext<CommandSourceStack> data) {
+                private static void check_update_main (CommandContext<CommandSourceStack> data) {
 
                     ServerLevel level_server = data.getSource().getLevel();
 
@@ -288,7 +281,7 @@ public class CommandMaker {
 
                 }
 
-                private static void update (CommandContext<CommandSourceStack> data) {
+                private static void update_main (CommandContext<CommandSourceStack> data) {
 
                     ServerLevel level_server = data.getSource().getLevel();
 
@@ -299,6 +292,13 @@ public class CommandMaker {
                     });
 
                 }
+
+            }
+
+            private static void restart (CommandContext<CommandSourceStack> data) {
+
+                ServerLevel level_server = data.getSource().getLevel();
+                Core.restart(level_server, true, true);
 
             }
 
