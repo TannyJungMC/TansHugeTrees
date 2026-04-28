@@ -9,7 +9,7 @@ My source code maybe a bit different from others. It's like linked code. I didn'
 
 ## How To Use
 
-- To switch between supported versions. Open MCreator, then open workspace settings, switch version of generator there. After finish MCreator part, then go to IntelliJ to fix errors in handcode part. Use find tool to find all text like this "(1.21.1)" or version you switched. It will show you all change mark comments, switch the changes by copy-paste them to the code below.
+- To switch between supported versions. Open MCreator, then open workspace settings, switch version of generator there. After finish MCreator part, then go to IntelliJ to fix errors in handcode part. Use find tool to find all text like this "(1.12.2)" or version you switched. It will show you all change mark comments, switch the changes by copy-paste them to the code below.
 - To run client or server.  In IntelliJ, go to "Gradle" tab at right side, select `Tasks > forgegradle runs > runClient or runServer`. In MCreator, click the green buttons at top-right.
 - To export the mod to JAR format. In IntelliJ, go to "Gradle" tab at right side, select `Tasks > build > build`. The exported file will be in `Project Folder > build > libs`. In MCreator, click the orange button then choose path for exported file.
 

@@ -98,11 +98,7 @@ public class Core {
 
                 if (message == true && config == true) {
 
-                    if (level_server == null) {
-
-                        logger.info("Restarting the mod...");
-
-                    } else {
+                    if (level_server != null) {
 
                         GameUtils.Misc.sendChatMessage(level_server, "Restarting the mod... / gray");
 
@@ -129,11 +125,7 @@ public class Core {
 
                     CustomPackOrganizing.Error.sendMessage(level_server);
 
-                    if (level_server == null) {
-
-                        logger.info("Restarted and cleared main caches about {}", cache_size);
-
-                    } else {
+                    if (level_server != null) {
 
                         GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches about " + cache_size + " / gray");
 

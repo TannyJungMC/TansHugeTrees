@@ -295,51 +295,64 @@ public class CustomPackOrganizing {
 
                 }
 
-                test:
+                // Pack ID
                 {
 
-                    // Pack ID
-                    {
+                    if (cache_pack_ids.containsKey(pack.getName()) == false) {
 
-                        if (cache_pack_ids.containsKey(pack.getName()) == false) {
+                        pass = false;
+                        Error.add("pack", "packs / pack ID not found. This will results skipping these packs. Make sure you use the version that includes pack ID.", pack.getPath(), pack.getName());
+
+                    }
+
+                }
+
+                // Data Structure Version
+                {
+
+                    if (Core.data_structure_version_pack.equals(data_structure_version) == false) {
+
+                        pass = false;
+                        Error.add("pack", "packs / unsupported data structure version. This will results skipping these packs. Your version is " + Core.data_structure_version_pack + " but these packs require a different version.", pack.getPath(), pack.getName() + " > " + data_structure_version);
+
+                    }
+
+                }
+
+                // Duplicated Pack ID
+                {
+
+                    pack_id_scan.clear();
+
+                    for (String id : cache_pack_ids.values()) {
+
+                        if (pack_id_scan.contains(id) == false) {
+
+                            pack_id_scan.add(id);
+
+                        } else {
 
                             pass = false;
-                            Error.add("pack", "packs / pack ID not found. This will results skipping these packs. Make sure you use the version that includes pack ID.", pack.getPath(), pack.getName());
-                            break test;
+                            Error.add("pack", "packs / duplicated pack IDs. This will results skipping these packs. You can report this to the pack authors to help them fix it.", pack.getPath(), pack.getName() + " > " + id);
+                            break;
 
                         }
 
                     }
 
-                    // Data Structure Version
-                    {
+                }
 
-                        if (Core.data_structure_version_pack.equals(data_structure_version) == false) {
+                // Required Packs
+                {
 
-                            pass = false;
-                            Error.add("pack", "packs / unsupported data structure version. This will results skipping these packs. Your version is " + Core.data_structure_version_pack + " but these packs require a different version.", pack.getPath(), pack.getName() + " > " + data_structure_version);
-                            break test;
+                    if (required_packs.equals("none") == false) {
 
-                        }
+                        for (String value : required_packs.split(" / ")) {
 
-                    }
-
-                    // Duplicated Pack ID
-                    {
-
-                        pack_id_scan.clear();
-
-                        for (String id : cache_pack_ids.values()) {
-
-                            if (pack_id_scan.contains(id) == false) {
-
-                                pack_id_scan.add(id);
-
-                            } else {
+                            if (cache_pack_ids.containsValue(value) == false) {
 
                                 pass = false;
-                                Error.add("pack", "packs / duplicated pack IDs. This will results skipping these packs. You can report this to the pack authors to help them fix it.", pack.getPath(), pack.getName() + " > " + id);
-                                break test;
+                                Error.add("pack", "packs / required packs not found. This will results skipping these packs. Make sure you install required packs to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
 
                             }
 
@@ -347,41 +360,19 @@ public class CustomPackOrganizing {
 
                     }
 
-                    // Required Packs
-                    {
+                }
 
-                        if (required_packs.equals("none") == false) {
+                // Required Mods
+                {
 
-                            for (String value : required_packs.split(" / ")) {
+                    if (required_mods.equals("none") == false) {
 
-                                if (cache_pack_ids.containsValue(value) == false) {
+                        for (String value : required_mods.split(" / ")) {
 
-                                    pass = false;
-                                    Error.add("pack", "packs / required packs not found. This will results skipping these packs. Make sure you install required packs to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
-                                    break test;
+                            if (GameUtils.Misc.isModLoaded(value) == false) {
 
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                    // Required Mods
-                    {
-
-                        if (required_mods.equals("none") == false) {
-
-                            for (String value : required_mods.split(" / ")) {
-
-                                if (GameUtils.Misc.isModLoaded(value) == false) {
-
-                                    pass = false;
-                                    Error.add("pack", "packs / required mods not found. This will results skipping these packs. Make sure you install required mods to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
-                                    break test;
-
-                                }
+                                pass = false;
+                                Error.add("pack", "packs / required mods not found. This will results skipping these packs. Make sure you install required mods to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
 
                             }
 
