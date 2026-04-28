@@ -19,7 +19,7 @@ public class Handcode {
         Core.data_structure_version_core = 1;
         Core.data_structure_version_mod = "1.8.0";
         Core.data_structure_version_pack = "1.8.0";
-        Core.tanny_pack_type = "Beta";
+        Core.main_pack_type = "Beta";
 
         Core.mod_name = "Tan's Huge Trees";
         Core.mod_id = "tanshugetrees";
@@ -76,7 +76,7 @@ public class Handcode {
                 ----------------------------------------------------------------------------------------------------
                 
                 path_preset = none
-                | Path of the preset you will convert. The part will be something like [ presets/#TannyJung-Main-Pack/redwood/redwood ]. This path is same as in temporary folder, found in dev folder inside the config. If the pack is extracted, then it will go get preset in extracted folder first.
+                | Path of the preset you will convert. The part will be something like [ presets/#main/redwood/redwood ]. This path is same as in temporary folder, found in dev folder inside the config. If the pack is extracted, then it will go get preset in extracted folder first.
                 
                 ----------------------------------------------------------------------------------------------------
                 """);
@@ -84,9 +84,6 @@ public class Handcode {
     }
 
     public static class Config {
-
-        public static boolean auto_check_update = false;
-        public static boolean wip_version = false;
 
         public static int region_scan_percent = 0;
         public static double multiply_rarity = 0.0;
@@ -147,23 +144,11 @@ public class Handcode {
         public static int tree_generator_count_limit = 0;
         public static int tree_generator_tp_limit = 0;
 
-        public static boolean developer_mode = false;
         public static boolean world_gen_icon = false;
 
-        public static void repair () {
+        public static void repair (String start, String end) {
 
-            String write = """
-                    
-                    ----------------------------------------------------------------------------------------------------
-                    TannyJung's Main Pack
-                    ----------------------------------------------------------------------------------------------------
-                    
-                    auto_check_update = true
-                    | Check for new update from GitHub every time the world starts
-                    
-                    wip_version = false
-                    | Use development version of the pack instead of release version. Not recommended for game play, as it's still in development, it might unstable. Sometimes it needed development version of the mod.
-                    
+            ConfigClassic.repair(Core.path_config + "/config.txt", start + """
                     ----------------------------------------------------------------------------------------------------
                     World Generation
                     ----------------------------------------------------------------------------------------------------
@@ -305,7 +290,7 @@ public class Handcode {
                     tree_generator_speed_tick = 1
                     | How fast of generators in tick. Increase this will make them slower. Set to 0 for temporary pause all generators.
                     
-                    tree_generator_speed_repeat = 100
+                    tree_generator_speed_repeat = 1000
                     | How many processes the generators run in a time. Increase this will make them generate faster but also can cause lag. Set to 0 for one time generation that can freeze the game.
                     
                     tree_generator_count_limit = 3
@@ -318,25 +303,13 @@ public class Handcode {
                     Miscellaneous
                     ----------------------------------------------------------------------------------------------------
                     
-                    developer_mode = false
-                    | Enable some features for debugging such as detailed error messages, info overlay in-game, etc.
-                    
                     world_gen_icon = true
                     | Enable little icon at top-left showing everytime the mod generate new region. This config only affect on singleplayer.
-                    
-                    ----------------------------------------------------------------------------------------------------
-                    """;
-
-            ConfigClassic.repair(Core.path_config + "/config.txt", write);
+                    """ + end);
 
         }
 
-        public static void apply () {
-
-            Map<String, String> data = ConfigClassic.getValues(Core.path_config + "/config.txt");
-
-            auto_check_update = Boolean.parseBoolean(data.get("auto_check_update"));
-            wip_version = Boolean.parseBoolean(data.get("wip_version"));
+        public static void apply (Map<String, String> data) {
 
             region_scan_percent = Integer.parseInt(data.get("region_scan_percent"));
             multiply_rarity = Double.parseDouble(data.get("multiply_rarity"));
@@ -397,7 +370,6 @@ public class Handcode {
             tree_generator_count_limit = Integer.parseInt(data.get("tree_generator_count_limit"));
             tree_generator_tp_limit = Integer.parseInt(data.get("tree_generator_tp_limit"));
 
-            developer_mode = Boolean.parseBoolean(data.get("developer_mode"));
             world_gen_icon = Boolean.parseBoolean(data.get("world_gen_icon"));
 
         }
@@ -414,18 +386,21 @@ public class Handcode {
 
                     Core.logger.info("Running config data migration for failed condition");
                     FileManager.delete(Core.path_config + "/#dev");
-                    FileManager.rename(Core.path_config + "/custom_packs/THT-tree_pack-main", "#TannyJung-Main-Pack");
-                    FileManager.rename(Core.path_config + "/custom_packs/TannyJung-Main-Pack", "#TannyJung-Main-Pack");
+                    FileManager.rename(Core.path_config + "/custom_packs/THT-tree_pack-main", "#main");
+                    FileManager.rename(Core.path_config + "/custom_packs/TannyJung-Main-Pack", "#main");
 
                 }
 
             }
 
-            if (OutsideUtils.testVersion("1.8.0", version).equals("outdated") == true) {
+            if (OutsideUtils.testVersion(version, "1.8.0").equals("outdated") == true) {
 
                 {
 
                     Core.logger.info("Running config data migration for 1.8.0");
+
+                    FileManager.rename(Core.path_config + "/custom_packs/#TannyJung-Main-Pack.zip", "#main.zip");
+                    FileManager.rename(Core.path_config + "/custom_packs/#TannyJung-Main-Pack", "#main");
                     FileManager.rename(Core.path_config + "/config_worldgen.txt", "config_world_gen.txt");
 
                 }
@@ -447,7 +422,7 @@ public class Handcode {
 
             }
 
-            if (OutsideUtils.testVersion("1.8.0", version).equals("outdated") == true) {
+            if (OutsideUtils.testVersion(version, "1.8.0").equals("outdated") == true) {
 
                 {
 
