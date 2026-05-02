@@ -3,7 +3,6 @@ package tannyjung.tanshugetrees_core.outside;
 import net.minecraft.server.level.ServerLevel;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
-import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -21,17 +20,17 @@ public class CustomPackOrganizing {
 
         FileManager.delete(Core.path_config + "/dev/temporary");
         FileManager.createEmptyFile(Core.path_config + "/dev/temporary", true);
-        FileManager.createEmptyFile(Core.path_config + "/custom_packs", true);
-        File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
-
-        if (packs == null) {
-
-            return;
-
-        }
 
         // Rename All Back
         {
+
+            File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
+
+            if (packs == null) {
+
+                return;
+
+            }
 
             for (File pack : packs) {
 
@@ -41,16 +40,16 @@ public class CustomPackOrganizing {
 
         }
 
-        packs = new File(Core.path_config + "/custom_packs").listFiles();
-
-        if (packs == null) {
-
-            return;
-
-        }
-
         // Extract ZIP
         {
+
+            File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
+
+            if (packs == null) {
+
+                return;
+
+            }
 
             for (File pack : packs) {
 
@@ -64,71 +63,20 @@ public class CustomPackOrganizing {
 
         }
 
-        // Organize Info
+        organizeInfo();
+
+        // Organizing Data
         {
 
-            File file = null;
+            File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 
-            for (File pack : packs) {
-
-                if (pack.getName().endsWith(".zip") == true) {
-
-                    file = new File(Core.path_config + "/dev/temporary/pack_zip/" + pack.getName() + "/info.txt");
-
-                } else {
-
-                    file = new File(pack.getPath() + "/info.txt");
-
-                }
-
-                if (file.exists() == true) {
-
-                    FileManager.copy(file.getPath(), Core.path_config + "/dev/temporary/info/" + pack.getName() + ".txt", false);
-
-                }
-
-            }
-
-        }
-
-        // Get Pack ID
-        {
-
-            File[] files = new File(Core.path_config + "/dev/temporary/info").listFiles();
-
-            if (files == null) {
+            if (packs == null) {
 
                 return;
 
             }
 
-            for (File file : files) {
-
-                if (file.exists() == true) {
-
-                    for (String scan : FileManager.readTXT(file.getPath())) {
-
-                        if (scan.startsWith("pack_id = ") == true) {
-
-                            cache_pack_ids.put(file.getName().substring(0, file.getName().length() - ".txt".length()), scan.substring("pack_id = ".length()));
-                            break;
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        testInfo();
-        pack_separate_multiple = " / " + pack_separate_multiple + " / ";
-
-        // Organizing Data
-        {
-
+            pack_separate_multiple = " / " + pack_separate_multiple + " / ";
             File main_pack = TannyPackManager.getCurrentFile();
 
             if (main_pack.exists() == true) {
@@ -210,6 +158,204 @@ public class CustomPackOrganizing {
 
     }
 
+    private static void organizeInfo () {
+
+        File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
+
+        if (packs == null) {
+
+            return;
+
+        }
+
+        Map<String, String> locations = new HashMap<>();
+
+        // Get Location
+        {
+
+            File file = null;
+
+            for (File pack : packs) {
+
+                if (pack.getName().endsWith(".zip") == true) {
+
+                    file = new File(Core.path_config + "/dev/temporary/pack_zip/" + pack.getName() + "/info.txt");
+
+                } else {
+
+                    file = new File(pack.getPath() + "/info.txt");
+
+                }
+
+                if (file.exists() == true) {
+
+                    FileManager.copy(file.getPath(), Core.path_config + "/dev/temporary/info/" + pack.getName() + ".txt", false);
+                    locations.put(pack.getName(), file.getPath());
+
+                }
+
+            }
+
+        }
+
+        // Get Pack ID
+        {
+
+            for (Map.Entry<String, String> entry : locations.entrySet()) {
+
+                cache_pack_ids.put(entry.getKey(), OutsideUtils.convertFileToDataMap(entry.getValue()).get("pack_id"));
+
+            }
+
+        }
+
+        boolean pass = false;
+        Map<String, String> data = null;
+        String location = "";
+        String pack_id = "";
+        String data_structure_version = "";
+        String required_packs = "";
+        String required_mods = "";
+        Map<String, List<Integer>> test_duplicated_pack = new HashMap<>();
+
+        for (File pack : packs) {
+
+            pass = true;
+            location = locations.get(pack.getName());
+
+            if (location == null) {
+
+                Error.add("pack", "packs / info file not found. This will results skipping these packs. Make sure you use the version that includes info file.", pack.getPath(), pack.getName());
+                pass = false;
+
+            }
+
+            data = OutsideUtils.convertFileToDataMap(location);
+
+            // Pack ID
+            {
+
+                pack_id = cache_pack_ids.get(pack.getName());
+
+                if (pack_id == null) {
+
+                    Error.add("pack", "packs / pack ID not found. This will results skipping these packs. Make sure you use the version that includes pack ID.", pack.getPath(), pack.getName());
+                    pass = false;
+
+                } else {
+
+                    test_duplicated_pack.computeIfAbsent(pack_id, create -> new ArrayList<>()).add(1);
+
+                    if (test_duplicated_pack.get(pack_id).size() > 1) {
+
+                        Error.add("pack", "packs / duplicated pack IDs. This will results skipping these packs. You can report this to the pack authors to help them fix it.", pack.getPath(), pack.getName() + " > " + pack_id);
+                        pass = false;
+
+                        cache_pack_ids.replace(pack.getName(), pack_id + "_" + test_duplicated_pack.get(pack_id).size());
+
+                    }
+
+                }
+
+            }
+
+            // Data Structure Version
+            {
+
+                data_structure_version = data.get("data_structure_version");
+
+                if (data_structure_version == null) {
+
+                    Error.add("pack", "packs / missing data_structure_version", pack.getPath(), pack.getName() + " > " + data_structure_version);
+                    pass = false;
+
+                } else {
+
+                    if (Core.data_structure_version_pack.equals(data_structure_version) == false) {
+
+                        Error.add("pack", "packs / unsupported data structure version. This will results skipping these packs. Your version is " + Core.data_structure_version_pack + " but these packs require a different version.", pack.getPath(), pack.getName() + " > " + data_structure_version);
+                        pass = false;
+
+                    }
+
+                }
+
+            }
+
+            // Required Packs
+            {
+
+                required_packs = data.get("required_packs");
+
+                if (required_packs == null) {
+
+                    Error.add("pack", "packs / missing required_packs", pack.getPath(), pack.getName() + " > " + data_structure_version);
+                    pass = false;
+
+                } else {
+
+                    if (required_packs.isEmpty() == false) {
+
+                        for (String scan : required_packs.split(" / ")) {
+
+                            if (cache_pack_ids.containsValue(scan) == false) {
+
+                                Error.add("pack", "packs / required packs not found. This will results skipping these packs. Make sure you install required packs to allow these packs to work.", pack.getPath(), pack.getName() + " > " + scan);
+                                pass = false;
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            // Required Mods
+            {
+
+                required_mods = data.get("required_mods");
+
+                if (required_mods == null) {
+
+                    Error.add("pack", "packs / missing required_mods", pack.getPath(), pack.getName() + " > " + data_structure_version);
+                    pass = false;
+
+                } else {
+
+                    if (required_mods.isEmpty() == false) {
+
+                        for (String scan : required_mods.split(" / ")) {
+
+                            if (GameUtils.Misc.isModLoaded(scan) == false) {
+
+                                Error.add("pack", "packs / required mods not found. This will results skipping these packs. Make sure you install required mods to allow these packs to work.", pack.getPath(), pack.getName() + " > " + scan);
+                                pass = false;
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            if (pass == false) {
+
+                FileManager.rename(pack.getPath(), "[INCOMPATIBLE] " + pack.getName());
+                cache_pack_ids.remove(pack.getName());
+                cache_pack_ids.put("[INCOMPATIBLE] " + pack.getName(), pack_id);
+
+            }
+
+        }
+
+    }
+
     private static void test (ServerLevel level_server, String folders, boolean is_function) {
 
         for (String folder : folders.split(" / ")) {
@@ -248,160 +394,9 @@ public class CustomPackOrganizing {
 
     }
 
-    private static void testInfo () {
-
-        File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
-
-        if (packs == null) {
-
-            return;
-
-        }
-
-        boolean pass = false;
-        File file = null;
-        String data_structure_version = "";
-        String required_packs = "none";
-        String required_mods = "none";
-        List<String> pack_id_scan = new ArrayList<>();
-
-        for (File pack : packs) {
-
-            pass = true;
-            file = new File(Core.path_config + "/dev/temporary/info/" + pack.getName() + ".txt");
-
-            if (file.exists() == true) {
-
-                // Get Data
-                {
-
-                    for (String scan : FileManager.readTXT(file.getPath())) {
-
-                        if (scan.startsWith("data_structure_version = ") == true) {
-
-                            data_structure_version = scan.substring("data_structure_version = ".length());
-
-                        } else if (scan.startsWith("required_packs = ")) {
-
-                            required_packs = scan.substring("required_packs = ".length());
-
-                        } else if (scan.startsWith("required_mods = ")) {
-
-                            required_mods = scan.substring("required_mods = ".length());
-
-                        }
-
-                    }
-
-                }
-
-                // Pack ID
-                {
-
-                    if (cache_pack_ids.containsKey(pack.getName()) == false) {
-
-                        pass = false;
-                        Error.add("pack", "packs / pack ID not found. This will results skipping these packs. Make sure you use the version that includes pack ID.", pack.getPath(), pack.getName());
-
-                    }
-
-                }
-
-                // Data Structure Version
-                {
-
-                    if (Core.data_structure_version_pack.equals(data_structure_version) == false) {
-
-                        pass = false;
-                        Error.add("pack", "packs / unsupported data structure version. This will results skipping these packs. Your version is " + Core.data_structure_version_pack + " but these packs require a different version.", pack.getPath(), pack.getName() + " > " + data_structure_version);
-
-                    }
-
-                }
-
-                // Duplicated Pack ID
-                {
-
-                    pack_id_scan.clear();
-
-                    for (String id : cache_pack_ids.values()) {
-
-                        if (pack_id_scan.contains(id) == false) {
-
-                            pack_id_scan.add(id);
-
-                        } else {
-
-                            pass = false;
-                            Error.add("pack", "packs / duplicated pack IDs. This will results skipping these packs. You can report this to the pack authors to help them fix it.", pack.getPath(), pack.getName() + " > " + id);
-                            break;
-
-                        }
-
-                    }
-
-                }
-
-                // Required Packs
-                {
-
-                    if (required_packs.equals("none") == false) {
-
-                        for (String value : required_packs.split(" / ")) {
-
-                            if (cache_pack_ids.containsValue(value) == false) {
-
-                                pass = false;
-                                Error.add("pack", "packs / required packs not found. This will results skipping these packs. Make sure you install required packs to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-                // Required Mods
-                {
-
-                    if (required_mods.equals("none") == false) {
-
-                        for (String value : required_mods.split(" / ")) {
-
-                            if (GameUtils.Misc.isModLoaded(value) == false) {
-
-                                pass = false;
-                                Error.add("pack", "packs / required mods not found. This will results skipping these packs. Make sure you install required mods to allow these packs to work.", pack.getPath(), pack.getName() + " > " + value);
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            } else {
-
-                pass = false;
-                Error.add("pack", "packs / info file not found. This will results skipping these packs. Make sure you use the version that includes info file.", pack.getPath(), pack.getName());
-
-            }
-
-            if (pass == false) {
-
-                FileManager.rename(file.getPath(), "/[INCOMPATIBLE] " + file.getName());
-
-            }
-
-        }
-
-    }
-
     private static void organize (File pack, String pack_separate_multiple) {
 
-        boolean incompatible = cache_error_files.contains(pack.getPath()) == true;
+        boolean incompatible = pack.getName().startsWith("[INCOMPATIBLE] ") == true;
 
         // Get Real Pack Path
         {
@@ -633,7 +628,7 @@ public class CustomPackOrganizing {
 
                         first = false;
 
-                        if (to_chat == true) {
+                        if (to_chat == false) {
 
                             Core.logger.error("----------------------------------------------------------------------------------------------------");
 
@@ -674,7 +669,7 @@ public class CustomPackOrganizing {
 
                         }
 
-                        if (to_chat == true) {
+                        if (to_chat == false) {
 
                             Core.logger.error("----------------------------------------------------------------------------------------------------");
 
