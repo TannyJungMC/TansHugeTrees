@@ -17,8 +17,8 @@ public class TanshugetreesModTabs {
 	public static final DeferredRegister<CreativeModeTab> REGISTRY = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, TanshugetreesMod.MODID);
 	public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB = REGISTRY.register("tab",
 			() -> CreativeModeTab.builder().title(Component.translatable("item_group.tanshugetrees.tab")).icon(() -> new ItemStack(TanshugetreesModBlocks.SAPLING_YOKAI.get())).displayItems((parameters, tabData) -> {
+				tabData.accept(TanshugetreesModBlocks.CUSTOM_SAPLING.get().asItem());
 				tabData.accept(TanshugetreesModBlocks.WAYPOINT_FLOWER.get().asItem());
-				tabData.accept(TanshugetreesModBlocks.TREE_GENERATOR.get().asItem());
 				tabData.accept(TanshugetreesModItems.TREE_SUMMONER_STAFF.get());
 				tabData.accept(TanshugetreesModBlocks.SAPLING_AGATHOS.get().asItem());
 				tabData.accept(TanshugetreesModBlocks.SAPLING_BAOBAB.get().asItem());

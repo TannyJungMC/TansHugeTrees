@@ -20,11 +20,11 @@ public class CacheManager {
 
         } else if (size < 1048576) {
 
-            return String.format(Locale.US, "%.2f", (double) size / 1024.0) + " KB";
+            return OutsideUtils.Mathematics.shorterDouble((double) size / 1024.0, 2) + " KB";
 
         } else {
 
-            return String.format(Locale.US, "%.2f", (double) size / 1048576.0) + " MB";
+            return OutsideUtils.Mathematics.shorterDouble((double) size / 1048576.0, 2) + " MB";
 
         }
 

@@ -16,7 +16,7 @@ import java.util.List;
 
 public class TXTFunction {
 
-    public static List<Entity> list_delayed_command = new ArrayList<>();
+    public static int count_delayed_command = 0;
 
 	public static void run (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos, String path, boolean randomly) {
 
@@ -311,7 +311,7 @@ public class TXTFunction {
                                                                     maxY = Integer.parseInt(min_max[4]);
                                                                     maxZ = Integer.parseInt(min_max[5]);
 
-                                                                    block = GameUtils.Tile.fromText(split[3]);
+                                                                    block = GameUtils.Tile.fromText(level_server, split[3]);
                                                                     variable_text = split[4];
 
                                                                 } catch (Exception ignored) {
@@ -522,10 +522,11 @@ public class TXTFunction {
 
     public static void loop (ServerLevel level_server) {
 
-        list_delayed_command = GameUtils.Mob.getAtEverywhere(level_server, "minecraft:marker", "TANNYJUNG-delayed_command");
+        count_delayed_command = 0;
 
-        for (Entity entity : list_delayed_command) {
+        for (Entity entity : GameUtils.Mob.getAtEverywhere(level_server, "minecraft:marker", "TANNYJUNG-delayed_command")) {
 
+            count_delayed_command = count_delayed_command + 1;
             TXTFunction.runDelayedCommand(level_server, entity);
 
         }

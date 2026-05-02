@@ -1,5 +1,6 @@
 package tannyjung.tanshugetrees_handcode.systems;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
@@ -284,7 +285,7 @@ public class Caches {
 
         }
 
-        public static Map<Short, BlockState> getBlock (String id) {
+        public static Map<Short, BlockState> getBlock (ServerLevel level_server, String id) {
 
             Map<String, String> data = CacheManager.DataText.getMap("tree_settings_block").get(id);
 
@@ -305,7 +306,7 @@ public class Caches {
 
             for (Map.Entry<String, String> entry : data.entrySet()) {
 
-                convert.put(Short.parseShort(entry.getKey()), GameUtils.Tile.fromText(entry.getValue()));
+                convert.put(Short.parseShort(entry.getKey()), GameUtils.Tile.fromText(level_server, entry.getValue()));
 
             }
 

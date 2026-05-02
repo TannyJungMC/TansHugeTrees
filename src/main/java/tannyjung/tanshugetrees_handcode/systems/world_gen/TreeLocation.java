@@ -173,33 +173,24 @@ public class TreeLocation {
         world_gen_overlay_details_biome = biome_id;
         world_gen_overlay_details_tree = "No Matching";
 
-        Map<String, String> config = null;
-        boolean config_enable = false;
-        String config_biome = "";
-        String config_spawn_type = "";
-        double config_rarity = 0.0;
-        int config_min_distance = 0;
-        int config_group_size = 0;
-        Set<String> set_biome_tree = CacheManager.DataText.getSet("set_biome_tree").get(biome_id);
+        Set<String> set_tree = null;
 
-        // Get Set of Trees
+        // get Set
         {
 
-            if (set_biome_tree == null) {
+            set_tree = CacheManager.DataText.getSet("set_tree").get(biome_id);
 
-                set_biome_tree = new HashSet<>();
+            if (set_tree == null) {
+
+                set_tree = new HashSet<>();
 
                 for (Map.Entry<String, Map<String, String>> entry : data.entrySet()) {
 
-                    config_enable = entry.getValue().get("enable").equals("true");
+                    if (entry.getValue().get("enable").equals("true") == true) {
 
-                    if (config_enable == true) {
+                        if (GameUtils.Environment.test(biome_center, entry.getValue().get("biome")) == true) {
 
-                        config_biome = entry.getValue().get("biome");
-
-                        if (GameUtils.Environment.test(biome_center, config_biome) == true) {
-
-                            set_biome_tree.add(entry.getKey());
+                            set_tree.add(entry.getKey());
 
                         }
 
@@ -207,17 +198,23 @@ public class TreeLocation {
 
                 }
 
-                CacheManager.DataText.setSet("set_biome_tree", biome_id, set_biome_tree);
+                CacheManager.DataText.setSet("set_tree", biome_id, set_tree);
 
             }
 
         }
 
+        Map<String, String> config = null;
+        String config_spawn_type = "";
+        String config_biome = "";
+        double config_rarity = 0.0;
+        int config_min_distance = 0;
+        int config_group_size = 0;
         int center_posX = 0;
         int center_posZ = 0;
         String[] split = null;
 
-        for (String scan : set_biome_tree) {
+        for (String scan : set_tree) {
 
             config = data.get(scan);
             config_rarity = (Double.parseDouble(config.get("rarity")) * 0.01) * Handcode.Config.multiply_rarity;
@@ -263,17 +260,16 @@ public class TreeLocation {
 
                 }
 
-                world_gen_overlay_details_biome = GameUtils.Environment.toID(biome_center);
                 world_gen_overlay_details_tree = scan;
                 writeData(level_accessor, center_posX, center_posZ, scan, config);
 
-                split = config.get("group_size").split(" <> ");
-                config_group_size = (int) ((double) Mth.nextInt(random, Integer.parseInt(split[0]), Integer.parseInt(split[1])) * Handcode.Config.multiply_group_size);
+                // Group Spawning
+                {
 
-                if (config_group_size > 1) {
+                    split = config.get("group_size").split(" <> ");
+                    config_group_size = (int) ((double) Mth.nextInt(random, Integer.parseInt(split[0]), Integer.parseInt(split[1])) * Handcode.Config.multiply_group_size);
 
-                    // Group Spawning
-                    {
+                    if (config_group_size > 1) {
 
                         config_spawn_type = config.get("spawn_type");
                         config_biome = config.get("biome");
@@ -560,7 +556,6 @@ public class TreeLocation {
 
     private static void writeData (LevelAccessor level_accessor, int centerX, int centerZ, String id, Map<String, String> data) {
 
-        RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((centerX * 341873128712L) + (centerZ * 132897987541L)));
         String path_storage = data.get("path_storage");
         File chosen = new File(Core.path_config + "/dev/temporary/" + path_storage);
 
@@ -575,6 +570,7 @@ public class TreeLocation {
 
             }
 
+            RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((centerX * 341873128712L) + (centerZ * 132897987541L)));
             chosen = new File(chosen.getPath() + "/" + list[random.nextInt(list.length)].getName());
 
         }
@@ -631,8 +627,7 @@ public class TreeLocation {
 
                 if (dead_tree_level > 200) {
 
-                    int fallen_direction = random.nextInt(4) + 1;
-
+                    int fallen_direction = getFallenDirection(level_accessor, centerX, centerZ);
                     int[] convert = OutsideUtils.convertSizeFallen(fallen_direction, sizeX, sizeY, sizeZ, center_sizeX, center_sizeY, center_sizeZ);
                     sizeX = convert[0];
                     sizeY = convert[1];
@@ -1019,6 +1014,13 @@ public class TreeLocation {
         }
 
         return data[random.nextInt(data.length)];
+
+    }
+
+    public static int getFallenDirection (LevelAccessor level_accessor, int centerX, int centerZ) {
+
+        RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((centerX * 341873128712L) + (centerZ * 132897987541L)));
+        return random.nextInt(4) + 1;
 
     }
 

@@ -53,32 +53,33 @@ public class Core {
     public static String mod_id = "";
     public static String mod_id_big = "";
     public static String mod_id_short = "";
-
+    
     public static int data_structure_version_core = 0;
     public static String data_structure_version_mod = "";
     public static String data_structure_version_pack = "";
-    public static String tanny_pack_type = "";
-    public static String tanny_pack_type_original = "";
-
+    public static String main_pack_type = "";
+    public static String main_pack_type_original = "";
     public static String github_pack = "";
     public static String wiki = "";
-
     public static boolean have_world_data_cleaner = false;
-
+    
     public static Logger logger = null;
+    public static boolean global_locking = false;
     public static String path_game = FMLPaths.GAMEDIR.get().toString();
     public static String path_config = path_game + "/" + mod_id + "_error";
     public static String path_world_core = path_game + "/" + mod_id + "_error";
     public static String path_world_mod = path_game + "/" + mod_id + "_error";
-    public static final ExecutorService thread_main = Executors.newFixedThreadPool(1, name -> { Thread thread = new Thread(name); thread.setName(Core.mod_name); return thread; });
+    public static final ExecutorService thread_main = Executors.newFixedThreadPool(1, name -> { Thread thread = new Thread(name); thread.setName(mod_name); return thread; });
 
-    public static boolean global_locking = false;
+    public static boolean auto_check_update = false;
+    public static boolean wip_version = false;
+    public static boolean developer_mode = false;
 
     public static void start (IEventBus bus) {
 
         Handcode.start();
         mod_id_big = mod_id.toUpperCase();
-        tanny_pack_type_original = tanny_pack_type;
+        main_pack_type_original = main_pack_type;
         logger = LogManager.getLogger(mod_id);
         path_config = path_game + "/config/" + mod_id;
 
@@ -95,19 +96,11 @@ public class Core {
             // Start Message
             {
 
-                if (message == true) {
+                if (message == true && config == true) {
 
-                    if (config == true) {
+                    if (level_server != null) {
 
-                        if (level_server == null) {
-
-                            logger.info("Restarting the mod...");
-
-                        } else {
-
-                            GameUtils.Misc.sendChatMessage(level_server, "Restarting the mod... / gray");
-
-                        }
+                        GameUtils.Misc.sendChatMessage(level_server, "Restarting the mod... / gray");
 
                     }
 
@@ -120,41 +113,20 @@ public class Core {
             if (config == true) {
 
                 cache_size = CacheManager.clear();
-                Handcode.Config.repair();
-                Handcode.Config.apply();
-
-                if (Handcode.Config.wip_version == true) {
-
-                    Core.tanny_pack_type = "WIP";
-
-                } else {
-
-                    Core.tanny_pack_type = Core.tanny_pack_type_original;
-
-                }
-
-                Handcode.repairData();
+                repairConfig(level_server);
 
             }
 
             // End Message
             {
 
-                if (message == true) {
+                if (message == true && config == true) {
 
                     CustomPackOrganizing.Error.sendMessage(level_server);
 
-                    if (config == true) {
+                    if (level_server != null) {
 
-                        if (level_server == null) {
-
-                            logger.info("Restarted and cleared main caches about {}", cache_size);
-
-                        } else {
-
-                            GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches about " + cache_size + " / gray");
-
-                        }
+                        GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches about " + cache_size + " / gray");
 
                     }
 
@@ -187,6 +159,55 @@ public class Core {
             });
 
         }
+
+    }
+
+    private static void repairConfig (ServerLevel level_server) {
+
+        FileManager.createEmptyFile(Core.path_config + "/custom_packs", true);
+
+        // Main Config
+        {
+
+            Handcode.Config.repair("""
+                    ----------------------------------------------------------------------------------------------------
+                    Main Pack
+                    ----------------------------------------------------------------------------------------------------
+                    
+                    auto_check_update = true
+                    | Check for new update from GitHub every time the world starts
+                    
+                    wip_version = false
+                    | Use development version of the pack instead of release version. Not recommended for game play, as it's still in development, it might unstable. Sometimes it needed development version of the mod.
+                    
+                    """, """
+                    
+                    developer_mode = false
+                    | Enable some features for debugging such as detailed error messages, info overlay in-game, etc.
+                    
+                    ----------------------------------------------------------------------------------------------------
+                    """);
+
+            Map<String, String> data = ConfigClassic.getValues(path_config + "/config.txt");
+            Handcode.Config.apply(data);
+
+            auto_check_update = Boolean.parseBoolean(data.get("auto_check_update"));
+            wip_version = Boolean.parseBoolean(data.get("wip_version"));
+            developer_mode = Boolean.parseBoolean(data.get("developer_mode"));
+
+            if (wip_version == true) {
+
+                main_pack_type = "WIP";
+
+            } else {
+
+                main_pack_type = main_pack_type_original;
+
+            }
+
+        }
+
+        Handcode.repairData(level_server);
 
     }
 
@@ -329,9 +350,13 @@ public class Core {
             // Developer Mode
             {
 
-                for (Entity entity : GameUtils.Mob.getAtEverywhere(level_server, "", Core.mod_id_big)) {
+                if (developer_mode == true) {
 
-                    GameUtils.Misc.spawnParticle(level_server, entity.position(), 0, 0, 0, 0, 1, "minecraft:end_rod");
+                    for (Entity entity : GameUtils.Mob.getAtEverywhere(level_server, "", mod_id_big)) {
+
+                        GameUtils.Misc.spawnParticle(level_server, entity.position(), 0, 0, 0, 0, 1, "minecraft:end_rod");
+
+                    }
 
                 }
 
@@ -364,8 +389,8 @@ public class Core {
 
             if (is_world == false) {
 
-                String path = Core.path_config + "/dev/version.txt";
-                File test_exist = new File(Core.path_config);
+                String path = path_config + "/dev/version.txt";
+                File test_exist = new File(path_config);
                 String version = "";
 
                 // Get Version
@@ -393,12 +418,12 @@ public class Core {
 
                 }
 
-                FileManager.writeTXT(path, Core.data_structure_version_mod, false);
+                FileManager.writeTXT(path, data_structure_version_mod, false);
 
             } else {
 
-                String path = Core.path_world_mod + "/version.txt";
-                File test_exist = new File(Core.path_world_mod);
+                String path = path_world_mod + "/version.txt";
+                File test_exist = new File(path_world_mod);
                 String version = "";
 
                 // Get Version
@@ -426,7 +451,7 @@ public class Core {
 
                 }
 
-                FileManager.writeTXT(path, Core.data_structure_version_mod, false);
+                FileManager.writeTXT(path, data_structure_version_mod, false);
 
             }
 

@@ -91,7 +91,7 @@ public class BlockPlacer {
 
             } else {
 
-                GameUtils.Tile.set(level_accessor, pos, GameUtils.Tile.fromText(GameUtils.Data.getBlockText(level_accessor, pos, "block")), false);
+                GameUtils.Tile.set(level_accessor, pos, GameUtils.Tile.fromText(level_server, GameUtils.Data.getBlockText(level_accessor, pos, "block")), false);
 
                 if (function.isEmpty() == false) {
 

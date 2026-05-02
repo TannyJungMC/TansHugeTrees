@@ -180,10 +180,19 @@ public class ConfigDynamic {
         }
 
         Map<String, String> options = OutsideUtils.convertFileToDataMap(source.toString());
+        String value = "";
 
         for (Map.Entry<String, String> entry : default_values.entrySet()) {
 
             if (options.containsKey(entry.getKey()) == true) {
+
+                value = options.get(entry.getKey());
+
+                if (value.isEmpty() == true) {
+
+                    value = "none";
+
+                }
 
                 if (temp.containsKey(id) == true && temp.get(id).containsKey(entry.getKey()) == true) {
 
@@ -193,13 +202,13 @@ public class ConfigDynamic {
 
                     } else {
 
-                        write.append(entry.getKey()).append(" = ").append(options.get(entry.getKey()));
+                        write.append(entry.getKey()).append(" = ").append(value);
 
                     }
 
                 } else {
 
-                    write.append(entry.getKey()).append(" = ").append(options.get(entry.getKey()));
+                    write.append(entry.getKey()).append(" = ").append(value);
 
                 }
 
@@ -220,7 +229,7 @@ public class ConfigDynamic {
     private static Map<String, Map<String, String>> read (Map<String, String> default_values, String name) {
 
         Map<String, Map<String, String>> data = new HashMap<>();
-        String[] value = null;
+        String[] split = null;
         String id = "";
         boolean skip = true;
 
@@ -253,19 +262,24 @@ public class ConfigDynamic {
 
                     } else if (scan.contains(" = ") == true) {
 
+                        split = scan.split(" = ");
+
                         if (skip == false) {
 
-                            value = scan.split(" = ");
-                            data.computeIfAbsent(id, create -> new HashMap<>()).put(value[0], value[1]);
+                            if (split[1].equals("none") == true) {
+
+                                split[1] = "";
+
+                            }
+
+                            data.computeIfAbsent(id, create -> new HashMap<>()).put(split[0], split[1]);
 
                         } else {
 
-                            value = scan.split(" = ");
+                            if (default_values.containsKey(split[0]) == true) {
 
-                            if (default_values.containsKey(value[0]) == true) {
-
-                                value[1] = default_values.get(value[0]);
-                                data.computeIfAbsent(id, create -> new HashMap<>()).put(value[0], value[1]);
+                                split[1] = default_values.get(split[0]);
+                                data.computeIfAbsent(id, create -> new HashMap<>()).put(split[0], split[1]);
 
                             }
 

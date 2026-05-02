@@ -14,9 +14,7 @@ import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepEnd;
 import tannyjung.tanshugetrees_core.outside.CustomPackOrganizing;
 import tannyjung.tanshugetrees_core.outside.TXTFunction;
 import tannyjung.tanshugetrees_core.outside.TannyPackManager;
-import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.systems.Commands;
-import tannyjung.tanshugetrees_handcode.systems.Events;
 import tannyjung.tanshugetrees_handcode.systems.Overlays;
 
 /*
@@ -93,9 +91,9 @@ public class EventCenter {
             int screen_height = event.getGuiGraphics().guiHeight();
             Overlays.eventInGame(graphic, screen_width, screen_height);
 
-            if (Handcode.Config.developer_mode == true) {
+            if (Core.developer_mode == true) {
 
-                OverlayMaker.createText(graphic, screen_width, screen_height, "top-right", 150, 50, 0.75, false, "§9Delayed Command = " + TXTFunction.list_delayed_command.size());
+                OverlayMaker.createText(graphic, screen_width, screen_height, "top-left", 8, 58, 0.75, false, "§9Delayed Command = " + TXTFunction.count_delayed_command);
 
             }
 
@@ -163,23 +161,21 @@ public class EventCenter {
 
                 Core.DelayedWork.create(true, 100, () -> {
 
-                    Core.thread_main.submit(() -> {
+                    CustomPackOrganizing.Error.sendMessage(level_server);
 
-                        CustomPackOrganizing.Error.sendMessage(level_server);
+                    if (Core.auto_check_update == true) {
 
-                        if (Handcode.Config.auto_check_update == true) {
+                        Core.thread_main.submit(() -> {
 
                             TannyPackManager.runCheckUpdate(level_server);
 
-                        }
+                        });
 
-                    });
+                    }
 
                 });
 
             }
-
-            Events.eventPlayerJoined();
 
         }
 

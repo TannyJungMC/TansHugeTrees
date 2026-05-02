@@ -11,6 +11,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
@@ -37,7 +38,7 @@ public class LivingMechanics {
 
         }
 
-        if (Handcode.Config.developer_mode == true) {
+        if (Core.developer_mode == true) {
 
             GameUtils.Misc.spawnParticle(level_server, entity.position(), 0, 0, 0, 0, 1, "minecraft:flash");
             GameUtils.Misc.spawnParticle(level_server, entity.position().add(0, 100, 0), 0, 25, 0, 0, 300, "minecraft:totem_of_undying");
@@ -48,7 +49,7 @@ public class LivingMechanics {
         boolean have_center_block = level_accessor.getBlockState(center_pos).isAir() == false;
         String path_settings = GameUtils.Data.getEntityText(entity, "tree_settings");
         short[] leaves_types = Caches.TreeSettings.getLeavesType(path_settings);
-        Map<Short, BlockState> blocks = Caches.TreeSettings.getBlock(path_settings);
+        Map<Short, BlockState> blocks = Caches.TreeSettings.getBlock(level_server, path_settings);
         Set<Block> leaves = new HashSet<>();
 
         // Get Leaves
@@ -230,9 +231,9 @@ public class LivingMechanics {
 
                 }
 
-                if (OutsideUtils.Math.isNumberStartWith(type, 1) == true) {
+                if (OutsideUtils.Mathematics.isNumberStartWith(type, 1) == true) {
 
-                    if (OutsideUtils.Math.isNumberStartWith(type, 120) == false) {
+                    if (OutsideUtils.Mathematics.isNumberStartWith(type, 120) == false) {
 
                         pre_block_data[0] = type;
                         pre_block_data[1] = posX;
@@ -690,7 +691,7 @@ public class LivingMechanics {
 
             } else {
 
-                LeafLitter.create(level_server, level_server, pos.above(), GameUtils.Tile.fromText(GameUtils.Data.getEntityText(entity, "block")), false);
+                LeafLitter.create(level_server, level_server, pos.above(), GameUtils.Tile.fromText(level_server, GameUtils.Data.getEntityText(entity, "block")), false);
                 entity.discard();
 
             }
@@ -717,7 +718,7 @@ public class LivingMechanics {
 
             } else {
 
-                LeafLitter.create(level_server, level_server, pos.above(), GameUtils.Tile.fromText(GameUtils.Data.getEntityText(entity, "block")), true);
+                LeafLitter.create(level_server, level_server, pos.above(), GameUtils.Tile.fromText(level_server, GameUtils.Data.getEntityText(entity, "block")), true);
                 entity.discard();
 
             }
@@ -761,6 +762,12 @@ public class LivingMechanics {
 
                     for (Entity entity : list_falling_leaf) {
 
+                        if (entity.isRemoved() == true) {
+
+                            continue;
+
+                        }
+
                         CustomEntityUpdate.runDrop(entity);
 
                     }
@@ -770,6 +777,12 @@ public class LivingMechanics {
                 if (list_leaf_litter_remover.isEmpty() == false) {
 
                     for (Entity entity : list_leaf_litter_remover) {
+
+                        if (entity.isRemoved() == true) {
+
+                            continue;
+
+                        }
 
                         CustomEntityUpdate.runLitterRemover(entity);
 

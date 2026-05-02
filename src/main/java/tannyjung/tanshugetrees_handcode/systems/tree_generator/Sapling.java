@@ -37,7 +37,7 @@ public class Sapling {
 
                     if (creative_mode == true || Math.random() < 0.05) {
 
-                        if (level_accessor.getBlockState(pos).getBlock() == TanshugetreesModBlocks.TREE_GENERATOR.get()) {
+                        if (level_accessor.getBlockState(pos).getBlock() == TanshugetreesModBlocks.CUSTOM_SAPLING.get()) {
 
                             // Custom Sapling
                             {
@@ -66,7 +66,7 @@ public class Sapling {
 
                                     String name = GameUtils.Tile.toText(level_accessor.getBlockState(pos))[0].substring("tanshugetrees:sapling_".length());
 
-                                    for (File scan : FileManager.getAllFiles(Core.path_config + "/dev/temporary/presets/#TannyJung-Main-Pack")) {
+                                    for (File scan : FileManager.getAllFiles(Core.path_config + "/dev/temporary/presets/#main")) {
 
                                         if (scan.getName().equals(name + ".txt") == true) {
 

@@ -86,7 +86,6 @@ public class TanshugetreesModBlockEntities {
 			BlockPlacerLimbOuterBlockEntity::new);
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SaplingHalcyonBlockEntity>> SAPLING_HALCYON = register("sapling_halcyon", TanshugetreesModBlocks.SAPLING_HALCYON, SaplingHalcyonBlockEntity::new);
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SaplingYokaiBlockEntity>> SAPLING_YOKAI = register("sapling_yokai", TanshugetreesModBlocks.SAPLING_YOKAI, SaplingYokaiBlockEntity::new);
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TreeGeneratorBlockEntity>> TREE_GENERATOR = register("tree_generator", TanshugetreesModBlocks.TREE_GENERATOR, TreeGeneratorBlockEntity::new);
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SaplingRedwoodBlockEntity>> SAPLING_REDWOOD = register("sapling_redwood", TanshugetreesModBlocks.SAPLING_REDWOOD, SaplingRedwoodBlockEntity::new);
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SaplingMalusDomesticaBlockEntity>> SAPLING_MALUS_DOMESTICA = register("sapling_malus_domestica", TanshugetreesModBlocks.SAPLING_MALUS_DOMESTICA,
 			SaplingMalusDomesticaBlockEntity::new);
@@ -111,6 +110,7 @@ public class TanshugetreesModBlockEntities {
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SaplingBeeKeeperBlockEntity>> SAPLING_BEE_KEEPER = register("sapling_bee_keeper", TanshugetreesModBlocks.SAPLING_BEE_KEEPER, SaplingBeeKeeperBlockEntity::new);
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SaplingWalkingTreeBlockEntity>> SAPLING_WALKING_TREE = register("sapling_walking_tree", TanshugetreesModBlocks.SAPLING_WALKING_TREE, SaplingWalkingTreeBlockEntity::new);
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SaplingCatalystBlockEntity>> SAPLING_CATALYST = register("sapling_catalyst", TanshugetreesModBlocks.SAPLING_CATALYST, SaplingCatalystBlockEntity::new);
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CustomSaplingBlockEntity>> CUSTOM_SAPLING = register("custom_sapling", TanshugetreesModBlocks.CUSTOM_SAPLING, CustomSaplingBlockEntity::new);
 
 	// Start of user code block custom block entities
 	// End of user code block custom block entities
@@ -154,7 +154,6 @@ public class TanshugetreesModBlockEntities {
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BLOCK_PLACER_LIMB_OUTER.get(), SidedInvWrapper::new);
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, SAPLING_HALCYON.get(), SidedInvWrapper::new);
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, SAPLING_YOKAI.get(), SidedInvWrapper::new);
-		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, TREE_GENERATOR.get(), SidedInvWrapper::new);
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, SAPLING_REDWOOD.get(), SidedInvWrapper::new);
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, SAPLING_MALUS_DOMESTICA.get(), SidedInvWrapper::new);
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, SAPLING_WENDY.get(), SidedInvWrapper::new);
@@ -176,5 +175,6 @@ public class TanshugetreesModBlockEntities {
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, SAPLING_BEE_KEEPER.get(), SidedInvWrapper::new);
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, SAPLING_WALKING_TREE.get(), SidedInvWrapper::new);
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, SAPLING_CATALYST.get(), SidedInvWrapper::new);
+		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CUSTOM_SAPLING.get(), SidedInvWrapper::new);
 	}
 }

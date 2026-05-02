@@ -11,8 +11,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerLevel;
@@ -22,6 +22,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -35,6 +36,7 @@ import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -52,21 +54,17 @@ import java.util.*;
 /*
 (1.20.1)
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 (1.21.1)
 import net.neoforged.fml.ModList;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.scores.ScoreHolder;
+import net.minecraft.data.worldgen.features.FeatureUtils;
 */
 import net.neoforged.fml.ModList;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
@@ -138,13 +136,7 @@ public class GameUtils {
 
 		public static void spawnParticle (ServerLevel level_server, Vec3 vec3, double spreadX, double spreadY, double spreadZ, double speed, int count, String id) {
 
-			/*
-			(1.20.1)
-			ParticleType<?> particle = ForgeRegistries.PARTICLE_TYPES.getValue(ResourceLocation.parse(id));
-			(1.21.1)
-			ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE.get(ResourceLocation.parse(id));
-			*/
-			ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE.get(ResourceLocation.parse(id));
+			ParticleType<?> particle = level_server.registryAccess().registryOrThrow(Registries.PARTICLE_TYPE).get(ResourceLocation.parse(id));
 
 			if (particle == null) {
 
@@ -162,13 +154,7 @@ public class GameUtils {
 
 		public static void playSound (ServerLevel level_server, BlockPos pos, double volume, double pitch, String id) {
 
-			/*
-			(1.20.1)
-			SoundEvent sound = ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation.parse(id));
-			(1.21.1)
-			SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse(id));
-			*/
-			SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse(id));
+			SoundEvent sound = level_server.registryAccess().registryOrThrow(Registries.SOUND_EVENT).get(ResourceLocation.parse(id));
 
 			if (sound == null) {
 
@@ -180,23 +166,25 @@ public class GameUtils {
 
 		}
 
-		public static Entity summonText (ServerLevel level_server, Vec3 vec3, double size, String data, boolean temporary) {
+		public static Entity summonText (ServerLevel level_server, Vec3 vec3, String tag, double size, String data) {
 
-			Entity entity = Mob.summon(level_server, vec3, "minecraft:text_display", "Display Text", Core.mod_id_big + "-display_text", "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[" + size + "f," + size + "f," + size + "f]},billboard:vertical,text:'" + Data.createText(data) + "'}");
+            return Mob.summon(level_server, vec3, "minecraft:text_display", "Display Text", Core.mod_id_big + "-display_text / " + tag, "{billboard:vertical,alignment:\"center\",see_through:true,brightness:{block:15, sky:15},text_opacity:0,line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[" + size + "f," + size + "f," + size + "f]},text:'" + Data.createText(data) + "'}");
 
-			if (temporary == true) {
+		}
 
-				Core.DelayedWork.create(false, 200, () -> {
+		public static Entity summonTextTemporary (ServerLevel level_server, Vec3 vec3, String tag, double size, String data) {
 
-					for (Entity scan : Mob.getAtArea(level_server, vec3, 1, true, 0, "minecraft:text_display", Core.mod_id_big + "-display_text")) {
+			Entity entity = summonText(level_server, vec3, tag, size, data);
 
-						scan.discard();
+			Core.DelayedWork.create(false, 200, () -> {
 
-					}
+				for (Entity scan : Mob.getAtArea(level_server, vec3, 1, true, 0, "minecraft:text_display", Core.mod_id_big + "-display_text")) {
 
-				});
+					scan.discard();
 
-			}
+				}
+
+			});
 
 			return entity;
 
@@ -548,7 +536,7 @@ public class GameUtils {
 
 		}
 
-		public static BlockState fromText (String data) {
+		public static BlockState fromText (ServerLevel level_server, String data) {
 
 			BlockState block = null;
 
@@ -570,13 +558,7 @@ public class GameUtils {
 
 				}
 
-				/*
-				(1.20.1)
-				get = ForgeRegistries.BLOCKS.getValue(ResourceLocation.parse(id));
-				(1.21.1)
-				get = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
-				*/
-				get = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
+				get = level_server.registryAccess().registryOrThrow(Registries.BLOCK).get(ResourceLocation.parse(id));
 
 				if (get == null) {
 
@@ -889,13 +871,7 @@ public class GameUtils {
 
 		public static Entity summon (ServerLevel level_server, Vec3 vec3, String id, String name, String tag, String custom) {
 
-			/*
-			(1.20.1)
-			EntityType<?> type = ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.parse(id));
-			(1.21.1)
-			EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(id));
-			*/
-			EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(id));
+			EntityType<?> type = level_server.registryAccess().registryOrThrow(Registries.ENTITY_TYPE).get(ResourceLocation.parse(id));
 
 			if (type == null) {
 
@@ -1063,15 +1039,9 @@ public class GameUtils {
 
 		}
 
-		public static ItemStack fromID (String id) {
+		public static ItemStack fromID (ServerLevel level_server, String id) {
 
-			/*
-			(1.20.1)
-			return ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(id)).getDefaultInstance();
-			(1.21.1)
-			return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)).getDefaultInstance();
-			*/
-			return BuiltInRegistries.ITEM.get(ResourceLocation.parse(id)).getDefaultInstance();
+			return level_server.registryAccess().registryOrThrow(Registries.ITEM).get(ResourceLocation.parse(id)).getDefaultInstance();
 
 		}
 
@@ -1138,16 +1108,18 @@ public class GameUtils {
 		public static void placeFeature (LevelAccessor level_accessor, BlockPos pos, String id) {
 
 			WorldGenLevel level_world_gen = (WorldGenLevel) level_accessor;
+			HolderLookup.RegistryLookup<ConfiguredFeature<?, ?>> lookup = level_world_gen.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE);
+			ResourceKey<ConfiguredFeature<?, ?>> key = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(id));
+			ChunkGenerator chunk_generator = level_world_gen.getLevel().getChunkSource().getGenerator();
+			RandomSource random = level_world_gen.getRandom();
 
 			/*
-			(1.20.1)
-			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
-			(1.21.1)
-			level_world_gen.holderOrThrow(ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(id))).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+			(1.20.1) (1.21.1)
+			lookup.getOrThrow(key).value().place(level_world_gen, chunk_generator, random, pos);
 			(1.21.8)
-			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getValueOrThrow(FeatureUtils.createKey(id)).place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+			lookup.getValueOrThrow(key).place(level_world_gen, chunk_generator, random, pos);
 			*/
-			level_world_gen.holderOrThrow(ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(id))).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+			lookup.getOrThrow(key).value().place(level_world_gen, chunk_generator, random, pos);
 
 		}
 

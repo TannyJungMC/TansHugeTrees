@@ -241,7 +241,7 @@ public class TreePlacer {
 
         }
 
-        Map<Short, BlockState> blocks = Caches.TreeSettings.getBlock(path_settings);
+        Map<Short, BlockState> blocks = Caches.TreeSettings.getBlock(level_server, path_settings);
         Set<Short> keep = Caches.TreeSettings.getKeep(path_settings);
         short[] leaves_type = Caches.TreeSettings.getLeavesType(path_settings);
         Map<Short, String> functions = Caches.TreeSettings.getFunction(path_settings);
@@ -390,8 +390,8 @@ public class TreePlacer {
 
             }
 
-            is_leaves = OutsideUtils.Math.isNumberStartWith(type, 120) == true;
-            is_function = OutsideUtils.Math.isNumberStartWith(type, 2) == true;
+            is_leaves = OutsideUtils.Mathematics.isNumberStartWith(type, 120) == true;
+            is_function = OutsideUtils.Mathematics.isNumberStartWith(type, 2) == true;
 
             if (is_function == false) {
 
@@ -411,7 +411,7 @@ public class TreePlacer {
                             // Basic Style
                             {
 
-                                if (OutsideUtils.Math.isNumberStartWith(type, 119) == true) {
+                                if (OutsideUtils.Mathematics.isNumberStartWith(type, 119) == true) {
 
                                     if (reduce_sprig > 0) {
 
@@ -423,7 +423,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 118) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 118) == true) {
 
                                     if (reduce_sprig == 0) {
 
@@ -439,7 +439,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 117) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 117) == true) {
 
                                     if (reduce_twig == 0) {
 
@@ -455,7 +455,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 116) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 116) == true) {
 
                                     if (reduce_limb == 0) {
 
@@ -471,7 +471,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 115) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 115) == true) {
 
                                     if (reduce_branch == 0) {
 
@@ -496,7 +496,7 @@ public class TreePlacer {
                                 // Only Trunk
                                 {
 
-                                    if (OutsideUtils.Math.isNumberStartWith(type, 114) == true) {
+                                    if (OutsideUtils.Mathematics.isNumberStartWith(type, 114) == true) {
 
                                         if (reduce_trunk > 0) {
 
@@ -571,7 +571,7 @@ public class TreePlacer {
 
                             if (no_roots == true) {
 
-                                if (OutsideUtils.Math.isNumberStartWith(type, 111) == true || OutsideUtils.Math.isNumberStartWith(type, 112) == true || OutsideUtils.Math.isNumberStartWith(type, 113) == true) {
+                                if (OutsideUtils.Mathematics.isNumberStartWith(type, 111) == true || OutsideUtils.Mathematics.isNumberStartWith(type, 112) == true || OutsideUtils.Mathematics.isNumberStartWith(type, 113) == true) {
 
                                     continue;
 
@@ -581,7 +581,7 @@ public class TreePlacer {
 
                         } else {
 
-                            if (OutsideUtils.Math.isNumberStartWith(type, 112) == true || OutsideUtils.Math.isNumberStartWith(type, 113) == true) {
+                            if (OutsideUtils.Mathematics.isNumberStartWith(type, 112) == true || OutsideUtils.Mathematics.isNumberStartWith(type, 113) == true) {
 
                                 continue;
 
@@ -589,7 +589,7 @@ public class TreePlacer {
 
                             if (no_roots == true) {
 
-                                if (OutsideUtils.Math.isNumberStartWith(type, 110) == true || OutsideUtils.Math.isNumberStartWith(type, 111) == true) {
+                                if (OutsideUtils.Mathematics.isNumberStartWith(type, 110) == true || OutsideUtils.Mathematics.isNumberStartWith(type, 111) == true) {
 
                                     continue;
 
@@ -612,7 +612,7 @@ public class TreePlacer {
 
                                 if (Handcode.Config.leaf_litter == true && Handcode.Config.leaf_litter_world_gen == true) {
 
-                                    if ((OutsideUtils.Math.isNumberEndWith(type, 1) == true && leaves_type[0] == 2) || (OutsideUtils.Math.isNumberEndWith(type, 2) == true && leaves_type[1] == 2)) {
+                                    if ((OutsideUtils.Mathematics.isNumberEndWith(type, 1) == true && leaves_type[0] == 2) || (OutsideUtils.Mathematics.isNumberEndWith(type, 2) == true && leaves_type[1] == 2)) {
 
                                         leaf_litter_chance = Handcode.Config.leaf_litter_world_gen_chance_coniferous;
 
@@ -965,13 +965,12 @@ public class TreePlacer {
 
             }
 
-            RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((centerX * 341873128712L) + (centerZ * 132897987541L)));
             int dead_tree_level = TreeLocation.getDeadTreeLevel(level_accessor, id, location, centerX, centerZ, false);
             int fallen_direction = 0;
 
             if (dead_tree_level > 200) {
 
-                fallen_direction = random.nextInt(4) + 1;
+                fallen_direction = TreeLocation.getFallenDirection(level_accessor, centerX, centerZ);
 
             }
 
@@ -1070,6 +1069,8 @@ public class TreePlacer {
                             }
 
                         }
+
+                        RandomSource random = RandomSource.create(level_accessor.getServer().overworld().getSeed() ^ ((centerX * 341873128712L) + (centerZ * 132897987541L)));
 
                         // Tree Type
                         {
@@ -1238,15 +1239,13 @@ public class TreePlacer {
 
                         if (sizeX != 0 || sizeZ != 0) {
 
-                            if (dead_tree_level < 200) {
+                            if (testSurfaceSmoothness(level_accessor, level_server, chunk_generator, pos_center, sizeX, sizeY, sizeZ, center_sizeX, center_sizeY, center_sizeZ, pos_original) == false) {
 
-                                if (testSurfaceSmoothness(level_accessor, level_server, chunk_generator, pos_center, sizeX, sizeZ, center_sizeX, center_sizeY, center_sizeZ, pos_original) == false) {
+                                break test;
 
-                                    break test;
+                            }
 
-                                }
-
-                            } else {
+                            if (dead_tree_level > 200) {
 
                                 if (testFallenArea(level_accessor, level_server, chunk_generator, location, pos_center, rotation_mirrored, fallen_direction, dead_tree_level) == false) {
 
@@ -1301,7 +1300,7 @@ public class TreePlacer {
 
         }
 
-        private static boolean testSurfaceSmoothness (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, BlockPos pos_center, int sizeX, int sizeZ, int center_sizeX, int center_sizeY, int center_sizeZ, BlockPos pos_original) {
+        private static boolean testSurfaceSmoothness (LevelAccessor level_accessor, ServerLevel level_server, ChunkGenerator chunk_generator, BlockPos pos_center, int sizeX, int sizeY, int sizeZ, int center_sizeX, int center_sizeY, int center_sizeZ, BlockPos pos_original) {
 
             if (Handcode.Config.surface_smoothness_detection == true) {
 
@@ -1315,8 +1314,10 @@ public class TreePlacer {
                 int pos3 = GameUtils.Space.getHeightWorldGen(level_accessor, level_server, chunk_generator, pos_center.getX() + test_sizeX, pos_center.getZ() - test_center_sizeZ, "OCEAN_FLOOR", "OCEAN_FLOOR_WG");
                 int pos4 = GameUtils.Space.getHeightWorldGen(level_accessor, level_server, chunk_generator, pos_center.getX() + test_sizeX, pos_center.getZ() + test_sizeZ, "OCEAN_FLOOR", "OCEAN_FLOOR_WG");
 
-                int height_up = (int) Math.ceil(pos_original.getY() + ((sizeX - center_sizeX) * (Handcode.Config.surface_smoothness_detection_height_up * 0.01)));
-                int height_down = (int) Math.ceil(pos_original.getY() - (center_sizeY * (Handcode.Config.surface_smoothness_detection_height_down * 0.01)));
+                int height_up = (sizeY - center_sizeY) + Math.abs(pos_center.getY() - pos_original.getY());
+                height_up = pos_original.getY() + (int) Math.ceil(height_up * Handcode.Config.surface_smoothness_detection_height_up * 0.01);
+                int height_down = center_sizeY + Math.abs(pos_center.getY() - pos_original.getY());
+                height_down = pos_original.getY() - (int) Math.ceil(height_down * Handcode.Config.surface_smoothness_detection_height_down * 0.01);
                 boolean test1 = (pos_original.getY() < pos1 && height_up > pos1) || (pos_original.getY() >= pos1 && pos1 > height_down);
                 boolean test2 = (pos_original.getY() < pos2 && height_up > pos2) || (pos_original.getY() >= pos2 && pos2 > height_down);
                 boolean test3 = (pos_original.getY() < pos3 && height_up > pos3) || (pos_original.getY() >= pos3 && pos3 > height_down);
@@ -1366,8 +1367,8 @@ public class TreePlacer {
             // Get Left
             {
 
-                int total = reduce_trunk + reduce_bough + reduce_branch + reduce_limb + reduce_twig + reduce_sprig;
-                left_before_test = (int) (total * 0.75);
+                double total = reduce_trunk + reduce_bough + reduce_branch + reduce_limb + reduce_twig + reduce_sprig;
+                left_before_test = (int) Math.ceil(total * 0.5);
 
             }
 
@@ -1412,12 +1413,12 @@ public class TreePlacer {
 
                 if (loop == 0) {
 
-                    if (OutsideUtils.Math.isNumberStartWith(type, 1) == true) {
+                    if (OutsideUtils.Mathematics.isNumberStartWith(type, 1) == true) {
 
                         // Skip Roots
                         {
 
-                            if (OutsideUtils.Math.isNumberStartWith(type, 110) == true || OutsideUtils.Math.isNumberStartWith(type, 111) == true || OutsideUtils.Math.isNumberStartWith(type, 112) == true || OutsideUtils.Math.isNumberStartWith(type, 113) == true) {
+                            if (OutsideUtils.Mathematics.isNumberStartWith(type, 110) == true || OutsideUtils.Mathematics.isNumberStartWith(type, 111) == true || OutsideUtils.Mathematics.isNumberStartWith(type, 112) == true || OutsideUtils.Mathematics.isNumberStartWith(type, 113) == true) {
 
                                 continue;
 
@@ -1431,11 +1432,11 @@ public class TreePlacer {
                             // Basic Style
                             {
 
-                                if (OutsideUtils.Math.isNumberStartWith(type, 120) == true) {
+                                if (OutsideUtils.Mathematics.isNumberStartWith(type, 120) == true) {
 
                                     continue;
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 119) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 119) == true) {
 
                                     if (reduce_sprig > 0) {
 
@@ -1447,7 +1448,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 118) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 118) == true) {
 
                                     if (reduce_sprig == 0) {
 
@@ -1463,7 +1464,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 117) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 117) == true) {
 
                                     if (reduce_twig == 0) {
 
@@ -1479,7 +1480,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 116) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 116) == true) {
 
                                     if (reduce_limb == 0) {
 
@@ -1495,7 +1496,7 @@ public class TreePlacer {
 
                                     }
 
-                                } else if (OutsideUtils.Math.isNumberStartWith(type, 115) == true) {
+                                } else if (OutsideUtils.Mathematics.isNumberStartWith(type, 115) == true) {
 
                                     if (reduce_branch == 0) {
 
@@ -1520,7 +1521,7 @@ public class TreePlacer {
                                 // Only Trunk
                                 {
 
-                                    if (OutsideUtils.Math.isNumberStartWith(type, 114) == true) {
+                                    if (OutsideUtils.Mathematics.isNumberStartWith(type, 114) == true) {
 
                                         if (reduce_trunk > 0) {
 
