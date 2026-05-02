@@ -4,13 +4,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.storage.LevelResource;
 
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepEnd;
+import tannyjung.tanshugetrees_core.outside.CustomPackOrganizing;
 import tannyjung.tanshugetrees_core.outside.TXTFunction;
+import tannyjung.tanshugetrees_core.outside.TannyPackManager;
 import tannyjung.tanshugetrees_handcode.systems.Commands;
 import tannyjung.tanshugetrees_handcode.systems.Overlays;
 
@@ -18,6 +21,7 @@ import tannyjung.tanshugetrees_handcode.systems.Overlays;
 (1.20.1)
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
@@ -30,6 +34,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.api.distmarker.Dist;
 (1.21.1)
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
@@ -44,6 +49,7 @@ import net.neoforged.api.distmarker.Dist;
 */
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
@@ -138,6 +144,36 @@ public class EventCenter {
                 ChunkPos chunk_pos = event.getChunk().getPos();
 
                 WorldGenStepEnd.start(dimension, chunk_pos);
+
+            }
+
+        }
+
+        @SubscribeEvent
+        public static void eventPlayerJoined (PlayerEvent.PlayerLoggedInEvent event) {
+
+            Entity entity = event.getEntity();
+            ServerLevel level_server = (ServerLevel) entity.level();
+
+            if (first_player_joined == false) {
+
+                first_player_joined = true;
+
+                Core.DelayedWork.create(true, 100, () -> {
+
+                    CustomPackOrganizing.Error.sendMessage(level_server);
+
+                    if (Core.auto_check_update == true) {
+
+                        Core.thread_main.submit(() -> {
+
+                            TannyPackManager.runCheckUpdate(level_server);
+
+                        });
+
+                    }
+
+                });
 
             }
 

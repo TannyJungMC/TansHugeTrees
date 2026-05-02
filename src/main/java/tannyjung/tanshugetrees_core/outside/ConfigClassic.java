@@ -7,46 +7,6 @@ import java.util.*;
 
 public class ConfigClassic {
 
-    public static void runMainRepairApply () {
-
-        Handcode.Config.repair("""
-                ----------------------------------------------------------------------------------------------------
-                Main Pack
-                ----------------------------------------------------------------------------------------------------
-                
-                auto_check_update = true
-                | Check for new update from GitHub every time the world starts
-                
-                wip_version = false
-                | Use development version of the pack instead of release version. Not recommended for game play, as it's still in development, it might unstable. Sometimes it needed development version of the mod.
-                
-                """, """
-                
-                developer_mode = false
-                | Enable some features for debugging such as detailed error messages, info overlay in-game, etc.
-                
-                ----------------------------------------------------------------------------------------------------
-                """);
-
-        Map<String, String> data = ConfigClassic.getValues(Core.path_config + "/config.txt");
-        Core.auto_check_update = Boolean.parseBoolean(data.get("auto_check_update"));
-        Core.wip_version = Boolean.parseBoolean(data.get("wip_version"));
-        Core.developer_mode = Boolean.parseBoolean(data.get("developer_mode"));
-
-        if (Core.wip_version == true) {
-
-            Core.main_pack_type = "WIP";
-
-        } else {
-
-            Core.main_pack_type = Core.main_pack_type_original;
-
-        }
-
-        Handcode.Config.apply(data);
-
-    }
-
 	public static void repair (String path, String original) {
 
         Map<String, Boolean> should_keep = new HashMap<>();

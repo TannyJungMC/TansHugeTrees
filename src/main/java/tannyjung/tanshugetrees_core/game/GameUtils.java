@@ -12,6 +12,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerLevel;
@@ -21,6 +22,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -34,6 +36,7 @@ import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -52,10 +55,8 @@ import java.util.*;
 (1.20.1)
 import net.minecraftforge.fml.ModList;
 import net.minecraft.world.level.chunk.ChunkStatus;
-import net.minecraft.data.worldgen.features.FeatureUtils;
 (1.21.1)
 import net.neoforged.fml.ModList;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
@@ -63,7 +64,6 @@ import net.minecraft.world.scores.ScoreHolder;
 */
 import net.minecraftforge.fml.ModList;
 import net.minecraft.world.level.chunk.ChunkStatus;
-import net.minecraft.data.worldgen.features.FeatureUtils;
 
 public class GameUtils {
 
@@ -1103,16 +1103,18 @@ public class GameUtils {
 		public static void placeFeature (LevelAccessor level_accessor, BlockPos pos, String id) {
 
 			WorldGenLevel level_world_gen = (WorldGenLevel) level_accessor;
+			HolderLookup.RegistryLookup<ConfiguredFeature<?, ?>> lookup = level_world_gen.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE);
+			ResourceKey<ConfiguredFeature<?, ?>> key = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(id));
+			ChunkGenerator chunk_generator = level_world_gen.getLevel().getChunkSource().getGenerator();
+			RandomSource random = level_world_gen.getRandom();
 
 			/*
-			(1.20.1)
-			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
-			(1.21.1)
-			level_world_gen.holderOrThrow(ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(id))).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+			(1.20.1) (1.21.1)
+			lookup.getOrThrow(key).value().place(level_world_gen, chunk_generator, random, pos);
 			(1.21.8)
-			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getValueOrThrow(FeatureUtils.createKey(id)).place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+			lookup.getValueOrThrow(key).place(level_world_gen, chunk_generator, random, pos);
 			*/
-			level_accessor.registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(FeatureUtils.createKey(id)).value().place(level_world_gen, level_world_gen.getLevel().getChunkSource().getGenerator(), level_world_gen.getRandom(), pos);
+			lookup.getOrThrow(key).value().place(level_world_gen, chunk_generator, random, pos);
 
 		}
 

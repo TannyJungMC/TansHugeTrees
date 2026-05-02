@@ -69,7 +69,7 @@ public class Core {
     public static String path_config = path_game + "/" + mod_id + "_error";
     public static String path_world_core = path_game + "/" + mod_id + "_error";
     public static String path_world_mod = path_game + "/" + mod_id + "_error";
-    public static final ExecutorService thread_main = Executors.newFixedThreadPool(1, name -> { Thread thread = new Thread(name); thread.setName(Core.mod_name); return thread; });
+    public static final ExecutorService thread_main = Executors.newFixedThreadPool(1, name -> { Thread thread = new Thread(name); thread.setName(mod_name); return thread; });
 
     public static boolean auto_check_update = false;
     public static boolean wip_version = false;
@@ -113,8 +113,7 @@ public class Core {
             if (config == true) {
 
                 cache_size = CacheManager.clear();
-                ConfigClassic.runMainRepairApply();
-                Handcode.repairData(level_server);
+                repairConfig(level_server);
 
             }
 
@@ -160,6 +159,55 @@ public class Core {
             });
 
         }
+
+    }
+
+    private static void repairConfig (ServerLevel level_server) {
+
+        FileManager.createEmptyFile(Core.path_config + "/custom_packs", true);
+
+        // Main Config
+        {
+
+            Handcode.Config.repair("""
+                    ----------------------------------------------------------------------------------------------------
+                    Main Pack
+                    ----------------------------------------------------------------------------------------------------
+                    
+                    auto_check_update = true
+                    | Check for new update from GitHub every time the world starts
+                    
+                    wip_version = false
+                    | Use development version of the pack instead of release version. Not recommended for game play, as it's still in development, it might unstable. Sometimes it needed development version of the mod.
+                    
+                    """, """
+                    
+                    developer_mode = false
+                    | Enable some features for debugging such as detailed error messages, info overlay in-game, etc.
+                    
+                    ----------------------------------------------------------------------------------------------------
+                    """);
+
+            Map<String, String> data = ConfigClassic.getValues(path_config + "/config.txt");
+            Handcode.Config.apply(data);
+
+            auto_check_update = Boolean.parseBoolean(data.get("auto_check_update"));
+            wip_version = Boolean.parseBoolean(data.get("wip_version"));
+            developer_mode = Boolean.parseBoolean(data.get("developer_mode"));
+
+            if (wip_version == true) {
+
+                main_pack_type = "WIP";
+
+            } else {
+
+                main_pack_type = main_pack_type_original;
+
+            }
+
+        }
+
+        Handcode.repairData(level_server);
 
     }
 
