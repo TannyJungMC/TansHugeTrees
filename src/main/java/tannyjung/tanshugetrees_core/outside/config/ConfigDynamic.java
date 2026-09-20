@@ -1,7 +1,10 @@
-package tannyjung.tanshugetrees_core.outside;
+package tannyjung.tanshugetrees_core.outside.config;
 
 
 import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.outside.CacheManager;
+import tannyjung.tanshugetrees_core.outside.FileManager;
+import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -300,6 +303,71 @@ public class ConfigDynamic {
     public static Map<String, Map<String, String>> getData (String name) {
 
         return CacheManager.DataText.getMap("config_" + name);
+
+    }
+
+    public static Map<String, Map<String, String>> readTest (String name) {
+
+        Map<String, Map<String, String>> data = new HashMap<>();
+        String[] split = null;
+        String id = "";
+        boolean lock = false;
+        boolean incompatible = false;
+
+        for (String scan : FileManager.readTXT(Core.path_config + "/config_" + name + ".txt")) {
+
+            {
+
+                if (scan.isEmpty() == false) {
+
+                    if (scan.startsWith("[") == true) {
+
+                        // First Data
+                        {
+
+                            lock = scan.startsWith("[LOCK] ") == true;
+
+                            if (lock == true) {
+
+                                scan = scan.substring("[LOCK] ".length());
+
+                            }
+
+                            incompatible = scan.startsWith("[INCOMPATIBLE] ") == true;
+
+                            if (incompatible == true) {
+
+                                scan = scan.substring("[INCOMPATIBLE] ".length());
+
+                            }
+
+                            id = scan.substring(scan.indexOf("]") + 2).replace(" > ", "/");
+                            data.computeIfAbsent(id, create -> new HashMap<>()).put("lock", String.valueOf(lock));
+                            data.computeIfAbsent(id, create -> new HashMap<>()).put("incompatible", String.valueOf(incompatible));
+
+                        }
+
+                    } else if (scan.contains(" = ") == true) {
+
+                        split = scan.split(" = ");
+
+                        if (split[1].equals("none") == true) {
+
+                            split[1] = "";
+
+                        }
+
+                        data.computeIfAbsent(id, create -> new HashMap<>()).put(split[0], split[1]);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        return data;
 
     }
 

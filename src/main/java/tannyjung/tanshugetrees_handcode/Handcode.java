@@ -4,6 +4,9 @@ import net.minecraft.server.level.ServerLevel;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_core.outside.*;
+import tannyjung.tanshugetrees_core.outside.config.ConfigClassic;
+import tannyjung.tanshugetrees_core.outside.config.ConfigDynamic;
+import tannyjung.tanshugetrees_core.outside.config.CustomPackOrganizing;
 
 import java.util.HashSet;
 import java.util.List;
@@ -16,27 +19,32 @@ public class Handcode {
 
     public static void start () {
 
-        Core.data_structure_version_core = 1;
-        Core.data_structure_version_mod = "1.8.0";
-        Core.data_structure_version_pack = "1.8.0";
-        Core.main_pack_type = "Beta";
+        Core.syncModData(
 
-        Core.mod_name = "Tan's Huge Trees";
-        Core.mod_id = "tanshugetrees";
-        Core.mod_id_short = "T";
-        Core.github_pack = "THT-tree_pack";
-        Core.wiki = "https://sites.google.com/view/tannyjung/minecraft-mods/tans-huge-trees";
+                "Tan's Huge Trees",
+                "tanshugetrees",
+                "T",
+                "THT-tree_pack",
+                "https://sites.google.com/view/tannyjung/minecraft-mods/tans-huge-trees",
 
-        Core.have_world_data_cleaner = true;
+                1,
+                "1.8.0",
+                "1.8.0",
+                "Beta",
 
-        compatibility_serene_seasons = Config.compatibility_serene_seasons && GameUtils.Misc.isModLoaded("sereneseasons");
+                true,
+                true
+
+        );
+
+        compatibility_serene_seasons = Config.compatibility_serene_seasons && GameUtils.isModLoaded("sereneseasons");
 
     }
 
     public static void repairData (ServerLevel level_server) {
 
-        FileManager.createEmptyFile(Core.path_config + "/dev/shape_file_converter", true);
-        CustomPackOrganizing.start(level_server, "functions / presets / world_gen", "presets < _settings / world_gen", "functions / leaf_litter / tree_decoration");
+        FileManager.createEmptyFile(Core.path_config + "/dev/shape_file_generator", true);
+        CustomPackOrganizing.start(level_server, new String[]{"functions", "tree_blueprints", "tree_palettes", "tree_shapes", "world_gen"}, new String[]{"presets", "world_gen"}, new String[]{"functions", "leaf_litter", "tree_decoration"});
 
         ConfigDynamic.reorganize("world_gen", "world_gen", """
                 enable = false
@@ -63,19 +71,19 @@ public class Handcode {
                 # Set rotation of that tree. For random direction, use [ random ]. For specific direction, use [ north ], [ west ], [ east ], or [ south ]. Only supported one value per tree.
                 mirrored = random
                 # Set mirror effect for that tree. For random value, use [ random ]. For specific value with 50% random, use [ random_x ] or [ random_z ]. Use [ off ] to disable mirror effect.
-                path_storage = none
+                path_shapes = none
                 # The part of tree shapes that will be used by that tree
-                path_settings = none
+                path_palettes = none
                 # The path of tree settings that will be applied into that tree
                 """);
 
-        ConfigClassic.repair(Core.path_config + "/dev/shape_file_converter/settings.txt", """
+        ConfigClassic.repair(Core.path_config + "/dev/shape_file_generator/settings.txt", """
                 - This only for convert tree presets into tree shapes, for use in custom packs. Not a place for people to run around.
-                - To use this. Set render distance to 32 or depends on tree size. Then write correct file location below and use command [ /TANSHUGETREES command shape_file_converter start <loop> ].
+                - To use this. Set render distance to 32 or depends on tree size. Then write correct file location below and use command [ /TANSHUGETREES command shape_file_generator start <loop> ].
                 
                 ----------------------------------------------------------------------------------------------------
                 
-                path_preset = none
+                path_blueprint = none
                 | Path of the preset you will convert. The part will be something like [ presets/#main/redwood/redwood ]. This path is same as in temporary folder, found in dev folder inside the config. If the pack is extracted, then it will go get preset in extracted folder first.
                 
                 ----------------------------------------------------------------------------------------------------
@@ -99,9 +107,10 @@ public class Handcode {
         public static double leaf_litter_world_gen_chance_coniferous = 0.0;
         public static boolean abscission_world_gen = false;
         public static Set<String> dead_tree_auto_level = new HashSet<>();
-        public static boolean tree_decorations = false;
-        public static double tree_decorations_normal_chance = 0.0;
-        public static double tree_decorations_decay_chance = 0.0;
+        public static boolean decorations = false;
+        public static double decorations_normal_chance = 0.0;
+        public static double decorations_decay_chance = 0.0;
+        public static int shadow_reduction_world_gen = 0;
 
         public static boolean shoreline_detection = false;
         public static boolean surface_smoothness_detection = false;
@@ -123,6 +132,7 @@ public class Handcode {
         public static int falling_leaf_count_limit = 0;
         public static int leaf_light_level_detection = 0;
         public static double dead_leaf_drop_chance = 0.0;
+        public static int shadow_reduction = 0;
 
         public static boolean compatibility_serene_seasons = false;
         public static double leaf_drop_chance_spring = 0;
@@ -172,7 +182,7 @@ public class Handcode {
                     | Cancel the trees when their spawn center is above this Y level. As some world gen mods such as ReTerraForged, replacing mountain block and my trees can't detect those new block, make them spawn on blocks that not in the list. Set to 0 to disable this.
                     
                     unviable_ecology_skip_chance = 0.75
-                    | Skip trees that generate in unviable ecosystems. For example, land trees that generate in water. This config only affect to dead trees, as normal trees already skip generate in unviable ecosystems.
+                    | Skip trees that generate in unviable ecosystems, such as land trees in water. When not skipped, they will generate as dead trees.
                     
                     leaf_litter_world_gen = true
                     leaf_litter_world_gen_chance = 0.1
@@ -185,10 +195,13 @@ public class Handcode {
                     dead_tree_auto_level = 11 / 12 / 13 / 14 / 15 / 16 / 17 / 18 / 19 / 21 / 22 / 23 / 24 / 25 / 26 / 27 / 28 / 29 / 31 / 32 / 33 / 34 / 35 / 36 / 37 / 38 / 39
                     | Randomly pick these number for trees that set dead tree level as "auto" and "auto_pine". 1X is normal dead trees. 2X is fallen trees with roots. 3X is fallen trees without roots. X1 X2 X3 X4 X5 is no leaves, no sprig, no twig, no limb, no branch. X6 X7 is only trunk 50-100% and hollowed. X8 X9 is only trunk 10-50% and hollowed.
                     
-                    tree_decorations = true
-                    tree_decorations_normal_chance = 0.01
-                    tree_decorations_decay_chance = 0.5
+                    decorations = true
+                    decorations_normal_chance = 0.01
+                    decorations_decay_chance = 0.5
                     | Run decoration functions while generate trees. Disable these or reduce their chances can improve world gen speed.
+                    
+                    shadow_reduction_world_gen = 16
+                    | Reduce shadow under trees in world generation. This is number of leaf holes in one chunk. Higher number lower shadow, but may slowdown the world generation. Set to 0 to disable this feature.
                     
                     ----------------------------------------------------------------------------------------------------
                     World Generation : Surrounding Area Detection
@@ -255,6 +268,9 @@ public class Handcode {
                     dead_leaf_drop_chance = 0.001
                     | Chance of leaves to drop themselves when the tree is dead by light level and missing center block
                     
+                    shadow_reduction = 16
+                    | Reduce shadow under trees while running living mechanics. This is number of leaf holes in one chunk. Higher number lower shadow, but may produce lag spikes. Set to 0 to disable this feature.
+                    
                     ----------------------------------------------------------------------------------------------------
                     Living Mechanics : Leaf Cycle and Seasons
                     ----------------------------------------------------------------------------------------------------
@@ -297,7 +313,7 @@ public class Handcode {
                     | How many generators will be generating in the same time. Set to 0 for no limit.
                     
                     tree_generator_tp_limit = 16
-                    | How many blocks the generators can move per time. Lower this can reduce lag spikes caused by placing blocks in many chunks at once. Set to 0 for no limit.
+                    | How many blocks the generators can move per time. Lower this can reduce lag spikes cause by placing blocks in many chunks at once. Set to 0 for no limit.
                     
                     ----------------------------------------------------------------------------------------------------
                     Miscellaneous
@@ -325,9 +341,10 @@ public class Handcode {
             leaf_litter_world_gen_chance_coniferous = Double.parseDouble(data.get("leaf_litter_world_gen_chance_coniferous"));
             abscission_world_gen = Boolean.parseBoolean(data.get("abscission_world_gen"));
             dead_tree_auto_level = new HashSet<>(List.of(data.get("dead_tree_auto_level").split(" / ")));
-            tree_decorations = Boolean.parseBoolean(data.get("tree_decorations"));
-            tree_decorations_normal_chance = Double.parseDouble(data.get("tree_decorations_normal_chance"));
-            tree_decorations_decay_chance = Double.parseDouble(data.get("tree_decorations_decay_chance"));
+            decorations = Boolean.parseBoolean(data.get("decorations"));
+            decorations_normal_chance = Double.parseDouble(data.get("decorations_normal_chance"));
+            decorations_decay_chance = Double.parseDouble(data.get("decorations_decay_chance"));
+            shadow_reduction_world_gen = Integer.parseInt(data.get("shadow_reduction_world_gen"));
 
             shoreline_detection = Boolean.parseBoolean(data.get("shoreline_detection"));
             surface_smoothness_detection = Boolean.parseBoolean(data.get("surface_smoothness_detection"));
@@ -349,6 +366,7 @@ public class Handcode {
             falling_leaf_count_limit = Integer.parseInt(data.get("falling_leaf_count_limit"));
             leaf_light_level_detection = Integer.parseInt(data.get("leaf_light_level_detection"));
             dead_leaf_drop_chance = Double.parseDouble(data.get("dead_leaf_drop_chance"));
+            shadow_reduction = Integer.parseInt(data.get("shadow_reduction"));
 
             compatibility_serene_seasons = Boolean.parseBoolean(data.get("compatibility_serene_seasons"));
             leaf_drop_chance_spring = Double.parseDouble(data.get("leaf_drop_chance_spring"));
@@ -398,10 +416,20 @@ public class Handcode {
                 {
 
                     Core.logger.info("Running config data migration for 1.8.0");
-
                     FileManager.rename(Core.path_config + "/custom_packs/#TannyJung-Main-Pack.zip", "#main.zip");
                     FileManager.rename(Core.path_config + "/custom_packs/#TannyJung-Main-Pack", "#main");
                     FileManager.rename(Core.path_config + "/config_worldgen.txt", "config_world_gen.txt");
+
+                }
+
+            }
+
+            if (OutsideUtils.testVersion(version, "1.9.0").equals("outdated") == true) {
+
+                {
+
+                    Core.logger.info("Running config data migration for 1.9.0");
+                    FileManager.rename(Core.path_config + "/dev/shape_file_converter", "shape_file_generator");
 
                 }
 

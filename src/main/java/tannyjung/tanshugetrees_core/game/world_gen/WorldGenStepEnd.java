@@ -3,7 +3,7 @@ package tannyjung.tanshugetrees_core.game.world_gen;
 import net.minecraft.world.level.ChunkPos;
 import tannyjung.tanshugetrees_core.Core;
 import tannyjung.tanshugetrees_core.outside.FileManager;
-import tannyjung.tanshugetrees_handcode.systems.world_gen.WorldGen;
+import tannyjung.tanshugetrees_handcode.core.WorldGen;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class WorldGenStepEnd {
                 test.clear();
                 test.add("b0");
                 FileManager.writeBIN(file.getPath(), test, false);
-                WorldGen.stepEnd(dimension, chunk_pos);
+                WorldGen.finishRegion(dimension, chunk_pos);
 
             }
 

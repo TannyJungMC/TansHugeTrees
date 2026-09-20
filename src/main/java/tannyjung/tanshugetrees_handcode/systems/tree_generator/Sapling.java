@@ -2,12 +2,13 @@ package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.Core;
-import tannyjung.tanshugetrees_core.game.GameUtils;
+import tannyjung.tanshugetrees_core.game.*;
 import tannyjung.tanshugetrees.init.TanshugetreesModBlocks;
 import tannyjung.tanshugetrees_core.outside.FileManager;
 
@@ -16,128 +17,119 @@ import java.nio.file.Path;
 
 public class Sapling {
 
-    public static void click (LevelAccessor level_accessor, Entity entity, BlockPos pos) {
+    public static void click (ServerLevel level_server, ServerPlayer player_server, BlockPos pos) {
 
-        if (level_accessor instanceof ServerLevel level_server) {
+        if (NBTManager.Tile.getLogic(level_server, pos, "main", "sapling_started") == false) {
 
-            if (GameUtils.Data.getBlockLogic(level_accessor, pos, "sapling_started") == false) {
+            ItemStack item = player_server.getItemBySlot(EquipmentSlot.MAINHAND);
 
-                if (GameUtils.Item.getSlot(entity, EquipmentSlot.MAINHAND).is(Items.BONE_MEAL) == true) {
+            if (item.getItem() == Items.BONE_MEAL) {
 
-                    String error = "";
-                    boolean creative_mode = GameUtils.Mob.isCreativeMode(entity);
-                    GameUtils.Misc.spawnParticle(level_server, pos.getCenter(), 0, 0, 0, 0, 10, "minecraft:happy_villager");
+                String error = "";
+                boolean creative_mode = player_server.isCreative() == true;
+                GameUtils.spawnParticle(level_server, pos.getCenter(), 0, 0, 0, 0, 10, "minecraft:happy_villager");
 
-                    if (creative_mode == false) {
+                if (creative_mode == false) {
 
-                        GameUtils.Item.addCount(entity, EquipmentSlot.MAINHAND, -1);
-                        GameUtils.Data.addBlockNumber(level_accessor, level_server, pos, "bone_meal_usage", 1);
+                    item.setCount(item.getCount() - 1);
+                    NBTManager.Tile.setNumber(level_server, pos, "main", "bone_meal_usage", 1);
+
+                }
+
+                if (creative_mode == true || Math.random() < 0.05) {
+
+                    if (level_server.getBlockState(pos).getBlock() == TanshugetreesModBlocks.CUSTOM_SAPLING.get()) {
+
+                        // Custom Sapling
+                        {
+
+                            if (NBTManager.Tile.getText(level_server, pos, "main", "path").isEmpty() == true) {
+
+                                if (NBTManager.Tile.getNumber(level_server, pos, "main", "tree_generator_speed_tick") == 0) {
+
+                                    error = "§cEmpty Blueprint";
+
+                                }
+
+                            }
+
+                        }
+
+                    } else {
+
+                        // General
+                        {
+
+                            String path = "";
+
+                            // Get Path
+                            {
+
+                                String name = BlockManager.toText(level_server.getBlockState(pos))[0].substring("tanshugetrees:sapling_".length());
+
+                                for (File scan : FileManager.getAllFiles(Core.path_config + "/dev/temporary/tree_blueprints/#main")) {
+
+                                    if (scan.getName().equals(name + ".txt") == false) {
+
+                                        continue;
+
+                                    }
+
+                                    path = Path.of(Core.path_config + "/dev/temporary/tree_blueprints").relativize(scan.toPath()).toString();
+                                    path = path.replace("\\", "/");
+                                    path = path.substring(0, path.length() - ".txt".length());
+                                    break;
+
+                                }
+
+                            }
+
+                            if (path.isEmpty() == true) {
+
+                                error = "§cBlueprint Not Found";
+
+                            } else {
+
+                                NBTManager.Tile.setText(level_server, pos, "main", "path", path);
+
+                            }
+
+                        }
 
                     }
 
-                    if (creative_mode == true || Math.random() < 0.05) {
+                    if (error.isEmpty() == false) {
 
-                        if (level_accessor.getBlockState(pos).getBlock() == TanshugetreesModBlocks.CUSTOM_SAPLING.get()) {
+                        // Error
+                        {
 
-                            // Custom Sapling
-                            {
+                            for (int test = (int) NBTManager.Tile.getNumber(level_server, pos, "main", "bone_meal_usage"); test > 0; test--) {
 
-                                if (GameUtils.Data.getBlockText(level_accessor, pos, "path").isEmpty() == true) {
-
-                                    if (GameUtils.Data.getBlockNumber(level_accessor, pos, "tree_generator_speed_tick") == 0) {
-
-                                        error = "Empty Sapling Preset";
-
-                                    }
-
-                                }
+                                EntityManager.summon(level_server, pos.getCenter(), false, "minecraft:item", "", new String[]{}, "{Item:{id:\"minecraft:bone_meal\",Count:1b}}");
 
                             }
 
-                        } else {
+                            NBTManager.Tile.setNumber(level_server, pos, "main", "bone_meal_usage", 0);
 
-                            // General
+                            // Display Text
                             {
 
-                                String path = "";
-
-                                // Get Path
-                                {
-
-                                    String name = GameUtils.Tile.toText(level_accessor.getBlockState(pos))[0].substring("tanshugetrees:sapling_".length());
-
-                                    for (File scan : FileManager.getAllFiles(Core.path_config + "/dev/temporary/presets/#main")) {
-
-                                        if (scan.getName().equals(name + ".txt") == true) {
-
-                                            path = Path.of(Core.path_config + "/dev/temporary").relativize(scan.toPath()).toString();
-                                            path = path.replace("\\", "/");
-                                            path = path.substring(0, path.length() - ".txt".length());
-
-                                        }
-
-                                    }
-
-                                }
-
-                                if (path.isEmpty() == true) {
-
-                                    error = "Sapling Not Available Yet";
-
-                                } else {
-
-                                    GameUtils.Data.setBlockText(level_accessor, level_server, pos, "path", path);
-
-                                }
+                                DisplayManager.summonTextTemporary(level_server, pos.getCenter().add(0, 1, 0), 1, new String[]{}, error);
 
                             }
 
                         }
 
-                        if (error.isEmpty() == false) {
+                    } else {
 
-                            // Error
-                            {
+                        if (creative_mode == true) {
 
-                                for (int test = (int) GameUtils.Data.getBlockNumber(level_accessor, pos, "bone_meal_usage"); test > 0; test--) {
-
-                                    GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:item", "", "", "{Item:{id:\"minecraft:bone_meal\",Count:1b}}");
-
-                                }
-
-                                GameUtils.Data.setBlockNumber(level_accessor, level_server, pos, "bone_meal_usage", 0);
-
-                                // Display Text
-                                {
-
-                                    GameUtils.Mob.summon(level_server, pos.getCenter().add(0, 0.75, 0), "minecraft:text_display", "Sapling Error", "TANSHUGETREES-sapling_error", "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical,text:'{\"text\":\"" + error + "\",\"color\":\"red\"}'}");
-
-                                    Core.DelayedWork.create(false, 200, () -> {
-
-                                        for (Entity entity_import : GameUtils.Mob.getAtArea(level_server, pos.getCenter().add(0, 0.75, 0), 1, true, 0, "minecraft:text_display", "TANSHUGETREES-sapling_error")) {
-
-                                            entity_import.discard();
-                                            
-                                        }
-                                        
-                                    });
-
-                                }
-
-                            }
-
-                        } else {
-
-                            if (creative_mode == true) {
-
-                                GameUtils.Data.setBlockNumber(level_accessor, level_server, pos, "countdown", -1);
-
-                            }
-
-                            GameUtils.Data.setBlockLogic(level_accessor, level_server, pos, "sapling_started", true);
-                            GameUtils.Mob.summon(level_server, pos.getCenter().add(0, 0.75, 0), "minecraft:text_display", "Sapling Countdown", "TANSHUGETREES-sapling_countdown", "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical}");
+                            NBTManager.Tile.setNumber(level_server, pos, "main", "countdown", -1);
 
                         }
+
+                        NBTManager.Tile.setLogic(level_server, pos, "main", "sapling_started", true);
+                        EntityManager.summon(level_server, pos.getCenter().add(0, 0.75, 0), false, "minecraft:text_display", "Sapling Countdown", new String[]{"TANSHUGETREES-sapling_countdown"}, "{see_through:1b,alignment:\"left\",brightness:{block:15, sky:15},line_width:1000,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]},billboard:vertical}");
 
                     }
 
@@ -149,76 +141,74 @@ public class Sapling {
 
     }
 
-    public static void tick (LevelAccessor level_accessor, BlockPos pos) {
+    public static void tick (ServerLevel level_server, BlockPos pos) {
 
-        if (level_accessor instanceof ServerLevel level_server) {
+        if (NBTManager.Tile.getLogic(level_server, pos, "main", "sapling_started") == true) {
 
-            if (GameUtils.Data.getBlockLogic(level_accessor, pos, "sapling_started") == true) {
+            int countdown = (int) NBTManager.Tile.getNumber(level_server, pos, "main", "countdown");
 
-                int countdown = (int) GameUtils.Data.getBlockNumber(level_accessor, pos, "countdown");
+            if (countdown >= 0) {
 
-                if (countdown >= 0) {
+                // Update Countdown Number
+                {
 
-                    // Update Countdown Number
-                    {
+                    for (Entity entity_import : EntityManager.Population.getArea(level_server, pos.getCenter(), 1, "minecraft:text_display", "TANSHUGETREES-sapling_countdown", new String[]{})) {
 
-                        for (Entity entity_import : GameUtils.Mob.getAtArea(level_server, pos.getCenter(), 1, true, 0, "minecraft:text_display", "TANSHUGETREES-sapling_countdown")) {
-
-                            GameUtils.Command.runEntity(entity_import, "data merge entity @s {text:'{\"text\":\"" + countdown + "\",\"color\":\"red\"}'}");
-
-                        }
+                        GameUtils.runCommandEntity(entity_import, "data merge player_server @s {text:'{\"text\":\"" + countdown + "\",\"color\":\"red\"}'}");
 
                     }
 
-                    // When Break Sapling
-                    {
+                }
 
-                        Core.DelayedWork.create(false, 20, () -> {
+                // When Break Sapling
+                {
 
-                            for (Entity entity_import : GameUtils.Mob.getAtArea(level_server, pos.getCenter(), 1, true, 0, "minecraft:text_display", "TANSHUGETREES-sapling_countdown")) {
+                    Core.DelayedWork.createBasic(20, () -> {
 
-                                entity_import.discard();
-
-                            }
-
-                        });
-
-                    }
-
-                    GameUtils.Data.addBlockNumber(level_accessor, level_server, pos, "countdown", -1);
-
-                } else {
-
-                    // End
-                    {
-
-                        for (Entity entity_import : GameUtils.Mob.getAtArea(level_server, pos.getCenter(), 1, true, 0, "minecraft:text_display", "TANSHUGETREES-sapling_countdown")) {
+                        for (Entity entity_import : EntityManager.Population.getArea(level_server, pos.getCenter(), 1, "minecraft:text_display", "TANSHUGETREES-sapling_countdown", new String[]{})) {
 
                             entity_import.discard();
 
                         }
 
-                        if (GameUtils.Data.getBlockText(level_accessor, pos, "path").isEmpty() == false) {
+                    });
 
-                            TreeGenerator.create(level_accessor, level_server, null, pos, GameUtils.Data.getBlockText(level_accessor, pos, "path"));
+                }
 
-                        } else {
+                NBTManager.Tile.addNumber(level_server, pos, "main", "countdown", -1);
 
-                            Entity entity_summon = GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Tree Generator", "TANSHUGETREES-tree_generator", "");
+            } else {
 
-                            if (entity_summon == null) {
+                // End
+                {
 
-                                return;
+                    for (Entity entity_import : EntityManager.Population.getArea(level_server, pos.getCenter(), 1, "minecraft:text_display", "TANSHUGETREES-sapling_countdown", new String[]{})) {
 
-                            }
+                        entity_import.discard();
 
-                            GameUtils.Command.runEntity(entity_summon, "data modify entity @s ForgeData.tanshugetrees set from block ~ ~ ~ ForgeData.tanshugetrees");
+                    }
+
+                    String path = NBTManager.Tile.getText(level_server, pos, "main", "path");
+
+                    if (path.isEmpty() == false) {
+
+                        TreeGenerator.create(level_server, null, pos, path);
+
+                    } else {
+
+                        Entity entity_summon = EntityManager.summon(level_server, pos.getCenter(), false, "minecraft:marker", "Tree Generator", new String[]{"TANSHUGETREES-tree_generator"}, "");
+
+                        if (entity_summon == null) {
+
+                            return;
 
                         }
 
-                        level_accessor.removeBlock(new BlockPos(pos), false);
+                        GameUtils.runCommandEntity(entity_summon, "data modify player_server @s NeoForgeData.tanshugetrees set from block ~ ~ ~ NeoForgeData.tanshugetrees");
 
                     }
+
+                    level_server.removeBlock(new BlockPos(pos), false);
 
                 }
 

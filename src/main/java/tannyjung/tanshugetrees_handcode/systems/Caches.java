@@ -1,9 +1,9 @@
 package tannyjung.tanshugetrees_handcode.systems;
 
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import tannyjung.tanshugetrees_core.Core;
-import tannyjung.tanshugetrees_core.game.GameUtils;
+import tannyjung.tanshugetrees_core.game.BlockManager;
 import tannyjung.tanshugetrees_core.outside.CacheManager;
 import tannyjung.tanshugetrees_core.outside.FileManager;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
@@ -34,12 +34,11 @@ public class Caches {
                     try {
 
                         String[] split = id.split("\\|");
-                        path = Core.path_config + "/dev/temporary/" + split[0] + "/" + split[1];
+                        path = Core.path_config + "/dev/temporary/tree_shapes/" + split[0] + "/" + split[1];
 
                     } catch (Exception exception) {
 
                         OutsideUtils.exception(new Exception(), exception, "");
-                        return;
 
                     }
 
@@ -109,12 +108,6 @@ public class Caches {
                 getTreeShape(id);
                 data = CacheManager.DataShort.getArray("tree_shape_size").get(id);
 
-                if (data == null) {
-
-                    data = new short[0];
-
-                }
-
             }
 
             return data;
@@ -129,12 +122,6 @@ public class Caches {
 
                 getTreeShape(id);
                 data = CacheManager.DataInt.getArray("tree_shape_block_count").get(id);
-
-                if (data == null) {
-
-                    data = new int[0];
-
-                }
 
             }
 
@@ -151,12 +138,6 @@ public class Caches {
                 getTreeShape(id);
                 data = CacheManager.DataShort.getArray("tree_shape_data").get(id);
 
-                if (data == null) {
-
-                    data = new short[0];
-
-                }
-
             }
 
             return data;
@@ -165,7 +146,7 @@ public class Caches {
 
     }
 
-    public static class TreeSettings {
+    public static class TreePalettes {
 
         private static void get (String id) {
 
@@ -173,7 +154,7 @@ public class Caches {
             Map<String, String> data_block = new HashMap<>();
             Map<String, String> data_function = new HashMap<>();
             Set<Short> data_keep = new HashSet<>();
-            short[] data_leaves_type = new short[2];
+            short[] data_leaves_type = new short[]{0, 0};
 
             // Get Data
             {
@@ -183,7 +164,7 @@ public class Caches {
                 String value = "";
                 byte leaves_type = 0;
 
-                for (String scan : FileManager.readTXT(Core.path_config + "/dev/temporary/" + id + ".txt")) {
+                for (String scan : FileManager.readTXT(Core.path_config + "/dev/temporary/tree_palettes/" + id + ".txt")) {
 
                     if (scan.isEmpty() == false) {
 
@@ -256,28 +237,22 @@ public class Caches {
 
             }
 
-            CacheManager.DataText.setMap("tree_settings_normal", id, data_normal);
-            CacheManager.DataText.setMap("tree_settings_block", id, data_block);
-            CacheManager.DataText.setMap("tree_settings_function", id, data_function);
-            CacheManager.DataShort.setSet("tree_settings_keep", id, data_keep);
-            CacheManager.DataShort.setArray("tree_settings_leaves_type", id, data_leaves_type);
+            CacheManager.DataText.setMap("tree_palettes_normal", id, data_normal);
+            CacheManager.DataText.setMap("tree_palettes_block", id, data_block);
+            CacheManager.DataText.setMap("tree_palettes_function", id, data_function);
+            CacheManager.DataShort.setSet("tree_palettes_keep", id, data_keep);
+            CacheManager.DataShort.setArray("tree_palettes_leaves_type", id, data_leaves_type);
 
         }
 
         public static Map<String, String> getNormal (String id) {
 
-            Map<String, String> data = CacheManager.DataText.getMap("tree_settings_normal").get(id);
+            Map<String, String> data = CacheManager.DataText.getMap("tree_palettes_normal").get(id);
 
             if (data == null) {
 
                 get(id);
-                data = CacheManager.DataText.getMap("tree_settings_normal").get(id);
-
-                if (data == null) {
-
-                    data = new  HashMap<>();
-
-                }
+                data = CacheManager.DataText.getMap("tree_palettes_normal").get(id);
 
             }
 
@@ -285,20 +260,14 @@ public class Caches {
 
         }
 
-        public static Map<Short, BlockState> getBlock (ServerLevel level_server, String id) {
+        public static Map<Short, BlockState> getBlock (LevelAccessor level_accessor, String id) {
 
-            Map<String, String> data = CacheManager.DataText.getMap("tree_settings_block").get(id);
+            Map<String, String> data = CacheManager.DataText.getMap("tree_palettes_block").get(id);
 
             if (data == null) {
 
                 get(id);
-                data = CacheManager.DataText.getMap("tree_settings_block").get(id);
-
-                if (data == null) {
-
-                    data = new HashMap<>();
-
-                }
+                data = CacheManager.DataText.getMap("tree_palettes_block").get(id);
 
             }
 
@@ -306,7 +275,7 @@ public class Caches {
 
             for (Map.Entry<String, String> entry : data.entrySet()) {
 
-                convert.put(Short.parseShort(entry.getKey()), GameUtils.Tile.fromText(level_server, entry.getValue()));
+                convert.put(Short.parseShort(entry.getKey()), BlockManager.fromText(level_accessor, entry.getValue()));
 
             }
 
@@ -316,18 +285,12 @@ public class Caches {
 
         public static Map<Short, String> getFunction (String id) {
 
-            Map<String, String> data = CacheManager.DataText.getMap("tree_settings_function").get(id);
+            Map<String, String> data = CacheManager.DataText.getMap("tree_palettes_function").get(id);
 
             if (data == null) {
 
                 get(id);
-                data = CacheManager.DataText.getMap("tree_settings_function").get(id);
-
-                if (data == null) {
-
-                    data = new HashMap<>();
-
-                }
+                data = CacheManager.DataText.getMap("tree_palettes_function").get(id);
 
             }
 
@@ -345,18 +308,12 @@ public class Caches {
 
         public static Set<Short> getKeep (String id) {
 
-            Set<Short> data = CacheManager.DataShort.getSet("tree_settings_keep").get(id);
+            Set<Short> data = CacheManager.DataShort.getSet("tree_palettes_keep").get(id);
 
             if (data == null) {
 
                 get(id);
-                data = CacheManager.DataShort.getSet("tree_settings_keep").get(id);
-
-                if (data == null) {
-
-                    data = new HashSet<>();
-
-                }
+                data = CacheManager.DataShort.getSet("tree_palettes_keep").get(id);
 
             }
 
@@ -366,18 +323,12 @@ public class Caches {
 
         public static short[] getLeavesType (String id) {
 
-            short[] data = CacheManager.DataShort.getArray("tree_settings_leaves_type").get(id);
+            short[] data = CacheManager.DataShort.getArray("tree_palettes_leaves_type").get(id);
 
             if (data == null) {
 
                 get(id);
-                data = CacheManager.DataShort.getArray("tree_settings_leaves_type").get(id);
-
-                if (data == null) {
-
-                    data = new short[0];
-
-                }
+                data = CacheManager.DataShort.getArray("tree_palettes_leaves_type").get(id);
 
             }
 

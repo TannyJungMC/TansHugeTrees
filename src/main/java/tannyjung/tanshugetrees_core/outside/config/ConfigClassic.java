@@ -1,7 +1,7 @@
-package tannyjung.tanshugetrees_core.outside;
+package tannyjung.tanshugetrees_core.outside.config;
 
 import tannyjung.tanshugetrees_core.Core;
-import tannyjung.tanshugetrees_handcode.Handcode;
+import tannyjung.tanshugetrees_core.outside.FileManager;
 
 import java.util.*;
 
@@ -81,7 +81,7 @@ public class ConfigClassic {
         write.append("Important Notes");
         write.append("\n");
         write.append("\n");
-        write.append("- To apply this config and repair missing values, run this command [ /").append(Core.mod_id_big).append("restart ] or restart the world.");
+        write.append("- To apply this config and repair missing values, run this command [ /").append(Core.mod_id_big).append(" restart ] or restart the world.");
         write.append("\n");
         write.append("- This config can be automatic repair itself to keep your unchanged values up to date, so don't panic when you see option values change by themselves!");
         write.append("\n");

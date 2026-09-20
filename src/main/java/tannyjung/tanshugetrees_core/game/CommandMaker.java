@@ -10,9 +10,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.Core;
-import tannyjung.tanshugetrees_core.outside.OutsideUtils;
-import tannyjung.tanshugetrees_core.outside.TannyPackManager;
-import tannyjung.tanshugetrees_core.outside.TXTFunction;
 
 import java.util.function.Consumer;
 
@@ -22,13 +19,18 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 (1.21.1)
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 */
-import net.minecraftforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import tannyjung.tanshugetrees_core.outside.OutsideUtils;
+import tannyjung.tanshugetrees_core.outside.TXTFunction;
+import tannyjung.tanshugetrees_core.outside.config.TannyPackManager;
 
 public class CommandMaker {
 
     public static void create (Object event_object, int permission, String structure, Consumer<CommandContext<CommandSourceStack>> consumer) {
 
         RegisterCommandsEvent event = (RegisterCommandsEvent) event_object;
+
+        structure = Core.mod_id_big + " / " + structure;
         String[] split = structure.split(" / ");
         String structure_short = "";
 
@@ -229,7 +231,7 @@ public class CommandMaker {
 
             if (player.hasPermissions(permission) == false) {
 
-                GameUtils.Misc.sendChatMessagePrivate(player, "You must have server permission minimum level " + permission + " to use this command. If you're in singleplayer, try enable cheat mode or temporary open LAN. If you're in multiplayer, try give yourself OP or contact server admin. / red");
+                GameUtils.sendChatMessagePrivate(player, "You must have server permission minimum level " + permission + " to use this command. If you're in singleplayer, try enable cheat mode or temporary open LAN. If you're in multiplayer, try give yourself OP or contact server admin. / red");
                 return false;
 
             }
@@ -244,10 +246,15 @@ public class CommandMaker {
 
         public static void registry (Object event_object) {
 
-            CommandMaker.create(event_object, 2, Core.mod_id_big + " / command / txt_function / <text>", run.command::txt_function);
-            CommandMaker.create(event_object, 2, Core.mod_id_big + " / pack / check_update_main", run.pack::check_update_main);
-            CommandMaker.create(event_object, 2, Core.mod_id_big + " / pack / update_main", run.pack::update_main);
-            CommandMaker.create(event_object, 2, Core.mod_id_big + " / restart", run::restart);
+            if (Core.have_custom_pack == true) {
+
+                CommandMaker.create(event_object, 2, "command / txt_function / <text>", run.command::txt_function);
+                CommandMaker.create(event_object, 2, "pack / check_update_main", run.pack::check_update_main);
+                CommandMaker.create(event_object, 2, "pack / update_main", run.pack::update_main);
+
+            }
+
+            CommandMaker.create(event_object, 2, "restart", run::restart);
 
         }
 
@@ -273,7 +280,7 @@ public class CommandMaker {
 
                     ServerLevel level_server = data.getSource().getLevel();
 
-                    Core.thread_main.submit(() -> {
+                    Core.thread.submit(() -> {
 
                         TannyPackManager.runCheckUpdate(level_server);
 
@@ -285,7 +292,7 @@ public class CommandMaker {
 
                     ServerLevel level_server = data.getSource().getLevel();
 
-                    Core.thread_main.submit(() -> {
+                    Core.thread.submit(() -> {
 
                         TannyPackManager.runUpdate(level_server);
 

@@ -2,12 +2,6 @@ package tannyjung.tanshugetrees.block.entity;
 
 import tannyjung.tanshugetrees.init.TanshugetreesModBlockEntities;
 
-import net.minecraftforge.items.wrapper.SidedInvWrapper;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.Capability;
-
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.item.ItemStack;
@@ -20,6 +14,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 
@@ -29,25 +24,24 @@ import java.util.stream.IntStream;
 
 public class BlockPlacerTwigInnerBlockEntity extends RandomizableContainerBlockEntity implements WorldlyContainer {
 	private NonNullList<ItemStack> stacks = NonNullList.withSize(9, ItemStack.EMPTY);
-	private final LazyOptional<? extends IItemHandler>[] handlers = SidedInvWrapper.create(this, Direction.values());
 
 	public BlockPlacerTwigInnerBlockEntity(BlockPos position, BlockState state) {
 		super(TanshugetreesModBlockEntities.BLOCK_PLACER_TWIG_INNER.get(), position, state);
 	}
 
 	@Override
-	public void load(CompoundTag compound) {
-		super.load(compound);
+	public void loadAdditional(CompoundTag compound, HolderLookup.Provider lookupProvider) {
+		super.loadAdditional(compound, lookupProvider);
 		if (!this.tryLoadLootTable(compound))
 			this.stacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(compound, this.stacks);
+		ContainerHelper.loadAllItems(compound, this.stacks, lookupProvider);
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag compound) {
-		super.saveAdditional(compound);
+	public void saveAdditional(CompoundTag compound, HolderLookup.Provider lookupProvider) {
+		super.saveAdditional(compound, lookupProvider);
 		if (!this.trySaveLootTable(compound)) {
-			ContainerHelper.saveAllItems(compound, this.stacks);
+			ContainerHelper.saveAllItems(compound, this.stacks, lookupProvider);
 		}
 	}
 
@@ -57,8 +51,8 @@ public class BlockPlacerTwigInnerBlockEntity extends RandomizableContainerBlockE
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		return this.saveWithFullMetadata();
+	public CompoundTag getUpdateTag(HolderLookup.Provider lookupProvider) {
+		return this.saveWithFullMetadata(lookupProvider);
 	}
 
 	@Override
@@ -122,19 +116,5 @@ public class BlockPlacerTwigInnerBlockEntity extends RandomizableContainerBlockE
 	@Override
 	public boolean canTakeItemThroughFace(int index, ItemStack itemstack, Direction direction) {
 		return true;
-	}
-
-	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing) {
-		if (!this.remove && facing != null && capability == ForgeCapabilities.ITEM_HANDLER)
-			return handlers[facing.ordinal()].cast();
-		return super.getCapability(capability, facing);
-	}
-
-	@Override
-	public void setRemoved() {
-		super.setRemoved();
-		for (LazyOptional<? extends IItemHandler> handler : handlers)
-			handler.invalidate();
 	}
 }

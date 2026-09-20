@@ -108,8 +108,8 @@ public class OutsideUtils {
 
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
             connection.setRequestMethod("HEAD");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(10000);
             connection.connect();
             return true;
 
@@ -367,7 +367,7 @@ public class OutsideUtils {
 
                 }
 
-                return data.toArray(new String[0]);
+                return data.toArray(new String[]{});
 
             } catch (Exception exception) {
 
@@ -377,7 +377,7 @@ public class OutsideUtils {
 
         }
 
-        return new String[0];
+        return new String[]{};
 
     }
 
@@ -466,7 +466,7 @@ public class OutsideUtils {
 
     }
 
-    public static class Mathematics {
+    public static class Mathematic {
 
         public static boolean isNumberStartWith (int number, int test) {
 
@@ -506,6 +506,64 @@ public class OutsideUtils {
 
             double test = Math.pow(10.0, decimal);
             return Math.ceil(number * test) / test;
+
+        }
+
+    }
+
+    public static class Calculation {
+
+        public static double getDegreeDestinationX (float rotationY, double posX, double posZ, double destinationX, double destinationZ) {
+
+            posX = posX - destinationX;
+            posZ = posZ - destinationZ;
+            double degree = Math.floor((Math.toDegrees(Math.atan2(posZ, posX)) + 360) % 360) + 90;
+            double current_direction = Math.floor(((-rotationY % 360) + 360) % 360);
+            degree = degree + current_direction;
+
+            while (degree > 360.0) {
+
+                degree = degree - 360.0;
+
+            }
+
+            return degree;
+
+        }
+
+        public static String convertSecondToTime (int seconds) {
+
+            int hour = (seconds / 60 / 60) % 60;
+            int minute = (seconds / 60) % 60;
+            int second = seconds % 60;
+            StringBuilder builder = new StringBuilder();
+
+            if (hour > 0) {
+
+                builder.append(hour).append("h ");
+
+            }
+
+            if (hour > 0 || minute > 0) {
+
+                if (minute < 10) {
+
+                    builder.append("0");
+
+                }
+
+                builder.append(minute).append("m ");
+
+            }
+
+            if (second < 10) {
+
+                builder.append("0");
+
+            }
+
+            builder.append(second).append("s");
+            return builder.toString();
 
         }
 

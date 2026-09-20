@@ -9,7 +9,7 @@ import tannyjung.tanshugetrees_handcode.Handcode;
 
 public class CompatibilitySereneSeasons {
 
-    public static void loop (LevelAccessor level_accessor, ServerLevel level_server) {
+    public static void loop (ServerLevel level_server) {
 
         if (Handcode.compatibility_serene_seasons == false) {
 
@@ -17,38 +17,38 @@ public class CompatibilitySereneSeasons {
 
         }
 
-        BlockPos pos = GameUtils.Space.getWorldSpawnPos(level_accessor).atY(GameUtils.Space.getBuildHeight(level_accessor, false)).above();
+        BlockPos pos = GameUtils.Space.getWorldSpawnPos(level_server).atY(GameUtils.Space.getBuildHeight(level_server, false)).above();
         runClear(level_server, pos);
 
-        Core.DelayedWork.create(false, 20, () -> {
+        Core.DelayedWork.createBasic(20, () -> {
 
             runTest(level_server, pos, "spring", 0);
 
-            Core.DelayedWork.create(false, 20, () -> {
+            Core.DelayedWork.createBasic(20, () -> {
 
                 runClear(level_server, pos);
 
-                Core.DelayedWork.create(false, 20, () -> {
+                Core.DelayedWork.createBasic(20, () -> {
 
                     runTest(level_server, pos, "summer", 1);
 
-                    Core.DelayedWork.create(false, 20, () -> {
+                    Core.DelayedWork.createBasic(20, () -> {
 
                         runClear(level_server, pos);
 
-                        Core.DelayedWork.create(false, 20, () -> {
+                        Core.DelayedWork.createBasic(20, () -> {
 
                             runTest(level_server, pos, "autumn", 2);
 
-                            Core.DelayedWork.create(false, 20, () -> {
+                            Core.DelayedWork.createBasic(20, () -> {
 
                                 runClear(level_server, pos);
 
-                                Core.DelayedWork.create(false, 20, () -> {
+                                Core.DelayedWork.createBasic(20, () -> {
 
                                     runTest(level_server, pos, "winter", 3);
 
-                                    Core.DelayedWork.create(false, 20, () -> {
+                                    Core.DelayedWork.createBasic(20, () -> {
 
                                         runClear(level_server, pos);
 
@@ -79,8 +79,8 @@ public class CompatibilitySereneSeasons {
 
     private static void runTest (ServerLevel level_server, BlockPos pos, String season, int season_number) {
 
-        GameUtils.Command.run(level_server, pos.getCenter(), "setblock ~ ~ ~ command_block{Command:\"TANSHUGETREES command season set " + season + "\"}");
-        GameUtils.Command.run(level_server, pos.getCenter(), "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
+        GameUtils.runCommand(level_server, pos.getCenter(), "setblock ~ ~ ~ command_block{Command:\"TANSHUGETREES command season set " + season + "\"}");
+        GameUtils.runCommand(level_server, pos.getCenter(), "setblock ~ ~1 ~ sereneseasons:season_sensor[season=" + season_number + "]");
 
     }
 

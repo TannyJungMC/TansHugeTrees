@@ -8,6 +8,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.BlockPos;
@@ -23,6 +24,8 @@ public class SaplingRightClickProcedure {
 				_level.getServer().getCommands().performPrefixedCommand(new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO, _level, 4, "", Component.literal(""), _level.getServer(), null).withSuppressedOutput(), "");
 			TanshugetreesMod.LOGGER.info(entity);
 		}
-		Sapling.click(world, entity, BlockPos.containing(x, y, z));
+		if (world.isClientSide() == true)
+			return;
+		Sapling.click((ServerLevel) world, (ServerPlayer) entity, BlockPos.containing(x, y, z));
 	}
 }

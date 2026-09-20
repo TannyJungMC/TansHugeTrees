@@ -1,24 +1,20 @@
 package tannyjung.tanshugetrees_core;
 
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.levelgen.feature.Feature;
 import org.apache.logging.log4j.Logger;
-import tannyjung.tanshugetrees_core.game.GameUtils;
-import tannyjung.tanshugetrees_core.game.world_gen.FeatureAreaDirt;
-import tannyjung.tanshugetrees_core.game.world_gen.FeatureAreaGrass;
-import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepBeforePlants;
-import tannyjung.tanshugetrees_core.game.world_gen.WorldGenStepLast;
+import tannyjung.tanshugetrees_core.game.*;
 import tannyjung.tanshugetrees_core.outside.*;
+import tannyjung.tanshugetrees_core.outside.CacheManager;
+import tannyjung.tanshugetrees_core.outside.config.ConfigClassic;
+import tannyjung.tanshugetrees_core.outside.config.CustomPackOrganizing;
 import tannyjung.tanshugetrees_handcode.Handcode;
-import tannyjung.tanshugetrees_handcode.systems.Loops;
+import tannyjung.tanshugetrees_handcode.core.GUIs;
+import tannyjung.tanshugetrees_handcode.core.KeyBindings;
+import tannyjung.tanshugetrees_handcode.core.Loops;
 
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 
@@ -32,9 +28,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.registries.DeferredRegister;
 */
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.loading.FMLPaths;
 
 public class Core {
 
@@ -48,28 +43,36 @@ public class Core {
     ___NeoForgeData___
 
     */
-    
+
     public static String mod_name = "";
     public static String mod_id = "";
     public static String mod_id_big = "";
     public static String mod_id_short = "";
-    
+    public static String github_pack = "";
+    public static String wiki = "";
+
     public static int data_structure_version_core = 0;
     public static String data_structure_version_mod = "";
     public static String data_structure_version_pack = "";
     public static String main_pack_type = "";
     public static String main_pack_type_original = "";
-    public static String github_pack = "";
-    public static String wiki = "";
+
+    public static boolean have_custom_pack = false;
     public static boolean have_world_data_cleaner = false;
-    
+
+    public static final ExecutorService thread = Executors.newFixedThreadPool(1, runnable -> {
+
+        Thread thread = new Thread(runnable);
+        thread.setName(mod_id_big + "-thread");
+        return thread;
+
+    });
+
+    public static String path_config = "";
+    public static String path_world_core = "";
+    public static String path_world_mod = "";
     public static Logger logger = null;
     public static boolean global_locking = false;
-    public static String path_game = FMLPaths.GAMEDIR.get().toString();
-    public static String path_config = path_game + "/" + mod_id + "_error";
-    public static String path_world_core = path_game + "/" + mod_id + "_error";
-    public static String path_world_mod = path_game + "/" + mod_id + "_error";
-    public static final ExecutorService thread_main = Executors.newFixedThreadPool(1, name -> { Thread thread = new Thread(name); thread.setName(mod_name); return thread; });
 
     public static boolean auto_check_update = false;
     public static boolean wip_version = false;
@@ -78,14 +81,48 @@ public class Core {
     public static void start (IEventBus bus) {
 
         Handcode.start();
-        mod_id_big = mod_id.toUpperCase();
-        main_pack_type_original = main_pack_type;
-        logger = LogManager.getLogger(mod_id);
-        path_config = path_game + "/config/" + mod_id;
-
-        Registry.start(bus);
         DataMigration.run(false);
+
+        generateDataOverall(bus);
+
         restart(null, true, true);
+
+    }
+
+    public static void syncModData (String mod_name, String mod_id, String mod_id_short, String github_pack, String wiki, int data_structure_version_core, String data_structure_version_mod, String data_structure_version_pack, String main_pack_type, boolean have_world_data_cleaner, boolean have_custom_pack) {
+
+        Core.mod_name = mod_name;
+        Core.mod_id = mod_id;
+        Core.mod_id_big = mod_id.toUpperCase();
+        Core.mod_id_short = mod_id_short;
+        Core.github_pack = github_pack;
+        Core.wiki = wiki;
+
+        Core.data_structure_version_core = data_structure_version_core;
+        Core.data_structure_version_mod = data_structure_version_mod;
+        Core.data_structure_version_pack = data_structure_version_pack;
+        Core.main_pack_type = main_pack_type;
+        Core.main_pack_type_original = main_pack_type;
+
+        Core.have_custom_pack = have_custom_pack;
+        Core.have_world_data_cleaner = have_world_data_cleaner;
+
+    }
+
+    public static void generateDataOverall (IEventBus bus) {
+
+        logger = LogManager.getLogger(mod_id);
+        path_config = FMLPaths.GAMEDIR.get().toString() + "/config/" + mod_id;
+        EventCenter.bus(bus);
+
+        GUIs.add();
+        KeyBindings.add();
+
+    }
+
+    public static void generateDataWorld (ServerLevel level_server) {
+
+        ScoreManager.create(level_server, mod_id_big);
 
     }
 
@@ -100,7 +137,7 @@ public class Core {
 
                     if (level_server != null) {
 
-                        GameUtils.Misc.sendChatMessage(level_server, "Restarting the mod... / gray");
+                        GameUtils.sendChatMessage(level_server, "Restarting the mod... / gray");
 
                     }
 
@@ -126,7 +163,7 @@ public class Core {
 
                     if (level_server != null) {
 
-                        GameUtils.Misc.sendChatMessage(level_server, "Restarted and cleared main caches about " + cache_size + " / gray");
+                        GameUtils.sendChatMessage(level_server, "Restarted and cleared main caches about " + cache_size + " / gray");
 
                     }
 
@@ -142,15 +179,16 @@ public class Core {
 
         } else {
 
-            thread_main.submit(() -> {
+            thread.submit(() -> {
 
                 GlobalLocking.test();
                 GlobalLocking.lock();
 
-                DelayedWork.create(true, 20, () -> {
+                DelayedWork.createAsync(20, () -> {
 
                     runnable.run();
-                    GameUtils.Score.create(level_server, mod_id_big);
+
+                    EntityManager.Population.refresh();
 
                     GlobalLocking.unlock();
 
@@ -211,37 +249,6 @@ public class Core {
 
     }
 
-    public static class Registry {
-
-        public static Map<String, Supplier<Feature<?>>> features = new HashMap<>();
-
-        public static void start (IEventBus bus) {
-
-            features.put("world_gen_before_plants", WorldGenStepBeforePlants::new);
-            features.put("world_gen_last", WorldGenStepLast::new);
-            features.put("area_grass", FeatureAreaGrass::new);
-            features.put("area_dirt", FeatureAreaDirt::new);
-
-            // Feature
-            {
-
-                DeferredRegister<Feature<?>> deferred = DeferredRegister.create(Registries.FEATURE, mod_id);
-
-                for (Map.Entry<String, Supplier<Feature<?>>> entry : features.entrySet()) {
-
-                    deferred.register(entry.getKey(), entry.getValue());
-
-                }
-
-                deferred.register(bus);
-                features.clear();
-
-            }
-
-        }
-
-    }
-    
     public static class GlobalLocking {
 
         private static final Object lock = new Object();
@@ -293,21 +300,33 @@ public class Core {
         private static final Collection<AbstractMap.SimpleEntry<Runnable, Integer>> delayed_works = new ConcurrentLinkedQueue<>();
         private static final ScheduledExecutorService thread_delay = Executors.newScheduledThreadPool(1);
 
-        public static void create (boolean async, int tick, Runnable work) {
+        public static void createBasic (int tick, Runnable work) {
 
-            if (async == true) {
+            if (tick == 0) {
 
-                thread_delay.schedule(work, tick * 50L, TimeUnit.MILLISECONDS);
-
-            } else {
-
-                delayed_works.add(new AbstractMap.SimpleEntry<>(work, tick));
+                work.run();
+                return;
 
             }
 
+            delayed_works.add(new AbstractMap.SimpleEntry<>(work, tick));
+
         }
 
-        public static void runTick () {
+        public static void createAsync (int tick, Runnable work) {
+
+            if (tick == 0) {
+
+                work.run();
+                return;
+
+            }
+
+            thread_delay.schedule(work, tick * 50L, TimeUnit.MILLISECONDS);
+
+        }
+
+        public static void tick () {
 
             for (AbstractMap.SimpleEntry<Runnable, Integer> work : delayed_works) {
 
@@ -329,55 +348,29 @@ public class Core {
     public static class Loop {
 
         private static int second = 0;
-        private static int minute = 0;
 
-        public static void loopTick (LevelAccessor level_accessor, ServerLevel level_server) {
+        public static void
+        loopTick (ServerLevel level_server) {
 
-            Loops.tick(level_accessor, level_server);
-            second = second + 1;
+            Loops.tick(level_server);
 
-            if (second > 20) {
+            if (second > 1) {
 
-                second = 0;
-                loopSecond(level_accessor, level_server);
+                second = second - 1;
+
+            } else {
+
+                second = 20;
+                loopSecond(level_server);
 
             }
 
         }
 
-        private static void loopSecond (LevelAccessor level_accessor, ServerLevel level_server) {
-
-            // Developer Mode
-            {
-
-                if (developer_mode == true) {
-
-                    for (Entity entity : GameUtils.Mob.getAtEverywhere(level_server, "", mod_id_big)) {
-
-                        GameUtils.Misc.spawnParticle(level_server, entity.position(), 0, 0, 0, 0, 1, "minecraft:end_rod");
-
-                    }
-
-                }
-
-            }
+        private static void loopSecond (ServerLevel level_server) {
 
             TXTFunction.loop(level_server);
-            Loops.second(level_accessor, level_server);
-            minute = minute + 1;
-
-            if (minute > 60) {
-
-                minute = 0;
-                loopMinute(level_accessor, level_server);
-
-            }
-
-        }
-
-        private static void loopMinute (LevelAccessor level_accessor, ServerLevel level_server) {
-
-            Loops.minute(level_accessor, level_server);
+            Loops.second(level_server);
 
         }
 
@@ -385,7 +378,7 @@ public class Core {
 
     public static class DataMigration {
 
-        public static void run(boolean is_world) {
+        public static void run (boolean is_world) {
 
             if (is_world == false) {
 

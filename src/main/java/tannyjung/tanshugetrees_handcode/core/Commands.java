@@ -1,12 +1,12 @@
-package tannyjung.tanshugetrees_handcode.systems;
+package tannyjung.tanshugetrees_handcode.core;
 
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import tannyjung.tanshugetrees_core.game.CommandMaker;
 import tannyjung.tanshugetrees_handcode.systems.living_mechanics.Seasons;
@@ -16,16 +16,16 @@ public class Commands {
 
     public static void registry (Object event) {
 
-        CommandMaker.create(event, 2, "TANSHUGETREES / command / preset_fixer", run.command::preset_fixer);
-        CommandMaker.create(event, 2, "TANSHUGETREES / command / seasons / get", run.command.seasons::get);
-        CommandMaker.create(event, 2, "TANSHUGETREES / command / seasons / set / autumn", run.command.seasons.set::autumn);
-        CommandMaker.create(event, 2, "TANSHUGETREES / command / seasons / set / spring", run.command.seasons.set::spring);
-        CommandMaker.create(event, 2, "TANSHUGETREES / command / seasons / set / summer", run.command.seasons.set::summer);
-        CommandMaker.create(event, 2, "TANSHUGETREES / command / seasons / set / winter", run.command.seasons.set::winter);
-        CommandMaker.create(event, 2, "TANSHUGETREES / command / shape_file_converter / start / <number>", run.command.shape_file_converter::start);
-        CommandMaker.create(event, 2, "TANSHUGETREES / command / shape_file_converter / stop", run.command.shape_file_converter::stop);
-        CommandMaker.create(event, 2, "TANSHUGETREES / command / summon_tree / <text>", run.command::summon_tree);
-        CommandMaker.create(event, 2, "TANSHUGETREES / command / summon_sapling_trader", run.command::summon_sapling_trader);
+        CommandMaker.create(event, 2, "command / preset_fixer", run.command::preset_fixer);
+        CommandMaker.create(event, 2, "command / seasons / get", run.command.seasons::get);
+        CommandMaker.create(event, 2, "command / seasons / set / autumn", run.command.seasons.set::autumn);
+        CommandMaker.create(event, 2, "command / seasons / set / spring", run.command.seasons.set::spring);
+        CommandMaker.create(event, 2, "command / seasons / set / summer", run.command.seasons.set::summer);
+        CommandMaker.create(event, 2, "command / seasons / set / winter", run.command.seasons.set::winter);
+        CommandMaker.create(event, 2, "command / shape_file_generator / start / <number>", run.command.shape_file_generator::start);
+        CommandMaker.create(event, 2, "command / shape_file_generator / stop", run.command.shape_file_generator::stop);
+        CommandMaker.create(event, 2, "command / summon_tree / <text>", run.command::summon_tree);
+        CommandMaker.create(event, 2, "command / summon_sapling_trader", run.command::summon_sapling_trader);
         
     }
 
@@ -99,20 +99,20 @@ public class Commands {
 
             }
 
-            private static class shape_file_converter {
+            private static class shape_file_generator {
 
                 private static void start (CommandContext<CommandSourceStack> data) {
 
-                    LevelAccessor level_accessor = data.getSource().getLevel();
+                    ServerLevel level_server = data.getSource().getLevel();
                     int variable_number = CommandMaker.Argument.getNumber(data);
-                    ShapeFileConverter.start(level_accessor, variable_number);
+                    ShapeFileGenerator.start(level_server, variable_number);
 
                 }
 
                 private static void stop (CommandContext<CommandSourceStack> data) {
 
-                    LevelAccessor level_accessor = data.getSource().getLevel();
-                    ShapeFileConverter.stop(level_accessor);
+                    ServerLevel level_server = data.getSource().getLevel();
+                    ShapeFileGenerator.stop(level_server);
 
                 }
 
@@ -120,27 +120,20 @@ public class Commands {
 
             private static void summon_tree (CommandContext<CommandSourceStack> data) {
 
-                LevelAccessor level_accessor = data.getSource().getLevel();
                 ServerLevel level_server = data.getSource().getLevel();
                 Entity entity = data.getSource().getEntity();
                 Vec3 vec3 = data.getSource().getPosition();
                 String variable_text = CommandMaker.Argument.getText(data);
 
-                if (entity == null) {
+                ServerPlayer player_server = null;
 
-                    return;
+                if (entity instanceof ServerPlayer == true) {
 
-                }
-
-                Player player = null;
-
-                if (entity instanceof Player == true) {
-
-                    player = (Player) entity;
+                    player_server = (ServerPlayer) entity;
 
                 }
 
-                TreeGenerator.create(level_accessor, level_server, player, BlockPos.containing(vec3), variable_text);
+                TreeGenerator.create(level_server, player_server, BlockPos.containing(vec3), variable_text);
 
             }
 

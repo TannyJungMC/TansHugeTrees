@@ -184,7 +184,7 @@ public class FileManager {
 
 			try {
 
-				return Files.readAllLines(file.toPath()).toArray(new String[0]);
+				return Files.readAllLines(file.toPath()).toArray(new String[]{});
 
 			} catch (Exception exception) {
 
@@ -194,7 +194,7 @@ public class FileManager {
 
 		}
 
-		return new String[0];
+		return new String[]{};
 
 	}
 
@@ -202,7 +202,7 @@ public class FileManager {
 
         createEmptyFile(path, false);
 
-        if (write.size() > 0) {
+        if (write.isEmpty() == false) {
 
             try {
 
@@ -283,7 +283,7 @@ public class FileManager {
             ZipInputStream stream_input = new ZipInputStream(new FileInputStream(path_zip));
             ZipEntry entry = stream_input.getNextEntry();
             FileOutputStream stream_output = null;
-            byte[] bytes = new byte[1024];
+            byte[] bytes = new byte[]{};
             int length = 0;
             String entry_path = "";
             int first_folder = 0;
@@ -312,8 +312,9 @@ public class FileManager {
 
                         createEmptyFile(path_folder + "/" + entry_path, false);
                         stream_output = new FileOutputStream(path_folder + "/" + entry_path);
+                        bytes = new byte[1024];
 
-                        while ((length = stream_input.read(bytes)) > 0) {
+                        while ((length = stream_input.read(bytes)) != -1) {
 
                             stream_output.write(bytes, 0, length);
 
@@ -325,11 +326,11 @@ public class FileManager {
 
                 }
 
+                stream_input.closeEntry();
                 entry = stream_input.getNextEntry();
 
             }
 
-            stream_input.closeEntry();
             stream_input.close();
 
         } catch (Exception exception) {

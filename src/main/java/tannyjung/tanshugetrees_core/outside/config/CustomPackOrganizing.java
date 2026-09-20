@@ -1,8 +1,11 @@
-package tannyjung.tanshugetrees_core.outside;
+package tannyjung.tanshugetrees_core.outside.config;
 
 import net.minecraft.server.level.ServerLevel;
 import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.game.BlockManager;
 import tannyjung.tanshugetrees_core.game.GameUtils;
+import tannyjung.tanshugetrees_core.outside.FileManager;
+import tannyjung.tanshugetrees_core.outside.OutsideUtils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -14,7 +17,7 @@ public class CustomPackOrganizing {
     private static final Set<String> cache_error_files = new HashSet<>();
     private static final Map<String, Map<String, Set<String>>> errors = new HashMap<>();
 
-    public static void start (ServerLevel level_server, String pack_separate_multiple, String folder_settings, String folder_functions) {
+    public static void start (ServerLevel level_server, String[] pack_separate_multiple, String[] folder_settings, String[] folder_functions) {
 
         errors.clear();
 
@@ -76,7 +79,7 @@ public class CustomPackOrganizing {
 
             }
 
-            pack_separate_multiple = " / " + pack_separate_multiple + " / ";
+            Map<String, Map<String, String>> config = ConfigDynamic.readTest("world_gen");
             File main_pack = TannyPackManager.getCurrentFile();
 
             if (main_pack.exists() == true) {
@@ -329,7 +332,7 @@ public class CustomPackOrganizing {
 
                         for (String scan : required_mods.split(" / ")) {
 
-                            if (GameUtils.Misc.isModLoaded(scan) == false) {
+                            if (GameUtils.isModLoaded(scan) == false) {
 
                                 Error.add("pack", "packs / required mods not found. This will results skipping these packs. Make sure you install required mods to allow these packs to work.", pack.getPath(), pack.getName() + " > " + scan);
                                 pass = false;
@@ -356,9 +359,9 @@ public class CustomPackOrganizing {
 
     }
 
-    private static void test (ServerLevel level_server, String folders, boolean is_function) {
+    private static void test (ServerLevel level_server, String[] folders, boolean is_function) {
 
-        for (String folder : folders.split(" / ")) {
+        for (String folder : folders) {
 
             String suffix = "";
 
@@ -394,11 +397,11 @@ public class CustomPackOrganizing {
 
     }
 
-    private static void organize (File pack, String pack_separate_multiple) {
+    private static void organize (File pack, String[] pack_separate_multiple) {
 
         boolean incompatible = pack.getName().startsWith("[INCOMPATIBLE] ") == true;
 
-        // Get Real Pack Path
+        // Get ZIP Pack Path
         {
 
             if (pack.getName().endsWith(".zip") == true) {
@@ -409,6 +412,7 @@ public class CustomPackOrganizing {
 
         }
 
+        boolean is_separate_multiple = false;
         File[] files = pack.listFiles();
 
         if (files == null) {
@@ -417,14 +421,22 @@ public class CustomPackOrganizing {
 
         }
 
-        boolean is_separate_multiple = false;
-
         for (File file : files) {
 
             if (file.isDirectory() == true) {
 
-                is_separate_multiple = pack_separate_multiple.contains(" / " + file.getName() + " / ") == true;
-                boolean is_separate_multiple_final = is_separate_multiple;
+                is_separate_multiple = false;
+
+                for (String scan : pack_separate_multiple) {
+
+                    if (file.getName().equals(scan) == true) {
+
+                        is_separate_multiple = true;
+                        break;
+
+                    }
+
+                }
 
                 for (File scan : FileManager.getAllFiles(file.getPath())) {
 
@@ -435,7 +447,7 @@ public class CustomPackOrganizing {
                         // Convert Path
                         {
 
-                            if (is_separate_multiple_final == true) {
+                            if (is_separate_multiple == true) {
 
                                 path_copy_to = path_copy_to.resolve(cache_pack_ids.get(pack.getName()));
 
@@ -508,7 +520,9 @@ public class CustomPackOrganizing {
 
                             if (value.equals("none") == false) {
 
-                                if (option.startsWith("path_") == true) {
+                                // TODO
+
+                                if (false     &&     option.startsWith("path_") == true) {
 
                                     {
 
@@ -547,7 +561,7 @@ public class CustomPackOrganizing {
 
                                             value = value.replace(" keep", "");
 
-                                            if (GameUtils.Tile.fromText(level_server, value).isAir() == true) {
+                                            if (BlockManager.fromText(level_server, value).isAir() == true) {
 
                                                 Error.add("file", "settings file / unknown block IDs. This will results skipping them in mod systems.", file.getPath(), id + " > " + value);
                                                 pass = false;
@@ -647,7 +661,7 @@ public class CustomPackOrganizing {
 
                         if (to_chat == true) {
 
-                            GameUtils.Misc.sendChatMessage(level_server, message + " / red");
+                            GameUtils.sendChatMessage(level_server, message + " / red");
 
                         } else {
 
@@ -659,7 +673,7 @@ public class CustomPackOrganizing {
 
                             if (to_chat == true) {
 
-                                GameUtils.Misc.sendChatMessage(level_server, get + " / dark_gray");
+                                GameUtils.sendChatMessage(level_server, get + " / dark_gray");
 
                             } else {
 

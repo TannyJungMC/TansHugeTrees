@@ -20,11 +20,11 @@ public class CacheManager {
 
         } else if (size < 1048576) {
 
-            return OutsideUtils.Mathematics.shorterDouble((double) size / 1024.0, 2) + " KB";
+            return OutsideUtils.Mathematic.shorterDouble((double) size / 1024.0, 2) + " KB";
 
         } else {
 
-            return OutsideUtils.Mathematics.shorterDouble((double) size / 1048576.0, 2) + " MB";
+            return OutsideUtils.Mathematic.shorterDouble((double) size / 1048576.0, 2) + " MB";
 
         }
 

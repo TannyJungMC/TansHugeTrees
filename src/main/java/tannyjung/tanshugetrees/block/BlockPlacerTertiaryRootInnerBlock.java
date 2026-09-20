@@ -102,10 +102,7 @@ public class BlockPlacerTertiaryRootInnerBlock extends Block implements SimpleWa
 	@Override
 	public void tick(BlockState blockstate, ServerLevel world, BlockPos pos, RandomSource random) {
 		super.tick(blockstate, world, pos, random);
-		int x = pos.getX();
-		int y = pos.getY();
-		int z = pos.getZ();
-		BlockPlacerTickProcedure.execute(world, x, y, z);
+		BlockPlacerTickProcedure.execute(world, pos.getX(), pos.getY(), pos.getZ());
 		world.scheduleTick(pos, this, 20);
 	}
 

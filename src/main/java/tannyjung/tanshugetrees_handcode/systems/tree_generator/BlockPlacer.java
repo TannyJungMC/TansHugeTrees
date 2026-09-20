@@ -2,28 +2,28 @@ package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.LevelAccessor;
 import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.game.BlockManager;
+import tannyjung.tanshugetrees_core.game.NBTManager;
 import tannyjung.tanshugetrees_core.outside.TXTFunction;
-import tannyjung.tanshugetrees_core.game.GameUtils;
 
 public class BlockPlacer {
 
-    public static void start (LevelAccessor level_accessor, ServerLevel level_server, BlockPos pos) {
+    public static void start (ServerLevel level_server, BlockPos pos) {
 
-        String function = GameUtils.Data.getBlockText(level_accessor, pos, "function");
+        String function = NBTManager.Tile.getText(level_server, pos, "main", "function");
 
-        if (GameUtils.Data.getBlockLogic(level_accessor, pos, "delay1") == false) {
+        if (NBTManager.Tile.getLogic(level_server, pos, "main", "delay1") == false) {
 
-            GameUtils.Data.setBlockLogic(level_accessor, level_server, pos, "delay1", true);
-            GameUtils.Tile.setScheduleTick(level_server, pos, 100);
+            NBTManager.Tile.setLogic(level_server, pos, "main", "delay1", true);
+            BlockManager.setScheduleTick(level_server, pos, 100);
 
             // Test Function
             {
 
                 if (function.isEmpty() == false) {
 
-                    String[] styles = GameUtils.Data.getBlockText(level_accessor, pos, "function_style").split("/");
+                    String[] styles = NBTManager.Tile.getText(level_server, pos, "main", "function_style").split("/");
                     boolean pass = false;
 
                     for (String style : styles) {
@@ -34,7 +34,7 @@ public class BlockPlacer {
 
                         } else if (style.equals("up") == true) {
 
-                            if (level_accessor.getBlockState(pos.above()).isAir() == true) {
+                            if (level_server.getBlockState(pos.above()).isAir() == true) {
 
                                 pass = true;
 
@@ -42,7 +42,7 @@ public class BlockPlacer {
 
                         } else if (style.equals("down") == true) {
 
-                            if (level_accessor.getBlockState(pos.below()).isAir() == true) {
+                            if (level_server.getBlockState(pos.below()).isAir() == true) {
 
                                 pass = true;
 
@@ -50,19 +50,19 @@ public class BlockPlacer {
 
                         } else if (style.equals("side") == true) {
 
-                            if (level_accessor.getBlockState(pos.north()).isAir() == true) {
+                            if (level_server.getBlockState(pos.north()).isAir() == true) {
 
                                 pass = true;
 
-                            } else if (level_accessor.getBlockState(pos.west()).isAir() == true) {
+                            } else if (level_server.getBlockState(pos.west()).isAir() == true) {
 
                                 pass = true;
 
-                            } else if (level_accessor.getBlockState(pos.east()).isAir() == true) {
+                            } else if (level_server.getBlockState(pos.east()).isAir() == true) {
 
                                 pass = true;
 
-                            } else if (level_accessor.getBlockState(pos.south()).isAir() == true) {
+                            } else if (level_server.getBlockState(pos.south()).isAir() == true) {
 
                                 pass = true;
 
@@ -74,7 +74,7 @@ public class BlockPlacer {
 
                     if (pass == false) {
 
-                        GameUtils.Data.setBlockText(level_accessor, level_server, pos, "function", "");
+                        NBTManager.Tile.setText(level_server, pos, "main", "function", "");
 
                     }
 
@@ -84,20 +84,20 @@ public class BlockPlacer {
 
         } else {
 
-            if (GameUtils.Data.getBlockLogic(level_accessor, pos, "delay2") == false) {
+            if (NBTManager.Tile.getLogic(level_server, pos, "main", "delay2") == false) {
 
-                GameUtils.Data.setBlockLogic(level_accessor, level_server, pos, "delay2", true);
-                GameUtils.Tile.setScheduleTick(level_server, pos, 100);
+                NBTManager.Tile.setLogic(level_server, pos, "main", "delay2", true);
+                BlockManager.setScheduleTick(level_server, pos, 100);
 
             } else {
 
-                GameUtils.Tile.set(level_accessor, pos, GameUtils.Tile.fromText(level_server, GameUtils.Data.getBlockText(level_accessor, pos, "block")), false);
+                BlockManager.set(level_server, pos, BlockManager.fromText(level_server, NBTManager.Tile.getText(level_server, pos, "main", "block")), false);
 
                 if (function.isEmpty() == false) {
 
-                    Core.DelayedWork.create(false, 20, () -> {
+                    Core.DelayedWork.createBasic(20, () -> {
 
-                        TXTFunction.run(level_accessor, level_server, pos, function, true);
+                        TXTFunction.run(level_server, level_server, pos, function, true);
 
                     });
 
