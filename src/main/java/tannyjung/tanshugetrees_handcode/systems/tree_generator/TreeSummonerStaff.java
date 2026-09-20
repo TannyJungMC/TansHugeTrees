@@ -2,49 +2,105 @@ package tannyjung.tanshugetrees_handcode.systems.tree_generator;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.item.ItemStack;
 import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.game.EntityManager;
 import tannyjung.tanshugetrees_core.game.GameUtils;
+import tannyjung.tanshugetrees_core.game.NBTManager;
+import tannyjung.tanshugetrees_core.game.screen.GUIManager;
+import tannyjung.tanshugetrees_core.outside.FileManager;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class TreeSummonerStaff {
 
-    public static void apply (Player player) {
+    public static void click (ServerLevel level_server, ServerPlayer player_server) {
 
-        GameUtils.Data.setItemText(player, EquipmentSlot.MAINHAND, "path", GameUtils.GUI.getTextBox(player, "path"));
+        if (player_server.isShiftKeyDown() == true) {
 
-    }
+            // GUI
+            {
 
-    public static void restore (Player player) {
+                List<String> list = new ArrayList<>();
+                File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 
-        Core.DelayedWork.create(false, 5, () -> {
+                if (packs != null) {
 
-            GameUtils.GUI.setTextBox(player, "path", GameUtils.Data.getItemText(player, EquipmentSlot.MAINHAND, "path"));
+                    Set<String> uncache_blueprints = new HashSet<>();
+                    String id = null;
 
-        });
+                    for (File pack : packs) {
 
-    }
+                        if (pack.getName().endsWith(".zip") == true) {
 
-    public static void click (Player player) {
+                            continue;
 
-        LevelAccessor level_accessor = player.level();
+                        }
 
-        if (level_accessor.isClientSide() == true) {
+                        for (File file : FileManager.getAllFiles(pack.getPath() + "/tree_blueprints")) {
 
-            return;
+                            id = Path.of(pack.getPath() + "/tree_blueprints").relativize(file.toPath()).toString();
+                            id = id.replace("\\", " > ");
+                            id = id.substring(0, id.length() - ".txt".length());
+                            id = pack.getName() + " > " + id;
 
-        }
+                            uncache_blueprints.add(id);
+                            list.add("§b" + id);
 
-        ServerLevel level_server = (ServerLevel) level_accessor;
-        BlockPos pos = BlockPos.containing(GameUtils.Space.getPosRay(player, 500));
+                        }
 
-        if (level_accessor.getBlockState(pos.above()).canBeReplaced() == false || level_accessor.getBlockState(pos.below()).canBeReplaced() == false || level_accessor.getBlockState(pos.north()).canBeReplaced() == false || level_accessor.getBlockState(pos.west()).canBeReplaced() == false || level_accessor.getBlockState(pos.east()).canBeReplaced() == false || level_accessor.getBlockState(pos.south()).canBeReplaced() == false) {
+                    }
 
-            GameUtils.Misc.spawnParticle(level_server, pos.getCenter(), 0, 0, 0, 0, 1, "minecraft:flash");
-            GameUtils.Misc.playSound(level_server, player.blockPosition(), 2, 2, "minecraft:entity.illusioner.mirror_move");
-            GameUtils.Misc.playSound(level_server, pos, 2, 0, "minecraft:entity.illusioner.prepare_blindness");
-            TreeGenerator.create(level_accessor, level_server, player, pos, GameUtils.Data.getItemText(player, EquipmentSlot.MAINHAND, "path"));
+                    for (File file : FileManager.getAllFiles(Core.path_config + "/dev/temporary/tree_blueprints")) {
+
+                        id = Path.of(Core.path_config + "/dev/temporary/tree_blueprints").relativize(file.toPath()).toString();
+                        id = id.replace("\\", " > ");
+                        id = id.substring(0, id.length() - ".txt".length());
+
+                        if (uncache_blueprints.contains(id) == true) {
+
+                            continue;
+
+                        }
+
+                        list.add("§a" + id);
+
+                    }
+
+                }
+
+                NBTManager.Item.setListAlternate(player_server.getItemBySlot(EquipmentSlot.MAINHAND), "gui", "board_tree_generator_staff", list);
+                GUIManager.open(player_server, "item", "main", "tree_generator_staff");
+
+            }
+
+        } else {
+
+            // Summon
+            {
+
+                BlockPos pos = BlockPos.containing(EntityManager.getPosRayForward(player_server, 500, false));
+                GameUtils.spawnParticle(level_server, pos.getCenter(), 0, 0, 0, 0, 1, "minecraft:flash");
+                GameUtils.playSound(level_server, player_server.position(), 2, 2, "minecraft:entity.illusioner.mirror_move");
+                GameUtils.playSound(level_server, pos.getCenter(), 2, 0, "minecraft:entity.illusioner.prepare_blindness");
+
+                ItemStack item = player_server.getItemBySlot(EquipmentSlot.MAINHAND);
+                List<String> list = NBTManager.Item.getListAsList(item, "gui", "board_tree_generator_staff");
+                int select = (int) NBTManager.Item.getNumber(item, "gui", "board_tree_generator_staff_select");
+
+                String id = list.get(select);
+                id = id.replace(" > ", "/");
+                id = id.substring("§f".length());
+                TreeGenerator.create(level_server, player_server, pos, id);
+
+            }
 
         }
 
