@@ -6,14 +6,16 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import tannyjung.tanshugetrees_core.Core;
+import tannyjung.tanshugetrees_core.game.*;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
-import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees.network.TanshugetreesModVariables;
 import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.systems.Caches;
@@ -28,8 +30,7 @@ public class LivingMechanics {
 
     public static void start (Entity entity) {
 
-        LevelAccessor level_accessor = entity.level();
-        ServerLevel level_server = (ServerLevel) level_accessor;
+        ServerLevel level_server = (ServerLevel) entity.level();
         BlockPos center_pos = new BlockPos(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
 
         if (level_server.isLoaded(center_pos) == false) {
@@ -40,16 +41,16 @@ public class LivingMechanics {
 
         if (Core.developer_mode == true) {
 
-            GameUtils.Misc.spawnParticle(level_server, entity.position(), 0, 0, 0, 0, 1, "minecraft:flash");
-            GameUtils.Misc.spawnParticle(level_server, entity.position().add(0, 100, 0), 0, 25, 0, 0, 300, "minecraft:totem_of_undying");
+            GameUtils.spawnParticle(level_server, entity.position(), 0, 0, 0, 0, 1, "minecraft:flash");
+            GameUtils.spawnParticle(level_server, entity.position().add(0, 100, 0), 0, 25, 0, 0, 300, "minecraft:totem_of_undying");
 
         }
 
-        int[] rotation_mirrored = new int[]{(int) GameUtils.Data.getEntityNumber(entity, "rotation"), (int) GameUtils.Data.getEntityNumber(entity, "mirrored")};
-        boolean have_center_block = level_accessor.getBlockState(center_pos).isAir() == false;
-        String path_settings = GameUtils.Data.getEntityText(entity, "tree_settings");
-        short[] leaves_types = Caches.TreeSettings.getLeavesType(path_settings);
-        Map<Short, BlockState> blocks = Caches.TreeSettings.getBlock(level_server, path_settings);
+        int[] rotation_mirrored = new int[]{(int) NBTManager.Mob.getNumber(entity, "main", "rotation"), (int) NBTManager.Mob.getNumber(entity, "main", "mirrored")};
+        boolean have_center_block = level_server.getBlockState(center_pos).isAir() == false;
+        String path_palettes = NBTManager.Mob.getText(entity, "main", "tree_palettes");
+        short[] leaves_types = Caches.TreePalettes.getLeavesType(path_palettes);
+        Map<Short, BlockState> blocks = Caches.TreePalettes.getBlock(level_server, path_palettes);
         Set<Block> leaves = new HashSet<>();
 
         // Get Leaves
@@ -81,7 +82,7 @@ public class LivingMechanics {
         // Get Data
         {
 
-            Map<String, String> data_normal = Caches.TreeSettings.getNormal(path_settings);
+            Map<String, String> data_normal = Caches.TreePalettes.getNormal(path_palettes);
             can_leaves_decay = data_normal.getOrDefault("can_leaves_decay", "false").equals("true");
             can_leaves_drop = data_normal.getOrDefault("can_leaves_drop", "false").equals("true");
             can_leaves_regrow = data_normal.getOrDefault("can_leaves_regrow", "false").equals("true");
@@ -93,7 +94,7 @@ public class LivingMechanics {
         // Biome Type Test
         {
 
-            Holder<Biome> biome = GameUtils.Environment.getAt(level_accessor, center_pos);
+            Holder<Biome> biome = GameUtils.Environment.getAt(level_server, center_pos);
 
             if (GameUtils.Environment.test(biome, "#tanshugetrees:snowy_biomes") == true) {
 
@@ -107,17 +108,17 @@ public class LivingMechanics {
 
         }
 
-        String path_storage = "";
+        String path_shapes = "";
         String chosen = "";
 
         // Get Path
         {
 
-            String[] split = GameUtils.Data.getEntityText(entity, "file").split("\\|");
+            String[] split = NBTManager.Mob.getText(entity, "main", "file").split("\\|");
 
             try {
 
-                path_storage = split[0];
+                path_shapes = split[0];
                 chosen = split[1];
 
             } catch (Exception exception) {
@@ -134,7 +135,7 @@ public class LivingMechanics {
         // Get Pre Block Data
         {
 
-            String[] split = GameUtils.Data.getEntityText(entity, "pre_block").split("/");
+            String[] split = NBTManager.Mob.getText(entity, "main", "pre_block").split("/");
 
             if (split.length > 1) {
 
@@ -159,8 +160,9 @@ public class LivingMechanics {
         {
 
             int process = 0;
-            int process_save_min = (int) GameUtils.Data.getEntityNumber(entity, "process_save");
+            int process_save_min = (int) NBTManager.Mob.getNumber(entity, "main", "process_save");
             int process_save_max = process_save_min + Handcode.Config.living_mechanics_process_limit;
+            ChunkPos chunk_pos = null;
             BlockPos pre_pos = null;
             BlockState pre_block = null;
             BlockPos pos = null;
@@ -168,13 +170,15 @@ public class LivingMechanics {
             int leaves_type = 0;
             boolean break_by_process = false;
 
+            Map<ChunkPos, Set<int[]>> shadow_reduction = new HashMap<>();
+
             int loop = 0;
             short type = 0;
             short posX = 0;
             short posY = 0;
             short posZ = 0;
 
-            for (short scan : Caches.TreeShape.getTreeShapeData(path_storage + "|" + chosen)) {
+            for (short scan : Caches.TreeShape.getTreeShapeData(path_shapes + "|" + chosen)) {
 
                 // Loop Skip
                 {
@@ -221,7 +225,7 @@ public class LivingMechanics {
 
                         } else if (process_save_max <= process) {
 
-                            GameUtils.Data.setEntityNumber(entity, "process_save", process);
+                            NBTManager.Mob.setNumber(entity, "main", "process_save", process, false);
                             break_by_process = true;
                             break;
 
@@ -231,9 +235,9 @@ public class LivingMechanics {
 
                 }
 
-                if (OutsideUtils.Mathematics.isNumberStartWith(type, 1) == true) {
+                if (OutsideUtils.Mathematic.isNumberStartWith(type, 1) == true) {
 
-                    if (OutsideUtils.Mathematics.isNumberStartWith(type, 120) == false) {
+                    if (OutsideUtils.Mathematic.isNumberStartWith(type, 120) == false) {
 
                         pre_block_data[0] = type;
                         pre_block_data[1] = posX;
@@ -273,6 +277,7 @@ public class LivingMechanics {
                         pos = OutsideUtils.convertPosRotationMirrored(pos, rotation_mirrored);
                         pos = pos.offset(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
                         block = blocks.get(type);
+                        chunk_pos = new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4);
 
                         if (block == null) {
 
@@ -291,23 +296,23 @@ public class LivingMechanics {
 
                         }
 
-                        if (level_accessor.getBlockState(pre_pos).getBlock() != pre_block.getBlock()) {
+                        if (testForceDecay(level_server, pos, chunk_pos, pre_pos, pre_block, shadow_reduction, can_leaves_drop)) {
 
-                            // Missing Twig
+                            // Force Decay
                             {
 
                                 if (can_leaves_decay == true) {
 
-                                    if (level_accessor.getBlockState(pos).getBlock() == block.getBlock()) {
+                                    if (level_server.getBlockState(pos).getBlock() == block.getBlock()) {
 
-                                        if (GameUtils.Tile.test(block, "#minecraft:leaves") == true) {
+                                        if (BlockManager.test(block, "#minecraft:leaves") == true) {
 
-                                            block = GameUtils.Tile.setPropertyLogic(block, "persistent", false);
-                                            GameUtils.Tile.set(level_accessor, pos, block, false);
+                                            block = BlockManager.setPropertyLogic(block, "persistent", false);
+                                            BlockManager.set(level_server, pos, block, false);
 
                                         } else {
 
-                                            level_accessor.destroyBlock(pos, false);
+                                            level_server.destroyBlock(pos, false);
 
                                         }
 
@@ -331,7 +336,7 @@ public class LivingMechanics {
 
                                 }
 
-                                update(level_accessor, level_server, entity, leaves, pos, block, leaves_type, biome_type, have_center_block, can_leaves_drop, can_leaves_regrow);
+                                update(level_server, entity, leaves, pos, block, leaves_type, biome_type, have_center_block, can_leaves_drop, can_leaves_regrow);
 
                             }
 
@@ -345,18 +350,18 @@ public class LivingMechanics {
 
             if (break_by_process == true) {
 
-                GameUtils.Data.setEntityText(entity, "pre_block", pre_block_data[0] + "/" + pre_block_data[1] + "/" + pre_block_data[2] + "/" + pre_block_data[3]);
+                NBTManager.Mob.setText(entity, "main", "pre_block", pre_block_data[0] + "/" + pre_block_data[1] + "/" + pre_block_data[2] + "/" + pre_block_data[3], false);
 
             } else {
 
                 // At the end of the file
                 {
 
-                    GameUtils.Data.setEntityNumber(entity, "process_save", 0);
+                    NBTManager.Mob.setNumber(entity, "main", "process_save", 0, false);
 
-                    if (GameUtils.Data.getEntityLogic(entity, "test_alive") == true) {
+                    if (NBTManager.Mob.getLogic(entity, "main", "test_alive") == true) {
 
-                        GameUtils.Data.setEntityLogic(entity, "test_alive", false);
+                        NBTManager.Mob.setLogic(entity, "main", "test_alive", false, false);
 
                     } else {
 
@@ -364,7 +369,7 @@ public class LivingMechanics {
 
                             if (leaves_types[0] == 1 && leaves_types[1] == 1) {
 
-                                if (TanshugetreesModVariables.MapVariables.get(level_accessor).season.equals("Summer") == true) {
+                                if (TanshugetreesModVariables.MapVariables.get(level_server).season.equals("Summer") == true) {
 
                                     entity.discard();
 
@@ -392,9 +397,66 @@ public class LivingMechanics {
 
     }
 
-    private static void update (LevelAccessor level_accessor, ServerLevel level_server, Entity entity, Set<Block> leaves, BlockPos pos, BlockState block, int leaves_type, int biome_type, boolean have_center_block, boolean can_leaves_drop, boolean can_leaves_regrow) {
+    private static boolean testForceDecay (ServerLevel level_server, BlockPos pos, ChunkPos chunk_pos, BlockPos pre_pos, BlockState pre_block, Map<ChunkPos, Set<int[]>> shadow_reduction, boolean can_leaves_drop) {
 
-        BlockState block_test = level_accessor.getBlockState(pos);
+        // Missing Twig
+        {
+
+            if (level_server.getBlockState(pre_pos).getBlock() != pre_block.getBlock()) {
+
+                return true;
+
+            }
+
+        }
+
+        // Shadow Reduction
+        {
+
+            if (Handcode.Config.shadow_reduction != 0) {
+
+                if (can_leaves_drop == true) {
+
+                    Set<int[]> shadow_reduction_data = shadow_reduction.get(chunk_pos);
+
+                    if (shadow_reduction_data == null) {
+
+                        shadow_reduction_data = new HashSet<>();
+                        RandomSource random = RandomSource.create(level_server.getSeed() ^ ((pos.getX() * 341873128712L) + (pos.getZ() * 132897987541L)));
+
+                        while (shadow_reduction_data.size() < Handcode.Config.shadow_reduction) {
+
+                            shadow_reduction_data.add(new int[]{random.nextInt(16) + (chunk_pos.x * 16), random.nextInt(16) + (chunk_pos.z * 16)});
+
+                        }
+
+                        shadow_reduction.put(chunk_pos, shadow_reduction_data);
+
+                    }
+
+                    for (int[] test : shadow_reduction_data) {
+
+                        if (test[0] == pos.getX() && test[1] == pos.getZ()) {
+
+                            return true;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        return false;
+
+    }
+
+    private static void update (ServerLevel level_server, Entity entity, Set<Block> leaves, BlockPos pos, BlockState block, int leaves_type, int biome_type, boolean have_center_block, boolean can_leaves_drop, boolean can_leaves_regrow) {
+
+        BlockState block_test = level_server.getBlockState(pos);
         boolean is_leaves = leaves.contains(block_test.getBlock()) == true;
         boolean straighten = false;
         boolean can_pos_photosynthesis = false;
@@ -402,11 +464,11 @@ public class LivingMechanics {
         // Straighten Test
         {
 
-            if ((GameUtils.Data.getEntityNumber(entity, "straighten_highestX") != pos.getX() || GameUtils.Data.getEntityNumber(entity, "straighten_highestY") < pos.getY() || GameUtils.Data.getEntityNumber(entity, "straighten_highestZ") != pos.getZ())) {
+            if ((NBTManager.Mob.getNumber(entity, "main", "straighten_highestX") != pos.getX() || NBTManager.Mob.getNumber(entity, "main", "straighten_highestY") < pos.getY() || NBTManager.Mob.getNumber(entity, "main", "straighten_highestZ") != pos.getZ())) {
 
-                GameUtils.Data.setEntityNumber(entity, "straighten_highestX", pos.getX());
-                GameUtils.Data.setEntityNumber(entity, "straighten_highestY", pos.getY());
-                GameUtils.Data.setEntityNumber(entity, "straighten_highestZ", pos.getZ());
+                NBTManager.Mob.setNumber(entity, "main", "straighten_highestX", pos.getX(), false);
+                NBTManager.Mob.setNumber(entity, "main", "straighten_highestY", pos.getY(), false);
+                NBTManager.Mob.setNumber(entity, "main", "straighten_highestZ", pos.getZ(), false);
 
             } else {
 
@@ -419,7 +481,7 @@ public class LivingMechanics {
         // Light Level Detection
         {
 
-            if (Handcode.Config.leaf_light_level_detection <= level_accessor.getBrightness(LightLayer.SKY, pos) + 1) {
+            if (Handcode.Config.leaf_light_level_detection <= level_server.getBrightness(LightLayer.SKY, pos) + 1) {
 
                 can_pos_photosynthesis = true;
 
@@ -441,7 +503,7 @@ public class LivingMechanics {
                         // Straighten
                         {
 
-                            if (leaves.contains(level_accessor.getBlockState(pos.atY((int) GameUtils.Data.getEntityNumber(entity, "straighten_highestY"))).getBlock()) == false) {
+                            if (leaves.contains(level_server.getBlockState(pos.atY((int) NBTManager.Mob.getNumber(entity, "main", "straighten_highestY"))).getBlock()) == false) {
 
                                 chance = 1.0;
 
@@ -465,7 +527,7 @@ public class LivingMechanics {
                                     // By Seasons
                                     {
 
-                                        chance = switch (TanshugetreesModVariables.MapVariables.get(level_accessor).season) {
+                                        chance = switch (TanshugetreesModVariables.MapVariables.get(level_server).season) {
                                             case "Spring" -> Handcode.Config.leaf_drop_chance_spring;
                                             case "Summer" -> Handcode.Config.leaf_drop_chance_summer;
                                             case "Autumn" -> Handcode.Config.leaf_drop_chance_autumn;
@@ -490,7 +552,7 @@ public class LivingMechanics {
                                 // Only drop coniferous leaves in summer
                                 {
 
-                                    if (TanshugetreesModVariables.MapVariables.get(level_accessor).season.equals("Summer") == true) {
+                                    if (TanshugetreesModVariables.MapVariables.get(level_server).season.equals("Summer") == true) {
 
                                         chance = Handcode.Config.leaf_drop_chance_coniferous;
 
@@ -512,7 +574,7 @@ public class LivingMechanics {
 
                         {
 
-                            GameUtils.Tile.remove(level_accessor, level_server, pos, false);
+                            BlockManager.remove(level_server, level_server, pos, false);
 
                             if (Handcode.Config.leaf_litter == true) {
 
@@ -524,10 +586,10 @@ public class LivingMechanics {
                                         if (list_falling_leaf.size() < Handcode.Config.falling_leaf_count_limit) {
 
                                             // Don't create animation, if there's a block below.
-                                            if (GameUtils.Tile.test(level_accessor.getBlockState(pos.below()), "#tanshugetrees:passable_blocks") == true) {
+                                            if (BlockManager.test(level_server.getBlockState(pos.below()), "#tanshugetrees:passable_blocks") == true) {
 
-                                                Entity entity_summon = GameUtils.Misc.summonBlock(level_server, pos.getCenter(), "Falling Leaf", "TANSHUGETREES-falling_leaf", 0, 0, 0, 1, 1, 1, 0, 0, GameUtils.Tile.toText(block)[0]);
-                                                GameUtils.Data.setEntityText(entity_summon, "block", GameUtils.Tile.toText(block)[0] + GameUtils.Tile.toText(block)[1]);
+                                                Entity entity_summon = DisplayManager.summonItem(level_server, pos.getCenter(), 0, 0, 1, false, "Falling Leaf", new String[]{"TANSHUGETREES-falling_leaf"}, BlockManager.toText(block)[0]);
+                                                NBTManager.Mob.setText(entity_summon, "main", "block", BlockManager.toText(block)[0] + BlockManager.toText(block)[1], false);
 
                                             }
 
@@ -540,11 +602,11 @@ public class LivingMechanics {
                                     // No Animation
                                     {
 
-                                        int height_motion = GameUtils.Space.getHeight(level_accessor, pos.getX(), pos.getZ(), "MOTION_BLOCKING_NO_LEAVES");
+                                        int height_motion = level_server.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
 
-                                        if (height_motion != GameUtils.Space.getBuildHeight(level_accessor, false) && height_motion < pos.getY()) {
+                                        if (height_motion != GameUtils.Space.getBuildHeight(level_server, false) && height_motion < pos.getY()) {
 
-                                            LeafLitter.create(level_accessor, level_server, pos.atY(height_motion), block, false);
+                                            LeafLitter.create(level_server, level_server, pos.atY(height_motion), block, false);
 
                                         }
 
@@ -576,7 +638,7 @@ public class LivingMechanics {
                         // Cancel By Straighten (if no block above)
                         {
 
-                            if (leaves.contains(level_accessor.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ()))) == true) {
+                            if (leaves.contains(level_server.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ()))) == true) {
 
                                 chance = 1.0;
 
@@ -596,7 +658,7 @@ public class LivingMechanics {
                                     // By Seasons
                                     {
 
-                                        chance = switch (TanshugetreesModVariables.MapVariables.get(level_accessor).season) {
+                                        chance = switch (TanshugetreesModVariables.MapVariables.get(level_server).season) {
                                             case "Spring" -> Handcode.Config.leaf_regrowth_chance_spring;
                                             case "Summer" -> Handcode.Config.leaf_regrowth_chance_summer;
                                             case "Autumn" -> Handcode.Config.leaf_regrowth_chance_autumn;
@@ -632,7 +694,7 @@ public class LivingMechanics {
 
                     if (Math.random() < chance) {
 
-                        GameUtils.Tile.set(level_accessor, pos, block, false);
+                        BlockManager.set(level_server, pos, block, false);
 
                     }
 
@@ -651,7 +713,7 @@ public class LivingMechanics {
 
                     if (list_leaf_litter_remover.size() < Handcode.Config.leaf_litter_remover_count_limit) {
 
-                        GameUtils.Mob.summon(level_server, pos.getCenter(), "minecraft:marker", "Leaf Litter Remover", "TANSHUGETREES-leaf_litter_remover", "{ForgeData:{tanshugetrees:{block:\"" + GameUtils.Tile.toText(block)[0] + "\"}}}");
+                        EntityManager.summon(level_server, pos.getCenter(), false, "minecraft:marker", "Leaf Litter Remover", new String[]{"TANSHUGETREES-leaf_litter_remover"}, "{NeoForgeData:{tanshugetrees:{block:\"" + BlockManager.toText(block)[0] + "\"}}}");
 
                     }
 
@@ -663,7 +725,7 @@ public class LivingMechanics {
 
         if (have_center_block == true && is_leaves == true) {
 
-            GameUtils.Data.setEntityLogic(entity, "test_alive", true);
+            NBTManager.Mob.setLogic(entity, "main", "test_alive", true, false);
 
         }
 
@@ -683,7 +745,7 @@ public class LivingMechanics {
             }
 
             BlockPos pos = BlockPos.containing(entity.position().add(0, -0.6, 0));
-            boolean is_passable = GameUtils.Tile.isPassable(level_accessor, pos) == true || GameUtils.Tile.test(level_accessor.getBlockState(pos), "#tanshugetrees:passable_blocks") == true;
+            boolean is_passable = BlockManager.isPassable(level_accessor, pos) == true || BlockManager.test(level_accessor.getBlockState(pos), "#tanshugetrees:passable_blocks") == true;
 
             if (is_passable == true && level_accessor.isWaterAt(pos) == false) {
 
@@ -691,7 +753,7 @@ public class LivingMechanics {
 
             } else {
 
-                LeafLitter.create(level_server, level_server, pos.above(), GameUtils.Tile.fromText(level_server, GameUtils.Data.getEntityText(entity, "block")), false);
+                LeafLitter.create(level_accessor, level_server, pos.above(), BlockManager.fromText(level_server, NBTManager.Mob.getText(entity, "main", "block")), false);
                 entity.discard();
 
             }
@@ -710,7 +772,7 @@ public class LivingMechanics {
             }
 
             BlockPos pos = entity.blockPosition().below();
-            boolean is_passable = GameUtils.Tile.isPassable(level_accessor, pos) == true || GameUtils.Tile.test(level_accessor.getBlockState(pos), "#tanshugetrees:passable_blocks") == true;
+            boolean is_passable = BlockManager.isPassable(level_accessor, pos) == true || BlockManager.test(level_accessor.getBlockState(pos), "#tanshugetrees:passable_blocks") == true;
 
             if (is_passable == true && level_accessor.isWaterAt(pos) == false) {
 
@@ -718,7 +780,7 @@ public class LivingMechanics {
 
             } else {
 
-                LeafLitter.create(level_server, level_server, pos.above(), GameUtils.Tile.fromText(level_server, GameUtils.Data.getEntityText(entity, "block")), true);
+                LeafLitter.create(level_accessor, level_server, pos.above(), BlockManager.fromText(level_server, NBTManager.Mob.getText(entity, "main", "block")), true);
                 entity.discard();
 
             }
@@ -762,12 +824,6 @@ public class LivingMechanics {
 
                     for (Entity entity : list_falling_leaf) {
 
-                        if (entity.isRemoved() == true) {
-
-                            continue;
-
-                        }
-
                         CustomEntityUpdate.runDrop(entity);
 
                     }
@@ -777,12 +833,6 @@ public class LivingMechanics {
                 if (list_leaf_litter_remover.isEmpty() == false) {
 
                     for (Entity entity : list_leaf_litter_remover) {
-
-                        if (entity.isRemoved() == true) {
-
-                            continue;
-
-                        }
 
                         CustomEntityUpdate.runLitterRemover(entity);
 
@@ -798,9 +848,9 @@ public class LivingMechanics {
 
             if (Handcode.Config.living_mechanics == true) {
 
-                list_tree_location = GameUtils.Mob.getAtEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-tree_location");
-                list_falling_leaf = GameUtils.Mob.getAtEverywhere(level_server, "minecraft:block_display", "TANSHUGETREES-falling_leaf");
-                list_leaf_litter_remover = GameUtils.Mob.getAtEverywhere(level_server, "minecraft:marker", "TANSHUGETREES-leaf_litter_remover");
+                list_tree_location = EntityManager.Population.getEverywhereStatic(level_server, "", "", new String[]{"TANSHUGETREES-tree_location"});
+                list_falling_leaf = EntityManager.Population.getEverywhereStatic(level_server, "", "", new String[]{"TANSHUGETREES-falling_leaf"});
+                list_leaf_litter_remover = EntityManager.Population.getEverywhereStatic(level_server, "", "", new String[]{"TANSHUGETREES-leaf_litter_remover"});
 
             }
 
