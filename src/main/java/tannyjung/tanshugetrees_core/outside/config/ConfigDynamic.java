@@ -89,21 +89,9 @@ public class ConfigDynamic {
 
                     Map<String, Map<String, String>> temp = read(default_values, name);
 
-                    try {
+                    for (File file : FileManager.getAllFiles(file_organized.getPath())) {
 
-                        Files.walk(file_organized.toPath()).forEach(source -> {
-
-                            if (source.toFile().isDirectory() == false) {
-
-                                write.append(write(default_values, temp, scan_at, source));
-
-                            }
-
-                        });
-
-                    } catch (Exception exception) {
-
-                        OutsideUtils.exception(new Exception(), exception, "");
+                        write.append(write(default_values, temp, scan_at, file.toPath()));
 
                     }
 

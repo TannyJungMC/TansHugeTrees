@@ -9,8 +9,8 @@ public class ConfigClassic {
 
 	public static void repair (String path, String original) {
 
-        Map<String, Boolean> should_keep = new HashMap<>();
         Map<String, String> old_values = new HashMap<>();
+        Map<String, Boolean> keep = new HashMap<>();
 
         // Get Old Values
         {
@@ -69,7 +69,7 @@ public class ConfigClassic {
 
                     }
 
-                    should_keep.put(options.get(loop), test);
+                    keep.put(options.get(loop), test);
 
                 }
 
@@ -98,7 +98,7 @@ public class ConfigClassic {
 
                 if (scan.startsWith("|") == false && scan.contains(" = ") == true) {
 
-                    // Write Option
+                    // Write Normal
                     {
 
                         split = scan.split(" = ");
@@ -107,7 +107,7 @@ public class ConfigClassic {
 
                         if (old_values.containsKey(option) == true) {
 
-                            if (should_keep.get(option) == true) {
+                            if (keep.get(option) == true) {
 
                                 write.append(option).append(" = ").append(old_values.get(option));
 
@@ -164,28 +164,21 @@ public class ConfigClassic {
     public static Map<String, String> getValues (String path) {
 
         Map<String, String> data = new HashMap<>();
+        int index = 0;
 
-        // Get Data
-        {
+        for (String scan : FileManager.readTXT(path)) {
 
-            int index = 0;
+            if (scan.isEmpty() == false) {
 
-            for (String scan : FileManager.readTXT(path)) {
+                index = scan.indexOf(" = ");
 
-                {
+                if (index == -1) {
 
-                    if (scan.isEmpty() == false) {
-
-                        if (scan.contains(" = ") == true) {
-
-                            index = scan.indexOf(" = ");
-                            data.put(scan.substring(0, index), scan.substring(index + 3));
-
-                        }
-
-                    }
+                    continue;
 
                 }
+
+                data.put(scan.substring(0, index), scan.substring(index + 3));
 
             }
 

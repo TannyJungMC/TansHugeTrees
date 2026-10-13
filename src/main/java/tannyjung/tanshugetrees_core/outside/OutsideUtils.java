@@ -388,23 +388,19 @@ public class OutsideUtils {
 
         for (String scan : FileManager.readTXT(path)) {
 
-            {
+            if (scan.isEmpty() == false) {
 
-                if (scan.isEmpty() == false) {
+                if (scan.contains(" = ") == true) {
 
-                    if (scan.contains(" = ") == true) {
+                    split = scan.split(" = ");
 
-                        split = scan.split(" = ");
+                    if (split[1].equals("none") == true) {
 
-                        if (split[1].equals("none") == true) {
-
-                            split[1] = "";
-
-                        }
-
-                        data.put(split[0], split[1]);
+                        split[1] = "";
 
                     }
+
+                    data.put(split[0], split[1]);
 
                 }
 

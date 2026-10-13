@@ -6,59 +6,42 @@ import tannyjung.tanshugetrees_core.game.BlockManager;
 import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_core.outside.FileManager;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
+import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 
-public class CustomPackOrganizing {
+public class CustomPack {
 
-    private static final Map<String, String> cache_pack_ids = new HashMap<>();
-    private static final Set<String> cache_error_files = new HashSet<>();
+    private static final Map<String, String> pack_ids = new HashMap<>();
     private static final Map<String, Map<String, Set<String>>> errors = new HashMap<>();
 
-    public static void start (ServerLevel level_server, String[] pack_separate_multiple, String[] folder_settings, String[] folder_functions) {
+    public static void organize (String[] folder_unique, String[] folder_fusion, String[] folder_index) {
 
+        pack_ids.clear();
         errors.clear();
 
         FileManager.delete(Core.path_config + "/dev/temporary");
         FileManager.createEmptyFile(Core.path_config + "/dev/temporary", true);
+        File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
 
-        // Rename All Back
-        {
+        if (packs == null) {
 
-            File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
-
-            if (packs == null) {
-
-                return;
-
-            }
-
-            for (File pack : packs) {
-
-                FileManager.rename(pack.getPath(), pack.getName().replace("[INCOMPATIBLE] ", ""));
-
-            }
+            return;
 
         }
 
-        // Extract ZIP
+        Map<String, String[]> zip_index = new HashMap<>();
+
+        // Get ZIP Index
         {
-
-            File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
-
-            if (packs == null) {
-
-                return;
-
-            }
 
             for (File pack : packs) {
 
-                if (pack.getName().endsWith(".zip") == true) {
+                if (pack.isDirectory() == false) {
 
-                    FileManager.extractZIP(pack.getPath(), Core.path_config + "/dev/temporary/pack_zip/" + pack.getName(), false, "");
+                    zip_index.put(pack.getName(), FileManager.ZIP.getIndex(pack.getPath()));
 
                 }
 
@@ -66,18 +49,37 @@ public class CustomPackOrganizing {
 
         }
 
-        organizeInfo();
+        readPackInfo(packs);
+
+        for (String folder : folder_unique) {
+
+            organizeUnique(packs, zip_index, folder);
+
+        }
+
+        for (String folder : folder_fusion) {
+
+            organizeFusion(packs, zip_index, folder);
+
+        }
+
+        for (String folder : folder_index) {
+
+            organizeIndex(packs, zip_index, folder);
+
+        }
+
+
+
+
+
+
+
+
+        /*
 
         // Organizing Data
         {
-
-            File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
-
-            if (packs == null) {
-
-                return;
-
-            }
 
             Map<String, Map<String, String>> config = ConfigDynamic.readTest("world_gen");
             File main_pack = TannyPackManager.getCurrentFile();
@@ -125,7 +127,7 @@ public class CustomPackOrganizing {
 
                                 } else {
 
-                                    FileManager.copy(scan.getPath(), path_to.toString(), false);
+                                    FileManager.copyFile(scan.getPath(), path_to.toString());
 
                                 }
 
@@ -159,43 +161,175 @@ public class CustomPackOrganizing {
         cache_pack_ids.clear();
         cache_error_files.clear();
 
+         */
+
     }
 
-    private static void organizeInfo () {
+    private static void readPackInfo (File[] packs) {
 
-        File[] packs = new File(Core.path_config + "/custom_packs").listFiles();
+        String[] data = new String[]{};
 
-        if (packs == null) {
+        for (File pack : packs) {
 
-            return;
+            if (pack.isDirectory() == true) {
+
+                data = FileManager.readTXT(pack.getPath() + "/info.txt");
+
+            } else {
+
+                data = FileManager.ZIP.readTXT(pack.getPath(), "info.txt");
+
+            }
+
+            for (String scan : data) {
+
+                if (scan.startsWith("pack_id = ") == true) {
+
+                    pack_ids.put(pack.getName(), scan.substring("pack_id = ".length()));
+
+                }
+
+            }
 
         }
 
+    }
+
+    private static void organizeUnique (File[] packs, Map<String, String[]> zip_index, String folder) {
+
+        for (File pack : packs) {
+
+            if (pack.isDirectory() == true) {
+
+                FileManager.copyFolder(pack.getPath() + "/" + folder, Core.path_config + "/dev/temporary/" + folder + "/" + pack_ids.get(pack.getName()));
+
+            } else {
+
+                for (String scan : zip_index.get(pack.getName())) {
+
+                    if (scan.startsWith(folder + "/") == true) {
+
+                        FileManager.ZIP.extractSpecific(pack.getPath(), scan, Core.path_config + "/dev/temporary/" + folder + "/" + pack_ids.get(pack.getName()) + "/" + scan.substring((folder + "/").length()));
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    private static void organizeFusion (File[] packs, Map<String, String[]> zip_index, String folder) {
+
+        for (File pack : packs) {
+
+            if (pack.isDirectory() == true) {
+
+                FileManager.copyFolder(pack.getPath() + "/" + folder, Core.path_config + "/dev/temporary/" + folder);
+
+            } else {
+
+                for (String scan : zip_index.get(pack.getName())) {
+
+                    if (scan.startsWith(folder + "/") == true) {
+
+                        FileManager.ZIP.extractSpecific(pack.getPath(), scan, Core.path_config + "/dev/temporary/" + folder + "/" + scan.substring((folder + "/").length()));
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    private static void organizeIndex (File[] packs, Map<String, String[]> zip_index, String folder) {
+
+        Map<String, String> map = new HashMap<>();
+        String pack_id = "";
+        String path = "";
+
+        for (File pack : packs) {
+
+            pack_id = pack_ids.get(pack.getName());
+
+            if (pack.isDirectory() == true) {
+
+                for (File scan : FileManager.getAllFiles(pack.getPath() + "/" + folder)) {
+
+                    path = Path.of(Core.path_config + "/custom_packs/" + pack.getName()).relativize(scan.toPath()).toString();
+                    path = path.substring((folder + "/").length());
+                    path = path.replace("\\", "/");
+                    map.put(Core.path_config + "/dev/temporary/" + folder + "/" + pack_id + "/" + path + ".txt", pack.getName() + "|" + folder + "/" + path);
+
+                }
+
+            } else {
+
+                for (String scan : zip_index.get(pack.getName())) {
+
+                    if (scan.startsWith(folder + "/") == true) {
+
+                        path = scan.substring((folder + "/").length());
+                        map.put(Core.path_config + "/dev/temporary/" + folder + "/" + pack_id + "/" + path + ".txt", pack.getName() + "|" + folder + "/" + path);
+
+                    }
+
+                }
+
+            }
+
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+
+                FileManager.writeTXT(entry.getKey(), entry.getValue(), false);
+
+            }
+
+            map.clear();
+
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private static void organizeInfo (File[] packs, Map<String, String> pack_ids) {
+
         Map<String, String> locations = new HashMap<>();
+        File file = null;
 
-        // Get Location
-        {
+        for (File pack : packs) {
 
-            File file = null;
+            if (pack.getName().endsWith(".zip") == true) {
 
-            for (File pack : packs) {
+                file = new File(Core.path_config + "/dev/temporary/pack_zip/" + pack.getName() + "/info.txt");
 
-                if (pack.getName().endsWith(".zip") == true) {
+            } else {
 
-                    file = new File(Core.path_config + "/dev/temporary/pack_zip/" + pack.getName() + "/info.txt");
+                file = new File(pack.getPath() + "/info.txt");
 
-                } else {
+            }
 
-                    file = new File(pack.getPath() + "/info.txt");
+            if (file.exists() == true) {
 
-                }
-
-                if (file.exists() == true) {
-
-                    FileManager.copy(file.getPath(), Core.path_config + "/dev/temporary/info/" + pack.getName() + ".txt", false);
-                    locations.put(pack.getName(), file.getPath());
-
-                }
+                FileManager.copyFile(file.getPath(), Core.path_config + "/dev/temporary/info/" + pack.getName() + ".txt");
+                locations.put(pack.getName(), file.getPath());
 
             }
 
@@ -206,7 +340,7 @@ public class CustomPackOrganizing {
 
             for (Map.Entry<String, String> entry : locations.entrySet()) {
 
-                cache_pack_ids.put(entry.getKey(), OutsideUtils.convertFileToDataMap(entry.getValue()).get("pack_id"));
+                pack_ids.put(entry.getKey(), OutsideUtils.convertFileToDataMap(entry.getValue()).get("pack_id"));
 
             }
 
@@ -238,7 +372,7 @@ public class CustomPackOrganizing {
             // Pack ID
             {
 
-                pack_id = cache_pack_ids.get(pack.getName());
+                pack_id = pack_ids.get(pack.getName());
 
                 if (pack_id == null) {
 
@@ -254,7 +388,7 @@ public class CustomPackOrganizing {
                         Error.add("pack", "packs / duplicated pack IDs. This will results skipping these packs. You can report this to the pack authors to help them fix it.", pack.getPath(), pack.getName() + " > " + pack_id);
                         pass = false;
 
-                        cache_pack_ids.replace(pack.getName(), pack_id + "_" + test_duplicated_pack.get(pack_id).size());
+                        pack_ids.replace(pack.getName(), pack_id + "_" + test_duplicated_pack.get(pack_id).size());
 
                     }
 
@@ -301,7 +435,7 @@ public class CustomPackOrganizing {
 
                         for (String scan : required_packs.split(" / ")) {
 
-                            if (cache_pack_ids.containsValue(scan) == false) {
+                            if (pack_ids.containsValue(scan) == false) {
 
                                 Error.add("pack", "packs / required packs not found. This will results skipping these packs. Make sure you install required packs to allow these packs to work.", pack.getPath(), pack.getName() + " > " + scan);
                                 pass = false;
@@ -344,14 +478,6 @@ public class CustomPackOrganizing {
                     }
 
                 }
-
-            }
-
-            if (pass == false) {
-
-                FileManager.rename(pack.getPath(), "[INCOMPATIBLE] " + pack.getName());
-                cache_pack_ids.remove(pack.getName());
-                cache_pack_ids.put("[INCOMPATIBLE] " + pack.getName(), pack_id);
 
             }
 
@@ -449,7 +575,7 @@ public class CustomPackOrganizing {
 
                             if (is_separate_multiple == true) {
 
-                                path_copy_to = path_copy_to.resolve(cache_pack_ids.get(pack.getName()));
+                                // path_copy_to = path_copy_to.resolve(cache_pack_ids.get(pack.getName()));
 
                             }
 
@@ -463,7 +589,7 @@ public class CustomPackOrganizing {
 
                         }
 
-                        FileManager.copy(scan.getPath(), path_copy_to.toString(), false);
+                        FileManager.copyFile(scan.getPath(), path_copy_to.toString());
 
                     }
 
@@ -620,7 +746,7 @@ public class CustomPackOrganizing {
         private static void add (String type, String error, String path, String troublemaker) {
 
             errors.computeIfAbsent(type, create -> new HashMap<>()).computeIfAbsent(error, create -> new HashSet<>()).add(troublemaker);
-            cache_error_files.add(path);
+            // cache_error_files.add(path);
 
         }
 

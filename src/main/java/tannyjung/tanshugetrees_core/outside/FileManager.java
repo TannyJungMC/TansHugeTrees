@@ -3,11 +3,13 @@ package tannyjung.tanshugetrees_core.outside;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -45,6 +47,19 @@ public class FileManager {
     public static List<File> getAllFiles (String path) {
 
         List<File> files = new ArrayList<>();
+        File file = new File(path);
+
+        if (file.exists() == false) {
+
+            return files;
+
+        }
+
+        if (file.list() == null) {
+
+            return files;
+
+        }
 
         try {
 
@@ -75,55 +90,69 @@ public class FileManager {
 
     }
 
-    public static void copy (String from, String to, boolean is_directory) {
+    public static void copyFile (String from, String to) {
 
         Path path_from = Path.of(from);
+
+        if (path_from.toFile().exists() == false) {
+
+            return;
+
+        }
+
+        Path path_to = Path.of(to);
+        createEmptyFile(path_to.getParent().toString(), true);
+
+        try {
+
+            Files.copy(path_from, path_to, StandardCopyOption.REPLACE_EXISTING);
+
+        } catch (Exception exception) {
+
+            OutsideUtils.exception(new Exception(), exception, "");
+
+        }
+
+    }
+
+    public static void copyFolder (String from, String to) {
+
+        Path path_from = Path.of(from);
+
+        if (path_from.toFile().exists() == false) {
+
+            return;
+
+        }
+
         Path path_to = Path.of(to);
 
-        if (is_directory == false) {
+        try {
 
-            createEmptyFile(path_to.getParent().toString(), true);
+            Files.walk(path_from).forEach(source -> {
 
-            try {
+                if (source.toFile().isDirectory() == false) {
 
-                Files.copy(path_from, path_to, StandardCopyOption.REPLACE_EXISTING);
+                    Path path_new = path_to.resolve(path_from.relativize(source));
+                    createEmptyFile(path_new.getParent().toString(), true);
 
-            } catch (Exception exception) {
+                    try {
 
-                OutsideUtils.exception(new Exception(), exception, "");
+                        Files.copy(source, path_new, StandardCopyOption.REPLACE_EXISTING);
 
-            }
+                    } catch (Exception exception) {
 
-        } else {
-
-            try {
-
-                Files.walk(path_from).forEach(source -> {
-
-                    if (source.toFile().isDirectory() == false) {
-
-                        Path path_new = path_to.resolve(path_from.relativize(source));
-                        createEmptyFile(path_new.getParent().toString(), true);
-
-                        try {
-
-                            Files.copy(source, path_new, StandardCopyOption.REPLACE_EXISTING);
-
-                        } catch (Exception exception) {
-
-                            OutsideUtils.exception(new Exception(), exception, "");
-
-                        }
+                        OutsideUtils.exception(new Exception(), exception, "");
 
                     }
 
-                });
+                }
 
-            } catch (Exception exception) {
+            });
 
-                OutsideUtils.exception(new Exception(), exception, "");
+        } catch (Exception exception) {
 
-            }
+            OutsideUtils.exception(new Exception(), exception, "");
 
         }
 
@@ -274,143 +303,11 @@ public class FileManager {
 
     }
 
-    public static void extractZIP (String path_zip, String path_folder, boolean skip_first_folder, String filter) {
-
-        createEmptyFile(path_folder, true);
-
-        try {
-
-            ZipInputStream stream_input = new ZipInputStream(new FileInputStream(path_zip));
-            ZipEntry entry = stream_input.getNextEntry();
-            FileOutputStream stream_output = null;
-            byte[] bytes = new byte[]{};
-            int length = 0;
-            String entry_path = "";
-            int first_folder = 0;
-
-            while (entry != null) {
-
-                if (skip_first_folder == true) {
-
-                    if (first_folder == 0) {
-
-                        first_folder = entry.getName().length();
-
-                    }
-
-                }
-
-                entry_path = entry.getName().substring(first_folder);
-
-                if (entry_path.contains(filter) == true) {
-
-                    if (entry.isDirectory() == true) {
-
-                        createEmptyFile(path_folder + "/" + entry_path, true);
-
-                    } else {
-
-                        createEmptyFile(path_folder + "/" + entry_path, false);
-                        stream_output = new FileOutputStream(path_folder + "/" + entry_path);
-                        bytes = new byte[1024];
-
-                        while ((length = stream_input.read(bytes)) != -1) {
-
-                            stream_output.write(bytes, 0, length);
-
-                        }
-
-                        stream_output.close();
-
-                    }
-
-                }
-
-                stream_input.closeEntry();
-                entry = stream_input.getNextEntry();
-
-            }
-
-            stream_input.close();
-
-        } catch (Exception exception) {
-
-            OutsideUtils.exception(new Exception(), exception, "");
-
-        }
-
-    }
-
-    public static void compressZIP (String path_zip, File file) {
-
-        createEmptyFile(path_zip, false);
-
-        try {
-
-            ZipOutputStream stream_output = new ZipOutputStream(new FileOutputStream(path_zip));
-            byte[] bytes = new byte[1024];
-
-            if (file.isDirectory() == false) {
-
-                FileInputStream stream_input = new FileInputStream(file);
-                stream_output.putNextEntry(new ZipEntry(file.getName()));
-                int length = 0;
-
-                while ((length = stream_input.read(bytes)) >= 0) {
-
-                    stream_output.write(bytes, 0, length);
-
-                }
-
-                stream_input.close();
-
-            } else {
-
-                Files.walk(file.toPath()).forEach(source -> {
-
-                    if (source.toFile().isDirectory() == false) {
-
-                        try {
-
-                            FileInputStream stream_input = new FileInputStream(source.toFile());
-                            stream_output.putNextEntry(new ZipEntry(file.toPath().relativize(source).toString()));
-                            int length = 0;
-
-                            while ((length = stream_input.read(bytes)) >= 0) {
-
-                                stream_output.write(bytes, 0, length);
-
-                            }
-
-                            stream_input.close();
-
-                        } catch (Exception exception) {
-
-                            OutsideUtils.exception(new Exception(), exception, "");
-
-                        }
-
-                    }
-
-                });
-
-            }
-
-            stream_output.close();
-
-        } catch (Exception exception) {
-
-            OutsideUtils.exception(new Exception(), exception, "");
-
-        }
-
-    }
-
     public static void mergeTXT (File file_from, File file_to) {
 
         if (file_to.exists() == false) {
 
-            copy(file_from.getPath(), file_to.getPath(), false);
+            copyFile(file_from.getPath(), file_to.getPath());
 
         } else {
 
@@ -583,6 +480,208 @@ public class FileManager {
                 }
 
             }
+
+        }
+
+    }
+
+    public static class ZIP {
+
+        public static void compress (String path_zip, File file) {
+
+            createEmptyFile(path_zip, false);
+
+            try {
+
+                ZipOutputStream stream_output = new ZipOutputStream(new FileOutputStream(path_zip));
+                byte[] bytes = new byte[1024];
+
+                if (file.isDirectory() == false) {
+
+                    FileInputStream stream_input = new FileInputStream(file);
+                    stream_output.putNextEntry(new ZipEntry(file.getName()));
+                    int length = 0;
+
+                    while ((length = stream_input.read(bytes)) >= 0) {
+
+                        stream_output.write(bytes, 0, length);
+
+                    }
+
+                    stream_input.close();
+
+                } else {
+
+                    Files.walk(file.toPath()).forEach(source -> {
+
+                        if (source.toFile().isDirectory() == false) {
+
+                            try {
+
+                                FileInputStream stream_input = new FileInputStream(source.toFile());
+                                stream_output.putNextEntry(new ZipEntry(file.toPath().relativize(source).toString()));
+                                int length = 0;
+
+                                while ((length = stream_input.read(bytes)) >= 0) {
+
+                                    stream_output.write(bytes, 0, length);
+
+                                }
+
+                                stream_input.close();
+
+                            } catch (Exception exception) {
+
+                                OutsideUtils.exception(new Exception(), exception, "");
+
+                            }
+
+                        }
+
+                    });
+
+                }
+
+                stream_output.close();
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception, "");
+
+            }
+
+        }
+
+        public static void extractAll (String path_zip, String path_extract_as_folder) {
+
+            createEmptyFile(path_extract_as_folder, true);
+
+            try {
+
+                ZipInputStream stream_input = new ZipInputStream(new FileInputStream(path_zip));
+                ZipEntry entry = stream_input.getNextEntry();
+                FileOutputStream stream_output = null;
+                byte[] bytes = new byte[]{};
+                int length = 0;
+
+                while (entry != null) {
+
+                    if (entry.isDirectory() == false) {
+
+                        createEmptyFile(path_extract_as_folder + "/" + entry, false);
+                        stream_output = new FileOutputStream(path_extract_as_folder + "/" + entry);
+                        bytes = new byte[1024];
+
+                        while ((length = stream_input.read(bytes)) != -1) {
+
+                            stream_output.write(bytes, 0, length);
+
+                        }
+
+                        stream_output.close();
+
+                    }
+
+                    stream_input.closeEntry();
+                    entry = stream_input.getNextEntry();
+
+                }
+
+                stream_input.close();
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception, "");
+
+            }
+
+        }
+
+        public static void extractSpecific (String path_zip, String path_inside, String path_extract_as_file) {
+
+            try {
+
+                ZipFile zip = new ZipFile(path_zip);
+                ZipEntry entry = zip.getEntry(path_inside);
+
+                if (entry == null) {
+
+                    return;
+
+                }
+
+                createEmptyFile(path_extract_as_file, false);
+                zip.getInputStream(entry).transferTo(new FileOutputStream(path_extract_as_file));
+                zip.close();
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception, "");
+
+            }
+
+        }
+
+        public static String[] getIndex (String path_zip) {
+
+            List<String> index = new ArrayList<>();
+
+            try {
+
+                ZipFile zip = new ZipFile(path_zip);
+
+                zip.stream().forEach(entry -> {
+
+                    if (entry.isDirectory() == false) {
+
+                        index.add(entry.getName());
+
+                    }
+
+                });
+
+                zip.close();
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception, "");
+
+            }
+
+            return index.toArray(new String[]{});
+
+        }
+
+        public static byte[] getFileByte (String path_zip, String path_inside) {
+
+            byte[] bytes = new byte[]{};
+
+            try {
+
+                ZipFile zip = new ZipFile(path_zip);
+                ZipEntry entry = zip.getEntry(path_inside);
+
+                if (entry != null) {
+
+                    bytes = zip.getInputStream(entry).readAllBytes();
+
+                }
+
+                zip.close();
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception, "");
+
+            }
+
+            return bytes;
+
+        }
+
+        public static String[] readTXT (String path_zip, String path_inside) {
+
+            return new String(getFileByte(path_zip, path_inside), StandardCharsets.UTF_8).split("\\n");
 
         }
 

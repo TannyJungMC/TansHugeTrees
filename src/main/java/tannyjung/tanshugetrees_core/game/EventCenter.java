@@ -25,8 +25,9 @@ import tannyjung.tanshugetrees_core.game.screen.GUIScreen;
 import tannyjung.tanshugetrees_core.game.screen.ScreenDrawing;
 import tannyjung.tanshugetrees_core.game.world_gen.*;
 import tannyjung.tanshugetrees_core.outside.NetworkManager;
-import tannyjung.tanshugetrees_core.outside.config.CustomPackOrganizing;
+import tannyjung.tanshugetrees_core.outside.config.CustomPack;
 import tannyjung.tanshugetrees_core.outside.config.TannyPackManager;
+import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.core.Commands;
 import tannyjung.tanshugetrees_handcode.core.Overlays;
 
@@ -71,8 +72,8 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.api.distmarker.Dist;
-import tannyjung.tanshugetrees_handcode.systems.world_gen.FeatureAreaDirt;
-import tannyjung.tanshugetrees_handcode.systems.world_gen.FeatureAreaGrass;
+import tannyjung.tanshugetrees_core.game.world_gen.FeatureAreaDirt;
+import tannyjung.tanshugetrees_core.game.world_gen.FeatureAreaGrass;
 
 import java.util.Map;
 
@@ -81,7 +82,7 @@ public class EventCenter {
 
     private static boolean first_player_joined = false;
 
-    public static void bus (IEventBus bus) {
+    public static void register (IEventBus bus) {
 
         GUIScreen.register.register(bus);
 
@@ -121,8 +122,8 @@ public class EventCenter {
         Core.path_world_core = path_world + "/data/tannyjung/" + Core.data_structure_version_core;
         Core.path_world_mod = path_world + "/data/" + Core.mod_id;
 
-        Core.DataMigration.run(true);
-        Core.restart(null, false, true);
+        Core.DataMigration.runWorld();
+        Core.DataManagement.restart(null, false, true);
 
     }
 
@@ -131,8 +132,8 @@ public class EventCenter {
 
         ServerLevel level_server = event.getServer().overworld();
 
-        Core.generateDataWorld(level_server);
-        Core.restart(level_server, true, false);
+        Core.DataManagement.regenerateWorld(level_server);
+        Core.DataManagement.restart(level_server, true, false);
 
     }
 
@@ -210,7 +211,7 @@ public class EventCenter {
 
             Core.DelayedWork.createAsync(100, () -> {
 
-                CustomPackOrganizing.Error.sendMessage(level_server);
+                CustomPack.Error.sendMessage(level_server);
 
                 if (Core.auto_check_update == true) {
 

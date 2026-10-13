@@ -21,6 +21,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -279,11 +280,13 @@ public class GameUtils {
 
 			if (level_world_gen.hasChunk(chunk_pos.x, chunk_pos.z) == true) {
 
-				if (level_world_gen.getChunk(pos) instanceof ProtoChunk == true) {
+				ChunkAccess chunk = level_world_gen.getChunk(pos);
+
+				if (chunk instanceof ProtoChunk == true) {
 
 					if (Space.testChunkStatus(level_world_gen, chunk_pos, ChunkStatus.CARVERS) == true) {
 
-						return level_world_gen.getChunk(chunk_pos.x, chunk_pos.z).getHeight(type_normal, pos.getX(), pos.getZ()) + 1;
+						return chunk.getHeight(type_normal, pos.getX(), pos.getZ()) + 1;
 
 					}
 

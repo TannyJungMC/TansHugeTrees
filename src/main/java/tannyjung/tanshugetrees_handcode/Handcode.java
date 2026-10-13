@@ -6,7 +6,9 @@ import tannyjung.tanshugetrees_core.game.GameUtils;
 import tannyjung.tanshugetrees_core.outside.*;
 import tannyjung.tanshugetrees_core.outside.config.ConfigClassic;
 import tannyjung.tanshugetrees_core.outside.config.ConfigDynamic;
-import tannyjung.tanshugetrees_core.outside.config.CustomPackOrganizing;
+import tannyjung.tanshugetrees_core.outside.config.CustomPack;
+import tannyjung.tanshugetrees_core.game.world_gen.FeatureAreaDirt;
+import tannyjung.tanshugetrees_core.game.world_gen.FeatureAreaGrass;
 
 import java.util.HashSet;
 import java.util.List;
@@ -15,36 +17,50 @@ import java.util.Set;
 
 public class Handcode {
 
-    public static boolean compatibility_serene_seasons = false;
+    public static boolean is_mod_serene_seasons_loaded = false;
 
-    public static void start () {
+    public static void sync () {
 
-        Core.syncModData(
+        is_mod_serene_seasons_loaded = GameUtils.isModLoaded("sereneseasons") == true;
+
+        Core.sync(
 
                 "Tan's Huge Trees",
                 "tanshugetrees",
                 "T",
                 "THT-tree_pack",
-                "https://sites.google.com/view/tannyjung/minecraft-mods/tans-huge-trees",
+                "https://sites.google.com/view/tannyjung/minecraft-mods",
+                true,
+                true,
 
                 1,
-                "1.8.0",
-                "1.8.0",
-                "Beta",
-
-                true,
-                true
+                "1.9.0",
+                "1.9.0",
+                "1.9.0"
 
         );
 
-        compatibility_serene_seasons = Config.compatibility_serene_seasons && GameUtils.isModLoaded("sereneseasons");
+    }
+
+    public static void organizeCustomPack () {
+
+        CustomPack.organize(new String[]{"functions", "tree_blueprints", "tree_palettes", "world_gen"}, new String[]{"decorations", "leaf_litter", "sapling_trader"}, new String[]{"tree_shapes"});
 
     }
 
     public static void repairData (ServerLevel level_server) {
 
-        FileManager.createEmptyFile(Core.path_config + "/dev/shape_file_generator", true);
-        CustomPackOrganizing.start(level_server, new String[]{"functions", "tree_blueprints", "tree_palettes", "tree_shapes", "world_gen"}, new String[]{"presets", "world_gen"}, new String[]{"functions", "leaf_litter", "tree_decoration"});
+        ConfigClassic.repair(Core.path_config + "/dev/shape_file_generator/settings.txt", """
+                - This only for convert tree presets into tree shapes, for use in custom packs. Not a place for people to run around.
+                - To use this. Set render distance to 32 or depends on tree size. Then write correct file location below and use command [ /TANSHUGETREES command shape_file_generator start <count> ].
+                
+                ----------------------------------------------------------------------------------------------------
+                
+                path_blueprint = none
+                | Path of the preset you will convert. The part will be something like [ presets/#main/redwood/redwood ]. This path is same as in temporary folder, found in dev folder inside the config. If the pack is extracted, then it will go get preset in extracted folder first.
+                
+                ----------------------------------------------------------------------------------------------------
+                """);
 
         ConfigDynamic.reorganize("world_gen", "world_gen", """
                 enable = false
@@ -75,18 +91,6 @@ public class Handcode {
                 # The part of tree shapes that will be used by that tree
                 path_palettes = none
                 # The path of tree settings that will be applied into that tree
-                """);
-
-        ConfigClassic.repair(Core.path_config + "/dev/shape_file_generator/settings.txt", """
-                - This only for convert tree presets into tree shapes, for use in custom packs. Not a place for people to run around.
-                - To use this. Set render distance to 32 or depends on tree size. Then write correct file location below and use command [ /TANSHUGETREES command shape_file_generator start <loop> ].
-                
-                ----------------------------------------------------------------------------------------------------
-                
-                path_blueprint = none
-                | Path of the preset you will convert. The part will be something like [ presets/#main/redwood/redwood ]. This path is same as in temporary folder, found in dev folder inside the config. If the pack is extracted, then it will go get preset in extracted folder first.
-                
-                ----------------------------------------------------------------------------------------------------
                 """);
 
     }

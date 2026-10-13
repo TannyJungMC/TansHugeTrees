@@ -22,10 +22,13 @@ public class Overlays {
                     if (TreeLocation.overlay_percent != 0) {
 
                         ScreenDrawing.Position.set(ScreenDrawing.Anchor.Type.TOP_LEFT, 10, 10);
-                        ScreenDrawing.ComponentOverlay.drawTextBasic(1, "§8Percent : " + TreeLocation.overlay_percent);
-                        ScreenDrawing.ComponentOverlay.drawTextBasic(1, "§8Biome : " + TreeLocation.overlay_biome);
-                        ScreenDrawing.ComponentOverlay.drawTextBasic(1, "§8Tree : " + TreeLocation.overlay_tree);
-                        ScreenDrawing.ComponentOverlay.drawTextBasic(1, "§6Generating tree locations. This may take a while.");
+                        ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Percent : " + TreeLocation.overlay_percent);
+                        ScreenDrawing.Position.addZ(3);
+                        ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Biome : " + TreeLocation.overlay_biome);
+                        ScreenDrawing.Position.addZ(3);
+                        ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Tree : " + TreeLocation.overlay_tree);
+                        ScreenDrawing.Position.addZ(3);
+                        ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§6Generating tree locations. This may take a while.");
 
                     }
 
@@ -39,8 +42,11 @@ public class Overlays {
 
                 ScreenDrawing.Position.set(ScreenDrawing.Anchor.Type.TOP_LEFT, 10, 10);
                 ScreenDrawing.ComponentOverlay.drawTextBasic(1, "§cIf this is a world you played with Tan's Huge Trees mod version before 2025, then this is incompatible error.");
+                ScreenDrawing.Position.addZ(3);
                 ScreenDrawing.ComponentOverlay.drawTextBasic(1, "§cI would recommended to go back to older version if you want to continue playing this world.");
+                ScreenDrawing.Position.addZ(3);
                 ScreenDrawing.ComponentOverlay.drawTextBasic(1, "§fสวัสดีชาวโลก");
+                ScreenDrawing.Position.addZ(3);
                 ScreenDrawing.ComponentOverlay.drawTextBasic(1, "§fฉันคือ มะนาวต่างดุด");
 
             }
@@ -77,9 +83,11 @@ public class Overlays {
                     if (Core.developer_mode == true) {
 
                         ScreenDrawing.Position.set(ScreenDrawing.Anchor.Type.TOP_LEFT, 10, 10);
-                        ScreenDrawing.ComponentOverlay.drawTextBasic(1, "§8Percent : " + TreeLocation.overlay_percent);
-                        ScreenDrawing.ComponentOverlay.drawTextBasic(1, "§8Biome : " + TreeLocation.overlay_biome);
-                        ScreenDrawing.ComponentOverlay.drawTextBasic(1, "§8Tree : " + TreeLocation.overlay_tree);
+                        ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Percent : " + TreeLocation.overlay_percent);
+                        ScreenDrawing.Position.addZ(3);
+                        ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Biome : " + TreeLocation.overlay_biome);
+                        ScreenDrawing.Position.addZ(3);
+                        ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Tree : " + TreeLocation.overlay_tree);
 
                     }
 

@@ -11,7 +11,7 @@ public class CompatibilitySereneSeasons {
 
     public static void loop (ServerLevel level_server) {
 
-        if (Handcode.compatibility_serene_seasons == false) {
+        if (Handcode.is_mod_serene_seasons_loaded == false || Handcode.Config.compatibility_serene_seasons == false) {
 
             return;
 

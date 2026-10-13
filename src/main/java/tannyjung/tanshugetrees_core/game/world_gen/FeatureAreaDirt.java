@@ -1,4 +1,4 @@
-package tannyjung.tanshugetrees_handcode.systems.world_gen;
+package tannyjung.tanshugetrees_core.game.world_gen;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -10,9 +10,9 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import tannyjung.tanshugetrees_core.game.BlockManager;
 
-public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
+public class FeatureAreaDirt extends Feature <NoneFeatureConfiguration> {
 
-    public FeatureAreaGrass () {
+    public FeatureAreaDirt () {
 
         super(NoneFeatureConfiguration.CODEC);
 
@@ -51,26 +51,9 @@ public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
                             pos = new BlockPos(center_pos.getX() + scanX, center_pos.getY() + scanY, center_pos.getZ() + scanZ);
                             previous_block = level_accessor.getBlockState(pos);
 
-                            if (BlockManager.test(previous_block, "#minecraft:sand / #minecraft:base_stone_overworld") == true) {
+                            if (BlockManager.test(previous_block, "#minecraft:dirt / #minecraft:sand / #minecraft:base_stone_overworld") == true) {
 
-                                if (Math.random() < 0.5) {
-
-                                    if (level_accessor.getBlockState(pos.above()).isAir() == true) {
-
-                                        block = Blocks.GRASS_BLOCK.defaultBlockState();
-
-                                    } else {
-
-                                        block = Blocks.DIRT.defaultBlockState();
-
-                                    }
-
-                                } else {
-
-                                    block = Blocks.COARSE_DIRT.defaultBlockState();
-
-                                }
-
+                                block = Blocks.COARSE_DIRT.defaultBlockState();
                                 BlockManager.set(level_accessor, pos, block, false);
 
                             }
@@ -84,6 +67,7 @@ public class FeatureAreaGrass extends Feature <NoneFeatureConfiguration> {
             }
 
         }
+
 
         return true;
 

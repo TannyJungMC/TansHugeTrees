@@ -305,7 +305,7 @@ public class CommandMaker {
             private static void restart (CommandContext<CommandSourceStack> data) {
 
                 ServerLevel level_server = data.getSource().getLevel();
-                Core.restart(level_server, true, true);
+                Core.DataManagement.restart(level_server, true, true);
 
             }
 
