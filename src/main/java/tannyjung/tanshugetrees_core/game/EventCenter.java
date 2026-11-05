@@ -27,7 +27,6 @@ import tannyjung.tanshugetrees_core.game.world_gen.*;
 import tannyjung.tanshugetrees_core.outside.NetworkManager;
 import tannyjung.tanshugetrees_core.outside.config.CustomPack;
 import tannyjung.tanshugetrees_core.outside.config.TannyPackManager;
-import tannyjung.tanshugetrees_handcode.Handcode;
 import tannyjung.tanshugetrees_handcode.core.Commands;
 import tannyjung.tanshugetrees_handcode.core.Overlays;
 
@@ -211,7 +210,7 @@ public class EventCenter {
 
             Core.DelayedWork.createAsync(100, () -> {
 
-                CustomPack.Error.sendMessage(level_server);
+                CustomPack.Error2.sendMessage(level_server);
 
                 if (Core.auto_check_update == true) {
 

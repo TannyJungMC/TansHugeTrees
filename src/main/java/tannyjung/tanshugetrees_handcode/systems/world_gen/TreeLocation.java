@@ -659,14 +659,14 @@ public class TreeLocation {
                 write.add("i" + to_chunkX);
                 write.add("i" + to_chunkZ);
 
-                int from_chunkX_test = from_chunkX >> 5;
-                int from_chunkZ_test = from_chunkZ >> 5;
-                int to_chunkX_test = to_chunkX >> 5;
-                int to_chunkZ_test = to_chunkZ >> 5;
+                int from_regionX = from_chunkX >> 5;
+                int from_regionZ = from_chunkZ >> 5;
+                int to_regionX = to_chunkX >> 5;
+                int to_regionZ = to_chunkZ >> 5;
 
-                for (int scanX = from_chunkX_test; scanX <= to_chunkX_test; scanX++) {
+                for (int scanX = from_regionX; scanX <= to_regionX; scanX++) {
 
-                    for (int scanZ = from_chunkZ_test; scanZ <= to_chunkZ_test; scanZ++) {
+                    for (int scanZ = from_regionZ; scanZ <= to_regionZ; scanZ++) {
 
                         cache_write_place.computeIfAbsent(scanX + "," + scanZ, create -> new ArrayList<>()).addAll(write);
 

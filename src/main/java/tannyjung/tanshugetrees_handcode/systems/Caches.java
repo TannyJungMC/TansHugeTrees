@@ -7,6 +7,7 @@ import tannyjung.tanshugetrees_core.game.BlockManager;
 import tannyjung.tanshugetrees_core.outside.CacheManager;
 import tannyjung.tanshugetrees_core.outside.FileManager;
 import tannyjung.tanshugetrees_core.outside.OutsideUtils;
+import tannyjung.tanshugetrees_core.outside.config.CustomPack;
 import tannyjung.tanshugetrees_handcode.Handcode;
 
 import java.nio.ByteBuffer;
@@ -26,7 +27,7 @@ public class Caches {
             // Get Data
             {
 
-                String path = "";
+                ByteBuffer buffer = null;
 
                 // Get path
                 {
@@ -34,17 +35,16 @@ public class Caches {
                     try {
 
                         String[] split = id.split("\\|");
-                        path = Core.path_config + "/dev/temporary/tree_shapes/" + split[0] + "/" + split[1];
+                        buffer = CustomPack.readIndexBIN(Core.path_config + "/dev/temporary/tree_shapes/" + split[0] + "/" + split[1]);
 
                     } catch (Exception exception) {
 
                         OutsideUtils.exception(new Exception(), exception, "");
+                        buffer = ByteBuffer.allocate(0);
 
                     }
 
                 }
-
-                ByteBuffer buffer = FileManager.readBIN(path);
 
                 if (buffer.remaining() > 0) {
 

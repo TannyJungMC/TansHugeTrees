@@ -1,17 +1,8 @@
-This is source code of Tan's Huge Trees, a mod for Minecraft. Generate trees and some nature stuffs around the world. With some detailed systems. You can check it out on [CurseForge](https://legacy.curseforge.com/minecraft/mc-mods/tans-huge-trees) and [Modrinth](https://modrinth.com/mod/tans-huge-trees).
+My source code maybe a bit different from others. I made it with MCreator (2025.3) and IntelliJ, each serving different purposes. MCreator for game version switching and handling hard things such as custom blocks, items, and entities. IntelliJ for handcode. If it's hard to understand or bad design, I'm sorry. For who want to do something with my code, please read my agreements below.
 
-My source code maybe a bit different from others. It's like linked code. I didn't separate the code for different game versions, but stick on one version, then "switch" the code instead. The reason is that I don't like managing multiple versions by separate the code, it's just difficult to handle for me, even if I'm a person who likes to organize things. What I did is write what changes by game versions in one place, then switch them manually when change game version. The branches that not what I currently stick on will have name like this "1.21.1-latest_switch-20260421", this mean last time I switched to that version, which maybe outdated compared to the version I'm currently stick on.
-
-## Required Programs
-
-- IntelliJ or any of coding programs
-- MCreator 2025.3 version. For game version switching and for handling hard things such as blocks, items, entities, and GUIs. You will need to install required plugins as well, for game version generators. I have already put them in the folder ".mcreator_plugins".
-
-## How To Use
-
-- To switch between supported versions. Open MCreator, then open workspace settings, switch version of generator there. After finish MCreator part, then go to IntelliJ to fix errors in handcode part. Use find tool to find all text like this "(1.12.2)" or version you switched. It will show you all change mark comments, switch the changes by copy-paste them to the code below.
-- To run client or server.  In IntelliJ, go to "Gradle" tab at right side, select `Tasks > forgegradle runs > runClient or runServer`. In MCreator, click the green buttons at top-right.
-- To export the mod to JAR format. In IntelliJ, go to "Gradle" tab at right side, select `Tasks > build > build`. The exported file will be in `Project Folder > build > libs`. In MCreator, click the orange button then choose path for exported file.
+- To run client or server.  In IntelliJ, go to "Gradle" tab at right side, select `Gradle > mod development > runClient or runServer`. In MCreator, click the green buttons at top-right.
+- To export the mod to JAR format. In IntelliJ, go to "Gradle" tab at right side, select `Gradle > build > build`. The exported file will be in `Project Folder > build > libs`. In MCreator, click the orange button then choose path of exported file.
+- In case you want to switch the code to different supported game versions. Download MCreator same version as I mentioned above. Install needed plugins, I already put them in the folder ".mcreator_plugins". Open MCreator, open workspace settings, switch version of the generator. After finish MCreator part, then go to IntelliJ to switch codes in handcode parts. Use find tool to find all text like this "(1.12.2)", it will show you all my change marks, switch the changes by copy and paste them to the code below.
 
 ## From Creator
 

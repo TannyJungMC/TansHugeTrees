@@ -159,7 +159,7 @@ public class Core {
 
                     if (message == true && config == true) {
 
-                        CustomPack.Error.sendMessage(level_server);
+                        CustomPack.Error2.sendMessage(level_server);
 
                         if (level_server != null) {
 

@@ -17,20 +17,16 @@ public class Overlays {
 
             {
 
-                if (Handcode.Config.world_gen_icon == true) {
+                if (Handcode.Config.world_gen_icon == true && TreeLocation.overlay_percent != 0) {
 
-                    if (TreeLocation.overlay_percent != 0) {
-
-                        ScreenDrawing.Position.set(ScreenDrawing.Anchor.Type.TOP_LEFT, 10, 10);
-                        ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Percent : " + TreeLocation.overlay_percent);
-                        ScreenDrawing.Position.addZ(3);
-                        ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Biome : " + TreeLocation.overlay_biome);
-                        ScreenDrawing.Position.addZ(3);
-                        ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Tree : " + TreeLocation.overlay_tree);
-                        ScreenDrawing.Position.addZ(3);
-                        ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§6Generating tree locations. This may take a while.");
-
-                    }
+                    ScreenDrawing.Position.set(ScreenDrawing.Anchor.Type.TOP_LEFT, 10, 10);
+                    ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Percent : " + TreeLocation.overlay_percent);
+                    ScreenDrawing.Position.addZ(3);
+                    ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Biome : " + TreeLocation.overlay_biome);
+                    ScreenDrawing.Position.addZ(3);
+                    ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Tree : " + TreeLocation.overlay_tree);
+                    ScreenDrawing.Position.addZ(3);
+                    ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§6Generating tree locations. This may take a while.");
 
                 }
 
@@ -60,7 +56,7 @@ public class Overlays {
         // Developer Mode
         {
 
-            if (Core.developer_mode == true) {
+            if (true || Core.developer_mode == true) {
 
                 ScreenDrawing.Position.set(ScreenDrawing.Anchor.Type.CENTER_LEFT, 10, 0);
                 ScreenDrawing.ComponentOverlay.drawTextBasic(0.5, "§fTree Location = " + LivingMechanics.list_tree_location.size());
@@ -76,22 +72,14 @@ public class Overlays {
         // World Gen Icon
         {
 
-            if (Handcode.Config.world_gen_icon == true) {
+            if (Handcode.Config.world_gen_icon == true && TreeLocation.overlay_percent != 0) {
 
-                if (TreeLocation.overlay_percent != 0) {
-
-                    if (Core.developer_mode == true) {
-
-                        ScreenDrawing.Position.set(ScreenDrawing.Anchor.Type.TOP_LEFT, 10, 10);
-                        ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Percent : " + TreeLocation.overlay_percent);
-                        ScreenDrawing.Position.addZ(3);
-                        ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Biome : " + TreeLocation.overlay_biome);
-                        ScreenDrawing.Position.addZ(3);
-                        ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Tree : " + TreeLocation.overlay_tree);
-
-                    }
-
-                }
+                ScreenDrawing.Position.set(ScreenDrawing.Anchor.Type.TOP_LEFT, 10, 10);
+                ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Percent : " + TreeLocation.overlay_percent);
+                ScreenDrawing.Position.addZ(3);
+                ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Biome : " + TreeLocation.overlay_biome);
+                ScreenDrawing.Position.addZ(3);
+                ScreenDrawing.ComponentOverlay.drawTextBasic(ScreenDrawing.normal_font_scale, "§8Tree : " + TreeLocation.overlay_tree);
 
             }
 

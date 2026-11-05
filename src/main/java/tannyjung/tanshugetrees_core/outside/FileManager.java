@@ -90,7 +90,7 @@ public class FileManager {
 
     }
 
-    public static void copyFile (String from, String to) {
+    public static void copyFile (String from, String to_as_file) {
 
         Path path_from = Path.of(from);
 
@@ -100,7 +100,7 @@ public class FileManager {
 
         }
 
-        Path path_to = Path.of(to);
+        Path path_to = Path.of(to_as_file);
         createEmptyFile(path_to.getParent().toString(), true);
 
         try {
@@ -227,6 +227,26 @@ public class FileManager {
 
 	}
 
+    public static Map<String, String> readTXTAsMap (String path) {
+
+        Map<String, String> data = new HashMap<>();
+        String[] split = new String[]{};
+
+        for (String scan : readTXT(path)) {
+
+            if (scan.contains(" = ") == true) {
+
+                split = scan.split(" = ");
+                data.put(split[0], split[1]);
+
+            }
+
+        }
+
+        return data;
+
+    }
+
     public static void writeBIN (String path, List<String> write, boolean append) {
 
         createEmptyFile(path, false);
@@ -303,15 +323,17 @@ public class FileManager {
 
     }
 
-    public static void mergeTXT (File file_from, File file_to) {
+    public static void mergeTXT (String path, String[] data_new) {
 
-        if (file_to.exists() == false) {
 
-            copyFile(file_from.getPath(), file_to.getPath());
+        // TODO -> Move this to CustomPack.java in the replace method
+
+
+        if (new File(path).exists() == false) {
+
+            FileManager.writeTXT(path, Arrays.toString(data_new), false);
 
         } else {
-
-            String[] data_new = FileManager.readTXT(file_from.getPath());
 
             if (data_new[0].equals("# REPLACE") == true) {
 
@@ -331,11 +353,11 @@ public class FileManager {
 
                 }
 
-                FileManager.writeTXT(file_to.getPath(), write.toString(), false);
+                FileManager.writeTXT(path, write.toString(), false);
 
             } else {
 
-                String[] data_old = FileManager.readTXT(file_to.getPath());
+                String[] data_old = FileManager.readTXT(path);
                 Map<String, String> data = new HashMap<>();
                 String[] split = null;
                 String[] split2 = null;
@@ -475,7 +497,7 @@ public class FileManager {
                     }
 
                     write.addAll(write_add);
-                    FileManager.writeTXT(file_to.getPath(), String.join("\n", write), false);
+                    FileManager.writeTXT(path, String.join("\n", write), false);
 
                 }
 
@@ -652,7 +674,7 @@ public class FileManager {
 
         }
 
-        public static byte[] getFileByte (String path_zip, String path_inside) {
+        public static ByteBuffer readBIN (String path_zip, String path_inside) {
 
             byte[] bytes = new byte[]{};
 
@@ -675,13 +697,32 @@ public class FileManager {
 
             }
 
-            return bytes;
+            return ByteBuffer.wrap(bytes).order(ByteOrder.BIG_ENDIAN);
 
         }
 
         public static String[] readTXT (String path_zip, String path_inside) {
 
-            return new String(getFileByte(path_zip, path_inside), StandardCharsets.UTF_8).split("\\n");
+            try {
+
+                ZipFile zip = new ZipFile(path_zip);
+                ZipEntry entry = zip.getEntry(path_inside);
+
+                if (entry != null) {
+
+                    return new String(zip.getInputStream(entry).readAllBytes(), StandardCharsets.UTF_8).split("\r\n");
+
+                }
+
+                zip.close();
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception, "");
+
+            }
+
+            return new String[]{};
 
         }
 
