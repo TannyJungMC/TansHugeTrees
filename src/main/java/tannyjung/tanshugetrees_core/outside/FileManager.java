@@ -1,6 +1,7 @@
 package tannyjung.tanshugetrees_core.outside;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -227,23 +228,40 @@ public class FileManager {
 
 	}
 
-    public static Map<String, String> readTXTAsMap (String path) {
+    public static String[] readOnlineTXT (String url) {
 
-        Map<String, String> data = new HashMap<>();
-        String[] split = new String[]{};
+        if (OutsideUtils.isURLAvailable(url) == true) {
 
-        for (String scan : readTXT(path)) {
+            try {
 
-            if (scan.contains(" = ") == true) {
+                List<String> data = new ArrayList<>();
 
-                split = scan.split(" = ");
-                data.put(split[0], split[1]);
+                {
+
+                    BufferedReader buffered_reader = new BufferedReader(new InputStreamReader(new URI(url).toURL().openStream()), 65536);
+                    String scan = "";
+
+                    while ((scan = buffered_reader.readLine()) != null) {
+
+                        data.add(scan);
+
+                    }
+
+                    buffered_reader.close();
+
+                }
+
+                return data.toArray(new String[]{});
+
+            } catch (Exception exception) {
+
+                OutsideUtils.exception(new Exception(), exception, "");
 
             }
 
         }
 
-        return data;
+        return new String[]{};
 
     }
 
@@ -320,190 +338,6 @@ public class FileManager {
         }
 
         return ByteBuffer.allocate(0);
-
-    }
-
-    public static void mergeTXT (String path, String[] data_new) {
-
-
-        // TODO -> Move this to CustomPack.java in the replace method
-
-
-        if (new File(path).exists() == false) {
-
-            FileManager.writeTXT(path, Arrays.toString(data_new), false);
-
-        } else {
-
-            if (data_new[0].equals("# REPLACE") == true) {
-
-                StringBuilder write = new StringBuilder();
-                boolean skip = true;
-
-                for (String scan : data_new) {
-
-                    if (skip == true) {
-
-                        skip = false;
-                        continue;
-
-                    }
-
-                    write.append(scan).append("\n");
-
-                }
-
-                FileManager.writeTXT(path, write.toString(), false);
-
-            } else {
-
-                String[] data_old = FileManager.readTXT(path);
-                Map<String, String> data = new HashMap<>();
-                String[] split = null;
-                String[] split2 = null;
-
-                // Get Old Data
-                {
-
-                    for (String scan : data_old) {
-
-                        if (scan.isEmpty() == false) {
-
-                            if (scan.startsWith("#") == false) {
-
-                                if (scan.contains(" = ") == true) {
-
-                                    split = scan.split(" = ");
-                                    data.put(split[0], split[1]);
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-                List<String> write_add = new ArrayList<>();
-
-                // Get Data
-                {
-
-                    StringBuilder merge = new StringBuilder();
-
-                    for (String scan : data_new) {
-
-                        if (scan.isEmpty() == false) {
-
-                            if (scan.contains(" = ") == true) {
-
-                                if (scan.startsWith("# MERGE") == true) {
-
-                                    {
-
-                                        split = scan.substring(scan.indexOf(" -> ") + 4).split(" = ");
-
-                                        if (data.containsKey(split[0]) == false) {
-
-                                            write_add.add(split[0] + " = " + split[1]);
-
-                                        } else {
-
-                                            merge.setLength(0);
-                                            merge.append("|").append(data.get(split[0]).replace(" / ", "| / |")).append("|");
-
-                                            for (String scan_list : split[1].split(" / ")) {
-
-                                                if (merge.toString().contains("|" + scan_list + "|") == false) {
-
-                                                    merge.append(" / ").append(scan_list);
-
-                                                }
-
-                                            }
-
-                                            data.put(split[0], merge.toString().replace("|", ""));
-
-                                        }
-
-                                    }
-
-                                } else if (scan.startsWith("# REPLACE") == true) {
-
-                                    {
-
-                                        split = scan.substring(scan.indexOf(" -> ") + 4).split(" = ");
-
-                                        if (data.containsKey(split[0]) == true) {
-
-                                            split2 = data.get(split[1]).split(" >>> ");
-                                            write_add.add(split[0] + " = " + data.get(split[0]).replace(split2[0], split2[1]));
-
-                                        }
-
-                                    }
-
-
-                                } else {
-
-                                    split = scan.split(" = ");
-
-                                    if (data.containsKey(split[0]) == true) {
-
-                                        data.replace(split[0], split[1]);
-
-                                    } else {
-
-                                        write_add.add(scan);
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-                // Write
-                {
-
-                    List<String> write = new ArrayList<>();
-
-                    for (String scan : data_old) {
-
-                        if (scan.contains(" = ") == false) {
-
-                            write.add(scan);
-
-                        } else {
-
-                            if (scan.startsWith("# MERGE") == true) {
-
-                                scan = scan.substring(scan.indexOf(" -> ") + 4);
-
-                            }
-
-                            split = scan.split(" = ");
-                            write.add(split[0] + " = " + data.get(split[0]));
-
-                        }
-
-                    }
-
-                    write.addAll(write_add);
-                    FileManager.writeTXT(path, String.join("\n", write), false);
-
-                }
-
-            }
-
-        }
 
     }
 

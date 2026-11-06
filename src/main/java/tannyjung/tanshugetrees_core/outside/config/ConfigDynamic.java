@@ -170,7 +170,7 @@ public class ConfigDynamic {
 
         }
 
-        Map<String, String> options = OutsideUtils.convertFileToDataMap(source.toString());
+        Map<String, String> options = CustomPack.convertDataToMap(FileManager.readTXT(source.toString()));
         String value = "";
 
         for (Map.Entry<String, String> entry : default_values.entrySet()) {

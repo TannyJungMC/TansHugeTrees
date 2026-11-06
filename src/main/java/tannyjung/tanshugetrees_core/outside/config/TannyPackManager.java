@@ -57,7 +57,7 @@ public class TannyPackManager {
             // Get Version (Online)
             {
 
-                for (String scan : OutsideUtils.readOnlineTXT(url)) {
+                for (String scan : FileManager.readOnlineTXT(url)) {
 
                     if (scan.startsWith("data_structure_version = ")) {
 

@@ -169,6 +169,41 @@ public class CustomPack {
 
     }
 
+    public static Map<String, String> convertDataToMap (String[] data) {
+
+        Map<String, String> convert = new HashMap<>();
+        String[] split = null;
+
+        for (String scan : data) {
+
+            if (scan.isEmpty() == true) {
+
+                continue;
+
+            }
+
+            if (scan.contains(" = ") == false) {
+
+                continue;
+
+            }
+
+            split = scan.split(" = ");
+
+            if (split[1].equals("none") == true) {
+
+                split[1] = "";
+
+            }
+
+            convert.put(split[0], split[1]);
+
+        }
+
+        return convert;
+
+    }
+
     private static Map<String, Map<String, String>> getInfoData (File[] packs) {
 
         Map<String, Map<String, String>> data = new HashMap<>();
@@ -189,7 +224,7 @@ public class CustomPack {
 
             }
 
-            info_data = FileManager.readTXTAsMap(destination);
+            info_data = convertDataToMap(FileManager.readTXT(destination));
             data.put(pack.getName(), info_data);
             pack_ids.put(pack.getName(), info_data.getOrDefault("pack_id", ""));
 
@@ -331,29 +366,193 @@ public class CustomPack {
 
     private static void replace (File[] packs, Map<String, String[]> zip_index) {
 
-        for (File pack : packs) {
+        Map<String, Map<String, String[]>> replace = new HashMap<>();
 
-            if (pack.isDirectory() == true) {
+        // Collect Replace Data
+        {
 
-                for (File scan : FileManager.getAllFiles(pack.getPath() + "/replace")) {
+            for (File pack : packs) {
 
-                    FileManager.mergeTXT(Core.path_config + "/dev/temporary/" + Path.of(Core.path_config + "/custom_packs/" + pack.getName() + "/replace").relativize(scan.toPath()), FileManager.readTXT(scan.getPath()));
+                if (pack.isDirectory() == true) {
 
-                }
+                    for (File scan : FileManager.getAllFiles(pack.getPath() + "/replace")) {
 
-            } else {
-
-                for (String scan : zip_index.get(pack.getName())) {
-
-                    if (scan.startsWith("replace/") == false) {
-
-                        continue;
+                        replace.computeIfAbsent(pack.getName(), create -> new HashMap<>()).put(Core.path_config + "/dev/temporary/" + Path.of(Core.path_config + "/custom_packs/" + pack.getName() + "/replace").relativize(scan.toPath()), FileManager.readTXT(scan.getPath()));
 
                     }
 
-                    FileManager.mergeTXT(Core.path_config + "/dev/temporary/" + scan.substring("replace/".length()), FileManager.ZIP.readTXT(pack.getPath(), scan));
+                } else {
+
+                    for (String scan : zip_index.get(pack.getName())) {
+
+                        if (scan.startsWith("replace/") == false) {
+
+                            continue;
+
+                        }
+
+                        replace.computeIfAbsent(pack.getName(), create -> new HashMap<>()).put(Core.path_config + "/dev/temporary/" + scan.substring("replace/".length()), FileManager.ZIP.readTXT(pack.getPath(), scan));
+
+                    }
 
                 }
+
+            }
+
+        }
+
+        List<String> data_before = new ArrayList<>();
+        List<String> data_before_reorganize = new ArrayList<>();
+        StringBuilder data_after = new StringBuilder();
+        String[] split = new String[]{};
+        int skip = 0;
+        String mode = "";
+
+        String option_prefix = "";
+        String option_name = "";
+        String option_value_old = "";
+        String option_value_new = "";
+
+        for (Map.Entry<String, Map<String, String[]>> entry1 : replace.entrySet()) {
+
+            for (Map.Entry<String, String[]> entry2 : entry1.getValue().entrySet()) {
+
+                if (entry2.getValue().length == 0) {
+
+                    continue;
+
+                }
+
+                mode = entry2.getValue()[0];
+
+                if (mode.equals("# ALL") == true) {
+
+                    {
+
+                        data_after.append("REPLACED ALL BY [ ").append(entry1.getKey()).append(" ]");
+                        data_after.append("\n");
+                        skip = 2;
+
+                        for (String scan : entry2.getValue()) {
+
+                            if (skip > 0) {
+
+                                skip = skip - 1;
+                                continue;
+
+                            }
+
+                            data_after.append(scan);
+                            data_after.append("\n");
+
+                        }
+
+                    }
+
+                } else if (mode.equals("# SPECIFIC") == true) {
+
+                    {
+
+                        data_before = Arrays.stream(FileManager.readTXT(entry2.getKey())).toList();
+
+                        for (String scan : entry2.getValue()) {
+
+                            split = scan.split(" = ");
+
+                            if (split.length == 1) {
+
+                                continue;
+
+                            }
+
+                            option_value_new = split[1];
+                            split = split[0].split(" -> ");
+
+                            if (split.length == 1) {
+
+                                continue;
+
+                            }
+
+                            option_prefix = split[0];
+                            option_name = split[1];
+
+                            for (String scan_old : data_before) {
+
+                                split = scan_old.split(" = ");
+
+                                if (split.length == 2 && split[0].equals(option_name) == true) {
+
+                                    option_value_old = split[1];
+
+                                    if (option_prefix.equals("SET") == true) {
+
+                                        {
+
+                                            data_before_reorganize.add(option_name + " = " + option_value_new);
+                                            data_before_reorganize.add("> EDITED BY [ " + entry1.getKey() + " ] SET VALUE FROM PREVIOUS [ " + option_value_old + " ]");
+                                            continue;
+
+                                        }
+
+                                    } else if (option_prefix.equals("ADD") == true) {
+
+                                        {
+
+                                            data_before_reorganize.add(option_name + " = " + option_value_old + " / " + option_value_new);
+                                            data_before_reorganize.add("> EDITED BY [ " + entry1.getKey() + " ] ADDED VALUE [ " + option_value_new + " ]");
+                                            continue;
+
+                                        }
+
+                                    } else if (option_prefix.equals("REPLACE") == true) {
+
+                                        {
+
+                                            split = option_value_new.split(" -> ");
+
+                                            if (split.length == 2 && option_value_old.contains(split[0]) == true) {
+
+                                                data_before_reorganize.add(option_name + " = " + option_value_old.replace(split[0], split[1]));
+                                                data_before_reorganize.add("> EDITED BY [ " + entry1.getKey() + " ] REPLACED WORD [ " + split[0] + " ] TO [ " + split[1] + " ]");
+                                                continue;
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
+
+                                data_before_reorganize.add(scan_old);
+
+                            }
+
+                            data_before = new ArrayList<>(data_before_reorganize);
+                            data_before_reorganize.clear();
+
+                        }
+
+                        for (String scan : data_before) {
+
+                            data_after.append(scan);
+                            data_after.append("\n");
+
+                        }
+
+                    }
+
+                }
+
+                if (data_after.isEmpty() == true) {
+
+                    continue;
+
+                }
+
+                FileManager.writeTXT(entry2.getKey(), data_after.toString(), false);
+                data_after.setLength(0);
 
             }
 
@@ -439,6 +638,12 @@ public class CustomPack {
 
         }
 
+        private static void addError (String error) {
+
+            cache_errors.computeIfAbsent("hard", create -> new ArrayList<>()).add(error);
+
+        }
+
         private static void checkInfo (Map<String, Map<String, String>> info_data) {
 
             String value = "";
@@ -448,7 +653,7 @@ public class CustomPack {
 
                 if (entry.getValue().isEmpty() == true) {
 
-                    cache_errors.computeIfAbsent("hard", create -> new ArrayList<>()).add(entry.getKey() + " -> Not detected info file or it has empty info file");
+                    Status.addError(entry.getKey() + " -> Not detected info file or it has empty info file");
                     continue;
 
                 }
@@ -460,7 +665,7 @@ public class CustomPack {
 
                     if (value == null) {
 
-                        cache_errors.computeIfAbsent("hard", create -> new ArrayList<>()).add(entry.getKey() + " -> Not detected option name [ pack_id ] in info file of the pack");
+                        Status.addError(entry.getKey() + " -> Not detected option name [ pack_id ] in info file of the pack");
 
                     } else {
 
@@ -474,7 +679,7 @@ public class CustomPack {
 
                             if (scan.getValue().equals(value) == true) {
 
-                                cache_errors.computeIfAbsent("hard", create -> new ArrayList<>()).add(entry.getKey() + " -> Detected duplicate pack ID [ " + value + " ] same as pack [ " + scan.getKey() + " ]");
+                                Status.addError(entry.getKey() + " -> Detected duplicate pack ID [ " + value + " ] same as pack [ " + scan.getKey() + " ]");
                                 break;
 
                             }
@@ -492,7 +697,7 @@ public class CustomPack {
 
                     if (value == null) {
 
-                        cache_errors.computeIfAbsent("hard", create -> new ArrayList<>()).add(entry.getKey() + " -> Not detected option name [ required_packs ] in info file of the pack");
+                        Status.addError(entry.getKey() + " -> Not detected option name [ required_packs ] in info file of the pack");
 
                     } else if (value.equals("none") == false) {
 
@@ -500,7 +705,7 @@ public class CustomPack {
 
                             if (pack_ids.containsValue(scan) == false) {
 
-                                cache_errors.computeIfAbsent("hard", create -> new ArrayList<>()).add(entry.getKey() + " -> Not detected pack ID [ " + scan + " ] which is required");
+                                Status.addError(entry.getKey() + " -> Not detected pack ID [ " + scan + " ] which is required");
 
                             }
 
@@ -517,7 +722,7 @@ public class CustomPack {
 
                     if (value == null) {
 
-                        cache_errors.computeIfAbsent("hard", create -> new ArrayList<>()).add(entry.getKey() + " -> Not detected option name [ required_mods ] in info file of the pack");
+                        Status.addError(entry.getKey() + " -> Not detected option name [ required_mods ] in info file of the pack");
 
                     } else if (value.equals("none") == false) {
 
@@ -525,7 +730,7 @@ public class CustomPack {
 
                             if (GameUtils.isModLoaded(scan) == false) {
 
-                                cache_errors.computeIfAbsent("hard", create -> new ArrayList<>()).add(entry.getKey() + " -> Not detected mod ID [ " + scan + " ] which is required");
+                                Status.addError(entry.getKey() + " -> Not detected mod ID [ " + scan + " ] which is required");
 
                             }
 
@@ -542,7 +747,7 @@ public class CustomPack {
 
                     if (value == null) {
 
-                        cache_errors.computeIfAbsent("hard", create -> new ArrayList<>()).add(entry.getKey() + " -> Not detected option name [ data_structure_version ] in info file of the pack");
+                        Status.addError(entry.getKey() + " -> Not detected option name [ data_structure_version ] in info file of the pack");
 
                     } else {
 
@@ -561,7 +766,7 @@ public class CustomPack {
 
                         if (test == false) {
 
-                            cache_errors.computeIfAbsent("hard", create -> new ArrayList<>()).add(entry.getKey() + " -> Unmatched data structure version [ " + value + " ] but the mod needs [ " + Core.data_structure_version_pack + " ]");
+                            Status.addError(entry.getKey() + " -> Unmatched data structure version [ " + value + " ] but the mod needs [ " + Core.data_structure_version_pack + " ]");
 
                         }
 
@@ -618,7 +823,7 @@ public class CustomPack {
 
             for (Map.Entry<String, String> entry : locations.entrySet()) {
 
-                pack_ids.put(entry.getKey(), OutsideUtils.convertFileToDataMap(entry.getValue()).get("pack_id"));
+                pack_ids.put(entry.getKey(), convertDataToMap(FileManager.readTXT(entry.getValue())).get("pack_id"));
 
             }
 
@@ -645,7 +850,7 @@ public class CustomPack {
 
             }
 
-            data = OutsideUtils.convertFileToDataMap(location);
+            data = convertDataToMap(FileManager.readTXT(location));
 
             // Pack ID
             {
